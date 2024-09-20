@@ -1,6 +1,69 @@
-# gigentic-frontend
+# Gigentic Frontend
 
-This project is generated with the [create-solana-dapp](https://github.com/solana-developers/create-solana-dapp) generator.
+Solana Anchor + Next.js Full Stack Setup
+
+This project was generated with the [create-solana-dapp](https://github.com/solana-developers/create-solana-dapp) generator.
+
+`npx create-solana-dapp@latest`
+
+- Project name: gigentic-frontend
+- Next.js
+- Tailwind
+- Counter Anchor template program
+
+Go to the project folder:
+
+`cd gigentic-frontend`
+
+Delete `package-lock.json` file:
+
+`rm package-lock.json`
+
+Delete `node_modules` folder:
+
+`rm -rf node_modules`
+
+Install dependencies in main gigentic-frontend folder:
+
+`yarn`
+
+#### Local validator setup
+
+Clear validator state:
+`rm -rf test-ledger`
+
+Start local validator:
+`solana-test-validator`
+
+### Chain code setup
+
+Set up libs in main anchor folder as well
+
+`cd anchor`
+
+`yarn`
+
+#### build
+
+`anchor build`
+`anchor keys sync`
+
+#### test
+
+`anchor test --skip-local-validator`
+
+### Run frontend
+
+Set up .env file. (See Google folder for sample keys for a reproducible local-dev setup.)
+
+In main gigentic-frontend folder:
+`yarn dev`
+
+==============================================================================
+
+# Docs from the solana-starter-dapp
+
+This project was originally generated with the [create-solana-dapp](https://github.com/solana-developers/create-solana-dapp) generator.
 
 ## Getting Started
 

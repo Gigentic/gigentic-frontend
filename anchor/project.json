@@ -12,7 +12,9 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "anchor",
-        "commands": ["anchor test"],
+        "commands": [
+          "anchor test --skip-local-validator"
+        ],
         "parallel": false
       }
     },
@@ -20,21 +22,17 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "anchor",
-        "commands": ["anchor"],
-        "parallel": false
-      }
-    },
-    "localnet": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "anchor",
-        "commands": ["anchor localnet"],
+        "commands": [
+          "anchor"
+        ],
         "parallel": false
       }
     },
     "jest": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "anchor/jest.config.ts"
       }

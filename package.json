@@ -5,8 +5,8 @@
   "scripts": {
     "anchor": "nx run anchor:anchor",
     "anchor-build": "nx run anchor:anchor build",
-    "anchor-localnet": "nx run anchor:anchor localnet",
-    "anchor-test": "nx run anchor:anchor test",
+    "anchor-keys": "nx run anchor:anchor keys sync",
+    "anchor-test": "nx run anchor:test",
     "feature": "nx generate @solana-developers/preset-react:feature",
     "build": "nx build web",
     "dev": "nx serve web"
