@@ -29,7 +29,7 @@ export function useGetSignatures({ address }: { address: PublicKey }) {
 
   return useQuery({
     queryKey: ['get-signatures', { endpoint: connection.rpcEndpoint, address }],
-    queryFn: () => connection.getConfirmedSignaturesForAddress2(address),
+    queryFn: () => connection.getSignaturesForAddress(address),
   });
 }
 
@@ -125,6 +125,7 @@ export function useRequestAirdrop({ address }: { address: PublicKey }) {
 
   return useMutation({
     mutationKey: ['airdrop', { endpoint: connection.rpcEndpoint, address }],
+    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
     mutationFn: async (amount: number = 1) => {
       const [latestBlockhash, signature] = await Promise.all([
         connection.getLatestBlockhash(),
