@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-gigentic_frontend = "6TWkDYVxEiiyVPgX6eg3Rd3N845sPFpWYiUXeneoZXau"
+gigentic_frontend = "GQs1P3y7HvyJBgQt8rNeZfuZa1fDZuTj6XZooVGeNq1U"
 
 [registry]
 url = "https://api.apr.dev"
