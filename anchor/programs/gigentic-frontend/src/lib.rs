@@ -1,70 +1,70 @@
-#![allow(clippy::result_large_err)]
-
 use anchor_lang::prelude::*;
+mod constants;
+mod contexts;
+mod errors;
+mod states;
+use contexts::agent_to_consumer_rating::*;
+use contexts::consumer_to_agent_rating::*;
+use contexts::init_service::*;
+use contexts::init_service_registry::*;
+use contexts::pay_service::*;
+use contexts::sign_service::*;
+use errors::ErrorCode;
 
-declare_id!("F2k6F2Uebns2TSywCKE9JiRYTMV85L4KbQNTos9kufGu");
+declare_id!("6TWkDYVxEiiyVPgX6eg3Rd3N845sPFpWYiUXeneoZXau");
 
 #[program]
 pub mod gigentic_frontend {
     use super::*;
 
-  pub fn close(_ctx: Context<CloseGigenticFrontend>) -> Result<()> {
-    Ok(())
-  }
+    pub fn initialize_service_registry(
+        ctx: Context<InitServiceRegistry>,
+        fee_account: Pubkey,
+        fee_percentage: u8,
+    ) -> Result<()> {
+        ctx.accounts.handler(fee_account, fee_percentage)?;
+        Ok(())
+    }
 
-  pub fn decrement(ctx: Context<Update>) -> Result<()> {
-    ctx.accounts.gigentic_frontend.count = ctx.accounts.gigentic_frontend.count.checked_sub(1).unwrap();
-    Ok(())
-  }
+    pub fn initialize_service(
+        ctx: Context<InitializeService>,
+        description: String,
+        price: u64,
+    ) -> Result<()> {
+        require!(
+            description.len() <= constants::MAX_DESCRIPTION_LENGTH,
+            ErrorCode::DescriptionTooLong
+        );
 
-  pub fn increment(ctx: Context<Update>) -> Result<()> {
-    ctx.accounts.gigentic_frontend.count = ctx.accounts.gigentic_frontend.count.checked_add(1).unwrap();
-    Ok(())
-  }
+        ctx.accounts.handler(description, price)?;
+        Ok(())
+    }
 
-  pub fn initialize(_ctx: Context<InitializeGigenticFrontend>) -> Result<()> {
-    Ok(())
-  }
+    pub fn pay_service(ctx: Context<PayService>) -> Result<()> {
+        ctx.accounts.handler()?;
+        Ok(())
+    }
 
-  pub fn set(ctx: Context<Update>, value: u8) -> Result<()> {
-    ctx.accounts.gigentic_frontend.count = value.clone();
-    Ok(())
-  }
-}
+    pub fn sign_service(ctx: Context<SignService>) -> Result<()> {
+        ctx.accounts.handler()?;
+        Ok(())
+    }
 
-#[derive(Accounts)]
-pub struct InitializeGigenticFrontend<'info> {
-  #[account(mut)]
-  pub payer: Signer<'info>,
+    pub fn agent_to_consumer_rating(
+        ctx: Context<ReviewAgentToCustomerService>,
+        rating: u8,
+        review: String,
+    ) -> Result<()> {
+        ctx.accounts.handler(rating, review)?;
+        Ok(())
+    }
 
-  #[account(
-  init,
-  space = 8 + GigenticFrontend::INIT_SPACE,
-  payer = payer
-  )]
-  pub gigentic_frontend: Account<'info, GigenticFrontend>,
-  pub system_program: Program<'info, System>,
-}
-#[derive(Accounts)]
-pub struct CloseGigenticFrontend<'info> {
-  #[account(mut)]
-  pub payer: Signer<'info>,
-
-  #[account(
-  mut,
-  close = payer, // close account and return lamports to payer
-  )]
-  pub gigentic_frontend: Account<'info, GigenticFrontend>,
-}
-
-#[derive(Accounts)]
-pub struct Update<'info> {
-  #[account(mut)]
-  pub gigentic_frontend: Account<'info, GigenticFrontend>,
-}
-
-#[account]
-#[derive(InitSpace)]
-pub struct GigenticFrontend {
-  count: u8,
+    pub fn consumer_to_agent_rating(
+        ctx: Context<ReviewCustomerToAgentService>,
+        rating: u8,
+        review: String,
+    ) -> Result<()> {
+        ctx.accounts.handler(rating, review)?;
+        Ok(())
+    }
 }
