@@ -4,7 +4,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletButton } from '../solana/solana-provider';
 import { AppHero, ellipsify } from '../ui/ui-layout';
 import { ExplorerLink } from '../cluster/cluster-ui';
-import { useGigenticFrontendProgram } from './gigentic-frontend-data-access';
+import { useGigenticProgram } from './gigentic-frontend-data-access';
 import {
   GigenticFrontendCreate,
   GigenticFrontendList,
@@ -12,7 +12,7 @@ import {
 
 export default function GigenticFrontendFeature() {
   const { publicKey } = useWallet();
-  const { programId } = useGigenticFrontendProgram();
+  const { programId } = useGigenticProgram();
 
   return publicKey ? (
     <div>

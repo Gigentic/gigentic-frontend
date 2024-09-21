@@ -1,8 +1,8 @@
 'use client';
 
 import {
-  getGigenticFrontendProgram,
-  getGigenticFrontendProgramId,
+  getGigenticProgram,
+  getGigenticProgramId,
 } from '@gigentic-frontend/anchor';
 import { Program } from '@coral-xyz/anchor';
 import { useConnection } from '@solana/wallet-adapter-react';
@@ -14,20 +14,20 @@ import { useCluster } from '../cluster/cluster-data-access';
 import { useAnchorProvider } from '../solana/solana-provider';
 import { useTransactionToast } from '../ui/ui-layout';
 
-export function useGigenticFrontendProgram() {
+export function useGigenticProgram() {
   const { connection } = useConnection();
   const { cluster } = useCluster();
   const transactionToast = useTransactionToast();
   const provider = useAnchorProvider();
   const programId = useMemo(
-    () => getGigenticFrontendProgramId(cluster.network as Cluster),
-    [cluster]
+    () => getGigenticProgramId(cluster.network as Cluster),
+    [cluster],
   );
-  const program = getGigenticFrontendProgram(provider);
+  const program = getGigenticProgram(provider);
 
   const accounts = useQuery({
-    queryKey: ['gigentic-frontend', 'all', { cluster }],
-    queryFn: () => program.account.gigenticFrontend.all(),
+    queryKey: ['gigentic', 'all', { cluster }],
+    queryFn: () => program.account.gigentic.all(),
   });
 
   const getProgramAccount = useQuery({
@@ -36,11 +36,11 @@ export function useGigenticFrontendProgram() {
   });
 
   const initialize = useMutation({
-    mutationKey: ['gigentic-frontend', 'initialize', { cluster }],
+    mutationKey: ['gigentic', 'initialize', { cluster }],
     mutationFn: (keypair: Keypair) =>
       program.methods
         .initialize()
-        .accounts({ gigenticFrontend: keypair.publicKey })
+        .accounts({ gigentic: keypair.publicKey })
         .signers([keypair])
         .rpc(),
     onSuccess: (signature) => {
@@ -59,24 +59,20 @@ export function useGigenticFrontendProgram() {
   };
 }
 
-export function useGigenticFrontendProgramAccount({
-  account,
-}: {
-  account: PublicKey;
-}) {
+export function useGigenticProgramAccount({ account }: { account: PublicKey }) {
   const { cluster } = useCluster();
   const transactionToast = useTransactionToast();
-  const { program, accounts } = useGigenticFrontendProgram();
+  const { program, accounts } = useGigenticProgram();
 
   const accountQuery = useQuery({
     queryKey: ['gigentic-frontend', 'fetch', { cluster, account }],
-    queryFn: () => program.account.gigenticFrontend.fetch(account),
+    queryFn: () => program.account.gigentic.fetch(account),
   });
 
   const closeMutation = useMutation({
     mutationKey: ['gigentic-frontend', 'close', { cluster, account }],
     mutationFn: () =>
-      program.methods.close().accounts({ gigenticFrontend: account }).rpc(),
+      program.methods.close().accounts({ gigentic: account }).rpc(),
     onSuccess: (tx) => {
       transactionToast(tx);
       return accounts.refetch();
@@ -86,7 +82,7 @@ export function useGigenticFrontendProgramAccount({
   const decrementMutation = useMutation({
     mutationKey: ['gigentic-frontend', 'decrement', { cluster, account }],
     mutationFn: () =>
-      program.methods.decrement().accounts({ gigenticFrontend: account }).rpc(),
+      program.methods.decrement().accounts({ gigentic: account }).rpc(),
     onSuccess: (tx) => {
       transactionToast(tx);
       return accountQuery.refetch();
@@ -96,7 +92,7 @@ export function useGigenticFrontendProgramAccount({
   const incrementMutation = useMutation({
     mutationKey: ['gigentic-frontend', 'increment', { cluster, account }],
     mutationFn: () =>
-      program.methods.increment().accounts({ gigenticFrontend: account }).rpc(),
+      program.methods.increment().accounts({ gigentic: account }).rpc(),
     onSuccess: (tx) => {
       transactionToast(tx);
       return accountQuery.refetch();
@@ -106,7 +102,7 @@ export function useGigenticFrontendProgramAccount({
   const setMutation = useMutation({
     mutationKey: ['gigentic-frontend', 'set', { cluster, account }],
     mutationFn: (value: number) =>
-      program.methods.set(value).accounts({ gigenticFrontend: account }).rpc(),
+      program.methods.set(value).accounts({ gigentic: account }).rpc(),
     onSuccess: (tx) => {
       transactionToast(tx);
       return accountQuery.refetch();

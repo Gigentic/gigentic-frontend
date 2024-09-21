@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-gigentic_frontend = "GQs1P3y7HvyJBgQt8rNeZfuZa1fDZuTj6XZooVGeNq1U"
+gigentic = "GQs1P3y7HvyJBgQt8rNeZfuZa1fDZuTj6XZooVGeNq1U"
 
 [registry]
 url = "https://api.apr.dev"
@@ -17,4 +17,4 @@ wallet = "~/.config/solana/id.json"
 
 [scripts]
 lint = "cargo dylint --all --workspace"
-test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/gigentic-frontend.spec.ts"
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/gigentic.spec.ts"

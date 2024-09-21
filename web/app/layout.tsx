@@ -12,7 +12,7 @@ export const metadata = {
 const links: { label: string; path: string }[] = [
   { label: 'Account', path: '/account' },
   { label: 'Clusters', path: '/clusters' },
-  { label: 'GigenticFrontend Program', path: '/gigentic-frontend' },
+  { label: 'Gigentic', path: '/gigentic-frontend' },
 ];
 
 export default function RootLayout({

@@ -14,7 +14,7 @@ use errors::ErrorCode;
 declare_id!("GQs1P3y7HvyJBgQt8rNeZfuZa1fDZuTj6XZooVGeNq1U");
 
 #[program]
-pub mod gigentic_frontend {
+pub mod gigentic {
     use super::*;
 
     pub fn initialize_service_registry(

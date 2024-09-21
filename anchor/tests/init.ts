@@ -10,7 +10,7 @@ import * as anchor from '@coral-xyz/anchor';
 import { createMint } from '@solana/spl-token';
 import { Program, web3 } from '@coral-xyz/anchor';
 import { PublicKey } from '@solana/web3.js';
-import { GigenticFrontend } from '../target/types/gigentic-frontend';
+import { Gigentic } from '../target/types/gigentic';
 
 // Configure the client to use the local cluster.
 anchor.setProvider(PROVIDER);
@@ -19,8 +19,8 @@ anchor.setProvider(PROVIDER);
 export const connection: web3.Connection = PROVIDER.connection;
 
 // Initialize the program object for the Gigentic smart contract
-export const program: Program<GigenticFrontend> = anchor.workspace
-  .GigenticFrontend as Program<GigenticFrontend>;
+export const program: Program<Gigentic> = anchor.workspace
+  .Gigentic as Program<Gigentic>;
 
 // Declare a variable to hold the mint public key
 export let mint: PublicKey;

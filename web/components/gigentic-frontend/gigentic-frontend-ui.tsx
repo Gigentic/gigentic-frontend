@@ -5,12 +5,12 @@ import { useMemo } from 'react';
 import { ellipsify } from '../ui/ui-layout';
 import { ExplorerLink } from '../cluster/cluster-ui';
 import {
-  useGigenticFrontendProgram,
-  useGigenticFrontendProgramAccount,
+  useGigenticProgram,
+  useGigenticProgramAccount,
 } from './gigentic-frontend-data-access';
 
 export function GigenticFrontendCreate() {
-  const { initialize } = useGigenticFrontendProgram();
+  const { initialize } = useGigenticProgram();
 
   return (
     <button
@@ -24,7 +24,7 @@ export function GigenticFrontendCreate() {
 }
 
 export function GigenticFrontendList() {
-  const { accounts, getProgramAccount } = useGigenticFrontendProgram();
+  const { accounts, getProgramAccount } = useGigenticProgram();
 
   if (getProgramAccount.isLoading) {
     return <span className="loading loading-spinner loading-lg"></span>;
@@ -69,11 +69,11 @@ function GigenticFrontendCard({ account }: { account: PublicKey }) {
     setMutation,
     decrementMutation,
     closeMutation,
-  } = useGigenticFrontendProgramAccount({ account });
+  } = useGigenticProgramAccount({ account });
 
   const count = useMemo(
     () => accountQuery.data?.count ?? 0,
-    [accountQuery.data?.count]
+    [accountQuery.data?.count],
   );
 
   return accountQuery.isLoading ? (
@@ -101,7 +101,7 @@ function GigenticFrontendCard({ account }: { account: PublicKey }) {
               onClick={() => {
                 const value = window.prompt(
                   'Set value to:',
-                  count.toString() ?? '0'
+                  count.toString() ?? '0',
                 );
                 if (
                   !value ||
@@ -136,7 +136,7 @@ function GigenticFrontendCard({ account }: { account: PublicKey }) {
               onClick={() => {
                 if (
                   !window.confirm(
-                    'Are you sure you want to close this account?'
+                    'Are you sure you want to close this account?',
                   )
                 ) {
                   return;
