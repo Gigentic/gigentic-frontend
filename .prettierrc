@@ -1,3 +1,14 @@
 {
-  "singleQuote": true
+  "singleQuote": true,
+  "plugins": [
+    "prettier-plugin-rust"
+  ],
+  "overrides": [
+    {
+      "files": "*.rs",
+      "options": {
+        "parser": "rust"
+      }
+    }
+  ]
 }
