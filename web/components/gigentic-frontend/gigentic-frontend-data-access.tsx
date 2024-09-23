@@ -25,58 +25,58 @@ import { useCluster } from '../cluster/cluster-data-access';
 
 import { useTransactionToast } from '../ui/ui-layout';
 
-// Helper function to parse keypair from environment variable
-const parseKeypair = (key: string): Keypair => {
-  const keypairString = process.env[key];
-  if (!keypairString) {
-    throw new Error(`Environment variable ${key} is not set`);
-  }
-  // console.log('keypairString', keypairString);
-  const keypair = Keypair.fromSecretKey(bs58.decode(keypairString));
+// // Helper function to parse keypair from environment variable
+// const parseKeypair = (key: string): Keypair => {
+//   const keypairString = process.env[key];
+//   if (!keypairString) {
+//     throw new Error(`Environment variable ${key} is not set`);
+//   }
+//   // console.log('keypairString', keypairString);
+//   const keypair = Keypair.fromSecretKey(bs58.decode(keypairString));
 
-  return keypair;
-};
+//   return keypair;
+// };
 
-export const SERVICE_REGISTRY_SPACE = 10_000_000;
-export const FEE_PERCENTAGE = 0;
+// export const SERVICE_REGISTRY_SPACE = 10_000_000;
+// export const FEE_PERCENTAGE = 0;
 
-// SEEDS
-// export const SOME_SEED: string = "some-registry";
+// // SEEDS
+// // export const SOME_SEED: string = "some-registry";
 
-// KEYPAIRS - Setup Service Registry Accounts
+// // KEYPAIRS - Setup Service Registry Accounts
 
-// export const SERVICE_REGISTRY_DEPLOYER = Keypair.generate();
-export const SERVICE_REGISTRY_DEPLOYER = parseKeypair(
-  'NEXT_PUBLIC_SERVICE_REGISTRY_DEPLOYER_SECRETKEY_BS58',
-);
+// // export const SERVICE_REGISTRY_DEPLOYER = Keypair.generate();
+// export const SERVICE_REGISTRY_DEPLOYER = parseKeypair(
+//   'NEXT_PUBLIC_SERVICE_REGISTRY_DEPLOYER_SECRETKEY_BS58',
+// );
 
-// export const SERVICE_REGISTRY_KEYPAIR = Keypair.generate();
-export const SERVICE_REGISTRY_KEYPAIR = parseKeypair(
-  'NEXT_PUBLIC_SERVICE_REGISTRY_KEYPAIR_SECRETKEY_BS58',
-);
+// // export const SERVICE_REGISTRY_KEYPAIR = Keypair.generate();
+// export const SERVICE_REGISTRY_KEYPAIR = parseKeypair(
+//   'NEXT_PUBLIC_SERVICE_REGISTRY_KEYPAIR_SECRETKEY_BS58',
+// );
 
-export const FEE_ACCOUNT = parseKeypair(
-  'NEXT_PUBLIC_FEE_ACCOUNT_SECRETKEY_BS58',
-);
+// export const FEE_ACCOUNT = parseKeypair(
+//   'NEXT_PUBLIC_FEE_ACCOUNT_SECRETKEY_BS58',
+// );
 
-// export const REGISTRY_KEYPAIR = process.env.NEXT_PUBLIC_SERVICE_REGISTRY_DEPLOYER;
-export const REGISTRY_KEYPAIR = Keypair.generate();
+// // export const REGISTRY_KEYPAIR = process.env.NEXT_PUBLIC_SERVICE_REGISTRY_DEPLOYER;
+// export const REGISTRY_KEYPAIR = Keypair.generate();
 
-export const MINT_AUTHORITY: Keypair = Keypair.generate();
+// export const MINT_AUTHORITY: Keypair = Keypair.generate();
 
-// export const MINT_AUTHORITY = parseKeypair('REACT_APP_MINT_AUTHORITY_KEYPAIR');
+// // export const MINT_AUTHORITY = parseKeypair('REACT_APP_MINT_AUTHORITY_KEYPAIR');
 
-export const SERVICE_DEPLOYERS: Keypair[] = [
-  Keypair.generate(),
-  Keypair.generate(),
-  Keypair.generate(),
-];
+// export const SERVICE_DEPLOYERS: Keypair[] = [
+//   Keypair.generate(),
+//   Keypair.generate(),
+//   Keypair.generate(),
+// ];
 
-export const SERVICE_USERS: Keypair[] = [
-  Keypair.generate(),
-  Keypair.generate(),
-  Keypair.generate(),
-];
+// export const SERVICE_USERS: Keypair[] = [
+//   Keypair.generate(),
+//   Keypair.generate(),
+//   Keypair.generate(),
+// ];
 
 /**
  * Funds a given account with SOL via an airdrop.

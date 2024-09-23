@@ -29,14 +29,14 @@ import {
 import {
   useGigenticProgram,
   fundAndLogAccount,
-  SERVICE_REGISTRY_SPACE,
-  SERVICE_REGISTRY_DEPLOYER,
-  SERVICE_REGISTRY_KEYPAIR,
-  REGISTRY_KEYPAIR,
-  FEE_ACCOUNT,
-  FEE_PERCENTAGE,
-  MINT_AUTHORITY,
-  SERVICE_DEPLOYERS,
+  // SERVICE_REGISTRY_SPACE,
+  // SERVICE_REGISTRY_DEPLOYER,
+  // SERVICE_REGISTRY_KEYPAIR,
+  // REGISTRY_KEYPAIR,
+  // FEE_ACCOUNT,
+  // FEE_PERCENTAGE,
+  // MINT_AUTHORITY,
+  // SERVICE_DEPLOYERS,
 } from './gigentic-frontend-data-access';
 
 export function InitializeServiceRegistry() {
@@ -54,11 +54,11 @@ export function InitializeServiceRegistry() {
   const handleFundAccounts = async () => {
     console.log('Fund necessary accounts with SOL:');
 
-    await fundAndLogAccount(
-      connection,
-      SERVICE_REGISTRY_DEPLOYER,
-      'SERVICE_REGISTRY_DEPLOYER',
-    );
+    // await fundAndLogAccount(
+    //   connection,
+    //   SERVICE_REGISTRY_DEPLOYER,
+    //   'SERVICE_REGISTRY_DEPLOYER',
+    // );
 
     // await fundAndLogAccount(connection, MINT_AUTHORITY, 'MINT_AUTHORITY');
 
@@ -73,50 +73,53 @@ export function InitializeServiceRegistry() {
 
   const handleSetUpRegistryAccount = async () => {
     console.log('Set up accounts for the Service Registry');
-
-    // Calculate the minimum balance required for rent exemption for an account of a given size.
-    // This prevents the account from being deleted due to insufficient balance.
-    const rentExemptionAmount =
-      await connection.getMinimumBalanceForRentExemption(
-        SERVICE_REGISTRY_SPACE,
-      );
-    console.log('rentExemptionAmount', rentExemptionAmount);
-
-    // Prepare the parameters needed to create a new account on the Solana blockchain.
-    const createAccountParams = {
-      fromPubkey: SERVICE_REGISTRY_DEPLOYER.publicKey, // Account paying for the creation of the new account
-      newAccountPubkey: SERVICE_REGISTRY_KEYPAIR.publicKey, // Public key of the new account to be created
-      lamports: rentExemptionAmount, // Amount of SOL (in lamports) to transfer for rent exemption
-      space: SERVICE_REGISTRY_SPACE, // Amount of space (in bytes) to allocate for the new account
-      programId: program.programId, // The program that owns this account (in this case, the service registry program)
-    };
     console.log(
-      'SERVICE_REGISTRY_DEPLOYER',
-      SERVICE_REGISTRY_DEPLOYER.publicKey.toBase58(),
-    );
-    console.log(
-      'SERVICE_REGISTRY_KEYPAIR',
-      SERVICE_REGISTRY_KEYPAIR.publicKey.toBase58(),
+      process.env.NEXT_PUBLIC_SERVICE_REGISTRY_KEYPAIR_SECRETKEY_BS58,
     );
 
-    // Create a new transaction and add an instruction to create a new account.
-    const createAccountTransaction = new Transaction().add(
-      SystemProgram.createAccount(createAccountParams),
-    );
+    // // Calculate the minimum balance required for rent exemption for an account of a given size.
+    // // This prevents the account from being deleted due to insufficient balance.
+    // const rentExemptionAmount =
+    //   await connection.getMinimumBalanceForRentExemption(
+    //     SERVICE_REGISTRY_SPACE,
+    //   );
+    // console.log('rentExemptionAmount', rentExemptionAmount);
 
-    try {
-      // Send the transaction and wait for confirmation.
-      // Both SERVICE_REGISTRY_DEPLOYER and SERVICE_REGISTRY_KEYPAIR need to sign the transaction.
-      const tx = await sendAndConfirmTransaction(
-        connection,
-        createAccountTransaction,
-        [SERVICE_REGISTRY_DEPLOYER, SERVICE_REGISTRY_KEYPAIR],
-      );
-      transactionToast(tx);
-      console.log('Service Registry account setup with transaction:', tx);
-    } catch (error) {
-      console.error('Error setting up Service Registry accounts:', error);
-    }
+    // // Prepare the parameters needed to create a new account on the Solana blockchain.
+    // const createAccountParams = {
+    //   fromPubkey: SERVICE_REGISTRY_DEPLOYER.publicKey, // Account paying for the creation of the new account
+    //   newAccountPubkey: SERVICE_REGISTRY_KEYPAIR.publicKey, // Public key of the new account to be created
+    //   lamports: rentExemptionAmount, // Amount of SOL (in lamports) to transfer for rent exemption
+    //   space: SERVICE_REGISTRY_SPACE, // Amount of space (in bytes) to allocate for the new account
+    //   programId: program.programId, // The program that owns this account (in this case, the service registry program)
+    // };
+    // console.log(
+    //   'SERVICE_REGISTRY_DEPLOYER',
+    //   SERVICE_REGISTRY_DEPLOYER.publicKey.toBase58(),
+    // );
+    // console.log(
+    //   'SERVICE_REGISTRY_KEYPAIR',
+    //   SERVICE_REGISTRY_KEYPAIR.publicKey.toBase58(),
+    // );
+
+    // // Create a new transaction and add an instruction to create a new account.
+    // const createAccountTransaction = new Transaction().add(
+    //   SystemProgram.createAccount(createAccountParams),
+    // );
+
+    // try {
+    //   // Send the transaction and wait for confirmation.
+    //   // Both SERVICE_REGISTRY_DEPLOYER and SERVICE_REGISTRY_KEYPAIR need to sign the transaction.
+    //   const tx = await sendAndConfirmTransaction(
+    //     connection,
+    //     createAccountTransaction,
+    //     [SERVICE_REGISTRY_DEPLOYER, SERVICE_REGISTRY_KEYPAIR],
+    //   );
+    //   transactionToast(tx);
+    //   console.log('Service Registry account setup with transaction:', tx);
+    // } catch (error) {
+    //   console.error('Error setting up Service Registry accounts:', error);
+    // }
   };
 
   const handleInitializeRegistry = async () => {
@@ -125,63 +128,63 @@ export function InitializeServiceRegistry() {
       return;
     }
 
-    // Convert feePercentage to a number and validate
-    const feePercentageNumber = parseInt(feePercentage);
-    if (
-      isNaN(feePercentageNumber) ||
-      feePercentageNumber < 0 ||
-      feePercentageNumber > 100
-    ) {
-      console.error('Invalid fee percentage');
-      return;
-    }
+    //   // Convert feePercentage to a number and validate
+    //   const feePercentageNumber = parseInt(feePercentage);
+    //   if (
+    //     isNaN(feePercentageNumber) ||
+    //     feePercentageNumber < 0 ||
+    //     feePercentageNumber > 100
+    //   ) {
+    //     console.error('Invalid fee percentage');
+    //     return;
+    //   }
 
-    console.log(
-      'SERVICE_REGISTRY_DEPLOYER',
-      SERVICE_REGISTRY_DEPLOYER.publicKey.toBase58(),
-    );
-    console.log('Wallet publicKey', publicKey.toBase58());
+    //   console.log(
+    //     'SERVICE_REGISTRY_DEPLOYER',
+    //     SERVICE_REGISTRY_DEPLOYER.publicKey.toBase58(),
+    //   );
+    //   console.log('Wallet publicKey', publicKey.toBase58());
 
-    console.log(
-      'serviceRegistry',
-      SERVICE_REGISTRY_KEYPAIR.publicKey.toBase58(),
-    );
+    //   console.log(
+    //     'serviceRegistry',
+    //     SERVICE_REGISTRY_KEYPAIR.publicKey.toBase58(),
+    //   );
 
-    try {
-      const tx = await program.methods
-        .initializeServiceRegistry(FEE_ACCOUNT.publicKey, feePercentageNumber) //  sets the fee_Account owner to the deployer, and for now sets the initial fee to 0
-        .accounts({
-          initializer: SERVICE_REGISTRY_DEPLOYER.publicKey, // Account that initializes the registry
-          serviceRegistry: SERVICE_REGISTRY_KEYPAIR.publicKey, // The new service registry account being initialized
-        })
-        .transaction();
+    //   try {
+    //     const tx = await program.methods
+    //       .initializeServiceRegistry(FEE_ACCOUNT.publicKey, feePercentageNumber) //  sets the fee_Account owner to the deployer, and for now sets the initial fee to 0
+    //       .accounts({
+    //         initializer: SERVICE_REGISTRY_DEPLOYER.publicKey, // Account that initializes the registry
+    //         serviceRegistry: SERVICE_REGISTRY_KEYPAIR.publicKey, // The new service registry account being initialized
+    //       })
+    //       .transaction();
 
-      const signature = await sendTransaction(tx, connection);
-      transactionToast(signature);
-      console.log('Transaction confirmed:', signature);
-    } catch (error) {
-      console.error('Error sending transaction:', error);
-    }
-  };
+    //     const signature = await sendTransaction(tx, connection);
+    //     transactionToast(signature);
+    //     console.log('Transaction confirmed:', signature);
+    //   } catch (error) {
+    //     console.error('Error sending transaction:', error);
+    //   }
+    // };
 
-  const handleCheckRegistry = async () => {
-    console.log(
-      'serviceRegistry',
-      SERVICE_REGISTRY_KEYPAIR.publicKey.toBase58(),
-    );
+    // const handleCheckRegistry = async () => {
+    //   console.log(
+    //     'serviceRegistry',
+    //     SERVICE_REGISTRY_KEYPAIR.publicKey.toBase58(),
+    //   );
 
-    // Fetch the service registry account data
-    const fetchedRegistryAccount = await program.account.serviceRegistry.fetch(
-      SERVICE_REGISTRY_KEYPAIR.publicKey,
-    );
-    console.log(
-      'Fetched Fee account from Registry:',
-      fetchedRegistryAccount.feeAccount.toBase58(),
-    );
-    console.log(
-      'Fetched Fee percentage from Registry:',
-      fetchedRegistryAccount.feePercentage,
-    );
+    //   // Fetch the service registry account data
+    //   const fetchedRegistryAccount = await program.account.serviceRegistry.fetch(
+    //     SERVICE_REGISTRY_KEYPAIR.publicKey,
+    //   );
+    //   console.log(
+    //     'Fetched Fee account from Registry:',
+    //     fetchedRegistryAccount.feeAccount.toBase58(),
+    //   );
+    //   console.log(
+    //     'Fetched Fee percentage from Registry:',
+    //     fetchedRegistryAccount.feePercentage,
+    //   );
 
     // // Additional checks if needed
     // console.log(
@@ -196,13 +199,13 @@ export function InitializeServiceRegistry() {
         Initialize Service Registry
       </h2>
 
-      <input
+      {/* <input
         type="text"
         placeholder="Fee Account Public Key"
         value={FEE_ACCOUNT.publicKey.toBase58()}
         onChange={(e) => setFeeAccount(e.target.value)}
         className="w-full p-2 mb-3 border border-blue-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+      /> */}
       <input
         type="number"
         placeholder="Fee Percentage (0-100)"
@@ -234,13 +237,13 @@ export function InitializeServiceRegistry() {
         >
           Init Registry
         </button>
-        <button
+        {/* <button
           onClick={handleCheckRegistry}
           disabled={!publicKey}
           className="flex-1 bg-blue-800 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Check Registry
-        </button>
+        </button> */}
       </div>
     </div>
   );
