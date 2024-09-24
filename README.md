@@ -4,6 +4,10 @@ Solana Anchor + Next.js Full Stack Setup
 
 This project was generated with the [create-solana-dapp](https://github.com/solana-developers/create-solana-dapp) generator.
 
+Notes:
+- make sure to downgrade rust to version rustc 1.79.0 to avoid problems running anchor
+
+
 `npx create-solana-dapp@latest`
 
 - Project name: gigentic-frontend
