@@ -6,7 +6,7 @@ import { useCompletion } from 'ai/react';
 
 
 export default function SearchAgent() {
-  const { completion, input, handleInputChange, handleSubmit, error } = useCompletion(
+  const { messages, input, handleInputChange, handleSubmit, error } = useChat(
       {
         api: '/api/completion',
         streamProtocol: 'text',
@@ -16,7 +16,7 @@ export default function SearchAgent() {
       }
   );
 
-  console.log("completion: ", completion);
+  console.log("messages: ", messages);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -27,7 +27,7 @@ export default function SearchAgent() {
   
   useEffect(() => {
     scrollToBottom();
-  }, [completion]);
+  }, [messages]);
 
   return (
     
@@ -37,9 +37,9 @@ export default function SearchAgent() {
       </h2>
       <div className="flex flex-col w-full flex-grow overflow-y-auto text-gray-900">
         
-        {completion.split('\n').map((m, index) => (
+        {messages.map((m, index) => (
           <div key={index} className="whitespace-pre-wrap">
-            {m}
+            {m.content}
           </div>
         ))}
         {error && <div className="text-red-500">Error: {error.message}</div>}

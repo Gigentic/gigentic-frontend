@@ -1,4 +1,5 @@
 import { 
+  convertToCoreMessages,
   Message as VercelChatMessage,
 } from 'ai';
 
@@ -29,9 +30,9 @@ const TEMPLATE = `
 
 
 export async function POST(req: Request) {
-  const { prompt }: { prompt: string } = await req.json();
+  const { messages }: { messages: VercelChatMessage[] } = await req.json();
   //const { messages } = await req.json();
-  console.log("prompt: ", prompt);
+  
 
   //const formattedPreviousMessages = messages.slice(0, -1).map(formatMessage);
   //const currentMessageContent = messages[messages.length - 1].content;
@@ -59,7 +60,7 @@ export async function POST(req: Request) {
   
     const result = await streamText({
       model: openai('gpt-4o'),
-      prompt: prompt,
+      messages: convertToCoreMessages(messages),
     });
   
 
