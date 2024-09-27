@@ -52,7 +52,7 @@ export function UiLayout({
       <ClusterChecker>
         <AccountChecker />
       </ClusterChecker>
-      <div className="flex-grow w-full mx-4 lg:mx-auto">
+      <div className="flex-grow w-full mx-4 lg:w-3/4 lg:mx-auto">
         <Suspense
           fallback={
             <div className="text-center my-32">
@@ -74,7 +74,7 @@ export function UiLayout({
               target="_blank"
               rel="noopener noreferrer"
             >
-               Gigentic
+              Gigentic
             </a>
           </p>
         </aside>
@@ -186,7 +186,7 @@ export function useTransactionToast() {
           label={'View Transaction'}
           className="btn btn-xs btn-primary"
         />
-      </div>
+      </div>,
     );
   };
 }
