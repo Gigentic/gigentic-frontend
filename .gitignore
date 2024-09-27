@@ -48,3 +48,4 @@ anchor/target/.rustc_info.json
 test-ledger
 .yarn
 .env
+web/.env.local

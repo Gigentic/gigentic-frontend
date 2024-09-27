@@ -2,17 +2,21 @@
 
 import { useChat } from 'ai/react';
 import { useEffect, useRef } from 'react';
+import { useCompletion } from 'ai/react';
 
 
 export default function SearchAgent() {
-  const { messages, input, handleInputChange, handleSubmit, error } = useChat(
+  const { completion, input, handleInputChange, handleSubmit, error } = useCompletion(
       {
         api: '/api/completion',
+        streamProtocol: 'text',
         onError: (error) => {
           console.error("Chat error:", error);
         }
       }
   );
+
+  console.log("completion: ", completion);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -23,18 +27,19 @@ export default function SearchAgent() {
   
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [completion]);
 
   return (
+    
     <div className="bg-blue-100 p-4 rounded-lg shadow-md w-full max-w-4xl mx-auto flex flex-col max-h-[80vh]">
       <h2 className="text-2xl font-bold mb-4 text-blue-900">
         Search Agent
       </h2>
       <div className="flex flex-col w-full flex-grow overflow-y-auto text-gray-900">
-        {messages.map(m => (
-          <div key={m.id} className="whitespace-pre-wrap">
-            {m.role === 'user' ? 'User: ' : 'AI: '}
-            {m.content}
+        
+        {completion.split('\n').map((m, index) => (
+          <div key={index} className="whitespace-pre-wrap">
+            {m}
           </div>
         ))}
         {error && <div className="text-red-500">Error: {error.message}</div>}
@@ -49,6 +54,8 @@ export default function SearchAgent() {
         />
       </form>
     </div>
+    
+    
   );
 }
 

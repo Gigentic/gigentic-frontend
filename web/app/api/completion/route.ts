@@ -4,7 +4,7 @@ import {
 
 import { PromptTemplate } from "@langchain/core/prompts";
 import { HttpResponseOutputParser } from "langchain/output_parsers";
-import { ChatOpenAI } from "@langchain/openai";
+//import { ChatOpenAI } from "@langchain/openai";
 import { streamText } from "ai";
 import { openai } from "@ai-sdk/openai";
 
@@ -29,12 +29,14 @@ const TEMPLATE = `
 
 
 export async function POST(req: Request) {
-  const { messages } = await req.json();
+  const { prompt }: { prompt: string } = await req.json();
+  //const { messages } = await req.json();
 
-  const formattedPreviousMessages = messages.slice(0, -1).map(formatMessage);
-  const currentMessageContent = messages[messages.length - 1].content;
 
-  const prompt = PromptTemplate.fromTemplate(TEMPLATE);
+  //const formattedPreviousMessages = messages.slice(0, -1).map(formatMessage);
+  //const currentMessageContent = messages[messages.length - 1].content;
+
+  //const prompt = PromptTemplate.fromTemplate(TEMPLATE);
 
   /*
   const model = new ChatOpenAI({ 
@@ -57,9 +59,12 @@ export async function POST(req: Request) {
   
     const result = await streamText({
       model: openai('gpt-4o'),
-      messages,
+      prompt: prompt,
     });
   
+
+    //console.log("result: ", result);
+    console.log("result.toTextStreamResponse(): ", result.toTextStreamResponse());
     return result.toTextStreamResponse();
 
   
