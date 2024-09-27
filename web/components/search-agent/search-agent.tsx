@@ -2,7 +2,7 @@
 
 import { useChat } from 'ai/react';
 import { useEffect, useRef } from 'react';
-import { useCompletion } from 'ai/react';
+
 
 
 export default function SearchAgent() {
@@ -16,7 +16,6 @@ export default function SearchAgent() {
       }
   );
 
-  console.log("messages: ", messages);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
