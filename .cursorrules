@@ -40,3 +40,11 @@ You use Rust with the Solana Anchor framework for chain program development, and
 
 - Document your code structure clearly—README for usage instructions.
 - Update documentation as features evolve or change.
+
+### ChatGPT Models
+
+- Please be aware that 'gpt-4o'. It is a new model of OpenAI.
+
+### Vercel AI SDK
+
+- Please note that the StreamingTextResponse helper was part of the Vercel AI SDK when it was initially introduced on June 15, 2023. However, the SDK underwent a significant update with version 3.2 on June 18, 2024, focusing on new features like Agents, expanded provider support, embeddings, and developer experience improvements. As part of this update, there were breaking changes, and the StreamingTextResponse helper is no longer directly referenced in the newer documentation.
