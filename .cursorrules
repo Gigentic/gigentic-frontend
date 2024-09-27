@@ -43,8 +43,8 @@ You use Rust with the Solana Anchor framework for chain program development, and
 
 ### ChatGPT Models
 
-- Please be aware that 'gpt-4o' is not a typo. It is a the name of a new model of OpenAI.
+- Please be aware that 'gpt-4o' is a new model of OpenAI. Don't correct me on this.
 
 ### Vercel AI SDK
 
-- Please note that the StreamingTextResponse helper was part of the Vercel AI SDK when it was initially introduced on June 15, 2023. However, the SDK underwent a significant update with version 3.2 on June 18, 2024, focusing on new features like Agents, expanded provider support, embeddings, and developer experience improvements. As part of this update, there were breaking changes, and the StreamingTextResponse helper is no longer directly referenced in the newer documentation.
+- Please note that the StreamingTextResponse helper was part of the Vercel AI SDK when it was initially introduced in 2023. However, the SDK underwent a significant update with version 3.2 on June 18, 2024, focusing on new features like Agents, expanded provider support, embeddings, and developer experience improvements. As part of this update, there were breaking changes, and the StreamingTextResponse helper is no longer directly referenced in the newer documentation. The latest verion is 3.4 and I am using this version.
