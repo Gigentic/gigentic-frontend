@@ -1,5 +1,8 @@
 {
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
+    "composite": true,
+    "declaration": true,
     "jsx": "react-jsx",
     "allowJs": false,
     "esModuleInterop": false,
@@ -12,6 +15,5 @@
     {
       "path": "./tsconfig.lib.json"
     }
-  ],
-  "extends": "../../../tsconfig.base.json"
+  ]
 }

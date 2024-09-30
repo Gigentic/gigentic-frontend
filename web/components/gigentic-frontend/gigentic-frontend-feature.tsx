@@ -3,6 +3,7 @@
 // React
 import { useState } from 'react';
 import { ButtonDemo } from './ButtonDemo';
+import ServiceRequestForm from './ServiceRequestForm';
 
 // Solana
 import {
@@ -268,9 +269,13 @@ export default function GigenticFrontendFeature() {
             label={ellipsify(programId.toString())}
           />
         </p>
-
+        <div className="flex items-center justify-center min-h-screen bg-neutral-100">
+          <div className="w-full max-w-md">
+            <ServiceRequestForm />
+          </div>
+        </div>
+        );
         <ButtonDemo />
-
         <GigenticFrontendCreate />
       </AppHero>
       <InitializeServiceRegistry />
