@@ -49,3 +49,5 @@ test-ledger
 .yarn
 .env
 web/.env.local
+concat-all.txt
+filesScript.js
