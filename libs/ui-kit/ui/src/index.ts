@@ -5,3 +5,7 @@ export * from './lib/ui/label';
 export * from './lib/ui/toast';
 export * from './lib/ui/toaster';
 export * from './lib/ui/textarea';
+export * from './lib/ui/tabs';
+export * from './lib/ui/card';
+export * from './lib/ui/input';
+export * from './lib/ui/avatar';
