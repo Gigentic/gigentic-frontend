@@ -2,6 +2,7 @@
 
 // React
 import { useState } from 'react';
+import { ButtonDemo } from './ButtonDemo';
 
 // Solana
 import {
@@ -267,6 +268,8 @@ export default function GigenticFrontendFeature() {
             label={ellipsify(programId.toString())}
           />
         </p>
+
+        <ButtonDemo />
 
         <GigenticFrontendCreate />
       </AppHero>
