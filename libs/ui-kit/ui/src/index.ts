@@ -9,3 +9,4 @@ export * from './lib/ui/tabs';
 export * from './lib/ui/card';
 export * from './lib/ui/input';
 export * from './lib/ui/avatar';
+export * from './lib/ui/resizable';
