@@ -17,6 +17,9 @@ import toast, { Toaster } from 'react-hot-toast';
 
 import GigenticFrontendFeature from '@/components/gigentic-frontend/gigentic-frontend-feature';
 
+import GigenticDemoBlue from '@/components/gigentic-frontend/demo-blue';
+import GigenticDemo from '@/components/gigentic-frontend/gigentic-demo';
+
 export function UiLayout({
   children,
   links,
@@ -33,8 +36,9 @@ export function UiLayout({
           <img className="h-4 md:h-6" alt="Logo" src="/logo.png" />
         </Link>
       </div>
-      <GigenticFrontendFeature />
-
+      {/* <GigenticFrontendFeature /> */}
+      {/* <GigenticDemoBlue /> */}
+      <GigenticDemo />
       <footer className="footer footer-center p-4 bg-base-300 text-base-content">
         <aside>
           <p>
