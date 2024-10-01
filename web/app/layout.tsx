@@ -6,12 +6,13 @@ import { ReactQueryProvider } from './react-query-provider';
 
 export const metadata = {
   title: 'gigentic-frontend',
-  description: 'Gigentic is a decentralized platform to help humans and AI agents work together',
+  description:
+    'Gigentic is a decentralized platform to help humans and AI agents work together',
 };
 
 const links: { label: string; path: string }[] = [
   { label: 'Account', path: '/account' },
-  { label: 'Clusters', path: '/clusters' },
+  // { label: 'Clusters', path: '/clusters' },
   { label: 'Gigentic', path: '/gigentic-frontend' },
   { label: 'SearchAgent', path: '/search-agent' },
 ];
