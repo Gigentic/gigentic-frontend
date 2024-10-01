@@ -15,6 +15,8 @@ import {
 } from '../cluster/cluster-ui';
 import toast, { Toaster } from 'react-hot-toast';
 
+import GigenticFrontendFeature from '@/components/gigentic-frontend/gigentic-frontend-feature';
+
 export function UiLayout({
   children,
   links,
@@ -25,45 +27,14 @@ export function UiLayout({
   const pathname = usePathname();
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="navbar bg-base-300 text-neutral-content flex-col md:flex-row space-y-2 md:space-y-0">
-        <div className="flex-1">
-          <Link className="btn btn-ghost normal-case text-xl" href="/">
-            <img className="h-4 md:h-6" alt="Logo" src="/logo.png" />
-          </Link>
-          <ul className="menu menu-horizontal px-1 space-x-2">
-            {links.map(({ label, path }) => (
-              <li key={path}>
-                <Link
-                  className={pathname.startsWith(path) ? 'active' : ''}
-                  href={path}
-                >
-                  {label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="flex-none space-x-2">
-          <WalletButton />
-          <ClusterUiSelect />
-        </div>
+    <div>
+      <div className="flex-1">
+        <Link className="btn btn-ghost normal-case text-xl" href="/">
+          <img className="h-4 md:h-6" alt="Logo" src="/logo.png" />
+        </Link>
       </div>
-      <ClusterChecker>
-        <AccountChecker />
-      </ClusterChecker>
-      <div className="flex-grow w-full mx-4 lg:w-3/4 lg:mx-auto">
-        <Suspense
-          fallback={
-            <div className="text-center my-32">
-              <span className="loading loading-spinner loading-lg"></span>
-            </div>
-          }
-        >
-          {children}
-        </Suspense>
-        <Toaster position="bottom-right" />
-      </div>
+      <GigenticFrontendFeature />
+
       <footer className="footer footer-center p-4 bg-base-300 text-base-content">
         <aside>
           <p>

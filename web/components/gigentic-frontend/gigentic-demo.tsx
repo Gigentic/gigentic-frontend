@@ -1,6 +1,6 @@
 'use client';
 
-import { SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import { StarIcon } from 'lucide-react';
 
 import {
@@ -11,7 +11,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
   Button,
@@ -20,7 +19,6 @@ import {
   Textarea,
   Avatar,
   AvatarFallback,
-  AvatarImage,
 } from '@gigentic-frontend/ui-kit/ui';
 
 export default function GigenticDemo() {
