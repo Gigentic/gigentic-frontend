@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "../dist/out-tsc",
     "declaration": true,
+    "composite": true,
     "types": ["node"],
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true
