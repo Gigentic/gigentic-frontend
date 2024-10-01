@@ -1,8 +1,8 @@
 @import '../../libs/ui-kit/util/src/styles/global.css';
 
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities; */
 
 html,
 body {
