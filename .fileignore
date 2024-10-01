@@ -1,6 +1,13 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
+yarn.lock
+.gitignore
+.fileignore
+.nx
+.vscode
+.git
+anchor
 dist
 tmp
 /out-tsc
@@ -49,5 +56,3 @@ test-ledger
 .yarn
 .env
 web/.env.local
-concat-all.txt
-filesScript.js

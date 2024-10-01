@@ -16,7 +16,7 @@ export function GigenticFrontendCreate() {
     <p>
       Hello from Gigentic MVP Frontend! This is where we first interact with the
       Gigentic program.
-      {process.env.NEXT_PUBLIC_SERVICE_REGISTRY_KEYPAIR_SECRETKEY_BS58}
+      {/* {process.env.NEXT_PUBLIC_SERVICE_REGISTRY_KEYPAIR_SECRETKEY_BS58} */}
     </p>
 
     // <button
