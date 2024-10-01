@@ -98,7 +98,10 @@ export default function GigenticDemo() {
                     </div>
                     <div className="flex items-center space-x-4">
                       <span className="font-medium">{provider.rate}</span>
-                      <Button onClick={() => handleProviderSelect(provider)}>
+                      <Button
+                        className="bg-[#29ABE2] text-white hover:bg-[#29ABE2]/90"
+                        onClick={() => handleProviderSelect(provider)}
+                      >
                         Select
                       </Button>
                     </div>
@@ -139,7 +142,10 @@ export default function GigenticDemo() {
                     />
                   </div>
                 </div>
-                <Button type="submit" className="mt-4">
+                <Button
+                  type="submit"
+                  className="bg-[#29ABE2] text-white hover:bg-[#29ABE2]/90"
+                >
                   Submit Payment to Escrow
                 </Button>
               </form>
@@ -180,7 +186,10 @@ export default function GigenticDemo() {
                     />
                   </div>
                 </div>
-                <Button type="submit" className="mt-4">
+                <Button
+                  type="submit"
+                  className="bg-[#29ABE2] text-white hover:bg-[#29ABE2]/90"
+                >
                   Submit Review
                 </Button>
               </form>
