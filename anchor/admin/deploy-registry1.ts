@@ -1,58 +1,36 @@
-import * as fs from 'fs';
-
-import { Program, workspace, setProvider, BN } from '@coral-xyz/anchor';
-
+import { Gigentic } from '../target/types/gigentic';
+import { Program, setProvider } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
 import {
   Keypair,
   Connection,
   SystemProgram,
   Transaction,
   sendAndConfirmTransaction,
-  PublicKey,
-  LAMPORTS_PER_SOL,
+  PublicKey, // Correctly placed import
 } from '@solana/web3.js';
+import { createMint } from '@solana/spl-token';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
-import { TOKEN_PROGRAM_ID, createMint } from '@solana/spl-token';
-
-import { Gigentic } from '../target/types/gigentic';
+import * as fs from 'fs';
 
 import {
   PROVIDER,
   SERVICE_DEPLOYERS,
   SERVICE_REGISTRY_KEYPAIR,
   DEPLOYER_KEYPAIR_PATH,
-  SERVICE_DEPLOYER,
 } from '../tests/constants';
 
-import * as bs58 from 'bs58';
-
-// Configure the client to use the local cluster.
+// Initialize the program
+export const connection: Connection = PROVIDER.connection;
 setProvider(PROVIDER);
 
-// Initialize connection to the Solana network using the provided anchor provider
-export const connection: Connection = PROVIDER.connection;
+export const program: Program<Gigentic> = anchor.workspace
+  .Gigentic as Program<Gigentic>;
 
-// Initialize the program
-// const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
-
-export const program: Program<Gigentic> =
-  workspace.Gigentic as Program<Gigentic>;
-
-// Load the "deployer" admin keypair which is used to deploy the program and create the service registry
-const deployerKeypair = JSON.parse(
-  fs.readFileSync(DEPLOYER_KEYPAIR_PATH, 'utf8'),
-);
-const deployer = Keypair.fromSecretKey(new Uint8Array(deployerKeypair));
-console.log('deployer', deployer.publicKey.toString());
-
-const serviceDeployerKeypair = Keypair.fromSecretKey(
-  bs58.decode(SERVICE_DEPLOYER),
-);
-
-console.log(
-  'serviceDeployerKeypair',
-  serviceDeployerKeypair.publicKey.toString(),
-);
+// Load the keypair
+const keypairData = JSON.parse(fs.readFileSync(DEPLOYER_KEYPAIR_PATH, 'utf8'));
+const payer = Keypair.fromSecretKey(new Uint8Array(keypairData));
 
 let mint: PublicKey;
 
@@ -67,7 +45,7 @@ async function initServiceRegistry() {
 
     console.log('Initializing Service Registry...');
 
-    const feeAccount = deployer.publicKey;
+    const feeAccount = payer.publicKey;
     console.log('Fee Account Public Key:', feeAccount.toString());
 
     const feePercentage = 0;
@@ -80,7 +58,7 @@ async function initServiceRegistry() {
         serviceRegistryAccountSize,
       );
     const createAccountParams = {
-      fromPubkey: deployer.publicKey, // Account paying for the creation of the new account
+      fromPubkey: payer.publicKey, // Account paying for the creation of the new account
       newAccountPubkey: serviceRegistryKeypair.publicKey, // Public key of the new account to be created
       lamports: rentExemptionAmount, // Amount of SOL (in lamports) to transfer for rent exemption
       space: serviceRegistryAccountSize, // Amount of space (in bytes) to allocate for the new account
@@ -90,17 +68,17 @@ async function initServiceRegistry() {
       SystemProgram.createAccount(createAccountParams),
     );
     await sendAndConfirmTransaction(connection, createAccountTransaction, [
-      deployer,
+      payer,
       serviceRegistryKeypair,
     ]);
 
     const transactionSignature = await program.methods
       .initializeServiceRegistry(feeAccount, feePercentage)
       .accounts({
-        initializer: deployer.publicKey,
+        initializer: payer.publicKey,
         serviceRegistry: serviceRegistryKeypair.publicKey,
       })
-      .signers([deployer])
+      .signers([payer])
       .rpc();
     console.log(`Transaction Signature: ${transactionSignature}`);
 
@@ -136,9 +114,9 @@ async function createService() {
   try {
     mint = await createMint(
       connection,
-      deployer, // Fee deployer for the mint creation
-      deployer.publicKey, // Mint authority that can mint new tokens
-      deployer.publicKey, // Freeze authority (can be set to `null` to disable freezing)
+      payer, // Fee payer for the mint creation
+      payer.publicKey, // Mint authority that can mint new tokens
+      payer.publicKey, // Freeze authority (can be set to `null` to disable freezing)
       8, // Number of decimals for the mint (similar to a currency's smallest unit)
     );
 
@@ -154,14 +132,14 @@ async function createService() {
 
     for (let i = 0; i < 1; i++) {
       await program.methods
-        .initializeService(descriptions[i], new BN(price[i]))
+        .initializeService(descriptions[i], new anchor.BN(price[i]))
         .accounts({
           provider: SERVICE_DEPLOYERS[0].publicKey,
           serviceRegistry: SERVICE_REGISTRY_KEYPAIR.publicKey,
           mint: mint,
           tokenProgram: TOKEN_PROGRAM_ID,
         })
-        .signers([SERVICE_DEPLOYERS[0]]) // Include both deployer and the new service keypair as signers
+        .signers([SERVICE_DEPLOYERS[0]]) // Include both payer and the new service keypair as signers
         .rpc();
     }
 
@@ -189,7 +167,7 @@ async function airdropSolToFirstDeployer() {
     const deployer = SERVICE_DEPLOYERS[0];
     const airdropSignature = await connection.requestAirdrop(
       deployer.publicKey,
-      2 * LAMPORTS_PER_SOL, // Airdrop 2 SOL
+      2 * anchor.web3.LAMPORTS_PER_SOL, // Airdrop 2 SOL
     );
     await connection.confirmTransaction(airdropSignature, 'confirmed');
     console.log(`Airdropped 2 SOL to ${deployer.publicKey.toString()}`);
@@ -200,8 +178,9 @@ async function airdropSolToFirstDeployer() {
 
 async function main() {
   try {
+    // await airdropSolToFirstDeployer(); // Airdrop SOL to the first deployer
     await initServiceRegistry();
-    await createService();
+    // await createService();
   } catch (error) {
     console.error('Error in main execution:', error);
   }

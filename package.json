@@ -7,6 +7,7 @@
     "anchor-build": "nx run anchor:anchor build",
     "anchor-keys": "nx run anchor:anchor keys sync",
     "anchor-test": "nx run anchor:test",
+    "anchor-deploy": "nx run anchor:anchor deploy",
     "feature": "nx generate @solana-developers/preset-react:feature",
     "build": "nx build web",
     "dev": "nx serve web"
@@ -97,7 +98,7 @@
     "swc-loader": "0.1.15",
     "tailwindcss": "3.4.3",
     "ts-jest": "^29.1.0",
-    "ts-node": "10.9.1",
+    "ts-node": "^10.9.2",
     "typescript": "~5.4.2"
   }
 }
