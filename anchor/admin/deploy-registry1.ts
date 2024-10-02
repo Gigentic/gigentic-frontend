@@ -1,18 +1,17 @@
-import { Gigentic } from '../target/types/gigentic';
-import { Program, setProvider } from '@coral-xyz/anchor';
-import * as anchor from '@coral-xyz/anchor';
+import * as fs from 'fs';
+
+import { Program, workspace, setProvider, BN } from '@coral-xyz/anchor';
+
 import {
   Keypair,
   Connection,
   SystemProgram,
   Transaction,
   sendAndConfirmTransaction,
-  PublicKey, // Correctly placed import
+  PublicKey,
 } from '@solana/web3.js';
-import { createMint } from '@solana/spl-token';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
-import * as fs from 'fs';
+import { Gigentic } from '../target/types/gigentic';
 
 import {
   PROVIDER,
@@ -21,18 +20,24 @@ import {
   DEPLOYER_KEYPAIR_PATH,
 } from '../tests/constants';
 
-// Initialize the program
-export const connection: Connection = PROVIDER.connection;
+// Configure the client to use the local cluster.
 setProvider(PROVIDER);
 
-export const program: Program<Gigentic> = anchor.workspace
-  .Gigentic as Program<Gigentic>;
+// Initialize connection to the Solana network using the provided anchor provider
+export const connection: Connection = PROVIDER.connection;
 
-// Load the keypair
-const keypairData = JSON.parse(fs.readFileSync(DEPLOYER_KEYPAIR_PATH, 'utf8'));
-const payer = Keypair.fromSecretKey(new Uint8Array(keypairData));
+// Initialize the program
+// const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
-let mint: PublicKey;
+export const program: Program<Gigentic> =
+  workspace.Gigentic as Program<Gigentic>;
+
+// Load the "deployer" admin keypair which is used to deploy the program and create the service registry
+const deployerKeypair = JSON.parse(
+  fs.readFileSync(DEPLOYER_KEYPAIR_PATH, 'utf8'),
+);
+const deployer = Keypair.fromSecretKey(new Uint8Array(deployerKeypair));
+console.log('deployer', deployer.publicKey.toString());
 
 async function initServiceRegistry() {
   try {
@@ -45,7 +50,7 @@ async function initServiceRegistry() {
 
     console.log('Initializing Service Registry...');
 
-    const feeAccount = payer.publicKey;
+    const feeAccount = deployer.publicKey;
     console.log('Fee Account Public Key:', feeAccount.toString());
 
     const feePercentage = 0;
@@ -57,28 +62,33 @@ async function initServiceRegistry() {
       await connection.getMinimumBalanceForRentExemption(
         serviceRegistryAccountSize,
       );
+    console.log('Rent Exemption Amount:', rentExemptionAmount);
+
     const createAccountParams = {
-      fromPubkey: payer.publicKey, // Account paying for the creation of the new account
+      fromPubkey: deployer.publicKey, // Account paying for the creation of the new account
       newAccountPubkey: serviceRegistryKeypair.publicKey, // Public key of the new account to be created
       lamports: rentExemptionAmount, // Amount of SOL (in lamports) to transfer for rent exemption
       space: serviceRegistryAccountSize, // Amount of space (in bytes) to allocate for the new account
       programId: program.programId, // The program that owns this account (in this case, the service registry program)
     };
+
     const createAccountTransaction = new Transaction().add(
       SystemProgram.createAccount(createAccountParams),
     );
+
+    // console.log('createAccountTransaction', createAccountTransaction);
     await sendAndConfirmTransaction(connection, createAccountTransaction, [
-      payer,
+      deployer,
       serviceRegistryKeypair,
     ]);
 
     const transactionSignature = await program.methods
       .initializeServiceRegistry(feeAccount, feePercentage)
       .accounts({
-        initializer: payer.publicKey,
+        initializer: deployer.publicKey,
         serviceRegistry: serviceRegistryKeypair.publicKey,
       })
-      .signers([payer])
+      .signers([deployer])
       .rpc();
     console.log(`Transaction Signature: ${transactionSignature}`);
 
@@ -112,13 +122,7 @@ async function initServiceRegistry() {
 
 async function createService() {
   try {
-    mint = await createMint(
-      connection,
-      payer, // Fee payer for the mint creation
-      payer.publicKey, // Mint authority that can mint new tokens
-      payer.publicKey, // Freeze authority (can be set to `null` to disable freezing)
-      8, // Number of decimals for the mint (similar to a currency's smallest unit)
-    );
+    const deployerIndex = 0; // Index of the service deployer to be used from the SERVICE_DEPLOYERS array
 
     const serviceRegistryKeypair = SERVICE_REGISTRY_KEYPAIR;
     const descriptions = [
@@ -129,58 +133,49 @@ async function createService() {
       'Maximize your system’s performance through AI agents trained with reinforcement learning, perfect for complex decision-making tasks.',
     ];
     const price = [100, 200, 300, 400, 500];
-
+    const deployerPublicKey = SERVICE_DEPLOYERS[deployerIndex].publicKey; // Fetch the public key of the deployer
+    const mint = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
+    const TOKEN_PROGRAM_ID = new PublicKey(
+      'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', // Fix the string to be a valid PublicKey
+    );
     for (let i = 0; i < 1; i++) {
       await program.methods
-        .initializeService(descriptions[i], new anchor.BN(price[i]))
+        .initializeService(descriptions[i], new BN(price[i])) // Fix typo: description -> descriptions
         .accounts({
-          provider: SERVICE_DEPLOYERS[0].publicKey,
-          serviceRegistry: SERVICE_REGISTRY_KEYPAIR.publicKey,
-          mint: mint,
-          tokenProgram: TOKEN_PROGRAM_ID,
+          provider: deployerPublicKey, // Deployer account that provides the service
+          serviceRegistry: SERVICE_REGISTRY_KEYPAIR.publicKey, // The service registry account where the service will be registered
+          mint: mint, // Mint account for token-based transactions
+          tokenProgram: TOKEN_PROGRAM_ID, // SPL Token Program ID for handling token transactions
         })
-        .signers([SERVICE_DEPLOYERS[0]]) // Include both payer and the new service keypair as signers
+        .signers([SERVICE_DEPLOYERS[deployerIndex]]) // Sign the transaction with the deployer's keypair
         .rpc();
     }
-
     const serviceRegistry = await program.account.serviceRegistry.fetch(
       SERVICE_REGISTRY_KEYPAIR.publicKey,
     );
     console.log('Service Registry:', serviceRegistry);
-
-    for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
-      const serviceAccount =
-        await program.account.service.fetch(serviceAddress);
+    for (let i = 0; i < 1; i++) {
+      const serviceAccount = await program.account.service.fetch(
+        serviceRegistry.serviceAccountAddresses[i],
+      );
       console.log('Service Account:', serviceAccount);
-      console.log('Service Account Address:', serviceAddress.toString());
+      console.log(
+        'Service Account Address:',
+        serviceRegistry.serviceAccountAddresses[i],
+      );
       console.log('Service Account Description:', serviceAccount.description);
       console.log('Service Account Price:', serviceAccount.price.toString());
-      console.log('Service Account Mint:', serviceAccount.mint.toString());
+      console.log('Service Account Mint:', serviceAccount.mint);
     }
   } catch (error) {
-    console.error('Error creating service:', error);
-  }
-}
-
-async function airdropSolToFirstDeployer() {
-  try {
-    const deployer = SERVICE_DEPLOYERS[0];
-    const airdropSignature = await connection.requestAirdrop(
-      deployer.publicKey,
-      2 * anchor.web3.LAMPORTS_PER_SOL, // Airdrop 2 SOL
-    );
-    await connection.confirmTransaction(airdropSignature, 'confirmed');
-    console.log(`Airdropped 2 SOL to ${deployer.publicKey.toString()}`);
-  } catch (error) {
-    console.error('Error airdropping SOL to the first deployer:', error);
+    console.log(error);
   }
 }
 
 async function main() {
   try {
-    // await airdropSolToFirstDeployer(); // Airdrop SOL to the first deployer
     await initServiceRegistry();
-    // await createService();
+    await createService();
   } catch (error) {
     console.error('Error in main execution:', error);
   }
