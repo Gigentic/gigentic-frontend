@@ -45,14 +45,9 @@ const deployerKeypair = JSON.parse(
 const deployer = Keypair.fromSecretKey(new Uint8Array(deployerKeypair));
 console.log('deployer', deployer.publicKey.toString());
 
-const serviceDeployerKeypair = Keypair.fromSecretKey(
-  bs58.decode(SERVICE_DEPLOYER),
-);
+const serviceDeployer = Keypair.fromSecretKey(bs58.decode(SERVICE_DEPLOYER));
 
-console.log(
-  'serviceDeployerKeypair',
-  serviceDeployerKeypair.publicKey.toString(),
-);
+console.log('serviceDeployerKeypair', serviceDeployer.publicKey.toString());
 
 let mint: PublicKey;
 
@@ -156,12 +151,12 @@ async function createService() {
       await program.methods
         .initializeService(descriptions[i], new BN(price[i]))
         .accounts({
-          provider: SERVICE_DEPLOYERS[0].publicKey,
+          provider: serviceDeployer.publicKey,
           serviceRegistry: SERVICE_REGISTRY_KEYPAIR.publicKey,
           mint: mint,
           tokenProgram: TOKEN_PROGRAM_ID,
         })
-        .signers([SERVICE_DEPLOYERS[0]]) // Include both deployer and the new service keypair as signers
+        .signers([serviceDeployer]) // Include both deployer and the new service keypair as signers
         .rpc();
     }
 
@@ -181,20 +176,6 @@ async function createService() {
     }
   } catch (error) {
     console.error('Error creating service:', error);
-  }
-}
-
-async function airdropSolToFirstDeployer() {
-  try {
-    const deployer = SERVICE_DEPLOYERS[0];
-    const airdropSignature = await connection.requestAirdrop(
-      deployer.publicKey,
-      2 * LAMPORTS_PER_SOL, // Airdrop 2 SOL
-    );
-    await connection.confirmTransaction(airdropSignature, 'confirmed');
-    console.log(`Airdropped 2 SOL to ${deployer.publicKey.toString()}`);
-  } catch (error) {
-    console.error('Error airdropping SOL to the first deployer:', error);
   }
 }
 
