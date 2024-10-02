@@ -1,9 +1,8 @@
 import * as fs from 'fs';
 
-import { Program } from '@coral-xyz/anchor';
-import * as anchor from '@coral-xyz/anchor';
+import { Program, workspace, setProvider, BN } from '@coral-xyz/anchor';
+
 import {
-  clusterApiUrl,
   Keypair,
   Connection,
   SystemProgram,
@@ -15,16 +14,23 @@ import {
 import { Gigentic } from '../target/types/gigentic';
 
 import {
+  PROVIDER,
   SERVICE_DEPLOYERS,
   SERVICE_REGISTRY_KEYPAIR,
   DEPLOYER_KEYPAIR_PATH,
 } from '../tests/constants';
 
-// Initialize the program
-const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+// Configure the client to use the local cluster.
+setProvider(PROVIDER);
 
-export const program: Program<Gigentic> = anchor.workspace
-  .Gigentic as Program<Gigentic>;
+// Initialize connection to the Solana network using the provided anchor provider
+export const connection: Connection = PROVIDER.connection;
+
+// Initialize the program
+// const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+
+export const program: Program<Gigentic> =
+  workspace.Gigentic as Program<Gigentic>;
 
 // Load the "deployer" admin keypair which is used to deploy the program and create the service registry
 const deployerKeypair = JSON.parse(
@@ -56,6 +62,8 @@ async function initServiceRegistry() {
       await connection.getMinimumBalanceForRentExemption(
         serviceRegistryAccountSize,
       );
+    console.log('Rent Exemption Amount:', rentExemptionAmount);
+
     const createAccountParams = {
       fromPubkey: deployer.publicKey, // Account paying for the creation of the new account
       newAccountPubkey: serviceRegistryKeypair.publicKey, // Public key of the new account to be created
@@ -63,9 +71,12 @@ async function initServiceRegistry() {
       space: serviceRegistryAccountSize, // Amount of space (in bytes) to allocate for the new account
       programId: program.programId, // The program that owns this account (in this case, the service registry program)
     };
+
     const createAccountTransaction = new Transaction().add(
       SystemProgram.createAccount(createAccountParams),
     );
+
+    // console.log('createAccountTransaction', createAccountTransaction);
     await sendAndConfirmTransaction(connection, createAccountTransaction, [
       deployer,
       serviceRegistryKeypair,
@@ -129,7 +140,7 @@ async function createService() {
     );
     for (let i = 0; i < 1; i++) {
       await program.methods
-        .initializeService(descriptions[i], new anchor.BN(price[i])) // Fix typo: description -> descriptions
+        .initializeService(descriptions[i], new BN(price[i])) // Fix typo: description -> descriptions
         .accounts({
           provider: deployerPublicKey, // Deployer account that provides the service
           serviceRegistry: SERVICE_REGISTRY_KEYPAIR.publicKey, // The service registry account where the service will be registered
@@ -164,8 +175,7 @@ async function createService() {
 async function main() {
   try {
     await initServiceRegistry();
-    // await createService();
-    // console.log('DEPLOYER_KEYPAIR_PATH', DEPLOYER_KEYPAIR_PATH);
+    await createService();
   } catch (error) {
     console.error('Error in main execution:', error);
   }

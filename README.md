@@ -13,8 +13,11 @@ connect to local validator:
 `solana config set --url localhost`
 `solana config set --url http://127.0.0.1:8899`
 
-fix admin-key.json location
-const keypairPath = './admin-key.json';
+connect to devnet:
+
+`solana config set --url https://api.devnet.solana.com`
+
+fix admin-key.json location in constants.ts TODO
 
 default keypair location on Mac OS:
 `/Users/marci/.config/solana/id.json`

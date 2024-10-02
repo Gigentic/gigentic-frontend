@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-gigentic = "HFFspJHrCTbgo6Vwq84d3DH3qiL22M9NGiLJn1cGaCL2"
+gigentic = "7i1WWZtvVzqgASdEhHk9eDXNN4kdtkUpw7epk74ZBqKC"
 
 [registry]
 url = "https://api.apr.dev"
@@ -17,6 +17,6 @@ cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
+deploy-registry = "yarn run ts-node admin/deploy-registry.ts"
 lint = "cargo dylint --all --workspace"
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/gigentic.spec.ts"
-deploy-registry = "ts-node admin/deploy-registry.ts"
