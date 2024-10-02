@@ -3,6 +3,8 @@ import * as anchor from '@coral-xyz/anchor';
 
 export const DEPLOYER_KEYPAIR_PATH = '/home/calc1f4r/.config/solana/id.json'; // TODO: could get this automatically from solana config
 // export const DEPLOYER_KEYPAIR_PATH = '/Users/marci/.config/solana/id.json'; // TODO: could get this automatically from solana config
+export const SERVICE_DEPLOYER =
+  'Dyn2GhUEvZUBG6r4G7Mh5skK9k77cDuGNRLNewmc2QJdnQy6ocPdNWDwLhBU71o45gfZVufZ3gbiZUCHo5Pokib';
 
 export const PROVIDER = anchor.AnchorProvider.env();
 export const SERVICE_REGISTRY_SPACE = 10_000_000;
