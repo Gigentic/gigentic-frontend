@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as bs58 from 'bs58';
 
 import { Program, workspace, setProvider, BN } from '@coral-xyz/anchor';
 
@@ -24,8 +25,6 @@ import {
   SERVICE_DEPLOYER,
 } from '../tests/constants';
 
-import * as bs58 from 'bs58';
-
 // Configure the client to use the local cluster.
 setProvider(PROVIDER);
 
@@ -33,8 +32,6 @@ setProvider(PROVIDER);
 export const connection: Connection = PROVIDER.connection;
 
 // Initialize the program
-// const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
-
 export const program: Program<Gigentic> =
   workspace.Gigentic as Program<Gigentic>;
 
@@ -45,8 +42,8 @@ const deployerKeypair = JSON.parse(
 const deployer = Keypair.fromSecretKey(new Uint8Array(deployerKeypair));
 console.log('deployer', deployer.publicKey.toString());
 
+// Load the service deployer keypair which is used to create the service
 const serviceDeployer = Keypair.fromSecretKey(bs58.decode(SERVICE_DEPLOYER));
-
 console.log('serviceDeployerKeypair', serviceDeployer.publicKey.toString());
 
 let mint: PublicKey;
