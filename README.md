@@ -22,11 +22,15 @@ fix admin-key.json location in constants.ts TODO
 default keypair location on Mac OS:
 `/Users/marci/.config/solana/id.json`
 
-deploy to devnet:
+deploy program to devnet:
 
 `anchor deploy --provider.cluster devnet`
 
-initialize service registry:
+run service registry deployer script:
+
+`yarn anchor run deploy-registry`
+
+initialize script pointed at devnet:
 
 `anchor run initRegistry --provider.cluster devnet`
 
