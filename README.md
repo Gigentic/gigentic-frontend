@@ -1,3 +1,32 @@
+# new notes to deploy to devnet:
+
+solana-keygen new
+
+solana address
+solana balance
+
+solana airdrop 100
+solana balance
+
+connect to local validator:
+
+`solana config set --url localhost`
+`solana config set --url http://127.0.0.1:8899`
+
+fix admin-key.json location
+const keypairPath = './admin-key.json';
+
+default keypair location on Mac OS:
+`/Users/marci/.config/solana/id.json`
+
+deploy to devnet:
+
+`anchor deploy --provider.cluster devnet`
+
+initialize service registry:
+
+`anchor run initRegistry --provider.cluster devnet`
+
 # Gigentic Frontend
 
 Solana Anchor + Next.js Full Stack Setup
@@ -5,8 +34,8 @@ Solana Anchor + Next.js Full Stack Setup
 This project was generated with the [create-solana-dapp](https://github.com/solana-developers/create-solana-dapp) generator.
 
 Notes:
-- make sure to downgrade rust to version rustc 1.79.0 to avoid problems running anchor
 
+- make sure to downgrade rust to version rustc 1.79.0 to avoid problems running anchor
 
 `npx create-solana-dapp@latest`
 

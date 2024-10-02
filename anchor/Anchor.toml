@@ -12,9 +12,11 @@ gigentic = "HFFspJHrCTbgo6Vwq84d3DH3qiL22M9NGiLJn1cGaCL2"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "localnet"
+# cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
 lint = "cargo dylint --all --workspace"
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/gigentic.spec.ts"
+deploy-registry = "ts-node admin/deploy-registry.ts"

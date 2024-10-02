@@ -1,5 +1,7 @@
-import { Keypair } from "@solana/web3.js";
-import * as anchor from "@coral-xyz/anchor";
+import { Keypair } from '@solana/web3.js';
+import * as anchor from '@coral-xyz/anchor';
+
+export const DEPLOYER_KEYPAIR_PATH = '/Users/marci/.config/solana/id.json'; // TODO: could get this automatically from solana config
 
 export const PROVIDER = anchor.AnchorProvider.env();
 export const SERVICE_REGISTRY_SPACE = 10_000_000;
