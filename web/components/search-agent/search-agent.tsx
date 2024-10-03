@@ -25,11 +25,12 @@ export default function SearchAgent() {
   }, [messages]);
 
   return (
-    <div className="bg-blue-100 p-4 rounded-lg shadow-md w-full max-w-4xl mx-auto flex flex-col max-h-[80vh]">
-      <h2 className="text-2xl font-bold mb-4 text-blue-900">Search Agent</h2>
-      <div className="flex flex-col w-full flex-grow overflow-y-auto text-gray-900">
+    <div className=" p-4 rounded-lg shadow-md w-full max-w-4xl mx-auto flex flex-col max-h-[80vh]">
+      <h2 className="text-2xl font-bold mb-4">Search Agent</h2>
+      <div className="flex flex-col w-full flex-grow overflow-y-auto">
         {messages.map((m, index) => (
           <div key={index} className="whitespace-pre-wrap">
+            <span className="font-bold">Message: </span>
             {m.content}
           </div>
         ))}

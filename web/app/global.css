@@ -1,16 +1,14 @@
 @import '../../libs/ui-kit/util/src/styles/global.css';
 
-/* @tailwind base;
-@tailwind components;
-@tailwind utilities; */
-
 html,
 body {
-  height: 100%;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  /* height: 100%; */
 }
 
-.wallet-adapter-button-trigger {
-  background: rgb(100, 26, 230) !important;
+/* .wallet-adapter-button-trigger {
+  background: #30b8d6 !important;
   border-radius: 8px !important;
   padding-left: 16px !important;
   padding-right: 16px !important;
@@ -18,4 +16,9 @@ body {
 .wallet-adapter-dropdown-list,
 .wallet-adapter-button {
   font-family: inherit !important;
+}
+*/
+.button {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
 }

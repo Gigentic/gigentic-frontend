@@ -5,8 +5,8 @@
   "tailwind": {
     "config": "libs/ui-kit/util/src/tailwind/tailwind.config.js",
     "css": "libs/ui-kit/util/src/styles/global.css",
-    "baseColor": "stone",
-    "cssVariables": true
+    "baseColor": "rose",
+    "cssVariables": false
   },
   "aliases": {
     "components": "@gigentic-frontend/ui-kit/ui/lib",

@@ -21,23 +21,26 @@ export default function GigenticFrontendFeature() {
   const { publicKey } = useWallet();
 
   return publicKey ? (
-    <ResizablePanelGroup direction="vertical">
-      <ResizablePanel>
-        <Card className="mt-6">
-          <CardContent className="p-6">
-            <ServiceRequestForm />
-          </CardContent>
-        </Card>
-      </ResizablePanel>
-      <ResizableHandle />
-      <ResizablePanel>
-        <Card>
-          <CardContent className="p-6">
-            <GigenticDemo />
-          </CardContent>
-        </Card>
-      </ResizablePanel>
-    </ResizablePanelGroup>
+    <div>
+      <p>Gigentic Frontend Feature Hello</p>
+      {/* <ResizablePanelGroup direction="horizontal">
+        <ResizablePanel>
+          <Card className="mt-6"> */}
+      <ServiceRequestForm />
+      {/* </Card>
+        </ResizablePanel>
+      </ResizablePanelGroup> */}
+      {/*  </ResizablePanel>
+        <ResizableHandle />
+        <ResizablePanel>
+          <Card>
+            <CardContent className="p-6"> */}
+      <GigenticDemo />
+      {/* </CardContent>
+          </Card>
+        </ResizablePanel>
+      </ResizablePanelGroup> */}
+    </div>
   ) : (
     <div className="py-16">
       <div className="text-center">

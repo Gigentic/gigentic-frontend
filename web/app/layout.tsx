@@ -11,10 +11,10 @@ export const metadata = {
 };
 
 const links: { label: string; path: string }[] = [
+  { label: 'SearchAgent', path: '/search-agent' },
+  { label: 'Gigentic', path: '/gigentic-frontend' },
   { label: 'Account', path: '/account' },
   // { label: 'Clusters', path: '/clusters' },
-  // { label: 'Gigentic', path: '/gigentic-frontend' },
-  { label: 'SearchAgent', path: '/search-agent' },
 ];
 
 export default function RootLayout({

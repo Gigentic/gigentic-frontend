@@ -10,3 +10,4 @@ export * from './lib/ui/card';
 export * from './lib/ui/input';
 export * from './lib/ui/avatar';
 export * from './lib/ui/resizable';
+export * from './lib/ui/select';
