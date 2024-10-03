@@ -6,13 +6,15 @@ import { useEffect, useRef } from 'react';
 
 
 export default function SearchAgent() {
-  const { messages, input, handleInputChange, handleSubmit, error } = useChat(
+  //const { messages, input, handleInputChange, handleSubmit, error } = useChat(
+  const { messages, input, setInput, append, error } = useChat(
       {
         api: '/api/completion',
-        streamProtocol: 'text',
+        //streamProtocol: 'text',
         onError: (error) => {
           console.error("Chat error:", error);
-        }
+        },
+        maxSteps: 2,
       }
   );
 
@@ -29,31 +31,37 @@ export default function SearchAgent() {
   }, [messages]);
 
   return (
-    
     <div className="bg-blue-100 p-4 rounded-lg shadow-md w-full max-w-4xl mx-auto flex flex-col max-h-[80vh]">
       <h2 className="text-2xl font-bold mb-4 text-blue-900">
         Search Agent
       </h2>
       <div className="flex flex-col w-full flex-grow overflow-y-auto text-gray-900">
-        
-        {messages.map((m, index) => (
-          <div key={index} className="whitespace-pre-wrap">
-            {m.content}
-          </div>
-        ))}
+
+        {messages
+          .filter((m) => m.content.trim() !== '') // Filter out empty messages
+          .map((m, index) => (
+            <div key={index} className="whitespace-pre-wrap">
+              <strong>{m.role}:</strong> {m.content}
+            </div>
+          ))}
         {error && <div className="text-red-500">Error: {error.message}</div>}
         <div ref={messagesEndRef} />
+
       </div>
-      <form onSubmit={handleSubmit} className="mt-4 w-full">
         <input
-          className="w-full p-2 border border-gray-300 rounded shadow-xl"
-          value={input}
-          placeholder="Search Agent - Say something..."
-          onChange={handleInputChange}
+            value={input}
+            onChange={event => {
+              setInput(event.target.value);
+            }}
+            onKeyDown={async event => {
+              if (event.key === 'Enter') {
+                append({ content: input, role: 'user' });
+                setInput('');
+              }
+            }}
         />
-      </form>
-    </div>
-    
+
+    </div>  
     
   );
 }
