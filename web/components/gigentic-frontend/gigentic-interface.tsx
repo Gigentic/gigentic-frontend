@@ -39,11 +39,7 @@ export default function GigenticInterface() {
       <header className="shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <img
-              src="/logo-gold.png"
-              alt="Gigentic Logo"
-              className="w-10 h-10"
-            />
+            <img src="/logo-g.png" alt="Gigentic Logo" className="w-10 h-10" />
             <nav className="hidden md:flex space-x-4">
               <a href="#" className="text-gray-600 hover:text-gray-900">
                 SearchAgent
