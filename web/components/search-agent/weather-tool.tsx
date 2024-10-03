@@ -11,11 +11,9 @@ export default function WeatherTool() {
   const [input, setInput] = useState<string>('');
 
   return (
-    <div className="bg-blue-100 p-4 rounded-lg shadow-md w-full max-w-4xl mx-auto flex flex-col max-h-[80vh]">
-    <h2 className="text-2xl font-bold mb-4 text-blue-900">
-      Search Agent
-    </h2>
-      <div className="flex flex-col w-full flex-grow overflow-y-auto text-gray-900">
+    <div className=" p-4 rounded-lg shadow-md w-full max-w-4xl mx-auto flex flex-col max-h-[80vh]">
+      <h2 className="text-2xl font-bold mb-4">Search Agent</h2>
+      <div className="flex flex-col w-full flex-grow overflow-y-auto ">
         <div>
           <div>
             {conversation.map((message, index) => (
@@ -27,22 +25,25 @@ export default function WeatherTool() {
           </div>
 
           <div>
-            <input 
+            <input
               type="text"
               value={input}
-              onChange={event => {
+              onChange={(event) => {
                 setInput(event.target.value);
               }}
-              className="w-full p-2 mb-2 text-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 mb-2 rounded-md focus:outline-none focus:ring-2"
               placeholder="Enter your weather query..."
             />
             <div>
               <button
-                className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                className="w-full font-bold py-2 px-4 rounded"
                 onClick={async () => {
                   const { messages } = await continueConversation([
                     // exclude React components from being sent back to the server:
-                    ...conversation.map(({ role, content }) => ({ role, content })),
+                    ...conversation.map(({ role, content }) => ({
+                      role,
+                      content,
+                    })),
                     { role: 'user', content: input },
                   ]);
 

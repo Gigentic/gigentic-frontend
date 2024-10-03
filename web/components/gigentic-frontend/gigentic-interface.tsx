@@ -25,6 +25,8 @@ import {
   SelectValue,
 } from '@gigentic-frontend/ui-kit/ui';
 
+import WeatherTool from '@/components/search-agent/weather-tool';
+
 export default function GigenticInterface() {
   const [selectedNetwork, setSelectedNetwork] = useState('devnet');
 
@@ -80,7 +82,9 @@ export default function GigenticInterface() {
         <h1 className="text-3xl font-bold mb-8">
           Gigentic Frontend Feature Hello
         </h1>
-
+        <div>
+          <WeatherTool />
+        </div>
         <div className="grid md:grid-cols-2 gap-8">
           <Card>
             <CardHeader>
