@@ -11,6 +11,7 @@ import {
   PublicKey,
   LAMPORTS_PER_SOL,
 } from '@solana/web3.js';
+import * as dotenv from 'dotenv';
 
 import { TOKEN_PROGRAM_ID, createMint } from '@solana/spl-token';
 
@@ -18,13 +19,13 @@ import { Gigentic } from '../target/types/gigentic';
 
 import {
   PROVIDER,
-  SERVICE_DEPLOYERS,
   SERVICE_REGISTRY_KEYPAIR,
   DEPLOYER_KEYPAIR_PATH,
   SERVICE_DEPLOYER,
 } from '../tests/constants';
 
 import * as bs58 from 'bs58';
+dotenv.config();
 
 // Configure the client to use the local cluster.
 setProvider(PROVIDER);
@@ -45,7 +46,9 @@ const deployerKeypair = JSON.parse(
 const deployer = Keypair.fromSecretKey(new Uint8Array(deployerKeypair));
 console.log('deployer', deployer.publicKey.toString());
 
-const serviceDeployer = Keypair.fromSecretKey(bs58.decode(SERVICE_DEPLOYER));
+const serviceDeployer = Keypair.fromSecretKey(
+  bs58.decode(SERVICE_DEPLOYER as string),
+);
 
 console.log('serviceDeployerKeypair', serviceDeployer.publicKey.toString());
 
@@ -69,7 +72,7 @@ async function initServiceRegistry() {
     console.log('Fee Percentage:', feePercentage);
 
     // Create the service registry account
-    const serviceRegistryAccountSize = 200; // Adjust the size based on the ServiceRegistry struct
+    const serviceRegistryAccountSize = 2000000; // Adjust the size based on the ServiceRegistry struct
     const rentExemptionAmount =
       await connection.getMinimumBalanceForRentExemption(
         serviceRegistryAccountSize,
@@ -144,12 +147,25 @@ async function createService() {
       'Unlock the power of computer vision to automate image recognition, object detection, and visual data processing.',
       'Use our AI-driven predictive models to forecast trends, optimize operations, and make informed decisions.',
       'Maximize your system’s performance through AI agents trained with reinforcement learning, perfect for complex decision-making tasks.',
+      'Automate customer support with AI chatbots, improving response times and customer satisfaction.',
+      'Integrate our AI recommendation system for personalized user experiences and product suggestions.',
+      'Analyze market trends with our AI-powered financial forecasting tool, ideal for investment decisions.',
+      'Enhance security with AI-driven fraud detection and prevention systems.',
+      'Streamline operations with AI-powered supply chain optimization and resource management.',
+      'Leverage AI sentiment analysis to better understand customer feedback and improve services.',
+      'Improve medical diagnostics with our AI healthcare analysis, offering faster and more accurate results.',
+      'Utilize AI marketing automation to personalize campaigns and improve conversion rates.',
+      'Boost efficiency with AI-driven robotic process automation (RPA) for repetitive tasks.',
+      'SoleSec: A specialized AI agent built for auditing smart contracts on the Solana blockchain, ensuring code integrity and security.',
     ];
-    const price = [100, 200, 300, 400, 500];
 
-    for (let i = 0; i < 1; i++) {
+    const prices = [
+      100, 200, 300, 400, 500, 150, 250, 350, 450, 600, 120, 220, 320, 420, 550,
+    ];
+
+    for (let i = 0; i < descriptions.length; i++) {
       await program.methods
-        .initializeService(descriptions[i], new BN(price[i]))
+        .initializeService(descriptions[i], new BN(prices[i]))
         .accounts({
           provider: serviceDeployer.publicKey,
           serviceRegistry: SERVICE_REGISTRY_KEYPAIR.publicKey,
