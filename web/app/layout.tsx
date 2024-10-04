@@ -13,9 +13,9 @@ export const metadata = {
 };
 
 const links: { label: string; path: string }[] = [
-  { label: 'SearchAgent', path: '/search-agent' },
-  { label: 'Gigentic', path: '/gigentic-frontend' },
-  { label: 'Account', path: '/account' },
+  { label: 'Search', path: '/search-agent' },
+  { label: 'Payment', path: '/payment' },
+  // { label: 'Account', path: '/account' },
   // { label: 'Clusters', path: '/clusters' },
 ];
 
@@ -30,9 +30,9 @@ export default function RootLayout({
         <ReactQueryProvider>
           <ClusterProvider>
             <SolanaProvider>
-            <AI>
-              <UiLayout links={links}>{children}</UiLayout>
-            </AI>
+              <AI>
+                <UiLayout links={links}>{children}</UiLayout>
+              </AI>
             </SolanaProvider>
           </ClusterProvider>
         </ReactQueryProvider>

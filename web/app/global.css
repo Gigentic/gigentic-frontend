@@ -4,11 +4,10 @@ html,
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-  /* height: 100%; */
 }
 
-/* .wallet-adapter-button-trigger {
-  background: #30b8d6 !important;
+.wallet-adapter-button-trigger {
+  background: hsl(var(--primary)) !important;
   border-radius: 8px !important;
   padding-left: 16px !important;
   padding-right: 16px !important;
@@ -16,9 +15,4 @@ body {
 .wallet-adapter-dropdown-list,
 .wallet-adapter-button {
   font-family: inherit !important;
-}
-*/
-.button {
-  background-color: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
 }

@@ -22,6 +22,34 @@ import GigenticDemo from '@/components/gigentic-frontend/gigentic-demo';
 import SearchAgent from '../search-agent/search-agent';
 import GigenticInterface from '../gigentic-frontend/gigentic-interface';
 import { ThemeProvider } from '@/components/theme-provider';
+
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Button,
+  Input,
+  Label,
+  Textarea,
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@gigentic-frontend/ui-kit/ui';
+
+import { Mail, X } from 'lucide-react';
+import Image from 'next/image';
+
 export function UiLayout({
   children,
   links,
@@ -41,7 +69,72 @@ export function UiLayout({
         enableSystem
         disableTransitionOnChange
       >
-        <GigenticInterface />
+        <div className="flex flex-col min-h-screen">
+          <header className="flex items-center justify-between p-4 border-b shadow-sm">
+            <div className="flex items-center space-x-4">
+              <div className="relative w-10 h-10">
+                <Image
+                  src="/logo-g.png"
+                  alt="Gigentic Logo"
+                  width={332}
+                  height={341}
+                  priority
+                />
+              </div>
+              <nav className="flex items-center">
+                <ul className="flex space-x-4">
+                  {links.map(({ label, path }) => (
+                    <li key={path}>
+                      <Link
+                        className={`
+                          px-1 py-2 rounded-md text-sm font-medium hover:underline
+                          ${pathname.startsWith(path) ? 'bold' : ''}
+                        `}
+                        href={path}
+                      >
+                        {label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+            <div className="">
+              <WalletButton />
+            </div>
+          </header>
+
+          <main className="flex-1 p-4">
+            <div className="flex items-center justify-center w-full h-full  rounded-lg">
+              <div className="flex-grow mx-4 lg:mx-auto">
+                <Suspense
+                  fallback={
+                    <div className="text-center my-32">
+                      <span className="loading loading-spinner loading-lg"></span>
+                    </div>
+                  }
+                >
+                  {children}
+                </Suspense>
+                <Toaster position="bottom-right" />
+              </div>
+            </div>
+          </main>
+
+          <footer className="flex items-center justify-between p-4 border-t">
+            <div className="flex space-x-4">
+              <Link href="https://x.com/GigenticAI" className="">
+                <X className="w-6 h-6" />
+                <span className="sr-only">Twitter</span>
+              </Link>
+              <Link href="mailto:info@gigentic.com" className="">
+                <Mail className="w-6 h-6" />
+                <span className="sr-only">Email</span>
+              </Link>
+            </div>
+            <p className="text-sm ">© 2024 Gigentic</p>
+          </footer>
+        </div>
       </ThemeProvider>
     </div>
 
