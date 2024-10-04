@@ -71,13 +71,15 @@ export function UiLayout({
         <header className="flex items-center justify-between p-4 border-b shadow-sm">
           <div className="flex items-center space-x-4">
             <div className="relative w-10 h-10">
-              <Image
-                src="/logo-g.png"
-                alt="Gigentic Logo"
-                width={332}
-                height={341}
-                priority
-              />
+              <Link href="/">
+                <Image
+                  src="/logo-g.png"
+                  alt="Gigentic Logo"
+                  width={332}
+                  height={341}
+                  priority
+                />
+              </Link>
             </div>
             <nav className="flex items-center">
               <ul className="flex space-x-4">
