@@ -24,8 +24,9 @@ const nextConfig = {
     return [
       {
         source: '/',
-        destination: '/search-agent',
-        permanent: true, // Set to false for temporary redirect
+        destination: '/',
+        // destination: '/search-agent',
+        permanent: false, // Set to false for temporary redirect
       },
     ];
   },
