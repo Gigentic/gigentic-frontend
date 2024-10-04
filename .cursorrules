@@ -1,11 +1,36 @@
-You are an expert in Solana full-stack web3 dApp development, focusing on building and deploying smart contracts using Rust and Anchor, and integrating on-chain data with Web3.js in React.
+I am building a decentralized service marketplace website where users solve their tasks with human and AI service provider agents. The web app connects to the Solana blockchain (local or devnet) and uses the Gigentic smart contract program.
 
-You use Rust with the Solana Anchor framework for chain program development, and TypeScript with Mocha / Chai for testing the programs. You use React, Tailwind and Solana Web3.js on the frontend. You use nx for tooling and build process.
+You are an expert in TypeScript, Node.js, Next.js App Router, React, Shadcn UI, Radix UI and Tailwind.
+You are also an expert in Solana full-stack web3 dApp development, focusing on building and deploying smart contracts using Rust and Anchor, and integrating on-chain data with Web3.js in React and Next.js.
 
-### General Guidelines
+I use Rust with the Solana Anchor framework for chain program development, and TypeScript with Mocha / Chai for testing the programs.
 
-- Prioritize secure, maintainable, performant code.
-- Optimize the MVP for practical functionality, not just ideal implementation.
+And I use Next.js, Tailwind, Shadcn UI, and Solana Anchor/Web3.js libraries on the frontend.
+
+I use Nx for tooling and build process.
+
+I want to implement the Jest / Playwright for testing the frontend.
+
+## Code Style & Structure
+
+- Use declarative programming patterns when fitting.
+- Functional programming: prefer small, reusable components, avoid classes.
+- Write concise, technical TypeScript code with accurate examples.
+- Prefer iteration and modularization over code duplication.
+- Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError).
+- Structure files: exported component, subcomponents, helpers, static content, types.
+
+### Naming Conventions
+
+- Use lowercase with dashes for directories (e.g., components/auth-wizard).
+- Favor named exports for components.
+
+### Documentation
+
+- Document your code structure clearly—README for usage instructions.
+- Update documentation as features evolve or change.
+
+## Frameworks and Libraries
 
 ### Solana Program Development (Rust + Anchor)
 
@@ -17,29 +42,55 @@ You use Rust with the Solana Anchor framework for chain program development, and
 
 - Use Solana Web3.js for optimized chain interactions.
 - Implement responsive design and error handling.
-- Use Tailwind for styling with a mobile-first approach. Keep React functional and concise in line with best practices.
+- Use Shadcn UI, Radix, and Tailwind for styling with a mobile-first approach.
+- Keep React functional and concise in line with best practices.
+
+## Programming Conventions
+
+### TypeScript Usage
+
+- Use TypeScript for all code; prefer interfaces over types.
+- Use TypeScript for static checking with interfaces.
+- Avoid enums; use maps instead.
+- Use functional components with TypeScript interfaces.
+
+### Syntax and Formatting
+
+- Use the "function" keyword for pure functions.
+- Avoid unnecessary curly braces in conditionals; use concise syntax for simple statements.
+- Use declarative JSX.
+
+### UI and Styling
+
+- Use Shadcn UI, Radix, and Tailwind for components and styling.
+- Implement responsive design with Tailwind CSS; use a mobile-first approach.
+
+### Performance Optimization
+
+- Minimize 'use client', 'useEffect', and 'setState'; favor React Server Components (RSC).
+- Wrap client components in Suspense with fallback.
+- Use dynamic loading for non-critical components.
+- Optimize images: use WebP format, include size data, implement lazy loading.
+
+### Key Conventions
+
+- Use 'nuqs' for URL search parameter state management.
+- Optimize Web Vitals (LCP, CLS, FID).
+- Limit 'use client':
+  - Favor server components and Next.js SSR.
+  - Use only for Web API access in small components.
+  - Avoid for data fetching or state management.
 
 ### Testing & Deployment
 
-- Write comprehensive tests using Mocha/Chai for contracts and frontend.
 - Perform local validation testing before devnet deployment.
 - Use continuous deployment pipelines to automate testing/rollouts.
 
-### Code Style & Structure
+## Additional Guidelines
 
-- Functional programming: prefer small, reusable components, avoid classes.
-- Use TypeScript for static checking with interfaces. Avoid enums.
-- Keep file structure clean: components, helpers, and static content organized logically.
+### Next.js
 
-### Performance & Optimization
-
-- Lazy load non-critical elements; optimize images (using WebP).
-- Wrap components in Suspense for async loading with fallbacks.
-
-### Documentation
-
-- Document your code structure clearly—README for usage instructions.
-- Update documentation as features evolve or change.
+- Follow Next.js docs for Data Fetching, Rendering, and Routing. I am using App Router.
 
 ### ChatGPT Models
 
