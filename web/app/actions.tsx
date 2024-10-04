@@ -1,51 +1,46 @@
 'use server';
 
-import { Weather } from '@/components/tools/weather';
-import { generateText } from 'ai';
-import { openai } from '@ai-sdk/openai';
-import { createStreamableUI } from 'ai/rsc';
-import { ReactNode } from 'react';
-import { z } from 'zod';
+import { createAI } from 'ai/rsc';
+import { ToolInvocation } from "ai";
+import { ReactNode } from "react";
 
-export interface Message {
-  role: 'user' | 'assistant';
-  content: string;
+// this is the system message we send to the LLM to instantiate it
+// gives it the context for tool callin
+
+const content = `\
+  You are a crypto bot and you can help users get the price of cryptocurrencies, besides that you can also chat with users.
+  
+  Messages inside [] means that it's a UI element of a user event. For example:
+    - "[Price of BTC] = 69696" means that the interface of the cryptocurrency price of BTC is shown to the user
+    - "[Stats of BTC]" means that the interface of the cryptocurrency stats of BTC is shown to the user
+
+    If the user wants the price, call \`get_crypto_price\` to show the price of the cryptocurrency.
+    If the user wants the market cap or stats of a given cryptocurrency, call \`get_crypto_stats\` to show the stats of the cryptocurrency.
+    If the user wants a stock price, it is an impossible task, so you should respond that you cannot do it.
+    If the user wants anything else unrelated to the functions calls \`get_crypto_price\` or \`get_crypto_stats\`, you should chat with the user. Answer any 
+    questions they may have that are unrelated to cryptocurrency.
+`;
+
+export const sendMessage = async () => {};
+
+export type AIState = Array<{
+  id?: number;
+  name?: "get_crypto_price" | "get_crypto_stats";
+  role?: "user" | "assistant" | "system";
+  content?: string;
+}>;
+
+export type UIState = Array<{
+  id?: number;
+  role?: "user" | "assistant";
   display?: ReactNode;
-}
+  toolInvocations?: ToolInvocation[];
+}>;
 
-export async function continueConversation(history: Message[]) {
-  const stream = createStreamableUI();
 
-  const { text, toolResults } = await generateText({
-    model: openai('gpt-3.5-turbo'),
-    system: 'You are a friendly weather assistant!',
-    messages: history,
-    tools: {
-      showWeather: {
-        description: 'Show the weather for a given location.',
-        parameters: z.object({
-          city: z.string().describe('The city to show the weather for.'),
-          unit: z
-            .enum(['C', 'F'])
-            .describe('The unit to display the temperature in'),
-        }),
-        execute: async ({ city, unit }) => {
-          stream.done(<Weather city={city} unit={unit} />);
-          return `Here's the weather for ${city}!`;
-        },
-      },
-    },
-  });
-
-  return {
-    messages: [
-      ...history,
-      {
-        role: 'assistant' as const,
-        content:
-          text || toolResults.map(toolResult => toolResult.result).join(),
-        display: stream.value,
-      },
-    ],
-  };
-}
+export const AI = createAI({
+  initialAIState: [] as AIState,
+  initialUIState: [] as UIState,
+  actions: {}
+  
+});

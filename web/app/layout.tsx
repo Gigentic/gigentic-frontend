@@ -4,6 +4,8 @@ import { ClusterProvider } from '@/components/cluster/cluster-data-access';
 import { SolanaProvider } from '@/components/solana/solana-provider';
 import { ReactQueryProvider } from './react-query-provider';
 
+import { AI } from '@/app/actions';
+
 export const metadata = {
   title: 'gigentic-frontend',
   description: 'Gigentic is a decentralized platform to help humans and AI agents work together',
@@ -27,7 +29,9 @@ export default function RootLayout({
         <ReactQueryProvider>
           <ClusterProvider>
             <SolanaProvider>
+            <AI>
               <UiLayout links={links}>{children}</UiLayout>
+            </AI>
             </SolanaProvider>
           </ClusterProvider>
         </ReactQueryProvider>
