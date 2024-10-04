@@ -9,7 +9,6 @@ import {
   Transaction,
   sendAndConfirmTransaction,
   PublicKey,
-  LAMPORTS_PER_SOL,
 } from '@solana/web3.js';
 import * as dotenv from 'dotenv';
 
@@ -72,7 +71,7 @@ async function initServiceRegistry() {
     console.log('Fee Percentage:', feePercentage);
 
     // Create the service registry account
-    const serviceRegistryAccountSize = 2000000; // Adjust the size based on the ServiceRegistry struct
+    const serviceRegistryAccountSize = 200000000; // Adjust the size based on the ServiceRegistry struct
     const rentExemptionAmount =
       await connection.getMinimumBalanceForRentExemption(
         serviceRegistryAccountSize,

@@ -52,7 +52,7 @@ async function initServiceRegistry() {
     console.log('Fee Percentage:', feePercentage);
 
     // Create the service registry account
-    const serviceRegistryAccountSize = 200; // Adjust the size based on the ServiceRegistry struct
+    const serviceRegistryAccountSize = 200000000; // Adjust the size based on the ServiceRegistry struct
     const rentExemptionAmount =
       await connection.getMinimumBalanceForRentExemption(
         serviceRegistryAccountSize,
