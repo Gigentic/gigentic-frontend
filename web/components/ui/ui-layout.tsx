@@ -15,9 +15,6 @@ import {
 } from '../cluster/cluster-ui';
 import toast, { Toaster } from 'react-hot-toast';
 
-import GigenticFrontendFeature from '@/components/gigentic-frontend/gigentic-frontend-feature';
-
-import GigenticDemoBlue from '@/components/gigentic-frontend/demo-blue';
 import GigenticDemo from '@/components/gigentic-frontend/gigentic-demo';
 import SearchAgent from '../search-agent/search-agent';
 import GigenticInterface from '../gigentic-frontend/gigentic-interface';
