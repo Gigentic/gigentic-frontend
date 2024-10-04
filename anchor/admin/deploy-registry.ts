@@ -16,12 +16,7 @@ import { TOKEN_PROGRAM_ID, createMint } from '@solana/spl-token';
 
 import { Gigentic } from '../target/types/gigentic';
 
-import {
-  PROVIDER,
-  SERVICE_REGISTRY_KEYPAIR,
-  DEPLOYER_KEYPAIR_PATH,
-  SERVICE_DEPLOYER,
-} from '../tests/constants';
+import { PROVIDER, SERVICE_REGISTRY_KEYPAIR } from '../tests/constants';
 
 import * as bs58 from 'bs58';
 dotenv.config();
@@ -40,13 +35,13 @@ export const program: Program<Gigentic> =
 
 // Load the "deployer" admin keypair which is used to deploy the program and create the service registry
 const deployerKeypair = JSON.parse(
-  fs.readFileSync(DEPLOYER_KEYPAIR_PATH, 'utf8'),
+  fs.readFileSync(process.env.DEPLOYER_KEYPAIR_PATH as string, 'utf8'),
 );
 const deployer = Keypair.fromSecretKey(new Uint8Array(deployerKeypair));
 console.log('deployer', deployer.publicKey.toString());
 
 const serviceDeployer = Keypair.fromSecretKey(
-  bs58.decode(SERVICE_DEPLOYER as string),
+  bs58.decode(process.env.SERVICE_DEPLOYER as string),
 );
 
 console.log('serviceDeployerKeypair', serviceDeployer.publicKey.toString());
