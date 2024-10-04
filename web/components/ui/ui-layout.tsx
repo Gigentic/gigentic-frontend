@@ -61,65 +61,65 @@ export function UiLayout({
 
   return (
     <div>
-      <ThemeProvider
+      {/* <ThemeProvider
         attribute="class"
         defaultTheme="light"
         enableSystem
         disableTransitionOnChange
-      >
-        <div className="flex flex-col min-h-screen">
-          <header className="flex items-center justify-between p-4 border-b shadow-sm">
-            <div className="flex items-center space-x-4">
-              <div className="relative w-10 h-10">
-                <Image
-                  src="/logo-g.png"
-                  alt="Gigentic Logo"
-                  width={332}
-                  height={341}
-                  priority
-                />
-              </div>
-              <nav className="flex items-center">
-                <ul className="flex space-x-4">
-                  {links.map(({ label, path }) => (
-                    <li key={path}>
-                      <Link
-                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors
+      > */}
+      <div className="flex flex-col min-h-screen">
+        <header className="flex items-center justify-between p-4 border-b shadow-sm">
+          <div className="flex items-center space-x-4">
+            <div className="relative w-10 h-10">
+              <Image
+                src="/logo-g.png"
+                alt="Gigentic Logo"
+                width={332}
+                height={341}
+                priority
+              />
+            </div>
+            <nav className="flex items-center">
+              <ul className="flex space-x-4">
+                {links.map(({ label, path }) => (
+                  <li key={path}>
+                    <Link
+                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors
                           ${pathname.startsWith(path) ? 'border-2 border-primary' : 'hover:underline'}
                         `}
-                        href={path}
-                      >
-                        {label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
+                      href={path}
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+          <div className="">
+            <WalletButton />
+          </div>
+        </header>
+        <main className="flex-1 p-4">
+          <div className="flex items-center justify-center w-full h-full  rounded-lg">
+            <div className="flex-grow mx-4 lg:mx-auto">
+              <Suspense
+                fallback={
+                  <div className="text-center my-32">
+                    <span className="loading loading-spinner loading-lg"></span>
+                  </div>
+                }
+              >
+                {children}
+              </Suspense>
+              <Toaster position="bottom-right" />
             </div>
-            <div className="">
-              <WalletButton />
-            </div>
-          </header>
-          <main className="flex-1 p-4">
-            <div className="flex items-center justify-center w-full h-full  rounded-lg">
-              <div className="flex-grow mx-4 lg:mx-auto">
-                <Suspense
-                  fallback={
-                    <div className="text-center my-32">
-                      <span className="loading loading-spinner loading-lg"></span>
-                    </div>
-                  }
-                >
-                  {children}
-                </Suspense>
-                <Toaster position="bottom-right" />
-              </div>
-            </div>
-          </main>
+          </div>
+        </main>
 
-          <Footer />
-        </div>
-      </ThemeProvider>
+        <Footer />
+      </div>
+      {/* </ThemeProvider> */}
     </div>
   );
 }
