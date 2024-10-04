@@ -2,7 +2,6 @@
 
 // React
 import { useState } from 'react';
-import { ButtonDemo } from './ButtonDemo';
 import ServiceRequestForm from './ServiceRequestForm';
 import GigenticDemo from './gigentic-demo';
 
@@ -282,7 +281,6 @@ export default function GigenticFrontendFeature() {
           </div>
         </div>
 
-        <ButtonDemo />
         <GigenticFrontendCreate />
       </AppHero>
       <InitializeServiceRegistry />
