@@ -83,9 +83,8 @@ export function UiLayout({
                   {links.map(({ label, path }) => (
                     <li key={path}>
                       <Link
-                        className={`
-                          px-1 py-2 rounded-md text-sm font-medium hover:underline
-                          ${pathname.startsWith(path) ? 'bold' : ''}
+                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors
+                          ${pathname.startsWith(path) ? 'border-2 border-primary' : 'hover:underline'}
                         `}
                         href={path}
                       >
@@ -100,7 +99,6 @@ export function UiLayout({
               <WalletButton />
             </div>
           </header>
-
           <main className="flex-1 p-4">
             <div className="flex items-center justify-center w-full h-full  rounded-lg">
               <div className="flex-grow mx-4 lg:mx-auto">
@@ -117,7 +115,6 @@ export function UiLayout({
               </div>
             </div>
           </main>
-
           <footer className="flex items-center justify-between p-4 border-t">
             <div className="flex space-x-4">
               <Link href="https://x.com/GigenticAI" className="">
