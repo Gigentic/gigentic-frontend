@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as bs58 from 'bs58';
+import * as dotenv from 'dotenv';
 
 import { Program, workspace, setProvider, BN } from '@coral-xyz/anchor';
 
@@ -19,7 +20,6 @@ import { Gigentic } from '../target/types/gigentic';
 
 import { PROVIDER, SERVICE_REGISTRY_KEYPAIR } from '../tests/constants';
 
-import * as bs58 from 'bs58';
 dotenv.config();
 
 // Start of Selection
