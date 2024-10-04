@@ -1,8 +1,12 @@
 'use server';
 
-import { createAI } from 'ai/rsc';
-import { ToolInvocation } from "ai";
+import { createAI, getMutableAIState, streamUI } from 'ai/rsc';
+import type { CoreMessage, ToolInvocation } from "ai";
 import { ReactNode } from "react";
+import { openai } from "@ai-sdk/openai";
+import { BotMessage } from "../components/llm/message";
+import { Loader2 } from "lucide-react";
+import { z } from "zod";
 
 // this is the system message we send to the LLM to instantiate it
 // gives it the context for tool callin
@@ -21,7 +25,68 @@ const content = `\
     questions they may have that are unrelated to cryptocurrency.
 `;
 
-export const sendMessage = async () => {};
+//export const sendMessage = async () => {};
+export async function sendMessage(message: string): Promise<{
+      id: number;
+      role: 'user' | 'assistant';
+      display: ReactNode;
+}> {
+  const history = getMutableAIState<typeof AI>();
+  
+  history.update([
+    ...history.get(),
+    {
+      role: 'user',
+      content: message,
+    }
+  ]);
+
+  const reply = await streamUI({
+    model: openai('gpt-4o'),
+    messages: [
+      {
+        role: "system",
+        content,
+        toolInvocations: []
+      },
+      ...history.get(),] as CoreMessage[],
+    initial: (
+      <BotMessage className="items-center flex shrink-0 select-none justify-center ">
+        <Loader2 className="w-5 animate-spin stroke-zinc-500" />
+      </BotMessage>
+    ),
+    text: ({content, done}) => {
+      if (done) {
+        history.done([...history.get(), {role: "assistant", content}]);
+      }
+      return (<BotMessage> {content} </BotMessage>)
+    },
+    tools: {
+      get_crypto_price: {
+        description: "Get the price of a cryptocurrency",
+        parameters: z.object({
+          symbol: z.string().describe("The symbol of the cryptocurrency"),
+        }),
+      },
+      get_crypto_stats: {
+        description: "Get the market cap and other stats of a cryptocurrency",
+        parameters: z.object({
+          slug: z.string().describe("The name of the cryptocurrency in lower case"),
+        }),
+      },
+    },
+  });
+  
+  return {
+    id: Date.now(),
+    role: 'assistant' as const,
+    display: (
+      <p> Hello</p>
+    )
+  
+  };
+} 
+
 
 export type AIState = Array<{
   id?: number;
@@ -41,6 +106,8 @@ export type UIState = Array<{
 export const AI = createAI({
   initialAIState: [] as AIState,
   initialUIState: [] as UIState,
-  actions: {}
+  actions: {
+    sendMessage,
+  }
   
 });
