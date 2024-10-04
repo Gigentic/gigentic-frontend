@@ -7,6 +7,13 @@ import { ReactNode, useState } from 'react';
 import { AppModal } from '../ui/ui-layout';
 import { ClusterNetwork, useCluster } from './cluster-data-access';
 import { Connection } from '@solana/web3.js';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@gigentic-frontend/ui-kit/ui';
 
 export function ExplorerLink({
   path,
@@ -62,29 +69,28 @@ export function ClusterChecker({ children }: { children: ReactNode }) {
 
 export function ClusterUiSelect() {
   const { clusters, setCluster, cluster } = useCluster();
+
   return (
-    <div className="dropdown dropdown-end">
-      <label tabIndex={0} className="btn btn-primary rounded-btn">
-        {cluster.name}
-      </label>
-      <ul
-        tabIndex={0}
-        className="menu dropdown-content z-[1] p-2 shadow bg-base-100 rounded-box w-52 mt-4"
-      >
+    <Select
+      value={cluster.name}
+      onValueChange={(value) => {
+        const selectedCluster = clusters.find((c) => c.name === value);
+        if (selectedCluster) {
+          setCluster(selectedCluster);
+        }
+      }}
+    >
+      <SelectTrigger className="w-[100px]">
+        <SelectValue placeholder="Select network" />
+      </SelectTrigger>
+      <SelectContent>
         {clusters.map((item) => (
-          <li key={item.name}>
-            <button
-              className={`btn btn-sm ${
-                item.active ? 'btn-primary' : 'btn-ghost'
-              }`}
-              onClick={() => setCluster(item)}
-            >
-              {item.name}
-            </button>
-          </li>
+          <SelectItem key={item.name} value={item.name}>
+            {item.name}
+          </SelectItem>
         ))}
-      </ul>
-    </div>
+      </SelectContent>
+    </Select>
   );
 }
 
