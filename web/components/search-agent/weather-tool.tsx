@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Message, continueConversation } from '@/app/actions';
+import { Message, continueConversation } from '@/app/actions3';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
