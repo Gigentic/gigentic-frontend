@@ -16,7 +16,7 @@ import {
 import toast, { Toaster } from 'react-hot-toast';
 
 import GigenticDemo from '@/components/gigentic-frontend/gigentic-demo';
-import SearchAgent from '../search-agent/search-agent';
+import Search from '../search-agent/search';
 import GigenticInterface from '../gigentic-frontend/gigentic-interface';
 import { ThemeProvider } from '@/components/theme-provider';
 
@@ -67,6 +67,9 @@ export function UiLayout({
         enableSystem
         disableTransitionOnChange
       > */}
+
+      {/* <Search /> */}
+
       <div className="flex flex-col min-h-screen">
         <header className="flex items-center justify-between p-4 border-b shadow-sm">
           <div className="flex items-center space-x-4">
