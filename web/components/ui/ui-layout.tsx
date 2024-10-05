@@ -115,7 +115,7 @@ export function UiLayout({
               </div>
             </div>
           </main>
-          <footer className="flex items-center justify-between p-4 border-t">
+          <footer className="fixed bottom-0 left-0 right-0 flex items-center justify-between p-4 border-t bg-background">
             <div className="flex space-x-4">
               <Link href="https://x.com/GigenticAI" className="">
                 <X className="w-6 h-6" />

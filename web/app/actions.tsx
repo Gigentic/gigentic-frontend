@@ -4,7 +4,7 @@ import { createAI, getMutableAIState, streamUI } from 'ai/rsc';
 import type { CoreMessage, ToolInvocation } from "ai";
 import { ReactNode } from "react";
 import { openai } from "@ai-sdk/openai";
-import { BotMessage } from "../components/llm/message";
+import { BotCard, BotMessage } from "../components/llm/message";
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
 
@@ -67,6 +67,13 @@ export async function sendMessage(message: string): Promise<{
         parameters: z.object({
           symbol: z.string().describe("The symbol of the cryptocurrency"),
         }),
+        generate: async function* ({symbol}: {symbol: string}) {
+          yield 
+            <BotCard> Loading..</BotCard>;
+
+            return null;
+          
+        }
       },
       get_crypto_stats: {
         description: "Get the market cap and other stats of a cryptocurrency",
