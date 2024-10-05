@@ -11,3 +11,5 @@ export * from './lib/ui/input';
 export * from './lib/ui/avatar';
 export * from './lib/ui/resizable';
 export * from './lib/ui/select';
+export * from './lib/ui/slider';
+export * from './lib/ui/skeleton';
