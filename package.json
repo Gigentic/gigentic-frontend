@@ -4,10 +4,10 @@
   "license": "MIT",
   "scripts": {
     "anchor": "nx run anchor:anchor",
-    "anchor-build": "nx run anchor:anchor build",
     "anchor-keys": "nx run anchor:anchor keys sync",
     "anchor-test": "nx run anchor:test",
-    "anchor-deploy": "nx run anchor:anchor deploy",
+    "create-service": "ts-node admin/create-service.ts",
+    "deploy-registry": "ts-node admin/deploy-registry.ts",
     "feature": "nx generate @solana-developers/preset-react:feature",
     "build": "nx build web",
     "dev": "nx serve web"
