@@ -39,7 +39,7 @@ function loadSecrekeyFromEnv(envVarName: string): Keypair {
   return keypair;
 }
 
-function loadKeypairBs58FromEnv(envVarName: string): Keypair {
+export function loadKeypairBs58FromEnv(envVarName: string): Keypair {
   console.log(
     `Loading keypair from bs58-encoded environment variable: ${envVarName}`,
   );
@@ -68,16 +68,16 @@ export const connection: Connection = PROVIDER.connection;
 export const program: Program<Gigentic> =
   workspace.Gigentic as Program<Gigentic>;
 
-// Load the "deployer" admin keypair which is used to deploy the program and create the service registry
-// const deployerKeypair = JSON.parse(
+// Load the "programDeployer" admin keypair which is used to deploy the program and create the service registry
+// const programDeployerKeypair = JSON.parse(
 //   fs.readFileSync(DEPLOYER_KEYPAIR_PATH, 'utf8'),
 // );
 
-const deployer = loadSecrekeyFromEnv('DEPLOYER_KEYPAIR_PATH');
-console.log('deployer', deployer.publicKey.toString());
+const programDeployer = loadKeypairBs58FromEnv('PROGRAM_DEPLOYER');
+console.log('programDeployer', programDeployer.publicKey.toString());
 
-// const deployer = Keypair.fromSecretKey(new Uint8Array(deployerKeypair));
-// console.log('deployer', deployer.publicKey.toString());
+// const programDeployer = Keypair.fromSecretKey(new Uint8Array(programDeployerKeypair));
+// console.log('programDeployer', programDeployer.publicKey.toString());
 
 const serviceDeployer = loadKeypairBs58FromEnv('SERVICE_DEPLOYER');
 console.log('serviceDeployer', serviceDeployer.publicKey.toString());
@@ -95,7 +95,7 @@ async function initServiceRegistry() {
 
     console.log('Initializing Service Registry...');
 
-    const feeAccount = deployer.publicKey;
+    const feeAccount = programDeployer.publicKey;
     console.log('Fee Account Public Key:', feeAccount.toString());
 
     const feePercentage = 0;
@@ -108,7 +108,7 @@ async function initServiceRegistry() {
         serviceRegistryAccountSize,
       );
     const createAccountParams = {
-      fromPubkey: deployer.publicKey, // Account paying for the creation of the new account
+      fromPubkey: programDeployer.publicKey, // Account paying for the creation of the new account
       newAccountPubkey: serviceRegistryKeypair.publicKey, // Public key of the new account to be created
       lamports: rentExemptionAmount, // Amount of SOL (in lamports) to transfer for rent exemption
       space: serviceRegistryAccountSize, // Amount of space (in bytes) to allocate for the new account
@@ -118,17 +118,17 @@ async function initServiceRegistry() {
       SystemProgram.createAccount(createAccountParams),
     );
     await sendAndConfirmTransaction(connection, createAccountTransaction, [
-      deployer,
+      programDeployer,
       serviceRegistryKeypair,
     ]);
 
     const transactionSignature = await program.methods
       .initializeServiceRegistry(feeAccount, feePercentage)
       .accounts({
-        initializer: deployer.publicKey,
+        initializer: programDeployer.publicKey,
         serviceRegistry: serviceRegistryKeypair.publicKey,
       })
-      .signers([deployer])
+      .signers([programDeployer])
       .rpc();
     console.log(`Transaction Signature: ${transactionSignature}`);
 
@@ -157,58 +157,6 @@ async function initServiceRegistry() {
     );
   } catch (error) {
     console.error('Error initializing Service Registry:', error);
-  }
-}
-
-async function createService() {
-  try {
-    mint = await createMint(
-      connection,
-      deployer, // Fee deployer for the mint creation
-      deployer.publicKey, // Mint authority that can mint new tokens
-      deployer.publicKey, // Freeze authority (can be set to `null` to disable freezing)
-      8, // Number of decimals for the mint (similar to a currency's smallest unit)
-    );
-
-    const serviceRegistryKeypair = SERVICE_REGISTRY_KEYPAIR;
-    const descriptions = [
-      'Leverage our AI agent for advanced data analysis, turning complex data into actionable insights for your business.',
-      'Our AI-powered NLP solutions help you understand and interact with text and speech, improving communication and automation.',
-      'Unlock the power of computer vision to automate image recognition, object detection, and visual data processing.',
-      'Use our AI-driven predictive models to forecast trends, optimize operations, and make informed decisions.',
-      'Maximize your system’s performance through AI agents trained with reinforcement learning, perfect for complex decision-making tasks.',
-    ];
-    const price = [100, 200, 300, 400, 500];
-
-    for (let i = 0; i < 1; i++) {
-      await program.methods
-        .initializeService(descriptions[i], new BN(price[i]))
-        .accounts({
-          provider: serviceDeployer.publicKey,
-          serviceRegistry: SERVICE_REGISTRY_KEYPAIR.publicKey,
-          mint: mint,
-          tokenProgram: TOKEN_PROGRAM_ID,
-        })
-        .signers([serviceDeployer]) // Include both deployer and the new service keypair as signers
-        .rpc();
-    }
-
-    const serviceRegistry = await program.account.serviceRegistry.fetch(
-      SERVICE_REGISTRY_KEYPAIR.publicKey,
-    );
-    console.log('Service Registry:', serviceRegistry);
-
-    for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
-      const serviceAccount =
-        await program.account.service.fetch(serviceAddress);
-      console.log('Service Account:', serviceAccount);
-      console.log('Service Account Address:', serviceAddress.toString());
-      console.log('Service Account Description:', serviceAccount.description);
-      console.log('Service Account Price:', serviceAccount.price.toString());
-      console.log('Service Account Mint:', serviceAccount.mint.toString());
-    }
-  } catch (error) {
-    console.error('Error creating service:', error);
   }
 }
 

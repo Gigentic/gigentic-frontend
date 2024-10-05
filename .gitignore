@@ -51,3 +51,4 @@ test-ledger
 web/.env.local
 concat-all.txt
 filesScript.js
+accounts.csv
