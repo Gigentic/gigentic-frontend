@@ -6,12 +6,12 @@ on:
 defaults:
   run:
     shell: bash
-    working-directory: .
+    working-directory: ./anchor
 
 env:
   CARGO_TERM_COLOR: always
-  RUST_TOOLCHAIN: "1.79.0"
-  SOLANA_CLI_VERSION: "1.18.18"
+  RUST_TOOLCHAIN: '1.79.0'
+  SOLANA_CLI_VERSION: '1.18.18'
 
 jobs:
   fmt-clippy:
@@ -58,8 +58,8 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: "20.x"
-          registry-url: "https://registry.npmjs.org"
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
       - name: Install yarn
         run: yarn
       - name: Run prettier
@@ -72,8 +72,8 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: "20.x"
-          registry-url: "https://registry.npmjs.org"
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
       - name: Install yarn
         run: yarn
       - name: Run lint
@@ -93,15 +93,15 @@ jobs:
       - name: Cache build artifacts
         uses: Swatinem/rust-cache@v1
         with:
-          cache-on-failure: "true"
+          cache-on-failure: 'true'
       - uses: ./.github/actions/setup-solana/
       - name: install anchor cli
         run: cargo install --git https://github.com/coral-xyz/anchor --tag v0.30.1 anchor-cli --locked
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: "20.x"
-          registry-url: "https://registry.npmjs.org"
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
       - name: Setup yarn
         run: npm install -g yarn
       - name: Install yarn
