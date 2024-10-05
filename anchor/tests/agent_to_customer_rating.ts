@@ -1,11 +1,11 @@
 import { SERVICE_REGISTRY_KEYPAIR } from './constants';
 import { program, connection } from './init';
-import { fund_account } from './utils';
+// import { fund_account } from './utils';
 import { PublicKey } from '@solana/web3.js';
 import * as anchor from '@coral-xyz/anchor';
 import { SendTransactionError } from '@solana/web3.js';
 import { expect } from 'chai';
-import { SERVICE_DEPLOYERS, SERVICE_USERS } from './constants';
+import { SERVICE_DEPLOYERS } from './constants';
 
 describe('Agent to customer review', () => {
   it('Rates the customer through the service provider and checks if the values are initialized correctly', async () => {
@@ -60,9 +60,10 @@ describe('Agent to customer review', () => {
     } catch (err) {
       // Handle transaction errors
       if (err instanceof SendTransactionError) {
+        console.error('SendTransactionError:', err.message);
         // If there's an error, retrieve and log the transaction's logs for debugging
-        const logs = await err.getLogs(connection);
-        console.error('Transaction Logs:', logs);
+        // const logs = await err.getLogs(connection);
+        // console.error('Transaction Logs:', logs);
       }
       throw err; // Re-throw the error to make the test fail
     }
