@@ -1,19 +1,19 @@
-import { expect } from "chai";
+import { expect } from 'chai';
 import {
   SystemProgram,
   Transaction,
   sendAndConfirmTransaction,
-} from "@solana/web3.js";
-import { connection, program } from "./init";
+} from '@solana/web3.js';
+import { connection, program } from './init';
 import {
   SERVICE_REGISTRY_DEPLOYER,
   SERVICE_REGISTRY_SPACE,
   FEE_ACCOUNT,
   FEE_PERCENTAGE,
   SERVICE_REGISTRY_KEYPAIR,
-} from "./constants";
+} from './constants';
 
-describe("Initialize Service Registry and checks for correct fee_account and correct fee percentage ", () => {
+describe('Initialize Service Registry and checks for correct fee_account and correct fee percentage ', () => {
   before(async function () {
     // Calculate the minimum balance required for rent exemption for an account of a given size.
     // This prevents the account from being deleted due to insufficient balance.
@@ -44,7 +44,7 @@ describe("Initialize Service Registry and checks for correct fee_account and cor
     ]);
   });
 
-  it("initializes a service registry", async () => {
+  it('initializes a service registry', async () => {
     // Call the 'initializeServiceRegistry' method on the program to initialize the service registry account.
     await program.methods
       .initializeServiceRegistry(FEE_ACCOUNT.publicKey, FEE_PERCENTAGE) //  sets the fee_Account owner to the deployer, and for now sets the initial fee to 0
@@ -69,29 +69,28 @@ describe("Initialize Service Registry and checks for correct fee_account and cor
     const actualFeeAccount = fetchedRegistryAccount.feeAccount;
 
     // Getting the actual Fee percentage
-
     const actualFeePercentage = fetchedRegistryAccount.feePercentage;
+
     // Verify that the actual service account addresses match the expected initial state.
     expect(
       actualServiceAccountAddresses,
-      "Service registry addresses do not match the expected addresses",
+      'Service registry addresses do not match the expected addresses',
     ).to.deep.equal(expectedServiceAccountAddresses);
 
     // Verify that the actual fee account matches the expected fee account
-    expect(actualFeeAccount.toBase58(), "Fee account does not match").to.equal(
+    expect(actualFeeAccount.toBase58(), 'Fee account does not match').to.equal(
       FEE_ACCOUNT.publicKey.toBase58(),
     );
 
     // verify that the actual fee percentage matches the expected fee percentage
-
-    expect(actualFeePercentage, "Fee percentage does not match").to.equal(
+    expect(actualFeePercentage, 'Fee percentage does not match').to.equal(
       FEE_PERCENTAGE,
     );
 
     // Verify that the length of the service account addresses matches the expected length.
     expect(
       actualServiceAccountAddresses.length,
-      "Service registry length does not match",
+      'Service registry length does not match',
     ).to.equal(expectedServiceAccountAddresses.length);
   });
 });

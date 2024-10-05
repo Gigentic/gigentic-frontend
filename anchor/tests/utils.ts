@@ -1,4 +1,4 @@
-import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
 /**
  * Funds a given account with SOL via an airdrop.
@@ -8,13 +8,13 @@ import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
  */
 export async function fund_account(connection: Connection, pubkey: PublicKey) {
   // Request an airdrop of 1000 SOL (specified in lamports, where 1 SOL = 10^9 lamports)
-  let airdropSignature = await connection.requestAirdrop(
+  const airdropSignature = await connection.requestAirdrop(
     pubkey,
     LAMPORTS_PER_SOL * 1000,
   );
 
   // Fetch the latest blockhash and last valid block height required for transaction confirmation
-  let latestBlockhash = await connection.getLatestBlockhash();
+  const latestBlockhash = await connection.getLatestBlockhash();
 
   // Confirm the transaction using the airdrop signature and the latest blockhash information
   await connection.confirmTransaction({
