@@ -52,5 +52,4 @@ web/.env.local
 concat-all.txt
 filesScript.js
 accounts.csv
-anchor/target/idl/gigentic.json
 
