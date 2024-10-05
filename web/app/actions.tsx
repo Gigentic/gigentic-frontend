@@ -61,6 +61,7 @@ export async function sendMessage(message: string): Promise<{
       }
       return (<BotMessage> {content} </BotMessage>)
     },
+    temperature: 0.0,
     tools: {
       get_crypto_price: {
         description: "Get the price of a cryptocurrency",
@@ -87,9 +88,7 @@ export async function sendMessage(message: string): Promise<{
   return {
     id: Date.now(),
     role: 'assistant' as const,
-    display: (
-      <p> Hello</p>
-    )
+    display: reply.value,
   
   };
 } 
