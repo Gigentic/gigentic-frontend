@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as bs58 from 'bs58';
 import * as dotenv from 'dotenv';
-import * as anchor from '@coral-xyz/anchor';
 
 import { Program, workspace, setProvider } from '@coral-xyz/anchor';
 
@@ -12,12 +11,14 @@ import {
   Transaction,
   sendAndConfirmTransaction,
   PublicKey,
+  LAMPORTS_PER_SOL,
 } from '@solana/web3.js';
 
 // import { TOKEN_PROGRAM_ID, createMint } from '@solana/spl-token';
 
 import { Gigentic } from '../target/types/gigentic';
 import {
+  AIRDROP_LAMPORTS,
   FEE_PERCENTAGE,
   PROVIDER,
   SERVICE_REGISTRY_KEYPAIR,
@@ -63,10 +64,12 @@ async function airdrop(deployer: PublicKey) {
   try {
     const airdropSignature = await connection.requestAirdrop(
       deployer,
-      10000 * anchor.web3.LAMPORTS_PER_SOL, // Airdrop 2 SOL
+      AIRDROP_LAMPORTS,
     );
     await connection.confirmTransaction(airdropSignature, 'confirmed');
-    console.log(`Airdropped 2 SOL to ${deployer.toString()}`);
+    console.log(
+      `Airdropped ${AIRDROP_LAMPORTS / LAMPORTS_PER_SOL} SOL to ${deployer.toString()}`,
+    );
   } catch (error) {
     console.error('Error airdropping SOL:', error);
   }
