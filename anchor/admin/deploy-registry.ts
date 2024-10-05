@@ -19,6 +19,7 @@ import {
   FEE_PERCENTAGE,
   PROVIDER,
   SERVICE_REGISTRY_KEYPAIR,
+  SERVICE_REGISTRY_SPACE_SMALL,
 } from '../tests/constants';
 import { loadKeypairBs58FromEnv } from '../tests/utils';
 
@@ -77,7 +78,7 @@ async function initServiceRegistry() {
     console.log('Fee Percentage:', feePercentage);
 
     // Create the service registry account
-    const serviceRegistryAccountSize = 2000; // Adjust the size based on the ServiceRegistry struct
+    const serviceRegistryAccountSize = SERVICE_REGISTRY_SPACE_SMALL; // Adjust the size based on the ServiceRegistry struct
     const rentExemptionAmount =
       await connection.getMinimumBalanceForRentExemption(
         serviceRegistryAccountSize,
