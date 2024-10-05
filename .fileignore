@@ -7,7 +7,6 @@ yarn.lock
 .nx
 .vscode
 .git
-anchor
 dist
 tmp
 /out-tsc
@@ -27,7 +26,7 @@ node_modules
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-# misc
+# Build
 /.sass-cache
 /connect.lock
 /coverage
@@ -44,15 +43,19 @@ Thumbs.db
 # Next.js
 .next
 out
+# Anchor
 .anchor
 anchor/target/deploy
 anchor/target/debug
 anchor/target/release
 anchor/target/sbf-solana-solana
 anchor/target/.rustc_info.json
-!anchor/target/idl/*.json
-!anchor/target/types/*.ts
 test-ledger
 .yarn
 .env
 web/.env.local
+/web
+/.vercel
+/libs
+filesScript.js
+concat-all.txt
