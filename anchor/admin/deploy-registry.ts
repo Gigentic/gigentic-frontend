@@ -14,10 +14,14 @@ import {
   PublicKey,
 } from '@solana/web3.js';
 
-import { TOKEN_PROGRAM_ID, createMint } from '@solana/spl-token';
+// import { TOKEN_PROGRAM_ID, createMint } from '@solana/spl-token';
 
 import { Gigentic } from '../target/types/gigentic';
-import { PROVIDER, SERVICE_REGISTRY_KEYPAIR } from '../tests/constants';
+import {
+  FEE_PERCENTAGE,
+  PROVIDER,
+  SERVICE_REGISTRY_KEYPAIR,
+} from '../tests/constants';
 
 dotenv.config();
 
@@ -82,7 +86,7 @@ async function initServiceRegistry() {
     const feeAccount = programDeployer.publicKey;
     console.log('Fee Account Public Key:', feeAccount.toString());
 
-    const feePercentage = 0;
+    const feePercentage = FEE_PERCENTAGE;
     console.log('Fee Percentage:', feePercentage);
 
     // Create the service registry account
@@ -146,7 +150,10 @@ async function initServiceRegistry() {
 
 async function main() {
   try {
-    await Promise.all([airdrop(programDeployer.publicKey), airdrop(serviceDeployer.publicKey)]);
+    await Promise.all([
+      airdrop(programDeployer.publicKey),
+      airdrop(serviceDeployer.publicKey),
+    ]);
     await initServiceRegistry();
   } catch (error) {
     console.error('Error in main execution:', error);
