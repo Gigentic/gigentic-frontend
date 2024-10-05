@@ -11,7 +11,6 @@ import {
   Transaction,
   sendAndConfirmTransaction,
   PublicKey,
-  LAMPORTS_PER_SOL,
 } from '@solana/web3.js';
 
 import { TOKEN_PROGRAM_ID, createMint } from '@solana/spl-token';
@@ -36,6 +35,7 @@ function loadSecrekeyFromEnv(envVarName: string): Keypair {
   console.log(
     `Keypair generated with public key: ${keypair.publicKey.toString()}`,
   );
+  console.log('Public key of the keypair generated : ', keypair.publicKey);
   return keypair;
 }
 
@@ -49,16 +49,15 @@ function loadKeypairBs58FromEnv(envVarName: string): Keypair {
   }
   console.log(`Decoding bs58 keypair: ${encodedKey}`);
   const decodedKey = bs58.decode(encodedKey);
-  console.log(`Decoded key bytes: ${decodedKey}`);
 
   // Create keypair directly from the decoded bytes
   const keypair = Keypair.fromSecretKey(decodedKey);
+
   console.log(
     `Keypair generated with public key: ${keypair.publicKey.toString()}`,
   );
   return keypair;
 }
-
 // Configure the client to use the local cluster.
 setProvider(PROVIDER);
 
@@ -103,7 +102,7 @@ async function initServiceRegistry() {
     console.log('Fee Percentage:', feePercentage);
 
     // Create the service registry account
-    const serviceRegistryAccountSize = 200; // Adjust the size based on the ServiceRegistry struct
+    const serviceRegistryAccountSize = 2000000; // Adjust the size based on the ServiceRegistry struct
     const rentExemptionAmount =
       await connection.getMinimumBalanceForRentExemption(
         serviceRegistryAccountSize,

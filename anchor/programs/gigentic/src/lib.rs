@@ -11,7 +11,7 @@ use contexts::pay_service::*;
 use contexts::sign_service::*;
 use errors::ErrorCode;
 
-declare_id!("7JynKYjRNQq3JH6XEGzHLuKtkyWe9yh52KiArwQjxUKz");
+declare_id!("BCPgWfT4kFACYBASKGEteicnDPHd7Tt73CAMSWh5tW5W");
 
 #[program]
 pub mod gigentic {
