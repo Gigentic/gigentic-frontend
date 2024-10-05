@@ -1,38 +1,129 @@
-import { Gigentic } from '../target/types/gigentic';
-import { Program, setProvider } from '@coral-xyz/anchor';
-import * as anchor from '@coral-xyz/anchor';
+import * as fs from 'fs';
+import * as bs58 from 'bs58';
+import * as dotenv from 'dotenv';
+
+import { Program, workspace, setProvider, BN } from '@coral-xyz/anchor';
+
 import {
   Keypair,
   Connection,
   SystemProgram,
   Transaction,
   sendAndConfirmTransaction,
-  PublicKey, // Correctly placed import
+  PublicKey,
+  LAMPORTS_PER_SOL,
 } from '@solana/web3.js';
-import { createMint } from '@solana/spl-token';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
-import * as fs from 'fs';
+import { TOKEN_PROGRAM_ID, createMint } from '@solana/spl-token';
 
-import {
-  PROVIDER,
-  SERVICE_DEPLOYERS,
-  SERVICE_REGISTRY_KEYPAIR,
-  DEPLOYER_KEYPAIR_PATH,
-} from '../tests/constants';
+import { Gigentic } from '../target/types/gigentic';
 
-// Initialize the program
-export const connection: Connection = PROVIDER.connection;
+import { PROVIDER, SERVICE_REGISTRY_KEYPAIR } from '../tests/constants';
+
+dotenv.config();
+
+// Start of Selection
+function loadSecrekeyFromEnv(envVarName: string): Keypair {
+  console.log(`Loading secret key from environment variable: ${envVarName}`);
+  const keypairPath = process.env[envVarName];
+  if (!keypairPath) {
+    throw new Error(`${envVarName} is not set in environment variables`);
+  }
+  console.log(`Keypair path found: ${keypairPath}`);
+  const keypairData = JSON.parse(fs.readFileSync(keypairPath, 'utf8'));
+  console.log(`Keypair data loaded from ${keypairPath}`);
+  const keypair = Keypair.fromSecretKey(new Uint8Array(keypairData));
+  console.log(
+    `Keypair generated with public key: ${keypair.publicKey.toString()}`,
+  );
+  return keypair;
+}
+
+function loadKeypairBs58FromEnv(envVarName: string): Keypair {
+  console.log(
+    `Loading keypair from bs58-encoded environment variable: ${envVarName}`,
+  );
+  const encodedKey = process.env[envVarName];
+  if (!encodedKey) {
+    throw new Error(`${envVarName} is not set in environment variables`);
+  }
+  console.log(`Decoding bs58 keypair: ${encodedKey}`);
+  const decodedKey = bs58.decode(encodedKey);
+  console.log(`Decoded key bytes: ${decodedKey}`);
+
+  // Create keypair directly from the decoded bytes
+  const keypair = Keypair.fromSecretKey(decodedKey);
+  console.log(
+    `Keypair generated with public key: ${keypair.publicKey.toString()}`,
+  );
+  return keypair;
+}
+
+// Configure the client to use the local cluster.
 setProvider(PROVIDER);
 
-export const program: Program<Gigentic> = anchor.workspace
-  .Gigentic as Program<Gigentic>;
+// Initialize connection to the Solana network using the provided anchor provider
+export const connection: Connection = PROVIDER.connection;
 
-// Load the keypair
-const keypairData = JSON.parse(fs.readFileSync(DEPLOYER_KEYPAIR_PATH, 'utf8'));
-const payer = Keypair.fromSecretKey(new Uint8Array(keypairData));
+// Initialize the program
+export const program: Program<Gigentic> =
+  workspace.Gigentic as Program<Gigentic>;
+
+// Load the "deployer" admin keypair which is used to deploy the program and create the service registry
+// const deployerKeypair = JSON.parse(
+//   fs.readFileSync(DEPLOYER_KEYPAIR_PATH, 'utf8'),
+// );
+
+const deployer = loadSecrekeyFromEnv('DEPLOYER_KEYPAIR_PATH');
+console.log('deployer', deployer.publicKey.toString());
+
+// const deployer = Keypair.fromSecretKey(new Uint8Array(deployerKeypair));
+// console.log('deployer', deployer.publicKey.toString());
+
+const serviceDeployer = loadKeypairBs58FromEnv('SERVICE_DEPLOYER');
+console.log('serviceDeployer', serviceDeployer.publicKey.toString());
 
 let mint: PublicKey;
+
+async function checkServiceRegistry() {
+  try {
+    // Use the known SERVICE_REGISTRY_KEYPAIR
+    const serviceRegistryPublicKey = SERVICE_REGISTRY_KEYPAIR.publicKey;
+    console.log(
+      'Checking Service Registry at:',
+      serviceRegistryPublicKey.toString(),
+    );
+
+    // Attempt to fetch the service registry account
+    const fetchedRegistryAccount = await program.account.serviceRegistry.fetch(
+      serviceRegistryPublicKey,
+    );
+
+    console.log('Service Registry found!');
+    console.log('Fetched Service Registry account:', fetchedRegistryAccount);
+    console.log(
+      'Service Registry fee account:',
+      fetchedRegistryAccount.feeAccount.toString(),
+    );
+    console.log(
+      'Service Registry fee percentage:',
+      fetchedRegistryAccount.feePercentage,
+    );
+    console.log(
+      'Service Registry service account addresses:',
+      fetchedRegistryAccount.serviceAccountAddresses,
+    );
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes('Account does not exist')
+    ) {
+      console.log('Service Registry not found. It may need to be initialized.');
+    } else {
+      console.error('Error checking Service Registry:', error);
+    }
+  }
+}
 
 async function initServiceRegistry() {
   try {
@@ -45,7 +136,7 @@ async function initServiceRegistry() {
 
     console.log('Initializing Service Registry...');
 
-    const feeAccount = payer.publicKey;
+    const feeAccount = deployer.publicKey;
     console.log('Fee Account Public Key:', feeAccount.toString());
 
     const feePercentage = 0;
@@ -58,7 +149,7 @@ async function initServiceRegistry() {
         serviceRegistryAccountSize,
       );
     const createAccountParams = {
-      fromPubkey: payer.publicKey, // Account paying for the creation of the new account
+      fromPubkey: deployer.publicKey, // Account paying for the creation of the new account
       newAccountPubkey: serviceRegistryKeypair.publicKey, // Public key of the new account to be created
       lamports: rentExemptionAmount, // Amount of SOL (in lamports) to transfer for rent exemption
       space: serviceRegistryAccountSize, // Amount of space (in bytes) to allocate for the new account
@@ -68,17 +159,17 @@ async function initServiceRegistry() {
       SystemProgram.createAccount(createAccountParams),
     );
     await sendAndConfirmTransaction(connection, createAccountTransaction, [
-      payer,
+      deployer,
       serviceRegistryKeypair,
     ]);
 
     const transactionSignature = await program.methods
       .initializeServiceRegistry(feeAccount, feePercentage)
       .accounts({
-        initializer: payer.publicKey,
+        initializer: deployer.publicKey,
         serviceRegistry: serviceRegistryKeypair.publicKey,
       })
-      .signers([payer])
+      .signers([deployer])
       .rpc();
     console.log(`Transaction Signature: ${transactionSignature}`);
 
@@ -114,9 +205,9 @@ async function createService() {
   try {
     mint = await createMint(
       connection,
-      payer, // Fee payer for the mint creation
-      payer.publicKey, // Mint authority that can mint new tokens
-      payer.publicKey, // Freeze authority (can be set to `null` to disable freezing)
+      deployer, // Fee deployer for the mint creation
+      deployer.publicKey, // Mint authority that can mint new tokens
+      deployer.publicKey, // Freeze authority (can be set to `null` to disable freezing)
       8, // Number of decimals for the mint (similar to a currency's smallest unit)
     );
 
@@ -132,14 +223,14 @@ async function createService() {
 
     for (let i = 0; i < 1; i++) {
       await program.methods
-        .initializeService(descriptions[i], new anchor.BN(price[i]))
+        .initializeService(descriptions[i], new BN(price[i]))
         .accounts({
-          provider: SERVICE_DEPLOYERS[0].publicKey,
+          provider: serviceDeployer.publicKey,
           serviceRegistry: SERVICE_REGISTRY_KEYPAIR.publicKey,
           mint: mint,
           tokenProgram: TOKEN_PROGRAM_ID,
         })
-        .signers([SERVICE_DEPLOYERS[0]]) // Include both payer and the new service keypair as signers
+        .signers([serviceDeployer]) // Include both deployer and the new service keypair as signers
         .rpc();
     }
 
@@ -162,24 +253,9 @@ async function createService() {
   }
 }
 
-async function airdropSolToFirstDeployer() {
-  try {
-    const deployer = SERVICE_DEPLOYERS[0];
-    const airdropSignature = await connection.requestAirdrop(
-      deployer.publicKey,
-      2 * anchor.web3.LAMPORTS_PER_SOL, // Airdrop 2 SOL
-    );
-    await connection.confirmTransaction(airdropSignature, 'confirmed');
-    console.log(`Airdropped 2 SOL to ${deployer.publicKey.toString()}`);
-  } catch (error) {
-    console.error('Error airdropping SOL to the first deployer:', error);
-  }
-}
-
 async function main() {
   try {
-    // await airdropSolToFirstDeployer(); // Airdrop SOL to the first deployer
-    await initServiceRegistry();
+    await checkServiceRegistry();
     // await createService();
   } catch (error) {
     console.error('Error in main execution:', error);

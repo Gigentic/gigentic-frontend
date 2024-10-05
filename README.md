@@ -1,3 +1,7 @@
+yarn anchor-deploy
+
+yarn anchor run deploy-registry
+
 # new notes to deploy to devnet:
 
 solana-keygen new

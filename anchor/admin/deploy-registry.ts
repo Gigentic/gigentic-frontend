@@ -216,7 +216,7 @@ async function createService() {
 async function main() {
   try {
     await initServiceRegistry();
-    await createService();
+    // await createService();
   } catch (error) {
     console.error('Error in main execution:', error);
   }
