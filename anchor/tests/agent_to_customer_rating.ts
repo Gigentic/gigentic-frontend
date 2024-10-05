@@ -1,14 +1,14 @@
-import { SERVICE_REGISTRY_KEYPAIR } from "./constants";
-import { program, connection } from "./init";
-import { fund_account } from "./utils";
-import { PublicKey } from "@solana/web3.js";
-import * as anchor from "@coral-xyz/anchor";
-import { SendTransactionError } from "@solana/web3.js";
-import { expect } from "chai";
-import { SERVICE_DEPLOYERS, SERVICE_USERS } from "./constants";
+import { SERVICE_REGISTRY_KEYPAIR } from './constants';
+import { program, connection } from './init';
+import { fund_account } from './utils';
+import { PublicKey } from '@solana/web3.js';
+import * as anchor from '@coral-xyz/anchor';
+import { SendTransactionError } from '@solana/web3.js';
+import { expect } from 'chai';
+import { SERVICE_DEPLOYERS, SERVICE_USERS } from './constants';
 
-describe("Agent to customer review", () => {
-  it("Rates the customer through the service provider and checks if the values are initialized correctly", async () => {
+describe('Agent to customer review', () => {
+  it('Rates the customer through the service provider and checks if the values are initialized correctly', async () => {
     // Select the service provider from the predefined service deployers array
     // Assume the service provider is the first one in the SERVICE_DEPLOYERS array
     const serviceProvider = SERVICE_DEPLOYERS[0];
@@ -32,7 +32,7 @@ describe("Agent to customer review", () => {
     const rating = 4;
 
     // The agent's review comment about the consumer
-    const review = "Great Consumer was very polite";
+    const review = 'Great Consumer was very polite';
 
     // Create a transaction to record the agent's rating and review for the consumer.
     // This calls the `agentToConsumerRating` method in the Solana program and passes the
@@ -62,7 +62,7 @@ describe("Agent to customer review", () => {
       if (err instanceof SendTransactionError) {
         // If there's an error, retrieve and log the transaction's logs for debugging
         const logs = await err.getLogs(connection);
-        console.error("Transaction Logs:", logs);
+        console.error('Transaction Logs:', logs);
       }
       throw err; // Re-throw the error to make the test fail
     }
@@ -70,7 +70,7 @@ describe("Agent to customer review", () => {
     // Find the program address for the review account
     // This is where the review data (rating, comment) is stored for the specific service
     const [reviewPubKey] = PublicKey.findProgramAddressSync(
-      [Buffer.from("review_service"), serviceAccountPubKey.toBuffer()], // Seed for address generation
+      [Buffer.from('review_service'), serviceAccountPubKey.toBuffer()], // Seed for address generation
       program.programId, // Program ID to tie it to
     );
 
@@ -80,19 +80,19 @@ describe("Agent to customer review", () => {
     // Validate that the service provider for this review matches the expected service provider
     expect(reviewAccount.serviceProvider.toBase58()).to.equal(
       serviceAccount.provider.toBase58(),
-      "The service provider in the review should match the service account provider.",
+      'The service provider in the review should match the service account provider.',
     );
 
     // Validate that the agent-to-consumer rating in the review matches the rating that was submitted
     expect(reviewAccount.agentToConsumerRating).to.equal(
       rating,
-      "The rating given by the agent should match the rating stored in the review account.",
+      'The rating given by the agent should match the rating stored in the review account.',
     );
 
     // Validate that the agent's review comment matches the review stored in the account
     expect(reviewAccount.agentToCustomerReview).to.equal(
       review,
-      "The review comment given by the agent should match the comment stored in the review account.",
+      'The review comment given by the agent should match the comment stored in the review account.',
     );
   });
 });

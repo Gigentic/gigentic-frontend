@@ -1,19 +1,19 @@
-import * as anchor from "@coral-xyz/anchor";
-import { PublicKey } from "@solana/web3.js";
-import { expect } from "chai";
-import { Keypair } from "@solana/web3.js";
-import { program, connection } from "./init";
+import * as anchor from '@coral-xyz/anchor';
+import { PublicKey } from '@solana/web3.js';
+import { expect } from 'chai';
+import { Keypair } from '@solana/web3.js';
+import { program, connection } from './init';
 import {
   SERVICE_REGISTRY_KEYPAIR,
   SERVICE_DEPLOYERS,
   SERVICE_USERS,
   FEE_ACCOUNT,
   FEE_PERCENTAGE,
-} from "./constants";
-import { SendTransactionError } from "@solana/web3.js";
+} from './constants';
+import { SendTransactionError } from '@solana/web3.js';
 
-describe("SignService: Transfers money to the service provider and sends fees to the fee account", () => {
-  it("Transfers money to the service provider and sends fees", async () => {
+describe('SignService: Transfers money to the service provider and sends fees to the fee account', () => {
+  it('Transfers money to the service provider and sends fees', async () => {
     // Select the buyer from the predefined service users
     const buyer = SERVICE_USERS[0];
 
@@ -31,7 +31,7 @@ describe("SignService: Transfers money to the service provider and sends fees to
 
     // Find the program address for the escrow account
     const [escrowPubKey, escrowBump] = PublicKey.findProgramAddressSync(
-      [Buffer.from("escrow"), serviceAccountPubKey.toBuffer()],
+      [Buffer.from('escrow'), serviceAccountPubKey.toBuffer()],
       program.programId,
     );
 
@@ -75,7 +75,7 @@ describe("SignService: Transfers money to the service provider and sends fees to
     } catch (err) {
       if (err instanceof SendTransactionError) {
         const logs = await err.getLogs(connection);
-        console.error("Transaction Logs:", logs);
+        console.error('Transaction Logs:', logs);
       }
       throw err;
     }

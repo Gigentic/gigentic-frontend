@@ -1,14 +1,14 @@
-import * as anchor from "@coral-xyz/anchor";
-import { expect } from "chai";
-import { SERVICE_DEPLOYERS, SERVICE_REGISTRY_KEYPAIR } from "./constants";
-import { program, mint } from "./init";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import * as anchor from '@coral-xyz/anchor';
+import { expect } from 'chai';
+import { SERVICE_DEPLOYERS, SERVICE_REGISTRY_KEYPAIR } from './constants';
+import { program, mint } from './init';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
-describe("Gigentic Service Deployment", () => {
-  it("Initializes a service with correct description and price!", async () => {
+describe('Gigentic Service Deployment', () => {
+  it('Initializes a service with correct description and price!', async () => {
     // Set up parameters for the test
     const deployerIndex = 0; // Index of the service deployer to be used from the SERVICE_DEPLOYERS array
-    const description = "Test description"; // Description for the new service to be deployed
+    const description = 'Test description'; // Description for the new service to be deployed
     const price = new anchor.BN(1000); // Price of the new service, represented as a BigNumber
 
     // Deploy a new service to the service registry
@@ -27,7 +27,7 @@ describe("Gigentic Service Deployment", () => {
         .signers([SERVICE_DEPLOYERS[deployerIndex]]) // Sign the transaction with the deployer's keypair
         .rpc(); // Execute the remote procedure call to interact with the blockchain
     } catch (error) {
-      console.error("Failed to initialize service:", error); // Log an error message if service initialization fails
+      console.error('Failed to initialize service:', error); // Log an error message if service initialization fails
     }
 
     // Fetch the service registry account data from the blockchain to verify the state after initialization
@@ -43,13 +43,13 @@ describe("Gigentic Service Deployment", () => {
     // Verify that the description of the service is set correctly
     expect(serviceAccount.description).to.equal(
       description,
-      "The service description does not match the expected value.", // Error message if the assertion fails
+      'The service description does not match the expected value.', // Error message if the assertion fails
     );
 
     // Verify that the price of the service is set correctly
     expect(serviceAccount.price.toString()).to.equal(
       price.toString(),
-      "The service price does not match the expected value.", // Error message if the assertion fails
+      'The service price does not match the expected value.', // Error message if the assertion fails
     );
   });
 });
