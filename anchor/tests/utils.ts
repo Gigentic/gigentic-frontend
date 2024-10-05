@@ -1,4 +1,12 @@
-import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import * as fs from 'fs';
+import * as bs58 from 'bs58';
+
+import {
+  Connection,
+  Keypair,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+} from '@solana/web3.js';
 
 /**
  * Funds a given account with SOL via an airdrop.
@@ -22,4 +30,19 @@ export async function fund_account(connection: Connection, pubkey: PublicKey) {
     blockhash: latestBlockhash.blockhash, // Latest blockhash to ensure transaction validity
     lastValidBlockHeight: latestBlockhash.lastValidBlockHeight, // The height up to which the blockhash is valid
   });
+}
+
+// Load secret key from environment variable
+export function loadKeypairFromEnv(envVarName: string): Keypair {
+  const keypairPath = process.env[envVarName];
+  if (!keypairPath) throw new Error(`${envVarName} is not set`);
+  const keypairData = JSON.parse(fs.readFileSync(keypairPath, 'utf8'));
+  return Keypair.fromSecretKey(new Uint8Array(keypairData));
+}
+
+// Load bs58-encoded keypair from environment variable
+export function loadKeypairBs58FromEnv(envVarName: string): Keypair {
+  const encodedKey = process.env[envVarName];
+  if (!encodedKey) throw new Error(`${envVarName} is not set`);
+  return Keypair.fromSecretKey(bs58.decode(encodedKey));
 }

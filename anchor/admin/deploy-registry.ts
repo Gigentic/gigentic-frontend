@@ -1,11 +1,8 @@
-import * as fs from 'fs';
-import * as bs58 from 'bs58';
 import * as dotenv from 'dotenv';
 
 import { Program, workspace, setProvider } from '@coral-xyz/anchor';
 
 import {
-  Keypair,
   Connection,
   SystemProgram,
   Transaction,
@@ -23,23 +20,9 @@ import {
   PROVIDER,
   SERVICE_REGISTRY_KEYPAIR,
 } from '../tests/constants';
+import { loadKeypairBs58FromEnv } from '../tests/utils';
 
 dotenv.config();
-
-// Load secret key from environment variable
-function loadKeypairFromEnv(envVarName: string): Keypair {
-  const keypairPath = process.env[envVarName];
-  if (!keypairPath) throw new Error(`${envVarName} is not set`);
-  const keypairData = JSON.parse(fs.readFileSync(keypairPath, 'utf8'));
-  return Keypair.fromSecretKey(new Uint8Array(keypairData));
-}
-
-// Load bs58-encoded keypair from environment variable
-export function loadKeypairBs58FromEnv(envVarName: string): Keypair {
-  const encodedKey = process.env[envVarName];
-  if (!encodedKey) throw new Error(`${envVarName} is not set`);
-  return Keypair.fromSecretKey(bs58.decode(encodedKey));
-}
 
 // Configure the client to use the local cluster
 setProvider(PROVIDER);
@@ -51,14 +34,15 @@ export const connection: Connection = PROVIDER.connection;
 export const program: Program<Gigentic> =
   workspace.Gigentic as Program<Gigentic>;
 
+console.log('connection', connection.rpcEndpoint);
+console.log('programId', program.programId.toString());
+
 // Load the "programDeployer" admin keypair which is used to deploy the program and create the service registry
 const programDeployer = loadKeypairBs58FromEnv('PROGRAM_DEPLOYER');
 console.log('programDeployer', programDeployer.publicKey.toString());
 
 const serviceDeployer = loadKeypairBs58FromEnv('SERVICE_DEPLOYER');
 console.log('serviceDeployer', serviceDeployer.publicKey.toString());
-
-let mint: PublicKey;
 
 async function airdrop(deployer: PublicKey) {
   try {
