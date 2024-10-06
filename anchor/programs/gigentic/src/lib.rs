@@ -28,7 +28,7 @@ pub mod gigentic {
 
     pub fn initialize_service(
         ctx: Context<InitializeService>,
-        unique_id:String,
+        unique_id: String,
         description: String,
         price: u64,
     ) -> Result<()> {
@@ -37,7 +37,7 @@ pub mod gigentic {
             ErrorCode::DescriptionTooLong
         );
 
-        ctx.accounts.handler(unique_id,description, price)?;
+        ctx.accounts.handler(unique_id, description, price)?;
         Ok(())
     }
 
