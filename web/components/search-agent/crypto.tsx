@@ -74,7 +74,7 @@ export default function CryptoTool() {
     //console.log("window.innerHeight: ", window.innerHeight);
     //console.log("window.scrollY: ", window.scrollY);
     //console.log("document.body.offsetHeight: ", document.body.offsetHeight);
-    console.log("window.innerHeight - window.scrollY 2: ", window.innerHeight - window.scrollY);
+    //console.log("window.innerHeight - window.scrollY 2: ", window.innerHeight - window.scrollY);
   };
 
   return (
