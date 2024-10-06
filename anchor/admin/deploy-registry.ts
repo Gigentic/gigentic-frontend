@@ -157,12 +157,22 @@ async function createMintToken() {
 async function main() {
   try {
     await airdrop(serviceDeployer.publicKey);
+    console.log('========== Airdropped service deployer');
+    console.log('\n');
     await airdrop(programDeployer.publicKey);
+    console.log('========== Airdropped program deployer');
+    console.log('\n');
+
     await initServiceRegistry();
+    console.log('========== Initialized service registry');
+    console.log('\n');
     await createMintToken();
+    console.log('========== Created mint token');
+    console.log('\n');
 
     for (let i = 0; i < services.length; i++) {
       // Update to use services array
+      console.log(`Creating service ${i + 1}/${services.length}:`);
       await createService(
         SERVICE_REGISTRY_KEYPAIR.publicKey,
         mint,

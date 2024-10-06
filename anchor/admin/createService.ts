@@ -46,10 +46,11 @@ export async function createService(
 
   for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
     const serviceAccount = await program.account.service.fetch(serviceAddress);
-    console.log('Service Account:', serviceAccount);
+    // console.log('Service Account:', serviceAccount);
     console.log('Service Account Address:', serviceAddress.toString());
+    // console.log('Service Account Unique ID:', serviceAccount.uniqueId);
     console.log('Service Account Description:', serviceAccount.description);
     console.log('Service Account Price:', serviceAccount.price.toString());
-    console.log('Service Account Mint:', serviceAccount.mint.toString());
+    // console.log('Service Account Mint:', serviceAccount.mint.toString());
   }
 }
