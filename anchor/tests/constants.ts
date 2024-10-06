@@ -7,6 +7,7 @@ export const SERVICE_REGISTRY_SPACE = 10_000_000;
 export const SERVICE_REGISTRY_SPACE_SMALL = 1000;
 
 // SERVICE_REGISTRY account
+export const SERVICE_REGISTRY_DEPLOYER = Keypair.generate();
 export const SERVICE_REGISTRY_KEYPAIR = Keypair.generate();
 export const FEE_ACCOUNT = Keypair.generate();
 export const FEE_PERCENTAGE = 0;
@@ -16,8 +17,8 @@ export const AIRDROP_LAMPORTS = AIRDROP_SOL_AMOUNT * LAMPORTS_PER_SOL;
 // KEYPAIRS
 export const REGISTRY_KEYPAIR = Keypair.generate();
 export const MINT_AUTHORITY: Keypair = Keypair.generate();
-export const SERVICE_REGISTRY_DEPLOYER = Keypair.generate();
 
+// SERVICE DEPLOYERS
 export const SERVICE_DEPLOYERS: Keypair[] = [
   Keypair.generate(),
   Keypair.generate(),
