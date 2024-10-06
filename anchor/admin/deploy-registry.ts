@@ -1,8 +1,12 @@
+import * as fs from 'fs';
+import * as bs58 from 'bs58';
 import * as dotenv from 'dotenv';
+import * as anchor from '@coral-xyz/anchor';
 
 import { Program, workspace, setProvider } from '@coral-xyz/anchor';
 
 import {
+  Keypair,
   Connection,
   SystemProgram,
   Transaction,
@@ -11,49 +15,47 @@ import {
   LAMPORTS_PER_SOL,
 } from '@solana/web3.js';
 
-// import { TOKEN_PROGRAM_ID, createMint } from '@solana/spl-token';
+import { createMint } from '@solana/spl-token';
 
 import { Gigentic } from '../target/types/gigentic';
-import {
-  AIRDROP_LAMPORTS,
-  FEE_PERCENTAGE,
-  PROVIDER,
-  SERVICE_REGISTRY_KEYPAIR,
-  SERVICE_REGISTRY_SPACE_SMALL,
-} from '../tests/constants';
-import { loadKeypairBs58FromEnv } from '../tests/utils';
+import { PROVIDER, SERVICE_REGISTRY_KEYPAIR } from '../tests/constants';
 
+import { createService } from './createService';
 dotenv.config();
+
+// Load bs58-encoded keypair from environment variable
+export function loadKeypairBs58FromEnv(envVarName: string): Keypair {
+  const encodedKey = process.env[envVarName];
+  if (!encodedKey) throw new Error(`${envVarName} is not set`);
+  return Keypair.fromSecretKey(bs58.decode(encodedKey));
+}
 
 // Configure the client to use the local cluster
 setProvider(PROVIDER);
 
-// Initialize connection to the Solana network using the provided anchor provider
-export const connection: Connection = PROVIDER.connection;
+// Initialize connection and program
+const connection: Connection = PROVIDER.connection;
+const program: Program<Gigentic> = workspace.Gigentic as Program<Gigentic>;
 
-// Initialize the program
-export const program: Program<Gigentic> =
-  workspace.Gigentic as Program<Gigentic>;
-
-console.log('connection', connection.rpcEndpoint);
-console.log('programId', program.programId.toString());
-
-// Load the "programDeployer" admin keypair which is used to deploy the program and create the service registry
+// Load keypairs
 const programDeployer = loadKeypairBs58FromEnv('PROGRAM_DEPLOYER');
-console.log('programDeployer', programDeployer.publicKey.toString());
-
 const serviceDeployer = loadKeypairBs58FromEnv('SERVICE_DEPLOYER');
+
+console.log('programDeployer', programDeployer.publicKey.toString());
 console.log('serviceDeployer', serviceDeployer.publicKey.toString());
+
+let mint: PublicKey;
 
 async function airdrop(deployer: PublicKey) {
   try {
+    const airdropAmount = 3 * LAMPORTS_PER_SOL;
     const airdropSignature = await connection.requestAirdrop(
       deployer,
-      AIRDROP_LAMPORTS,
+      airdropAmount,
     );
     await connection.confirmTransaction(airdropSignature, 'confirmed');
     console.log(
-      `Airdropped ${AIRDROP_LAMPORTS / LAMPORTS_PER_SOL} SOL to ${deployer.toString()}`,
+      `Airdropped ${airdropAmount / LAMPORTS_PER_SOL} SOL to ${deployer.toString()}`,
     );
   } catch (error) {
     console.error('Error airdropping SOL:', error);
@@ -74,15 +76,16 @@ async function initServiceRegistry() {
     const feeAccount = programDeployer.publicKey;
     console.log('Fee Account Public Key:', feeAccount.toString());
 
-    const feePercentage = FEE_PERCENTAGE;
+    const feePercentage = 0;
     console.log('Fee Percentage:', feePercentage);
 
     // Create the service registry account
-    const serviceRegistryAccountSize = SERVICE_REGISTRY_SPACE_SMALL; // Adjust the size based on the ServiceRegistry struct
+    const serviceRegistryAccountSize = 20000; // Adjust the size based on the ServiceRegistry struct
     const rentExemptionAmount =
       await connection.getMinimumBalanceForRentExemption(
         serviceRegistryAccountSize,
       );
+    console.log('Rent Exemption Amount: ', rentExemptionAmount);
     const createAccountParams = {
       fromPubkey: programDeployer.publicKey, // Account paying for the creation of the new account
       newAccountPubkey: serviceRegistryKeypair.publicKey, // Public key of the new account to be created
@@ -136,13 +139,52 @@ async function initServiceRegistry() {
   }
 }
 
+async function createMintToken() {
+  try {
+    mint = await createMint(
+      connection,
+      programDeployer,
+      programDeployer.publicKey,
+      programDeployer.publicKey,
+      8,
+    );
+    console.log('Mint token created:', mint.toString());
+  } catch (error) {
+    console.error('Error creating mint token:', error);
+  }
+}
+
 async function main() {
   try {
-    await Promise.all([
-      airdrop(programDeployer.publicKey),
-      airdrop(serviceDeployer.publicKey),
-    ]);
+    await airdrop(serviceDeployer.publicKey);
+    await airdrop(programDeployer.publicKey);
     await initServiceRegistry();
+    await createMintToken();
+    const descriptions = [
+      'AI agent  ',
+      'AI-powered NLP ',
+      'Computer vision ',
+      'Predictive models ',
+      'Reinforcement',
+      'AI chatbots ',
+      'AI recommendation',
+      'AI financial',
+      'AI-driven',
+      'AI supply chain',
+    ];
+    const prices = [
+      100, 200, 300, 400, 500, 150, 250, 350, 450, 600, 120, 220, 320, 420, 550,
+    ];
+    for (let i = 0; i < descriptions.length; i++) {
+      await createService(
+        SERVICE_REGISTRY_KEYPAIR.publicKey,
+        mint,
+        program,
+        prices[i],
+        descriptions[i],
+        i.toString(),
+      );
+    }
   } catch (error) {
     console.error('Error in main execution:', error);
   }

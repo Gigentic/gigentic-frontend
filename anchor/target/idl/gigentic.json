@@ -1,5 +1,5 @@
 {
-  "address": "3E8qHURSLd6P1cWR5Bwbekvn9P9cwN637dhjNRsVwuCH",
+  "address": "8gCXx6e5VU2pmTSrmQcXuq2PtaQbu8v74YNqRgyd1vPU",
   "metadata": {
     "name": "gigentic",
     "version": "0.1.0",
@@ -174,11 +174,6 @@
         {
           "name": "service",
           "writable": true,
-          "signer": true
-        },
-        {
-          "name": "service_authority",
-          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -190,22 +185,16 @@
                   118,
                   105,
                   99,
-                  101,
-                  95,
-                  97,
-                  117,
-                  116,
-                  104,
-                  111,
-                  114,
-                  105,
-                  116,
-                  121
+                  101
                 ]
               },
               {
+                "kind": "arg",
+                "path": "_unique_id"
+              },
+              {
                 "kind": "account",
-                "path": "service"
+                "path": "provider"
               }
             ]
           }
@@ -222,6 +211,10 @@
         }
       ],
       "args": [
+        {
+          "name": "unique_id",
+          "type": "string"
+        },
         {
           "name": "description",
           "type": "string"
@@ -474,19 +467,6 @@
       ]
     },
     {
-      "name": "ServiceAuthority",
-      "discriminator": [
-        199,
-        242,
-        58,
-        222,
-        53,
-        161,
-        60,
-        220
-      ]
-    },
-    {
       "name": "ServiceRegistry",
       "discriminator": [
         105,
@@ -641,13 +621,6 @@
             }
           }
         ]
-      }
-    },
-    {
-      "name": "ServiceAuthority",
-      "type": {
-        "kind": "struct",
-        "fields": []
       }
     },
     {
