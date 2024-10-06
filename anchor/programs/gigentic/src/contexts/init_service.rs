@@ -39,7 +39,7 @@ pub struct InitializeService<'info> {
 
 impl<'info> InitializeService<'info> {
     // Handler function to initialize the service
-    pub fn handler(&mut self, _unique_id: String, description: String, price: u64,) -> Result<()> {
+    pub fn handler(&mut self, _unique_id: String, description: String, price: u64) -> Result<()> {
         // Check that the ServiceRegistry still has space for new services
         require_gt!(
             312499,
@@ -62,7 +62,7 @@ impl<'info> InitializeService<'info> {
 
         // Log the last service address or return an error if none are registered
         if let Some(last_address) = self.service_registry.service_account_addresses.last() {
-            msg!("Last service address: {}", last_address);
+            msg!("Hello Last service address: {}", last_address);
         } else {
             return err!(ErrorCode::NoServicesRegistered);
         }

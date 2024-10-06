@@ -4,7 +4,7 @@ import { Program } from '@coral-xyz/anchor';
 import { Keypair, PublicKey } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { Gigentic } from '../target/types/gigentic';
-import { SERVICE_REGISTRY_KEYPAIR } from '../tests/constants';
+// import { SERVICE_REGISTRY_KEYPAIR } from '../tests/constants';
 import * as anchor from '@coral-xyz/anchor';
 
 export function loadKeypairBs58FromEnv(envVarName: string): Keypair {
