@@ -1,3 +1,5 @@
+import { before } from 'mocha';
+
 import {
   SERVICE_REGISTRY_DEPLOYER,
   MINT_AUTHORITY,
