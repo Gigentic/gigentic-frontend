@@ -14,7 +14,7 @@ import {
   PublicKey,
   LAMPORTS_PER_SOL,
 } from '@solana/web3.js';
-
+import { services } from './Services'; // Import services from Services.ts
 import { createMint } from '@solana/spl-token';
 
 import { Gigentic } from '../target/types/gigentic';
@@ -160,28 +160,15 @@ async function main() {
     await airdrop(programDeployer.publicKey);
     await initServiceRegistry();
     await createMintToken();
-    const descriptions = [
-      'AI agent  ',
-      'AI-powered NLP ',
-      'Computer vision ',
-      'Predictive models ',
-      'Reinforcement',
-      'AI chatbots ',
-      'AI recommendation',
-      'AI financial',
-      'AI-driven',
-      'AI supply chain',
-    ];
-    const prices = [
-      100, 200, 300, 400, 500, 150, 250, 350, 450, 600, 120, 220, 320, 420, 550,
-    ];
-    for (let i = 0; i < descriptions.length; i++) {
+
+    for (let i = 0; i < services.length; i++) {
+      // Update to use services array
       await createService(
         SERVICE_REGISTRY_KEYPAIR.publicKey,
         mint,
         program,
-        prices[i],
-        descriptions[i],
+        services[i].price, // Use price from services
+        services[i].description, // Use description from services
         i.toString(),
       );
     }
