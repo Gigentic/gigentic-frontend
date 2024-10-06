@@ -17,15 +17,6 @@ dotenv.config();
 
 const serviceDeployer = loadKeypairBs58FromEnv('SERVICE_DEPLOYER');
 
-const mint: PublicKey = new PublicKey(
-  'HBxv7LzrJHheuf2YgHtFnfqrPr2D4JzEWgUudFjqhMKY',
-);
-console.log('Mint here', mint);
-
-let serviceRegistryPublicKey: PublicKey = new PublicKey(
-  'AHmFgbfyuVyE2Jsng9HQ2WnfvrTvtrKUDoJRkHGZSLxw',
-);
-
 export async function createService(
   serviceRegistryPubkey: PublicKey,
   _mint: PublicKey,
