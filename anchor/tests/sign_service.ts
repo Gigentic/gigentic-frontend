@@ -73,9 +73,12 @@ describe('SignService: Transfers money to the service provider and sends fees to
         [buyer],
       );
     } catch (err) {
+      // Handle transaction errors
       if (err instanceof SendTransactionError) {
-        const logs = await err.getLogs(connection);
-        console.error('Transaction Logs:', logs);
+        console.error('SendTransactionError:', err.message);
+        // If there's an error, retrieve and log the transaction's logs for debugging
+        // const logs = await err.getLogs(connection);
+        // console.error('Transaction Logs:', logs);
       }
       throw err;
     }
