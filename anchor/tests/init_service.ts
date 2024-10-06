@@ -10,14 +10,14 @@ describe('Gigentic Service Deployment', () => {
     const deployerIndex = 0; // Index of the service deployer to be used from the SERVICE_DEPLOYERS array
     const description = 'Test description'; // Description for the new service to be deployed
     const price = new anchor.BN(1000); // Price of the new service, represented as a BigNumber
-
+    let uniqueId = '1';
     // Deploy a new service to the service registry
     try {
       const deployerPublicKey = SERVICE_DEPLOYERS[deployerIndex].publicKey; // Fetch the public key of the deployer
 
       // Initialize a new service by calling the smart contract's method
       await program.methods
-        .initializeService(description, price) // Method to initialize a new service
+        .initializeService(uniqueId, description, price) // Method to initialize a new service
         .accounts({
           provider: deployerPublicKey, // Deployer account that provides the service
           serviceRegistry: SERVICE_REGISTRY_KEYPAIR.publicKey, // The service registry account where the service will be registered
@@ -57,14 +57,14 @@ describe('Gigentic Service Deployment', () => {
     const deployerIndex = 1; // Index of the service deployer to be used from the SERVICE_DEPLOYERS array
     const description = 'Test description1'; // Description for the new service to be deployed
     const price = new anchor.BN(2000); // Price of the new service, represented as a BigNumber
-
+    let uniqueId = '2';
     // Deploy a new service to the service registry
     try {
       const deployerPublicKey = SERVICE_DEPLOYERS[deployerIndex].publicKey; // Fetch the public key of the deployer
 
       // Initialize a new service by calling the smart contract's method
       await program.methods
-        .initializeService(description, price) // Method to initialize a new service
+        .initializeService(uniqueId, description, price) // Method to initialize a new service
         .accounts({
           provider: deployerPublicKey, // Deployer account that provides the service
           serviceRegistry: SERVICE_REGISTRY_KEYPAIR.publicKey, // The service registry account where the service will be registered

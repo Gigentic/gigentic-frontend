@@ -39,7 +39,7 @@ pub struct InitializeService<'info> {
 
 impl<'info> InitializeService<'info> {
     // Handler function to initialize the service
-    pub fn handler(&mut self, _unique_id: String, description: String, price: u64,) -> Result<()> {
+    pub fn handler(&mut self, _unique_id: String, description: String, price: u64) -> Result<()> {
         // Check that the ServiceRegistry still has space for new services
         require_gt!(
             312499,

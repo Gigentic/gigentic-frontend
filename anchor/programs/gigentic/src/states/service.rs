@@ -1,8 +1,6 @@
 use crate::constants::MAX_DESCRIPTION_LENGTH;
 use anchor_lang::prelude::*;
 
-
-
 #[account]
 pub struct Service {
     pub provider: Pubkey,
