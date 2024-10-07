@@ -80,24 +80,6 @@ async function initServiceRegistry() {
       .rpc();
     console.log(`Transaction Signature: ${transactionSignature}`);
 
-    // const fetchedRegistryAccount = await program.account.serviceRegistry.fetch(
-    //   serviceRegistryKeypair.publicKey,
-    // );
-
-    // console.log('Fetched Service Registry account:', fetchedRegistryAccount);
-    // console.log(
-    //   'Service Registry fee account:',
-    //   fetchedRegistryAccount.feeAccount.toString(),
-    // );
-    // console.log(
-    //   'Service Registry fee percentage:',
-    //   fetchedRegistryAccount.feePercentage,
-    // );
-    // console.log(
-    //   'Service Registry service account addresses:',
-    //   fetchedRegistryAccount.serviceAccountAddresses,
-    // );
-
     console.log('');
     console.log(
       'Service Registry initialized successfully with address:\n',
