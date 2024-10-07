@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { InfoIcon } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
 
 import {
   Card,
@@ -20,11 +21,26 @@ import {
 } from '@gigentic-frontend/ui-kit/ui';
 
 export default function Payment() {
+
+  const searchParams = useSearchParams()
   const [contractAddress, setContractAddress] = useState('')
   const [amount, setAmount] = useState('')
   const [agreed, setAgreed] = useState(false)
 
   const serviceAccountAddress = '8GEujj99kRkEcpJLSGXDj8L45u2daDYufMueu14q1t4c'
+
+  useEffect(() => {
+    const address = searchParams.get('address')
+    if (address) {
+      console.log('Setting contract address:', address)
+      setContractAddress(address)
+    }
+  }, [searchParams])
+
+    // Add this useEffect for debugging
+    useEffect(() => {
+      console.log('Current contract address state:', contractAddress)
+    }, [contractAddress])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -58,7 +74,10 @@ export default function Payment() {
                   type="text"
                   placeholder="Enter contract address"
                   value={contractAddress}
-                  onChange={(e) => setContractAddress(e.target.value)}
+                  onChange={(e) => {
+                    console.log('Input changed:', e.target.value)
+                    setContractAddress(e.target.value)
+                  }}
                   className="w-full pl-3 pr-10 py-2 rounded-md shadow-sm"
                   required
                 />
