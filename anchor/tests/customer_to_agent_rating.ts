@@ -1,17 +1,17 @@
-import { SERVICE_REGISTRY_KEYPAIR } from './constants';
+import { TEST_SERVICE_REGISTRY_KEYPAIR } from './constants';
 import { program, connection } from './init';
 import { fund_account } from './utils';
 import { PublicKey } from '@solana/web3.js';
 import * as anchor from '@coral-xyz/anchor';
 import { SendTransactionError } from '@solana/web3.js';
 import { expect } from 'chai';
-import { SERVICE_DEPLOYERS, SERVICE_USERS } from './constants';
+import { TEST_SERVICE_DEPLOYERS, TEST_SERVICE_USERS } from './constants';
 
 describe('Customer to agent review', () => {
   it('Gives the service review to the customer and checks if the review has the values assigned', async () => {
     // Select the buyer (consumer) from the predefined list of service users
     // The buyer will be reviewing the service provided by the agent
-    const buyer = SERVICE_USERS[0];
+    const buyer = TEST_SERVICE_USERS[0];
 
     // Fund the buyer's account with enough SOL to pay transaction fees
     await fund_account(connection, buyer.publicKey);
@@ -29,7 +29,7 @@ describe('Customer to agent review', () => {
     // Fetch the service registry account using the program and its public key.
     // The service registry holds references to the services deployed by agents.
     const serviceRegistry = await program.account.serviceRegistry.fetch(
-      SERVICE_REGISTRY_KEYPAIR.publicKey,
+      TEST_SERVICE_REGISTRY_KEYPAIR.publicKey,
     );
 
     // Retrieve the public key of the first service account from the service registry
@@ -89,7 +89,7 @@ describe('Customer to agent review', () => {
 
     // Validate that the service provider stored in the review account matches the expected service provider
     expect(reviewAccount.serviceProvider.toBase58()).to.equal(
-      SERVICE_DEPLOYERS[0].publicKey.toBase58(),
+      TEST_SERVICE_DEPLOYERS[0].publicKey.toBase58(),
       'The service provider in the review account should match the service provider who owns the service.',
     );
 

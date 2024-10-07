@@ -1,16 +1,16 @@
-import { SERVICE_REGISTRY_KEYPAIR } from './constants';
+import { TEST_SERVICE_REGISTRY_KEYPAIR } from './constants';
 import { program, connection } from './init';
 import { fund_account } from './utils';
 import { PublicKey } from '@solana/web3.js';
 import * as anchor from '@coral-xyz/anchor';
 import { SendTransactionError } from '@solana/web3.js';
 import { expect } from 'chai';
-import { SERVICE_DEPLOYERS, SERVICE_USERS } from './constants';
+import { TEST_SERVICE_DEPLOYERS, TEST_SERVICE_USERS } from './constants';
 
 describe('Gigentic Service Buying', () => {
   it('Checks if the service is paid correctly and escrow has the correct values', async () => {
     // Select the buyer from the predefined service users
-    const buyer = SERVICE_USERS[0];
+    const buyer = TEST_SERVICE_USERS[0];
 
     // Fund the buyer's account
     await fund_account(connection, buyer.publicKey);
@@ -25,7 +25,7 @@ describe('Gigentic Service Buying', () => {
 
     // Fetch the service registry account
     const serviceRegistry = await program.account.serviceRegistry.fetch(
-      SERVICE_REGISTRY_KEYPAIR.publicKey,
+      TEST_SERVICE_REGISTRY_KEYPAIR.publicKey,
     );
 
     // Get the public key of the service account from the registry
@@ -42,7 +42,7 @@ describe('Gigentic Service Buying', () => {
         .accounts({
           buyer: buyer.publicKey,
           service: serviceAccountPubKey,
-          serviceRegistry: SERVICE_REGISTRY_KEYPAIR.publicKey,
+          serviceRegistry: TEST_SERVICE_REGISTRY_KEYPAIR.publicKey,
         })
         .instruction(),
     );
@@ -90,7 +90,8 @@ describe('Gigentic Service Buying', () => {
     ).to.equal(expectedBuyer);
 
     // Check if the escrow account has the correct service provider
-    const expectedServiceProvider = SERVICE_DEPLOYERS[0].publicKey.toBase58();
+    const expectedServiceProvider =
+      TEST_SERVICE_DEPLOYERS[0].publicKey.toBase58();
     expect(
       escrowAccount.serviceProvider.toBase58(),
       "Escrow account service provider should match the service deployer's public key",

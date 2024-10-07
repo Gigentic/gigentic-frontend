@@ -1,22 +1,22 @@
-import { SERVICE_REGISTRY_KEYPAIR } from './constants';
+import { TEST_SERVICE_REGISTRY_KEYPAIR } from './constants';
 import { program, connection } from './init';
 // import { fund_account } from './utils';
 import { PublicKey } from '@solana/web3.js';
 import * as anchor from '@coral-xyz/anchor';
 import { SendTransactionError } from '@solana/web3.js';
 import { expect } from 'chai';
-import { SERVICE_DEPLOYERS } from './constants';
+import { TEST_SERVICE_DEPLOYERS } from './constants';
 
 describe('Agent to customer review', () => {
   it('Rates the customer through the service provider and checks if the values are initialized correctly', async () => {
     // Select the service provider from the predefined service deployers array
     // Assume the service provider is the first one in the SERVICE_DEPLOYERS array
-    const serviceProvider = SERVICE_DEPLOYERS[0];
+    const serviceProvider = TEST_SERVICE_DEPLOYERS[0];
 
     // Fetch the service registry account from the program, using its public key.
     // This registry holds references to various service accounts.
     const serviceRegistry = await program.account.serviceRegistry.fetch(
-      SERVICE_REGISTRY_KEYPAIR.publicKey,
+      TEST_SERVICE_REGISTRY_KEYPAIR.publicKey,
     );
 
     // Retrieve the public key of the first service account from the service registry
