@@ -46,3 +46,20 @@ export function loadKeypairBs58FromEnv(envVarName: string): Keypair {
   if (!encodedKey) throw new Error(`${envVarName} is not set`);
   return Keypair.fromSecretKey(bs58.decode(encodedKey));
 }
+
+// Airdrop SOL to a given public key
+export async function airdrop(connection: Connection, deployer: PublicKey) {
+  try {
+    const airdropAmount = 3 * LAMPORTS_PER_SOL;
+    const airdropSignature = await connection.requestAirdrop(
+      deployer,
+      airdropAmount,
+    );
+    await connection.confirmTransaction(airdropSignature, 'confirmed');
+    console.log(
+      `Airdropped ${airdropAmount / LAMPORTS_PER_SOL} SOL to ${deployer.toString()}`,
+    );
+  } catch (error) {
+    console.error('Error airdropping SOL:', error);
+  }
+}
