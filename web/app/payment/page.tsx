@@ -1,5 +1,5 @@
-import Payment from "@/components/payment/payment";
+import EscrowManagement from "@/components/payment/EscrowManagement";
 
 export default function PaymentPage() {
-  return <Payment />;
+  return <EscrowManagement />;
 }
