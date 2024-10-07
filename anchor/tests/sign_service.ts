@@ -1,25 +1,24 @@
-import * as anchor from "@coral-xyz/anchor";
-import { PublicKey } from "@solana/web3.js";
-import { expect } from "chai";
-import { Keypair } from "@solana/web3.js";
-import { program, connection } from "./init";
+import * as anchor from '@coral-xyz/anchor';
+import { PublicKey } from '@solana/web3.js';
+import { expect } from 'chai';
+import { program, connection } from './init';
 import {
-  SERVICE_REGISTRY_KEYPAIR,
-  SERVICE_DEPLOYERS,
-  SERVICE_USERS,
-  FEE_ACCOUNT,
+  TEST_SERVICE_REGISTRY_KEYPAIR,
+  TEST_SERVICE_DEPLOYERS,
+  TEST_SERVICE_USERS,
+  TEST_FEE_ACCOUNT,
   FEE_PERCENTAGE,
-} from "./constants";
-import { SendTransactionError } from "@solana/web3.js";
+} from './constants';
+import { SendTransactionError } from '@solana/web3.js';
 
-describe("SignService: Transfers money to the service provider and sends fees to the fee account", () => {
-  it("Transfers money to the service provider and sends fees", async () => {
+describe('SignService: Transfers money to the service provider and sends fees to the fee account', () => {
+  it('Transfers money to the service provider and sends fees', async () => {
     // Select the buyer from the predefined service users
-    const buyer = SERVICE_USERS[0];
+    const buyer = TEST_SERVICE_USERS[0];
 
     // Fetch the service registry account
     const serviceRegistry = await program.account.serviceRegistry.fetch(
-      SERVICE_REGISTRY_KEYPAIR.publicKey,
+      TEST_SERVICE_REGISTRY_KEYPAIR.publicKey,
     );
 
     // Get the public key of the service account from the registry
@@ -31,7 +30,7 @@ describe("SignService: Transfers money to the service provider and sends fees to
 
     // Find the program address for the escrow account
     const [escrowPubKey, escrowBump] = PublicKey.findProgramAddressSync(
-      [Buffer.from("escrow"), serviceAccountPubKey.toBuffer()],
+      [Buffer.from('escrow'), serviceAccountPubKey.toBuffer()],
       program.programId,
     );
 
@@ -45,8 +44,8 @@ describe("SignService: Transfers money to the service provider and sends fees to
         .accounts({
           signer: buyer.publicKey,
           service: serviceAccountPubKey,
-          serviceProvider: SERVICE_DEPLOYERS[0].publicKey,
-          feeAccount: FEE_ACCOUNT.publicKey,
+          serviceProvider: TEST_SERVICE_DEPLOYERS[0].publicKey,
+          feeAccount: TEST_FEE_ACCOUNT.publicKey,
         })
         .signers([buyer])
         .instruction(),
@@ -57,12 +56,12 @@ describe("SignService: Transfers money to the service provider and sends fees to
 
     // Get the balance of the service provider account before the transaction
     const balancebeforeServiceProviderAccount = await connection.getBalance(
-      SERVICE_DEPLOYERS[0].publicKey,
+      TEST_SERVICE_DEPLOYERS[0].publicKey,
     );
 
     // Get the balance of the fee account before the transaction
     const balancebeforeFeeAccount = await connection.getBalance(
-      FEE_ACCOUNT.publicKey,
+      TEST_FEE_ACCOUNT.publicKey,
     );
 
     // Send and confirm the transaction
@@ -73,21 +72,24 @@ describe("SignService: Transfers money to the service provider and sends fees to
         [buyer],
       );
     } catch (err) {
+      // Handle transaction errors
       if (err instanceof SendTransactionError) {
-        const logs = await err.getLogs(connection);
-        console.error("Transaction Logs:", logs);
+        console.error('SendTransactionError:', err.message);
+        // If there's an error, retrieve and log the transaction's logs for debugging
+        // const logs = await err.getLogs(connection);
+        // console.error('Transaction Logs:', logs);
       }
       throw err;
     }
 
     // Get the balance of the service provider account after the transaction
     const balanceAfterServiceProviderAccount = await connection.getBalance(
-      SERVICE_DEPLOYERS[0].publicKey,
+      TEST_SERVICE_DEPLOYERS[0].publicKey,
     );
 
     // Get the balance of the fee account after the transaction
     const balanceAfterFeeAccount = await connection.getBalance(
-      FEE_ACCOUNT.publicKey,
+      TEST_FEE_ACCOUNT.publicKey,
     );
 
     // Check if the fee percentage is defined and assert the fee account balance increased

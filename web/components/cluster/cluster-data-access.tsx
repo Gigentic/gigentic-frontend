@@ -30,20 +30,20 @@ export const defaultClusters: Cluster[] = [
     network: ClusterNetwork.Devnet,
   },
   { name: 'local', endpoint: 'http://localhost:8899' },
-  {
-    name: 'testnet',
-    endpoint: clusterApiUrl('testnet'),
-    network: ClusterNetwork.Testnet,
-  },
+  // {
+  //   name: 'testnet',
+  //   endpoint: clusterApiUrl('testnet'),
+  //   network: ClusterNetwork.Testnet,
+  // },
 ];
 
 const clusterAtom = atomWithStorage<Cluster>(
   'solana-cluster',
-  defaultClusters[0]
+  defaultClusters[0],
 );
 const clustersAtom = atomWithStorage<Cluster[]>(
   'solana-clusters',
-  defaultClusters
+  defaultClusters,
 );
 
 const activeClustersAtom = atom<Cluster[]>((get) => {
@@ -71,7 +71,7 @@ export interface ClusterProviderContext {
 }
 
 const Context = createContext<ClusterProviderContext>(
-  {} as ClusterProviderContext
+  {} as ClusterProviderContext,
 );
 
 export function ClusterProvider({ children }: { children: ReactNode }) {

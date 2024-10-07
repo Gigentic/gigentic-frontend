@@ -1,16 +1,16 @@
-import { SERVICE_REGISTRY_KEYPAIR } from "./constants";
-import { program, connection } from "./init";
-import { fund_account } from "./utils";
-import { PublicKey } from "@solana/web3.js";
-import * as anchor from "@coral-xyz/anchor";
-import { SendTransactionError } from "@solana/web3.js";
-import { expect } from "chai";
-import { SERVICE_DEPLOYERS, SERVICE_USERS } from "./constants";
+import { TEST_SERVICE_REGISTRY_KEYPAIR } from './constants';
+import { program, connection } from './init';
+import { fund_account } from './utils';
+import { PublicKey } from '@solana/web3.js';
+import * as anchor from '@coral-xyz/anchor';
+import { SendTransactionError } from '@solana/web3.js';
+import { expect } from 'chai';
+import { TEST_SERVICE_DEPLOYERS, TEST_SERVICE_USERS } from './constants';
 
-describe("Gigentic Service Buying", () => {
-  it("Checks if the service is paid correctly and escrow has the correct values", async () => {
+describe('Gigentic Service Buying', () => {
+  it('Checks if the service is paid correctly and escrow has the correct values', async () => {
     // Select the buyer from the predefined service users
-    const buyer = SERVICE_USERS[0];
+    const buyer = TEST_SERVICE_USERS[0];
 
     // Fund the buyer's account
     await fund_account(connection, buyer.publicKey);
@@ -19,13 +19,13 @@ describe("Gigentic Service Buying", () => {
     // Check if the buyer has enough SOL to pay transaction fees
     if (buyerBalance < 0.01 * anchor.web3.LAMPORTS_PER_SOL) {
       throw new Error(
-        "Buyer does not have enough SOL to pay transaction fees.",
+        'Buyer does not have enough SOL to pay transaction fees.',
       );
     }
 
     // Fetch the service registry account
     const serviceRegistry = await program.account.serviceRegistry.fetch(
-      SERVICE_REGISTRY_KEYPAIR.publicKey,
+      TEST_SERVICE_REGISTRY_KEYPAIR.publicKey,
     );
 
     // Get the public key of the service account from the registry
@@ -42,7 +42,7 @@ describe("Gigentic Service Buying", () => {
         .accounts({
           buyer: buyer.publicKey,
           service: serviceAccountPubKey,
-          serviceRegistry: SERVICE_REGISTRY_KEYPAIR.publicKey,
+          serviceRegistry: TEST_SERVICE_REGISTRY_KEYPAIR.publicKey,
         })
         .instruction(),
     );
@@ -58,15 +58,17 @@ describe("Gigentic Service Buying", () => {
     } catch (err) {
       // Handle transaction errors
       if (err instanceof SendTransactionError) {
-        const logs = await err.getLogs(connection);
-        console.error("Transaction Logs:", logs);
+        console.error('SendTransactionError:', err.message);
+        // If there's an error, retrieve and log the transaction's logs for debugging
+        // const logs = await err.getLogs(connection);
+        // console.error('Transaction Logs:', logs);
       }
       throw err;
     }
 
     // Find the program address for the escrow account
     const [escrowPubKey] = PublicKey.findProgramAddressSync(
-      [Buffer.from("escrow"), serviceAccountPubKey.toBuffer()],
+      [Buffer.from('escrow'), serviceAccountPubKey.toBuffer()],
       program.programId,
     );
 
@@ -77,18 +79,19 @@ describe("Gigentic Service Buying", () => {
     const expectedAmount = serviceAccount.price;
     expect(
       escrowAccount.expectedAmount.toString(),
-      "Escrow account expected amount should match the service price",
+      'Escrow account expected amount should match the service price',
     ).to.equal(expectedAmount.toString());
 
     // Check if the escrow account has the correct buyer
     const expectedBuyer = buyer.publicKey.toBase58();
     expect(
       escrowAccount.buyer.toBase58(),
-      "Escrow account buyer should match the buyer public key",
+      'Escrow account buyer should match the buyer public key',
     ).to.equal(expectedBuyer);
 
     // Check if the escrow account has the correct service provider
-    const expectedServiceProvider = SERVICE_DEPLOYERS[0].publicKey.toBase58();
+    const expectedServiceProvider =
+      TEST_SERVICE_DEPLOYERS[0].publicKey.toBase58();
     expect(
       escrowAccount.serviceProvider.toBase58(),
       "Escrow account service provider should match the service deployer's public key",

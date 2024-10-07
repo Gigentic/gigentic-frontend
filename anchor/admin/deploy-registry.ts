@@ -1,78 +1,62 @@
-import * as fs from 'fs';
-import * as bs58 from 'bs58';
+import * as dotenv from 'dotenv';
 
-import { Program, workspace, setProvider, BN } from '@coral-xyz/anchor';
+import { Program, workspace, setProvider } from '@coral-xyz/anchor';
 
 import {
-  Keypair,
   Connection,
   SystemProgram,
   Transaction,
   sendAndConfirmTransaction,
-  PublicKey,
-  LAMPORTS_PER_SOL,
 } from '@solana/web3.js';
 
-import { TOKEN_PROGRAM_ID, createMint } from '@solana/spl-token';
-
 import { Gigentic } from '../target/types/gigentic';
+import { PROVIDER } from '../tests/constants';
+import { loadKeypairBs58FromEnv, airdrop } from '../tests/utils';
 
-import {
-  PROVIDER,
-  SERVICE_DEPLOYERS,
-  SERVICE_REGISTRY_KEYPAIR,
-  DEPLOYER_KEYPAIR_PATH,
-  SERVICE_DEPLOYER,
-} from '../tests/constants';
+dotenv.config();
 
-// Configure the client to use the local cluster.
+// Configure the client to use the local cluster
 setProvider(PROVIDER);
 
-// Initialize connection to the Solana network using the provided anchor provider
-export const connection: Connection = PROVIDER.connection;
+// Initialize connection and program
+const connection: Connection = PROVIDER.connection;
+const program: Program<Gigentic> = workspace.Gigentic as Program<Gigentic>;
 
-// Initialize the program
-export const program: Program<Gigentic> =
-  workspace.Gigentic as Program<Gigentic>;
-
-// Load the "deployer" admin keypair which is used to deploy the program and create the service registry
-const deployerKeypair = JSON.parse(
-  fs.readFileSync(DEPLOYER_KEYPAIR_PATH, 'utf8'),
+// Load service registry keypairs
+const serviceRegistryDeployer = loadKeypairBs58FromEnv(
+  'SERVICE_REGISTRY_DEPLOYER',
 );
-const deployer = Keypair.fromSecretKey(new Uint8Array(deployerKeypair));
-console.log('deployer', deployer.publicKey.toString());
-
-// Load the service deployer keypair which is used to create the service
-const serviceDeployer = Keypair.fromSecretKey(bs58.decode(SERVICE_DEPLOYER));
-console.log('serviceDeployerKeypair', serviceDeployer.publicKey.toString());
-
-let mint: PublicKey;
+const serviceRegistryKeypair = loadKeypairBs58FromEnv(
+  'SERVICE_REGISTRY_KEYPAIR',
+);
+console.log(
+  'serviceRegistryDeployer',
+  serviceRegistryDeployer.publicKey.toString(),
+);
+console.log(
+  'serviceRegistryKeypair',
+  serviceRegistryKeypair.publicKey.toString(),
+);
 
 async function initServiceRegistry() {
   try {
-    // Generate a new Keypair for the service registry
-    const serviceRegistryKeypair = SERVICE_REGISTRY_KEYPAIR;
-    console.log(
-      'Generated new Keypair for Service Registry:',
-      serviceRegistryKeypair.publicKey.toString(),
-    );
+    // console.log('Initializing Service Registry...');
 
-    console.log('Initializing Service Registry...');
-
-    const feeAccount = deployer.publicKey;
+    const feeAccount = serviceRegistryDeployer.publicKey;
     console.log('Fee Account Public Key:', feeAccount.toString());
 
     const feePercentage = 0;
     console.log('Fee Percentage:', feePercentage);
 
     // Create the service registry account
-    const serviceRegistryAccountSize = 200; // Adjust the size based on the ServiceRegistry struct
+    const serviceRegistryAccountSize = 20000; // Adjust the size based on the ServiceRegistry struct
     const rentExemptionAmount =
       await connection.getMinimumBalanceForRentExemption(
         serviceRegistryAccountSize,
       );
+    console.log('Rent Exemption Amount: ', rentExemptionAmount);
     const createAccountParams = {
-      fromPubkey: deployer.publicKey, // Account paying for the creation of the new account
+      fromPubkey: serviceRegistryDeployer.publicKey, // Account paying for the creation of the new account
       newAccountPubkey: serviceRegistryKeypair.publicKey, // Public key of the new account to be created
       lamports: rentExemptionAmount, // Amount of SOL (in lamports) to transfer for rent exemption
       space: serviceRegistryAccountSize, // Amount of space (in bytes) to allocate for the new account
@@ -82,41 +66,23 @@ async function initServiceRegistry() {
       SystemProgram.createAccount(createAccountParams),
     );
     await sendAndConfirmTransaction(connection, createAccountTransaction, [
-      deployer,
+      serviceRegistryDeployer,
       serviceRegistryKeypair,
     ]);
 
     const transactionSignature = await program.methods
       .initializeServiceRegistry(feeAccount, feePercentage)
       .accounts({
-        initializer: deployer.publicKey,
+        initializer: serviceRegistryDeployer.publicKey,
         serviceRegistry: serviceRegistryKeypair.publicKey,
       })
-      .signers([deployer])
+      .signers([serviceRegistryDeployer])
       .rpc();
     console.log(`Transaction Signature: ${transactionSignature}`);
 
-    const fetchedRegistryAccount = await program.account.serviceRegistry.fetch(
-      serviceRegistryKeypair.publicKey,
-    );
-
-    console.log('Fetched Service Registry account:', fetchedRegistryAccount);
+    console.log('');
     console.log(
-      'Service Registry fee account:',
-      fetchedRegistryAccount.feeAccount.toString(),
-    );
-    console.log(
-      'Service Registry fee percentage:',
-      fetchedRegistryAccount.feePercentage,
-    );
-    console.log(
-      'Service Registry service account addresses:',
-      fetchedRegistryAccount.serviceAccountAddresses,
-    );
-
-    console.log('Service Registry initialized successfully!');
-    console.log(
-      'Service Registry address:',
+      'Service Registry initialized successfully with address:\n',
       serviceRegistryKeypair.publicKey.toString(),
     );
   } catch (error) {
@@ -124,62 +90,30 @@ async function initServiceRegistry() {
   }
 }
 
-async function createService() {
-  try {
-    mint = await createMint(
-      connection,
-      deployer, // Fee deployer for the mint creation
-      deployer.publicKey, // Mint authority that can mint new tokens
-      deployer.publicKey, // Freeze authority (can be set to `null` to disable freezing)
-      8, // Number of decimals for the mint (similar to a currency's smallest unit)
-    );
-
-    const serviceRegistryKeypair = SERVICE_REGISTRY_KEYPAIR;
-    const descriptions = [
-      'Leverage our AI agent for advanced data analysis, turning complex data into actionable insights for your business.',
-      'Our AI-powered NLP solutions help you understand and interact with text and speech, improving communication and automation.',
-      'Unlock the power of computer vision to automate image recognition, object detection, and visual data processing.',
-      'Use our AI-driven predictive models to forecast trends, optimize operations, and make informed decisions.',
-      'Maximize your system’s performance through AI agents trained with reinforcement learning, perfect for complex decision-making tasks.',
-    ];
-    const price = [100, 200, 300, 400, 500];
-
-    for (let i = 0; i < 1; i++) {
-      await program.methods
-        .initializeService(descriptions[i], new BN(price[i]))
-        .accounts({
-          provider: serviceDeployer.publicKey,
-          serviceRegistry: SERVICE_REGISTRY_KEYPAIR.publicKey,
-          mint: mint,
-          tokenProgram: TOKEN_PROGRAM_ID,
-        })
-        .signers([serviceDeployer]) // Include both deployer and the new service keypair as signers
-        .rpc();
-    }
-
-    const serviceRegistry = await program.account.serviceRegistry.fetch(
-      SERVICE_REGISTRY_KEYPAIR.publicKey,
-    );
-    console.log('Service Registry:', serviceRegistry);
-
-    for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
-      const serviceAccount =
-        await program.account.service.fetch(serviceAddress);
-      console.log('Service Account:', serviceAccount);
-      console.log('Service Account Address:', serviceAddress.toString());
-      console.log('Service Account Description:', serviceAccount.description);
-      console.log('Service Account Price:', serviceAccount.price.toString());
-      console.log('Service Account Mint:', serviceAccount.mint.toString());
-    }
-  } catch (error) {
-    console.error('Error creating service:', error);
-  }
-}
-
 async function main() {
   try {
+    console.log('========== Airdrop serviceRegistry deployer');
+    await airdrop(connection, serviceRegistryDeployer.publicKey);
+    console.log('\n');
+
+    console.log('========== Initialize service registry');
     await initServiceRegistry();
-    await createService();
+    console.log('\n');
+
+    console.log('========== Read service registry');
+    const serviceRegistry = await program.account.serviceRegistry.fetch(
+      serviceRegistryKeypair.publicKey,
+    );
+
+    for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
+      console.log('Service Account Address:', serviceAddress.toString());
+
+      const serviceAccount =
+        await program.account.service.fetch(serviceAddress);
+      // console.log('Service Account Unique ID:', serviceAccount.uniqueId);
+      console.log('Service Account Description:', serviceAccount.description);
+      console.log('Service Account Price:', serviceAccount.price.toString());
+    }
   } catch (error) {
     console.error('Error in main execution:', error);
   }

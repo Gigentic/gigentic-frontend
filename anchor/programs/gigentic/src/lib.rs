@@ -11,7 +11,7 @@ use contexts::pay_service::*;
 use contexts::sign_service::*;
 use errors::ErrorCode;
 
-declare_id!("7JynKYjRNQq3JH6XEGzHLuKtkyWe9yh52KiArwQjxUKz");
+declare_id!("3E8qHURSLd6P1cWR5Bwbekvn9P9cwN637dhjNRsVwuCH");
 
 #[program]
 pub mod gigentic {
@@ -28,6 +28,7 @@ pub mod gigentic {
 
     pub fn initialize_service(
         ctx: Context<InitializeService>,
+        unique_id: String,
         description: String,
         price: u64,
     ) -> Result<()> {
@@ -36,7 +37,7 @@ pub mod gigentic {
             ErrorCode::DescriptionTooLong
         );
 
-        ctx.accounts.handler(description, price)?;
+        ctx.accounts.handler(unique_id, description, price)?;
         Ok(())
     }
 

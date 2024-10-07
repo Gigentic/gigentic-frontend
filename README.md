@@ -1,3 +1,31 @@
+# new notes to deploy to localnet:
+
+restart program:
+rm -rf test-ledger; solana-test-validator
+solana-keygen new --no-bip39-passphrase --force
+yarn anchor deploy
+
+yarn anchor run deploy-registry
+
+---
+
+solana-keygen new --no-bip39-passphrase --force
+solana config set --url localhost
+
+in new tab:
+rm -rf test-ledger; solana-test-validator
+
+yarn anchor build
+yarn anchor-keys
+yarn anchor deploy
+yarn anchor-test
+
+---
+
+from here we can re-run scripts:
+
+yarn anchor run deploy-registry
+
 # new notes to deploy to devnet:
 
 solana-keygen new
@@ -17,8 +45,6 @@ connect to devnet:
 
 `solana config set --url https://api.devnet.solana.com`
 
-fix admin-key.json location in constants.ts TODO
-
 default keypair location on Mac OS:
 `/Users/marci/.config/solana/id.json`
 
@@ -32,40 +58,25 @@ run service registry deployer script:
 
 initialize script pointed at devnet:
 
-`anchor run initRegistry --provider.cluster devnet`
-
 # Gigentic Frontend
 
-Solana Anchor + Next.js Full Stack Setup
-
-This project was generated with the [create-solana-dapp](https://github.com/solana-developers/create-solana-dapp) generator.
+Solana anchor + Next.js full stack setup generated with the [create-solana-dapp](https://github.com/solana-developers/create-solana-dapp) generator.
 
 Notes:
 
-- make sure to downgrade rust to version rustc 1.79.0 to avoid problems running anchor
+- Make sure to downgrade rust to version rustc 1.79.0 to avoid problems running anchor
 
-`npx create-solana-dapp@latest`
-
-- Project name: gigentic-frontend
 - Next.js
 - Tailwind
 - Counter Anchor template program
 
-Go to the project folder:
-
-`cd gigentic-frontend`
-
-Delete `package-lock.json` file:
-
-`rm package-lock.json`
-
-Delete `node_modules` folder:
-
-`rm -rf node_modules`
-
 Install dependencies in main gigentic-frontend folder:
-
 `yarn`
+
+### Run frontend
+
+In main gigentic-frontend folder:
+`yarn dev`
 
 #### Local validator setup
 
@@ -75,7 +86,7 @@ Clear validator state:
 Start local validator:
 `solana-test-validator`
 
-### Chain code setup
+### Chain code test and typescript setup
 
 Set up libs in main anchor folder as well
 
@@ -92,12 +103,9 @@ Set up libs in main anchor folder as well
 
 `anchor test --skip-local-validator`
 
-### Run frontend
+### .env file setup
 
 Set up .env file. (See Google folder for sample keys for a reproducible local-dev setup.)
-
-In main gigentic-frontend folder:
-`yarn dev`
 
 ==============================================================================
 

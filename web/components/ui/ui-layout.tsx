@@ -16,7 +16,7 @@ import {
 import toast, { Toaster } from 'react-hot-toast';
 
 import GigenticDemo from '@/components/gigentic-frontend/gigentic-demo';
-import SearchAgent from '../search-agent/search-agent';
+import Search from '../search-agent/search';
 import GigenticInterface from '../gigentic-frontend/gigentic-interface';
 import { ThemeProvider } from '@/components/theme-provider';
 
@@ -61,16 +61,20 @@ export function UiLayout({
 
   return (
     <div>
-      <ThemeProvider
+      {/* <ThemeProvider
         attribute="class"
         defaultTheme="light"
         enableSystem
         disableTransitionOnChange
-      >
-        <div className="flex flex-col min-h-screen">
-          <header className="flex items-center justify-between p-4 border-b shadow-sm">
-            <div className="flex items-center space-x-4">
-              <div className="relative w-10 h-10">
+      > */}
+
+      {/* <Search /> */}
+
+      <div className="flex flex-col min-h-screen">
+        <header className="flex items-center justify-between p-4 border-b shadow-sm">
+          <div className="flex items-center space-x-4">
+            <div className="relative w-10 h-10">
+              <Link href="/">
                 <Image
                   src="/logo-g.png"
                   alt="Gigentic Logo"
@@ -78,13 +82,14 @@ export function UiLayout({
                   height={341}
                   priority
                 />
-              </div>
-              <nav className="flex items-center">
-                <ul className="flex space-x-4">
-                  {links.map(({ label, path }) => (
-                    <li key={path}>
-                      <Link
-                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors
+              </Link>
+            </div>
+            <nav className="flex items-center">
+              <ul className="flex space-x-4">
+                {links.map(({ label, path }) => (
+                  <li key={path}>
+                    <Link
+                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors
                           ${pathname.startsWith(path) ? 'border-2 border-primary' : 'hover:underline'}
                         `}
                         href={path}

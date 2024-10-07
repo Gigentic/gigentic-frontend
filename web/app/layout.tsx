@@ -5,6 +5,7 @@ import { SolanaProvider } from '@/components/solana/solana-provider';
 import { ReactQueryProvider } from './react-query-provider';
 
 import { AI } from '@/app/actions';
+import { ThemeProvider } from 'next-themes';
 
 export const metadata = {
   title: 'gigentic-frontend',
@@ -24,8 +25,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    // <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <body>
+        {/* <ThemeProvider> */}
         <ReactQueryProvider>
           <ClusterProvider>
             <SolanaProvider>
@@ -35,6 +38,7 @@ export default function RootLayout({
             </SolanaProvider>
           </ClusterProvider>
         </ReactQueryProvider>
+        {/* </ThemeProvider> */}
       </body>
     </html>
   );
