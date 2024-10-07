@@ -1,7 +1,7 @@
-import * as fs from 'fs';
+// import * as fs from 'fs';
 import * as bs58 from 'bs58';
 import * as dotenv from 'dotenv';
-import * as anchor from '@coral-xyz/anchor';
+// import * as anchor from '@coral-xyz/anchor';
 
 import { Program, workspace, setProvider } from '@coral-xyz/anchor';
 
@@ -18,7 +18,7 @@ import { services } from './Services'; // Import services from Services.ts
 import { createMint } from '@solana/spl-token';
 
 import { Gigentic } from '../target/types/gigentic';
-import { PROVIDER, SERVICE_REGISTRY_KEYPAIR } from '../tests/constants';
+import { PROVIDER } from '../tests/constants';
 
 import { createService } from './createService';
 dotenv.config();
@@ -37,11 +37,24 @@ setProvider(PROVIDER);
 const connection: Connection = PROVIDER.connection;
 const program: Program<Gigentic> = workspace.Gigentic as Program<Gigentic>;
 
-// Load keypairs
-const programDeployer = loadKeypairBs58FromEnv('PROGRAM_DEPLOYER');
-const serviceDeployer = loadKeypairBs58FromEnv('SERVICE_DEPLOYER');
+// Load service registry keypairs
+const serviceRegistryDeployer = loadKeypairBs58FromEnv(
+  'SERVICE_REGISTRY_DEPLOYER',
+);
+const serviceRegistryKeypair = loadKeypairBs58FromEnv(
+  'SERVICE_REGISTRY_KEYPAIR',
+);
+console.log(
+  'serviceRegistryDeployer',
+  serviceRegistryDeployer.publicKey.toString(),
+);
+console.log(
+  'serviceRegistryKeypair',
+  serviceRegistryKeypair.publicKey.toString(),
+);
 
-console.log('programDeployer', programDeployer.publicKey.toString());
+// Load service deployer keypair
+const serviceDeployer = loadKeypairBs58FromEnv('SERVICE_DEPLOYER');
 console.log('serviceDeployer', serviceDeployer.publicKey.toString());
 
 let mint: PublicKey;
@@ -64,16 +77,9 @@ async function airdrop(deployer: PublicKey) {
 
 async function initServiceRegistry() {
   try {
-    // Generate a new Keypair for the service registry
-    const serviceRegistryKeypair = SERVICE_REGISTRY_KEYPAIR;
-    console.log(
-      'Generated new Keypair for Service Registry:',
-      serviceRegistryKeypair.publicKey.toString(),
-    );
-
     console.log('Initializing Service Registry...');
 
-    const feeAccount = programDeployer.publicKey;
+    const feeAccount = serviceRegistryDeployer.publicKey;
     console.log('Fee Account Public Key:', feeAccount.toString());
 
     const feePercentage = 0;
@@ -87,7 +93,7 @@ async function initServiceRegistry() {
       );
     console.log('Rent Exemption Amount: ', rentExemptionAmount);
     const createAccountParams = {
-      fromPubkey: programDeployer.publicKey, // Account paying for the creation of the new account
+      fromPubkey: serviceRegistryDeployer.publicKey, // Account paying for the creation of the new account
       newAccountPubkey: serviceRegistryKeypair.publicKey, // Public key of the new account to be created
       lamports: rentExemptionAmount, // Amount of SOL (in lamports) to transfer for rent exemption
       space: serviceRegistryAccountSize, // Amount of space (in bytes) to allocate for the new account
@@ -97,17 +103,17 @@ async function initServiceRegistry() {
       SystemProgram.createAccount(createAccountParams),
     );
     await sendAndConfirmTransaction(connection, createAccountTransaction, [
-      programDeployer,
+      serviceRegistryDeployer,
       serviceRegistryKeypair,
     ]);
 
     const transactionSignature = await program.methods
       .initializeServiceRegistry(feeAccount, feePercentage)
       .accounts({
-        initializer: programDeployer.publicKey,
+        initializer: serviceRegistryDeployer.publicKey,
         serviceRegistry: serviceRegistryKeypair.publicKey,
       })
-      .signers([programDeployer])
+      .signers([serviceRegistryDeployer])
       .rpc();
     console.log(`Transaction Signature: ${transactionSignature}`);
 
@@ -143,9 +149,9 @@ async function createMintToken() {
   try {
     mint = await createMint(
       connection,
-      programDeployer,
-      programDeployer.publicKey,
-      programDeployer.publicKey,
+      serviceRegistryDeployer,
+      serviceRegistryDeployer.publicKey,
+      serviceRegistryDeployer.publicKey,
       8,
     );
     console.log('Mint token created:', mint.toString());
@@ -156,31 +162,52 @@ async function createMintToken() {
 
 async function main() {
   try {
-    await airdrop(serviceDeployer.publicKey);
-    console.log('========== Airdropped service deployer');
-    console.log('\n');
-    await airdrop(programDeployer.publicKey);
-    console.log('========== Airdropped program deployer');
+    await airdrop(serviceRegistryDeployer.publicKey);
+    console.log('========== Airdropped serviceRegistry deployer');
     console.log('\n');
 
     await initServiceRegistry();
     console.log('========== Initialized service registry');
     console.log('\n');
+
     await createMintToken();
     console.log('========== Created mint token');
     console.log('\n');
 
+    await airdrop(serviceDeployer.publicKey);
+    console.log('========== Airdropped service deployer');
+    console.log('\n');
     for (let i = 0; i < services.length; i++) {
       // Update to use services array
       console.log(`Creating service ${i + 1}/${services.length}:`);
       await createService(
-        SERVICE_REGISTRY_KEYPAIR.publicKey,
+        serviceRegistryKeypair.publicKey,
         mint,
         program,
         services[i].price, // Use price from services
         services[i].description, // Use description from services
-        i.toString(),
+        i.toString(), // unique id
       );
+    }
+    const serviceRegistry = await program.account.serviceRegistry.fetch(
+      serviceRegistryKeypair.publicKey,
+    );
+    console.log('XXX pubkey', serviceRegistryKeypair.publicKey.toString());
+    console.log('XXX secretKey', serviceRegistryKeypair.secretKey.toString());
+
+    console.log('serviceRegistry.feePercentage');
+    console.log(serviceRegistry.feePercentage);
+
+    for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
+      console.log('Service Account Address:', serviceAddress.toString());
+
+      const serviceAccount =
+        await program.account.service.fetch(serviceAddress);
+      // console.log('Service Account:', serviceAccount);
+      // console.log('Service Account Unique ID:', serviceAccount.uniqueId);
+      console.log('Service Account Description:', serviceAccount.description);
+      console.log('Service Account Price:', serviceAccount.price.toString());
+      // console.log('Service Account Mint:', serviceAccount.mint.toString());
     }
   } catch (error) {
     console.error('Error in main execution:', error);
