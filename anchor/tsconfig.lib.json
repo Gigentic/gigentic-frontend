@@ -8,6 +8,10 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*.ts"],
+  "include": [
+    "src/**/*",
+    "target/idl/gigentic.json",
+    "target/types/gigentic.ts"
+  ],
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"]
 }

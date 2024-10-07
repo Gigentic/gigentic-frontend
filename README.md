@@ -1,12 +1,12 @@
 # new notes to deploy to localnet:
 
 restart program:
-rm -rf test-ledger; solana-test-validator
-solana-keygen new --no-bip39-passphrase --force
+solana-keygen new --no-bip39-passphrase --force; rm -rf test-ledger; solana-test-validator
+
 yarn anchor deploy
 
 yarn anchor run deploy-registry
-
+yarn anchor run write-services
 ---
 
 solana-keygen new --no-bip39-passphrase --force

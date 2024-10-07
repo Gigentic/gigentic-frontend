@@ -1,24 +1,102 @@
 'use server';
 
-import { createAI, getMutableAIState, streamUI } from 'ai/rsc';
-import type { CoreMessage, ToolInvocation } from "ai";
 import { ReactNode } from "react";
-import { openai } from "@ai-sdk/openai";
-import { BotCard, BotMessage } from "../components/llm/message";
 import { Loader2 } from "lucide-react";
+import type { CoreMessage, ToolInvocation } from "ai";
+import { createAI, getMutableAIState, streamUI } from 'ai/rsc';
+import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
+import { BotCard, BotMessage } from "../components/llm/message";
 import Price from "../components/ui/price";
 import PriceSkeleton from "../components/ui/price-skeleton";
 import FreelancerProfileCard from "../components/ui/freelancer-profile-card";
-// this is the system message we send to the LLM to instantiate it
-// gives it the context for tool callin
 
+import { Program, setProvider, AnchorProvider } from '@coral-xyz/anchor';// this is the system message we send to the LLM to instantiate it
+import { Keypair, Connection, PublicKey, Cluster } from '@solana/web3.js';
+
+// import { Gigentic } from '../../anchor/target/types/gigentic';
+// import { IDL } from '@coral-xyz/anchor/dist/cjs/native/system';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { loadKeypairBs58FromEnv } from '../../anchor/tests/utils';
+
+// Program Data Access
+// import {
+//   useGigenticProgram,
+// } from '../components/gigentic-frontend/gigentic-frontend-data-access';
+
+import {
+  getGigenticProgram,
+  getGigenticProgramId,
+} from '@gigentic-frontend/anchor';
+// import { useAnchorProvider } from "@/components/solana/solana-provider";
+// import { useCluster } from "@/components/cluster/cluster-data-access";
+
+
+// Initialize connection and program
+//const connection: Connection = PROVIDER.connection;
+//const program: Program<Gigentic> = workspace.Gigentic as Program<Gigentic>;
+//const { program } = useGigenticProgram();
+// const PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_GIGENTIC_PROGRAM_ID || '');
+// const program = new Program<Gigentic>(IDL, PROGRAM_ID, provider);
+
+
+
+async function fetchServiceRegistry() {
+
+// Create a new AnchorProvider
+
+// Initialize connection
+const connection = new Connection('http://localhost:8899');
+const provider = new AnchorProvider(connection, {} as any, { commitment: 'confirmed' });
+const programId = getGigenticProgramId('devnet');
+const program = getGigenticProgram(provider);
+
+  // Load service registry keypairs
+const serviceRegistryDeployer = loadKeypairBs58FromEnv(
+  'SERVICE_REGISTRY_DEPLOYER',
+);
+const serviceRegistryKeypair = loadKeypairBs58FromEnv(
+  'SERVICE_REGISTRY_KEYPAIR',
+);
+console.log(
+  'serviceRegistryDeployer',
+  serviceRegistryDeployer.publicKey.toString(),
+);
+console.log(
+  'serviceRegistryKeypair',
+  serviceRegistryKeypair.publicKey.toString(),
+);
+
+  // const { connection } = useConnection();
+  // const { program } = useGigenticProgram();
+
+
+  console.log('========== Fetch service registry');
+  const serviceRegistry = await program.account.serviceRegistry.fetch(
+    serviceRegistryKeypair.publicKey,
+  );
+
+  for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
+    console.log('Service Account Address:', serviceAddress.toString());
+
+    const serviceAccount =
+      await program.account.service.fetch(serviceAddress);
+    // console.log('Service Account Unique ID:', serviceAccount.uniqueId);
+    console.log('Service Account Description:', serviceAccount.description);
+    console.log('Service Account Price:', serviceAccount.price.toString());
+    // console.log('Service Account Mint:', serviceAccount.mint.toString());
+  }
+
+}
+
+
+// gives it the context for tool callin
 const prompt_instructions = `\
-  You are a assistant helping users finding the right freelancer for their project/task. 
-  
-    If the user is looking for help / a freelancer, look for the right freelancer or AI agent in the service registry and show a summary of the profile to the user by calling \`show_freelancer_profile\`, never return a profile summary in text format. Always give a only 1 option to the user to choose from. 
+  You are a assistant helping users finding the right freelancer for their project/task.
+
+    If the user is looking for help / a freelancer, look for the right freelancer or AI agent in the service registry and show a summary of the profile to the user by calling \`show_freelancer_profile\`, never return a profile summary in text format. Always give a only 1 option to the user to choose from.
     If the user wants the price of a cryptocurrency, call \`get_crypto_price\` to show the price of the cryptocurrency.
-    If the user wants anything else unrelated to the functions calls \`get_crypto_price\` or \`show_freelancer_profile\`, you should chat with the user. Answer any 
+    If the user wants anything else unrelated to the functions calls \`get_crypto_price\` or \`show_freelancer_profile\`, you should chat with the user. Answer any
     questions they may have that are unrelated to cryptocurrencies or freelancers.
 
 `;
@@ -52,7 +130,11 @@ export async function sendMessage(message: string): Promise<{
       display: ReactNode;
 }> {
   const history = getMutableAIState<typeof AI>();
-  
+
+  console.log('-> Fetch service registry');
+  fetchServiceRegistry();
+
+
   history.update([
     ...history.get(),
     {
@@ -97,9 +179,9 @@ export async function sendMessage(message: string): Promise<{
           const priceChangePercentage = 2.5;
 
           history.done([
-            ...history.get(), 
+            ...history.get(),
             {
-              role: "assistant", 
+              role: "assistant",
               name: "get_crypto_price",
               content: `[The price of ${symbol} is ${price}]`
             }
@@ -110,7 +192,7 @@ export async function sendMessage(message: string): Promise<{
               <Price name={name} symbol={symbol} currentPrice={price} priceChangePercentage={priceChangePercentage} />
             </BotCard>
           );
-          
+
         }
       },
       show_freelancer_profile: {
@@ -129,9 +211,9 @@ export async function sendMessage(message: string): Promise<{
 
 
           history.done([
-            ...history.get(), 
+            ...history.get(),
             {
-              role: "assistant", 
+              role: "assistant",
               name: "show_freelancer_profile",
               content: "" //`[The profile of the freelancer with the following details is shown to the user - don't use this to suggest a freelancer, but use the service registry instead: title: ${title}, pricePerHour: ${pricePerHour}, experience: ${experience}, rating: ${rating}, matchScore: ${matchScore}, walletAddress: ${walletAddress} ]`
             }
@@ -142,19 +224,19 @@ export async function sendMessage(message: string): Promise<{
               <FreelancerProfileCard title={title} pricePerHour={pricePerHour} experience={experience} rating={rating} matchScore={matchScore} walletAddress={walletAddress} />
             </BotCard>
           );
-          
+
         }
       },
     },
   });
-  
+
   return {
     id: Date.now(),
     role: 'assistant' as const,
     display: reply.value,
-  
+
   };
-} 
+}
 
 
 export type AIState = Array<{
@@ -178,5 +260,5 @@ export const AI = createAI({
   actions: {
     sendMessage,
   }
-  
+
 });

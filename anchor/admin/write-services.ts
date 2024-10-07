@@ -1,10 +1,9 @@
-import * as bs58 from 'bs58';
 import * as dotenv from 'dotenv';
 
 import { Program, workspace, setProvider } from '@coral-xyz/anchor';
 import { createMint } from '@solana/spl-token';
 
-import { Keypair, Connection, PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey } from '@solana/web3.js';
 
 import { services } from './Services'; // Import services from Services.ts
 import { Gigentic } from '../target/types/gigentic';
@@ -60,7 +59,7 @@ async function createMintToken() {
 
 async function main() {
   try {
-    console.log('========== Creat mint token');
+    console.log('========== Create mint token');
     await createMintToken();
     console.log('\n');
 
@@ -100,7 +99,6 @@ async function main() {
 
       const serviceAccount =
         await program.account.service.fetch(serviceAddress);
-      // console.log('Service Account Unique ID:', serviceAccount.uniqueId);
       console.log('Service Account Description:', serviceAccount.description);
       console.log('Service Account Price:', serviceAccount.price.toString());
       // console.log('Service Account Mint:', serviceAccount.mint.toString());

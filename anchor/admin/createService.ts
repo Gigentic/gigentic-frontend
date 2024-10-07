@@ -39,22 +39,4 @@ export async function createService(
     })
     .signers([serviceDeployer]) // Include both deployer and the new service keypair as signers
     .rpc();
-
-  // const serviceRegistry = await program.account.serviceRegistry.fetch(
-  //   serviceRegistryPubkey,
-  // );
-  // console.log('Service Registry:', serviceRegistry);
-  // console.log('uniqueId:', uniqueId);
-
-  // for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
-  //   console.log('Service Address:', serviceAddress.toString());
-  //   console.log('Service Account Address:', serviceAddress.toString());
-
-  //   const serviceAccount = await program.account.service.fetch(serviceAddress);
-  //   // console.log('Service Account:', serviceAccount);
-  //   // console.log('Service Account Unique ID:', serviceAccount.uniqueId);
-  //   console.log('Service Account Description:', serviceAccount.description);
-  //   console.log('Service Account Price:', serviceAccount.price.toString());
-  //   // console.log('Service Account Mint:', serviceAccount.mint.toString());
-  // }
 }
