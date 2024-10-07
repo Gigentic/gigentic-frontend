@@ -25,7 +25,7 @@ export default function ChatScrollAnchor() {
       });
       //console.log("GOOOOO!");
     }
-  }, [inView, entry, isAtBottom]);
+  }, [inView, entry, isAtBottom, trackVisibility]);
 
   return <div ref={ref} className="h-px w-full" />;
 }

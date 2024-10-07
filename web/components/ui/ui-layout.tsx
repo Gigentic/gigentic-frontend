@@ -15,34 +15,6 @@ import {
 import toast, { Toaster } from 'react-hot-toast';
 
 // import { ThemeProvider } from '@/components/theme-provider';
-
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Button,
-  Input,
-  Label,
-  Textarea,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@gigentic-frontend/ui-kit/ui';
-
-
-
-
 export function UiLayout({
   children,
   links,
