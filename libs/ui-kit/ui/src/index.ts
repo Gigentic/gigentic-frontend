@@ -13,3 +13,5 @@ export * from './lib/ui/resizable';
 export * from './lib/ui/select';
 export * from './lib/ui/skeleton';
 export * from './lib/ui/badge';
+export * from './lib/ui/tooltip';
+export * from './lib/ui/checkbox';

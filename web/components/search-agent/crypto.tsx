@@ -12,30 +12,7 @@ import type { AI } from '../../app/actions';
 import { sendMessage } from '../../app/actions';
 import { UserMessage, BotMessage } from '../llm/message';
 
-
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Button,
-  Input,
-  Label,
-  Textarea,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@gigentic-frontend/ui-kit/ui';
+import { Button } from '@gigentic-frontend/ui-kit/ui';
 import { z } from 'zod';
 
 const chatSchema = z.object({
