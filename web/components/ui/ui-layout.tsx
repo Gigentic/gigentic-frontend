@@ -92,52 +92,52 @@ export function UiLayout({
                       className={`px-3 py-2 rounded-md text-sm font-medium transition-colors
                           ${pathname.startsWith(path) ? 'border-2 border-primary' : 'hover:underline'}
                         `}
-                        href={path}
-                      >
-                        {label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            </div>
-            <div className="">
-              <WalletButton />
-            </div>
-          </header>
-          <main className="flex-1 overflow-hidden">
-            <div className="h-full overflow-y-auto p-4 pb-20">
-              <div className="flex items-center justify-center w-full rounded-lg">
-                <div className="flex-grow mx-4 lg:mx-auto">
-                  <Suspense
-                    fallback={
-                      <div className="text-center my-32">
-                        <span className="loading loading-spinner loading-lg"></span>
-                      </div>
-                    }
-                  >
-                    {children}
-                  </Suspense>
-                  <Toaster position="bottom-right" />
-                </div>
+                      href={path}
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+          <div className="">
+            <WalletButton />
+          </div>
+        </header>
+        <main className="flex-1 overflow-hidden">
+          <div className="h-full overflow-y-auto p-4 pb-20">
+            <div className="flex items-center justify-center w-full rounded-lg">
+              <div className="flex-grow mx-4 lg:mx-auto">
+                <Suspense
+                  fallback={
+                    <div className="text-center my-32">
+                      <span className="loading loading-spinner loading-lg"></span>
+                    </div>
+                  }
+                >
+                  {children}
+                </Suspense>
+                <Toaster position="bottom-right" />
               </div>
             </div>
-          </main>
-          <footer className="fixed bottom-0 left-0 right-0 flex items-center justify-between p-4 border-t bg-background">
-            <div className="flex space-x-4">
-              <Link href="https://x.com/GigenticAI" className="">
-                <X className="w-6 h-6" />
-                <span className="sr-only">Twitter</span>
-              </Link>
-              <Link href="mailto:info@gigentic.com" className="">
-                <Mail className="w-6 h-6" />
-                <span className="sr-only">Email</span>
-              </Link>
-            </div>
-            <p className="text-sm ">© 2024 Gigentic</p>
-          </footer>
-        </div>
-      </ThemeProvider>
+          </div>
+        </main>
+        <footer className="fixed bottom-0 left-0 right-0 flex items-center justify-between p-4 border-t bg-background">
+          <div className="flex space-x-4">
+            <Link href="https://x.com/GigenticAI" className="">
+              <X className="w-6 h-6" />
+              <span className="sr-only">Twitter</span>
+            </Link>
+            <Link href="mailto:info@gigentic.com" className="">
+              <Mail className="w-6 h-6" />
+              <span className="sr-only">Email</span>
+            </Link>
+          </div>
+          <p className="text-sm ">© 2024 Gigentic</p>
+        </footer>
+      </div>
+      {/* </ThemeProvider> */}
     </div>
   );
 }
