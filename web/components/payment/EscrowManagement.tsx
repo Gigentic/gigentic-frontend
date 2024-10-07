@@ -44,6 +44,13 @@ export default function EscrowManagement() {
   const [agreed, setAgreed] = useState(false)
   const [userEscrows, setUserEscrows] = useState([]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const contractIdParam = params.get('contractId');
+    if (contractIdParam) {
+      setContractId(contractIdParam);
+    }
+  }, []);
 
   useEffect(() => {
     if (publicKey && programId) {

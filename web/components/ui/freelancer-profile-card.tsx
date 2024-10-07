@@ -24,7 +24,7 @@ const DefaultFreelancerProfileProps: FreelancerProfileProps = {
   paymentWalletAddress: "0x1234567890123456789012345678901234567890"
 }
 
-export default function FreelancerProfileCard(props: FreelancerProfileProps = DefaultFreelancerProfileProps) 
+export default function FreelancerProfileCard(props: FreelancerProfileProps = DefaultFreelancerProfileProps)
 {
   const freelancerProfileProps: FreelancerProfileProps = {
     title: props.title,
@@ -47,10 +47,8 @@ export default function FreelancerProfileCard(props: FreelancerProfileProps = De
   }
 
   const handlePayEscrow = () => {
-    // Replace this URL with the actual Escrow URL when available
-    setContractAddress(props.paymentWalletAddress)
-    const escrowUrl = `http://localhost:3000/payment?address=${props.paymentWalletAddress}`
-    window.open(escrowUrl, '_blank', 'noopener,noreferrer')
+    const escrowUrl = `/payment?contractId=${encodeURIComponent(props.paymentWalletAddress)}`;
+    window.open(escrowUrl, '_blank', 'noopener,noreferrer');
   }
 
   const getMatchScoreColor = (score: number) => {
