@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { InfoIcon } from 'lucide-react'
 import {
   Card,
@@ -36,7 +36,7 @@ export default function EscrowManagement() {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
   const transactionToast = useTransactionToast();
-  const { program, programId, accounts, getProgramAccount } = useGigenticProgram();
+  const {programId, accounts, getProgramAccount } = useGigenticProgram();
 
 
   const [contractId, setContractId] = useState('')
@@ -44,21 +44,7 @@ export default function EscrowManagement() {
   const [agreed, setAgreed] = useState(false)
   const [userEscrows, setUserEscrows] = useState([]);
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const contractIdParam = params.get('contractId');
-    if (contractIdParam) {
-      setContractId(contractIdParam);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (publicKey && programId) {
-      fetchAllEscrows();
-    }
-  }, [publicKey, programId, connection]);
-
-  const fetchAllEscrows = async () => {
+  const fetchAllEscrows = useCallback(async () => {
     if (!publicKey || !programId) return;
 
     try {
@@ -85,7 +71,21 @@ export default function EscrowManagement() {
     } catch (error) {
       console.error('Error fetching escrows:', error);
     }
-  };
+  }, [publicKey, programId, connection]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const contractIdParam = params.get('contractId');
+    if (contractIdParam) {
+      setContractId(contractIdParam);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (publicKey && programId) {
+      fetchAllEscrows();
+    }
+  }, [publicKey, programId, fetchAllEscrows]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -260,10 +260,18 @@ export default function EscrowManagement() {
               <div className="space-y-4">
                 {userEscrows.length === 0 ? (
                   <p>No active escrows found.</p>
+
+
+
+
                 ) : (
                   userEscrows.map((escrow: any) => (
                     <div key={escrow.pubkey.toString()} className="flex items-center justify-between p-4 border rounded-lg">
                       <div>
+
+
+
+
                         <p className="font-medium">Escrow ID: {escrow.pubkey.toString().slice(0, 8)}...</p>
                         <p className="text-sm">Service Provider: {escrow.serviceProvider.slice(0, 8)}...</p>
                         <p className="text-sm">Amount: {escrow.amount.toFixed(2)} SOL</p>
