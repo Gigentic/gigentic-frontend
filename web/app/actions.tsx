@@ -38,34 +38,34 @@ import {
 //const { program } = useGigenticProgram();
 // const PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_GIGENTIC_PROGRAM_ID || '');
 // const program = new Program<Gigentic>(IDL, PROGRAM_ID, provider);
-
+let service_registry = ''
 
 
 async function fetchServiceRegistry() {
 
-// Create a new AnchorProvider
+  // Create a new AnchorProvider
 
-// Initialize connection
-const connection = new Connection('http://localhost:8899');
-const provider = new AnchorProvider(connection, {} as any, { commitment: 'confirmed' });
-const programId = getGigenticProgramId('devnet');
-const program = getGigenticProgram(provider);
+  // Initialize connection
+  const connection = new Connection('http://localhost:8899');
+  const provider = new AnchorProvider(connection, {} as any, { commitment: 'confirmed' });
+  const programId = getGigenticProgramId('devnet');
+  const program = getGigenticProgram(provider);
 
-  // Load service registry keypairs
-const serviceRegistryDeployer = loadKeypairBs58FromEnv(
-  'SERVICE_REGISTRY_DEPLOYER',
-);
-const serviceRegistryKeypair = loadKeypairBs58FromEnv(
-  'SERVICE_REGISTRY_KEYPAIR',
-);
-console.log(
-  'serviceRegistryDeployer',
-  serviceRegistryDeployer.publicKey.toString(),
-);
-console.log(
-  'serviceRegistryKeypair',
-  serviceRegistryKeypair.publicKey.toString(),
-);
+    // Load service registry keypairs
+  const serviceRegistryDeployer = loadKeypairBs58FromEnv(
+    'SERVICE_REGISTRY_DEPLOYER',
+  );
+  const serviceRegistryKeypair = loadKeypairBs58FromEnv(
+    'SERVICE_REGISTRY_KEYPAIR',
+  );
+  console.log(
+    'serviceRegistryDeployer',
+    serviceRegistryDeployer.publicKey.toString(),
+  );
+  console.log(
+    'serviceRegistryKeypair',
+    serviceRegistryKeypair.publicKey.toString(),
+  );
 
   // const { connection } = useConnection();
   // const { program } = useGigenticProgram();
@@ -82,8 +82,10 @@ console.log(
     const serviceAccount =
       await program.account.service.fetch(serviceAddress);
     // console.log('Service Account Unique ID:', serviceAccount.uniqueId);
-    console.log('Service Account Description:', serviceAccount.description);
-    console.log('Service Account Price:', serviceAccount.price.toString());
+    //console.log('Service Account Description:', serviceAccount.description);
+    service_registry += `\n${serviceAccount.description}`;
+
+    //console.log('Service Account Price:', serviceAccount.price.toString());
     // console.log('Service Account Mint:', serviceAccount.mint.toString());
   }
 
@@ -101,6 +103,7 @@ const prompt_instructions = `\
 
 `;
 
+/*
 const service_registry = `
             You can choose between the freelancers/AI agents in the following service registry to help the user solve his task:
             - Backend Developer, Experience: Specialist in Node.js, rating: 2.9/5, price: 30, email: backend@gigentic.com, wallet: 0x12345678901234567890123456789012XXvf76
@@ -120,8 +123,9 @@ const service_registry = `
             - React Developer, Experience: 2 years of experience in React, rating: 4.1/5, price: 15, email: reactdeveloper@gigentic.com, wallet: 0x123456789012xxbVXube901234567890
             - Next.js Developer, Experience: 1 year of experience in Next.js, rating: 4.0/5, price: 10, email: nextjsdeveloper@gigentic.com, wallet: 0x12345XBjevbeviX678901234567890
 `;
+*/
 
-const content = `${prompt_instructions}\n${service_registry}`;
+let content = `${prompt_instructions}\n${service_registry}`;
 
 //export const sendMessage = async () => {};
 export async function sendMessage(message: string): Promise<{
@@ -133,6 +137,7 @@ export async function sendMessage(message: string): Promise<{
 
   console.log('-> Fetch service registry');
   fetchServiceRegistry();
+  content = `${prompt_instructions}\n${service_registry}`;
 
 
   history.update([

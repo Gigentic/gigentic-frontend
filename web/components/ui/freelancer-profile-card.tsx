@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@gigentic-frontend/ui-kit/ui"
 import { Badge } from "@gigentic-frontend/ui-kit/ui"
 import { Button } from "@gigentic-frontend/ui-kit/ui"
-import { Star, MessageSquare, Zap } from "lucide-react"
+import { Star, MessageSquare, Zap, Lock } from "lucide-react"
 
 interface FreelancerProfileProps {
   title: string
@@ -42,8 +42,14 @@ export default function FreelancerProfileCard(props: FreelancerProfileProps = De
 
   const handleContactNow = () => {
     // Replace this URL with the actual Solchat URL when available
-    const solchatUrl = `https://www.solchat.app/${props.walletAddress}`
+    const solchatUrl = `https://www.solchat.app/`
     window.open(solchatUrl, '_blank', 'noopener,noreferrer')
+  }
+
+  const handlePayEscrow = () => {
+    // Replace this URL with the actual Escrow URL when available
+    const escrowUrl = `https://www.escrow.com/`
+    window.open(escrowUrl, '_blank', 'noopener,noreferrer')
   }
 
   const getMatchScoreColor = (score: number) => {
@@ -123,10 +129,14 @@ export default function FreelancerProfileCard(props: FreelancerProfileProps = De
             )}
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex flex-col gap-2">
           <Button className="w-full" onClick={handleContactNow}>
             <MessageSquare className="w-4 h-4 mr-2" />
             Contact Now
+          </Button>
+          <Button className="w-full" variant="outline" onClick={handlePayEscrow}>
+            <Lock className="w-4 h-4 mr-2" />
+            Pay into Escrow
           </Button>
         </CardFooter>
       </Card>
