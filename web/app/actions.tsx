@@ -109,9 +109,6 @@ async function fetchServiceRegistry() {
 }
 
 
-
-
-
 //export const sendMessage = async () => {};
 export async function sendMessage(message: string): Promise<{
       id: number;

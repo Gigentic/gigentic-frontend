@@ -2,11 +2,6 @@
 // import LlamaChat from '@/components/search-agent/llama-chat';
 // import WeatherTool from '@/components/search-agent/weather-tool';
 import CryptoTool from '@/components/search-agent/crypto';
-/*
-export default function Page() {
-  return <SearchAgent />;
-}
-*/
 
 export default function Page() {
   return <CryptoTool />;
