@@ -23,6 +23,7 @@ import { PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL, ParsedAccountD
 import { useTransactionToast } from '../ui/ui-layout';
 
 import { useGigenticProgram } from '../gigentic-frontend/gigentic-frontend-data-access';
+import EscrowCard from './EscrowCard';
 
 
 // Mock data for open escrows
@@ -259,30 +260,30 @@ export default function EscrowManagement() {
             <TabsContent value="release">
               <div className="space-y-4">
                 {userEscrows.length === 0 ? (
-                  <p>No active escrows found.</p>
-
-
-
-
+                  <div>
+                    <EscrowCard />
+                    <p>No active escrows found.</p>
+                  </div>
                 ) : (
                   userEscrows.map((escrow: any) => (
-                    <div key={escrow.pubkey.toString()} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div>
-
-
-
-
-                        <p className="font-medium">Escrow ID: {escrow.pubkey.toString().slice(0, 8)}...</p>
-                        <p className="text-sm">Service Provider: {escrow.serviceProvider.slice(0, 8)}...</p>
-                        <p className="text-sm">Amount: {escrow.amount.toFixed(2)} SOL</p>
-                      </div>
-                      <Button onClick={() => handleReleaseEscrow(escrow.pubkey.toString())}>
-                        Release
-                      </Button>
-                    </div>
+                    <EscrowCard
+                      key={escrow.pubkey.toString()}
+                      providerName={`Provider ${escrow.serviceProvider.slice(0, 8)}...`}
+                      serviceId={escrow.pubkey.toString().slice(0, 8)}
+                      amountInEscrow={escrow.amount}
+                      onReleaseEscrow={() => handleReleaseEscrow(escrow.pubkey.toString())}
+                    />
                   ))
                 )}
               </div>
+
+              {/* add a new card to show some info parsed from the contract from the blockchain */}
+              <div className="flex items-center justify-between p-4 border rounded-lg">
+
+                  data
+
+              </div>
+
             </TabsContent>
           </Tabs>
         </CardContent>
