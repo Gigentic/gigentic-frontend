@@ -1,122 +1,140 @@
 export const services = [
   {
-    price: 80,
-    description:
-      'Senior Backend Developer | 5+ years exp | Node.js, Express, MongoDB | backend@gigentic.com',
+    price: 30,
+    currency: 'SOL',
+    title: 'Backend Developer',
+    experience:
+      'Specialist in Node.js and NoSQL databases, 3 years working in fast paced startup environment',
+    chatWalletAddress: 'GxZwMR34EYkWm49qfPkvRG5zGJzJg1mpbFCPkPbD3Eem',
+    avgRating: 2.9,
   },
   {
-    price: 75,
-    description:
-      'Expert Frontend Developer | 4+ years exp | React, Redux, Next.js | frontend@gigentic.com',
+    price: 40,
+    currency: 'SOL',
+    title: 'Frontend Developer',
+    experience: 'Specialist in React, also some experience in UX design',
+    chatWalletAddress: 'GxZwMR34EYkWm49qfPkvRG5zGJzJg1mpbFCPkPbD3Eem',
+    avgRating: 4.2,
   },
   {
-    price: 100,
-    description:
-      'Full Stack Developer | 6+ years exp | Next.js, Node.js, PostgreSQL | fullstack@gigentic.com',
+    price: 25,
+    currency: 'SOL',
+    title: 'Senior Full Stack Developer',
+    experience:
+      'Specialist in Next.js in combination with Postgres databases, 5 years of experience in the field',
+    chatWalletAddress: 'GxZwMR34EYkWm49qfPkvRG5zGJzJg1mpbFCPkPbD3Eem',
+    avgRating: 4.1,
   },
   {
-    price: 90,
-    description:
-      'Senior DevOps Engineer | 5+ years exp | Docker, Kubernetes, CI/CD | devops@gigentic.com',
+    price: 20,
+    currency: 'SOL',
+    title: 'DevOps Engineer',
+    experience:
+      'Specialist in Docker and Kubernetes, 2 years of experience migrating and managing large scale applications',
+    chatWalletAddress: 'GxZwMR34EYkWm49qfPkvRG5zGJzJg1mpbFCPkPbD3Eem',
+    avgRating: 3.8,
   },
-  // {
-  //   price: 95,
-  //   description:
-  //     'Data Scientist | PhD in Machine Learning | Python, TensorFlow, Visualization | datascience@gigentic.com',
-  // },
-  // {
-  //   price: 110,
-  //   description:
-  //     'Machine Learning Engineer | 5+ years exp | TensorFlow, PyTorch, NLP | mlengineer@gigentic.com',
-  // },
-  // {
-  //   price: 150,
-  //   description:
-  //     'Senior Smart Contract Auditor | 5+ years exp | Solidity, Rust, ETH, SOL | smartcontractauditor@gigentic.com',
-  // },
-  // {
-  //   price: 120,
-  //   description:
-  //     'Solesec AI Solana auditor agent | 120+ audits | Automated vulnerability detection | solesec@gmail.com',
-  // },
-  // {
-  //   price: 130,
-  //   description:
-  //     'Expert Smart Contract Developer | 6+ years exp | Solidity, EVM, DeFi | smartcontractdev@gigentic.com',
-  // },
-  // {
-  //   price: 140,
-  //   description:
-  //     'Blockchain Developer | 5+ years exp | Rust, Go, L2 solutions | blockchaindev@gigentic.com',
-  // },
-  // {
-  //   price: 135,
-  //   description:
-  //     'Senior Solana Developer | 3+ years exp | Rust, Anchor, Ecosystem | solanadev@gigentic.com',
-  // },
-  // {
-  //   price: 85,
-  //   description:
-  //     'Rust Developer | 3+ years exp | Systems programming, WebAssembly | rustdev@gigentic.com',
-  // },
-  // {
-  //   price: 70,
-  //   description:
-  //     'Python Developer | 5+ years exp | Django, Flask, Data analysis | pythondev@gigentic.com',
-  // },
-  // {
-  //   price: 65,
-  //   description:
-  //     'JavaScript Developer | 4+ years exp | Node.js, Express, RESTful API | jsdev@gigentic.com',
-  // },
-  // {
-  //   price: 80,
-  //   description:
-  //     'Senior React Developer | 4+ years exp | React, Redux, React Native | reactdev@gigentic.com',
-  // },
-  // {
-  //   price: 75,
-  //   description:
-  //     'Next.js Developer | 3+ years exp | SSR, Static Site Generation | nextjsdev@gigentic.com',
-  // },
-  // {
-  //   price: 115,
-  //   description:
-  //     'Cybersecurity Specialist | 7+ years exp | Penetration testing, CISSP | cybersec@gigentic.com',
-  // },
-  // {
-  //   price: 105,
-  //   description:
-  //     'UI/UX Designer | 5+ years exp | Figma, Adobe Creative Suite | uiux@gigentic.com',
-  // },
-  // {
-  //   price: 95,
-  //   description:
-  //     'Technical Writer | 6+ years exp | API docs, User guides | techwriter@gigentic.com',
-  // },
-  // {
-  //   price: 125,
-  //   description:
-  //     'Cloud Architect | 8+ years exp | AWS, Azure, GCP, Serverless | cloudarchitect@gigentic.com',
-  // },
-  // {
-  //   price: 140,
-  //   description:
-  //     'Quantum Computing Researcher | PhD | Quantum algorithms, Error correction | quantumdev@gigentic.com',
-  // },
-  // {
-  //   price: 100,
-  //   description:
-  //     'Mobile App Developer | 5+ years exp | iOS, Android, React Native | mobiledev@gigentic.com',
-  // },
-  // {
-  //   price: 110,
-  //   description:
-  //     'Game Developer | 6+ years exp | Unity, Unreal Engine, VR/AR | gamedev@gigentic.com',
-  // },
-  // {
-  //   price: 130,
-  //   description:
-  //     'Embedded Systems Engineer | 7+ years exp | C/C++, RTOS, IoT | embeddedsys@gigentic.com',
-  // },
+  {
+    price: 25,
+    currency: 'SOL',
+    title: 'Data Scientist',
+    experience:
+      'Specialist in Python, 4 years of experience in the field, PhD in Mathematics, Skills: PyTorch, TensorFlow, Scikit-learn',
+    chatWalletAddress: 'GxZwMR34EYkWm49qfPkvRG5zGJzJg1mpbFCPkPbD3Eem',
+    avgRating: 3.9,
+  },
+  {
+    price: 20,
+    currency: 'SOL',
+    title: 'Machine Learning Engineer',
+    experience:
+      'Specialist in TensorFlow, 3 years of experience in the field, specialized in ML Ops',
+    chatWalletAddress: 'GxZwMR34EYkWm49qfPkvRG5zGJzJg1mpbFCPkPbD3Eem',
+    avgRating: 3.7,
+  },
+  {
+    price: 25,
+    currency: 'SOL',
+    title: 'Smart Contract Auditor',
+    experience:
+      '5 years of experience in auditing smart contracts, Chains: ADA, DOT',
+    chatWalletAddress: 'GxZwMR34EYkWm49qfPkvRG5zGJzJg1mpbFCPkPbD3Eem',
+    avgRating: 4.8,
+  },
+  {
+    price: 30,
+    currency: 'SOL',
+    title: 'Smart Contract Audit AI Agent',
+    experience:
+      '120 successful projects with excellent customer feedback, Chains: SOL, ETH',
+    chatWalletAddress: 'GxZwMR34EYkWm49qfPkvRG5zGJzJg1mpbFCPkPbD3Eem',
+    avgRating: 4.9,
+  },
+  {
+    price: 30,
+    currency: 'SOL',
+    title: 'Smart Contract Developer',
+    experience: 'Specialist in Solidity, 4 years of experience in the field',
+    chatWalletAddress: 'GxZwMR34EYkWm49qfPkvRG5zGJzJg1mpbFCPkPbD3Eem',
+    avgRating: 3.2,
+  },
+  {
+    price: 25,
+    currency: 'SOL',
+    title: 'Blockchain Developer',
+    experience: 'Specialist in Rust, 2 years of experience in the field',
+    chatWalletAddress: 'GxZwMR34EYkWm49qfPkvRG5zGJzJg1mpbFCPkPbD3Eem',
+    avgRating: 3.1,
+  },
+  {
+    price: 20,
+    currency: 'SOL',
+    title: 'Solana Developer',
+    experience:
+      '3 years of experience in Solana. Worked with Rust on various L2 projects. Strong experience with Anchor and TypeScript. Participated in various Hackthons (Radar, WebZero, Colosseum). Located in Dublin and open to work remotely in any timezone',
+    chatWalletAddress: 'GxZwMR34EYkWm49qfPkvRG5zGJzJg1mpbFCPkPbD3Eem',
+    avgRating: 3.9,
+  },
+  {
+    price: 15,
+    currency: 'SOL',
+    title: 'Rust Developer',
+    experience:
+      '8 years of experience in Rust, experience in coaching and mentoring junior developers',
+    chatWalletAddress: 'GxZwMR34EYkWm49qfPkvRG5zGJzJg1mpbFCPkPbD3Eem',
+    avgRating: 3.5,
+  },
+  {
+    price: 10,
+    currency: 'SOL',
+    title: 'Python Developer',
+    experience:
+      '4 years of experience in Python, 2 years of experience in AI/ML',
+    chatWalletAddress: 'GxZwMR34EYkWm49qfPkvRG5zGJzJg1mpbFCPkPbD3Eem',
+    avgRating: 3.3,
+  },
+  {
+    price: 12,
+    currency: 'SOL',
+    title: 'Javascript Developer',
+    experience: '3 years of experience in Javascript',
+    chatWalletAddress: 'GxZwMR34EYkWm49qfPkvRG5zGJzJg1mpbFCPkPbD3Eem',
+    avgRating: 3.7,
+  },
+  {
+    price: 15,
+    currency: 'SOL',
+    title: 'React Developer',
+    experience: '2 years of experience in React',
+    chatWalletAddress: 'GxZwMR34EYkWm49qfPkvRG5zGJzJg1mpbFCPkPbD3Eem',
+    avgRating: 4.1,
+  },
+  {
+    price: 10,
+    currency: 'SOL',
+    title: 'Next.js Developer',
+    experience: '2 years of experience in Next.js, various css frameworks',
+    chatWalletAddress: 'GxZwMR34EYkWm49qfPkvRG5zGJzJg1mpbFCPkPbD3Eem',
+    avgRating: 4.0,
+  },
 ];

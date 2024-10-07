@@ -68,18 +68,26 @@ async function main() {
     await airdrop(connection, serviceDeployer.publicKey);
     console.log('\n');
 
-    console.log('========== Create services');
-    for (let i = 0; i < services.length; i++) {
+    console.log('========== Prepare data and Create services');
+    console.log('\n');
+
+    let index = 0;
+
+    for (const service of services) {
+      const description = `chatWalletAddress: ${service.chatWalletAddress} | title: ${service.title} | experience: ${service.experience} | price: ${service.price} ${service.currency} | avgRating: ${service.avgRating}`;
+      console.log(description);
+
       // Update to use services array
-      console.log(`Creating service ${i + 1}/${services.length}:`);
+      console.log(`Creating service ${index + 1}/${services.length}:`);
       await createService(
         serviceRegistryKeypair.publicKey,
         mint,
         program,
-        services[i].price, // Use price from services
-        services[i].description, // Use description from services
-        i.toString(), // unique id
+        service.price, // Use price from services
+        description, // Use description from services
+        index.toString(), // unique id
       );
+      index++;
     }
 
     console.log('========== Fetch service registry');
