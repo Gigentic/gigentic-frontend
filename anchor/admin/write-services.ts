@@ -59,7 +59,7 @@ async function createMintToken() {
 
 async function main() {
   try {
-    console.log('========== Creat mint token');
+    console.log('========== Create mint token');
     await createMintToken();
     console.log('\n');
 
