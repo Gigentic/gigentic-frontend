@@ -4,26 +4,46 @@ import { createAI, getMutableAIState, streamUI } from 'ai/rsc';
 import type { CoreMessage, ToolInvocation } from "ai";
 import { ReactNode } from "react";
 import { openai } from "@ai-sdk/openai";
-import { BotMessage } from "../components/llm/message";
+import { BotCard, BotMessage } from "../components/llm/message";
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
-
+import Price from "../components/ui/price";
+import PriceSkeleton from "../components/ui/price-skeleton";
+import FreelancerProfileCard from "../components/ui/freelancer-profile-card";
 // this is the system message we send to the LLM to instantiate it
 // gives it the context for tool callin
 
-const content = `\
-  You are a crypto bot and you can help users get the price of cryptocurrencies, besides that you can also chat with users.
+const prompt_instructions = `\
+  You are a assistant helping users finding the right freelancer for their project/task. 
   
-  Messages inside [] means that it's a UI element of a user event. For example:
-    - "[Price of BTC] = 69696" means that the interface of the cryptocurrency price of BTC is shown to the user
-    - "[Stats of BTC]" means that the interface of the cryptocurrency stats of BTC is shown to the user
+    If the user is looking for help / a freelancer, look for the right freelancer or AI agent in the service registry and show a summary of the profile to the user by calling \`show_freelancer_profile\`, never return a profile summary in text format. Always give a only 1 option to the user to choose from. 
+    If the user wants the price of a cryptocurrency, call \`get_crypto_price\` to show the price of the cryptocurrency.
+    If the user wants anything else unrelated to the functions calls \`get_crypto_price\` or \`show_freelancer_profile\`, you should chat with the user. Answer any 
+    questions they may have that are unrelated to cryptocurrencies or freelancers.
 
-    If the user wants the price, call \`get_crypto_price\` to show the price of the cryptocurrency.
-    If the user wants the market cap or stats of a given cryptocurrency, call \`get_crypto_stats\` to show the stats of the cryptocurrency.
-    If the user wants a stock price, it is an impossible task, so you should respond that you cannot do it.
-    If the user wants anything else unrelated to the functions calls \`get_crypto_price\` or \`get_crypto_stats\`, you should chat with the user. Answer any 
-    questions they may have that are unrelated to cryptocurrency.
 `;
+
+const service_registry = `
+            You can choose between the freelancers/AI agents in the following service registry to help the user solve his task:
+            - Backend Developer, Experience: Specialist in Node.js, rating: 2.9/5, price: 30, email: backend@gigentic.com, wallet: 0x12345678901234567890123456789012XXvf76
+            - Frontend Developer, Experience: Specialist in React, rating: 4.2/5, price: 40, email: frontend@gigentic.com, wallet: 0x123456789012345678Xjaush45678901234567890
+            - Full Stack Developer, Experience: Specialist in Next.js in combination with Postgres databases, rating: 4.1/5, price: 25, email: fullstack@gigentic.com, wallet: 0x1234567890asdgvd78901234567890123456789
+            - DevOps Engineer, Experience: Specialist in Docker, rating: 3.8/5, price: 20, email: devops@gigentic.com, wallet: 0x12345678asdds56789012345678901234567890
+            - Data Scientist, Experience: Specialist in Python, rating: 3.9/5, price: 25, email: datascience@gigentic.com, wallet: 0x12345678901234567890rbrb478901234567890
+            - Machine Learning Engineer, Experience: Specialist in TensorFlow, rating: 3.7/5, price: 20, email: mlengineer@gigentic.com, wallet: 0x1234567890123ololuo45678901234567890
+            - Smart Contract Auditor, Experience: 5 years of experience in auditing smart contracts, Chains: ADA, DOT, avg. rating 4.8/5, price: 25, email: smartcontractauditor@gigentic.com, wallet: 0x12345678ntununt789012345678901234567890
+            - Smart Contract Audit AI Agent, Experience: 120 successful projects with excellent customer feedback, Chains: SOL, ETH, avg. rating 4.9/5, price: 30, email: smartcontractauditor@gigentic.com, wallet: 0x12345678ntununt789012345678901234567890
+            - Smart Contract Developer, Experience: Specialist in Solidity, rating: 3.2/5, price: 30, email: smartcontractdeveloper@gigentic.com, wallet: 0x12345cwecwev89012345678901234567890
+            - Blockchain Developer, Experience: Specialist in Rust, rating: 3.1/5, price: 25, email: blockchaindeveloper@gigentic.com, wallet: 0x12345678xbxvxhyuse6789012341234567890
+            - Solana Developer, Experience: 3 years of experience in Solana. Worked with Rust on various L2 projects. Strong experience with Anchor and TypeScript. Participated in various Hackthons (Radar, WebZero, Colosseum). Located in Dublin and open to work remotely in any timezone, rating: 3.9/5, price: 20, email: solanadeveloper@gigentic.com, wallet: 0x1234567890123456rewrvdscn5678901234567890
+            - Rust Developer, Experience: 2 years of experience in Rust, rating: 3.5/5, price: 15, email: rustdeveloper@gigentic.com, wallet: 0x1234567890123lvkoiwjwenxx4567890
+            - Python Developer, Experience: 4 years of experience in Python, rating: 3.3/5, price: 10, email: pythondeveloper@gigentic.com, wallet: 0x12345xeojvp9jJSnlg2345678901234567890123456789
+            - Javascript Developer, Experience: 3 years of experience in Javascript, rating: 3.7/5, price: 12, email: javascriptdeveloper@gigentic.com, wallet: 0x12345LSNJUNBkvnsv901234567890
+            - React Developer, Experience: 2 years of experience in React, rating: 4.1/5, price: 15, email: reactdeveloper@gigentic.com, wallet: 0x123456789012xxbVXube901234567890
+            - Next.js Developer, Experience: 1 year of experience in Next.js, rating: 4.0/5, price: 10, email: nextjsdeveloper@gigentic.com, wallet: 0x12345XBjevbeviX678901234567890
+`;
+
+const content = `${prompt_instructions}\n${service_registry}`;
 
 //export const sendMessage = async () => {};
 export async function sendMessage(message: string): Promise<{
@@ -61,18 +81,69 @@ export async function sendMessage(message: string): Promise<{
       }
       return (<BotMessage> {content} </BotMessage>)
     },
+    temperature: 0.0,
     tools: {
       get_crypto_price: {
         description: "Get the price of a cryptocurrency",
         parameters: z.object({
           symbol: z.string().describe("The symbol of the cryptocurrency"),
         }),
+        generate: async function* ({symbol}: {symbol: string}) {
+          console.log({symbol});
+          yield <BotCard> <PriceSkeleton /> </BotCard>;
+
+          const price = 231.4;
+          const name = "Solana";
+          const priceChangePercentage = 2.5;
+
+          history.done([
+            ...history.get(), 
+            {
+              role: "assistant", 
+              name: "get_crypto_price",
+              content: `[The price of ${symbol} is ${price}]`
+            }
+          ]);
+
+          return (
+            <BotCard>
+              <Price name={name} symbol={symbol} currentPrice={price} priceChangePercentage={priceChangePercentage} />
+            </BotCard>
+          );
+          
+        }
       },
-      get_crypto_stats: {
-        description: "Get the market cap and other stats of a cryptocurrency",
+      show_freelancer_profile: {
+        description: "Show the summary profile of a freelancer or AI agent",
         parameters: z.object({
-          slug: z.string().describe("The name of the cryptocurrency in lower case"),
+          title: z.string().describe("The title of the freelancer or AI agent"),
+          pricePerHour: z.number().describe("The price per hour of the freelancer"),
+          experience: z.string().describe("The experience of the freelancer"),
+          matchScore: z.number().describe("Give a match score of the freelancer to the user's task"),
+          rating: z.number().describe("The rating of the freelancer"),
+          walletAddress: z.string().describe("The wallet address of the freelancer"),
         }),
+        generate: async function* ({title, pricePerHour, experience, rating, matchScore, walletAddress}: {title: string, pricePerHour: number, experience: string, rating: number, matchScore: number, walletAddress: string}) {
+          console.log({title, pricePerHour, experience, rating, matchScore, walletAddress});
+          yield <BotCard> Loading... </BotCard>;
+
+
+          history.done([
+            ...history.get(), 
+            {
+              role: "assistant", 
+              name: "show_freelancer_profile",
+              content: "" //`[The profile of the freelancer with the following details is shown to the user - don't use this to suggest a freelancer, but use the service registry instead: title: ${title}, pricePerHour: ${pricePerHour}, experience: ${experience}, rating: ${rating}, matchScore: ${matchScore}, walletAddress: ${walletAddress} ]`
+            }
+          ]);
+
+          return (
+            <BotCard>
+              <FreelancerProfileCard title={title} pricePerHour={pricePerHour} experience={experience} rating={rating} matchScore={matchScore} walletAddress={walletAddress} />
+            </BotCard>
+          );
+          
+        }
       },
     },
   });
@@ -80,9 +151,7 @@ export async function sendMessage(message: string): Promise<{
   return {
     id: Date.now(),
     role: 'assistant' as const,
-    display: (
-      <p> Hello</p>
-    )
+    display: reply.value,
   
   };
 } 
@@ -90,7 +159,7 @@ export async function sendMessage(message: string): Promise<{
 
 export type AIState = Array<{
   id?: number;
-  name?: "get_crypto_price" | "get_crypto_stats";
+  name?: "get_crypto_price" | "get_crypto_stats" | "show_freelancer_profile";
   role?: "user" | "assistant" | "system";
   content?: string;
 }>;
