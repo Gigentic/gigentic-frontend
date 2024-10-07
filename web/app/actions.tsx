@@ -10,9 +10,84 @@ import { z } from "zod";
 import Price from "../components/ui/price";
 import PriceSkeleton from "../components/ui/price-skeleton";
 import FreelancerProfileCard from "../components/ui/freelancer-profile-card";
-// this is the system message we send to the LLM to instantiate it
-// gives it the context for tool callin
 
+import { Program, workspace, setProvider, AnchorProvider } from '@coral-xyz/anchor';// this is the system message we send to the LLM to instantiate it
+import { Keypair, Connection, PublicKey } from '@solana/web3.js';
+import { airdrop, loadKeypairBs58FromEnv } from '../../anchor/tests/utils';
+import { Gigentic } from '../../anchor/target/types/gigentic';
+import { PROVIDER } from '../../anchor/tests/constants';
+import { useGigenticProgram } from '../components/gigentic-frontend/gigentic-frontend-data-access';
+import { IDL } from '@coral-xyz/anchor/dist/cjs/native/system';
+
+// Define a fallback RPC URL (e.g., localhost)
+const FALLBACK_RPC_URL = 'http://localhost:8899';
+
+// Use the environment variable if available, otherwise use the fallback
+const rpcUrl = process.env.ANCHOR_PROVIDER_URL || FALLBACK_RPC_URL;
+
+// Initialize connection
+const connection = new Connection(rpcUrl);
+
+// Create a new AnchorProvider
+const provider = new AnchorProvider(
+  connection,
+  {} as any, // We're not using a wallet here, so we pass an empty object
+  { commitment: 'confirmed' }
+);
+
+// Set the provider
+setProvider(provider);
+
+// Configure the client to use the local cluster
+//setProvider(PROVIDER);
+
+// Initialize connection and program
+//const connection: Connection = PROVIDER.connection;
+//const program: Program<Gigentic> = workspace.Gigentic as Program<Gigentic>;
+//const { program } = useGigenticProgram();
+const PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_GIGENTIC_PROGRAM_ID || '');
+const program = new Program<Gigentic>(IDL, PROGRAM_ID, provider);
+
+// Load service registry keypairs
+const serviceRegistryDeployer = loadKeypairBs58FromEnv(
+  'SERVICE_REGISTRY_DEPLOYER',
+);
+const serviceRegistryKeypair = loadKeypairBs58FromEnv(
+  'SERVICE_REGISTRY_KEYPAIR',
+);
+console.log(
+  'serviceRegistryDeployer',
+  serviceRegistryDeployer.publicKey.toString(),
+);
+console.log(
+  'serviceRegistryKeypair',
+  serviceRegistryKeypair.publicKey.toString(),
+);
+
+
+
+async function fetchServiceRegistry() {
+
+  console.log('========== Fetch service registry');
+  const serviceRegistry = await program.account.serviceRegistry.fetch(
+    serviceRegistryKeypair.publicKey,
+  );
+
+  for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
+    console.log('Service Account Address:', serviceAddress.toString());
+
+    const serviceAccount =
+      await program.account.service.fetch(serviceAddress);
+    // console.log('Service Account Unique ID:', serviceAccount.uniqueId);
+    console.log('Service Account Description:', serviceAccount.description);
+    console.log('Service Account Price:', serviceAccount.price.toString());
+    // console.log('Service Account Mint:', serviceAccount.mint.toString());
+  }
+
+}
+
+
+// gives it the context for tool callin
 const prompt_instructions = `\
   You are a assistant helping users finding the right freelancer for their project/task. 
   
@@ -52,7 +127,11 @@ export async function sendMessage(message: string): Promise<{
       display: ReactNode;
 }> {
   const history = getMutableAIState<typeof AI>();
-  
+ 
+  console.log('-> Fetch service registry');
+  fetchServiceRegistry();
+
+
   history.update([
     ...history.get(),
     {
