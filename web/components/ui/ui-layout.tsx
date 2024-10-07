@@ -99,19 +99,21 @@ export function UiLayout({
               <WalletButton />
             </div>
           </header>
-          <main className="flex-1 p-4">
-            <div className="flex items-center justify-center w-full h-full  rounded-lg">
-              <div className="flex-grow mx-4 lg:mx-auto">
-                <Suspense
-                  fallback={
-                    <div className="text-center my-32">
-                      <span className="loading loading-spinner loading-lg"></span>
-                    </div>
-                  }
-                >
-                  {children}
-                </Suspense>
-                <Toaster position="bottom-right" />
+          <main className="flex-1 overflow-hidden">
+            <div className="h-full overflow-y-auto p-4 pb-20">
+              <div className="flex items-center justify-center w-full rounded-lg">
+                <div className="flex-grow mx-4 lg:mx-auto">
+                  <Suspense
+                    fallback={
+                      <div className="text-center my-32">
+                        <span className="loading loading-spinner loading-lg"></span>
+                      </div>
+                    }
+                  >
+                    {children}
+                  </Suspense>
+                  <Toaster position="bottom-right" />
+                </div>
               </div>
             </div>
           </main>
