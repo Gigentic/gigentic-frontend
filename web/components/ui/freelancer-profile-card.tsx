@@ -12,16 +12,16 @@ interface FreelancerProfileProps {
   experience: string
   rating: number
   matchScore: number
-  walletAddress: string
+  paymentWalletAddress: string
 }
 
 const DefaultFreelancerProfileProps: FreelancerProfileProps = {
-  title: "Frontend Developer",
+  title: "Test",
   pricePerHour: 50,
-  experience: "5+ years of experience in developing responsive web applications using React, Next.js, and TypeScript. Proficient in modern frontend technologies and best practices.",
+  experience: "Test",
   rating: 4.5,
   matchScore: 80,
-  walletAddress: "0x1234567890123456789012345678901234567890"
+  paymentWalletAddress: "0x1234567890123456789012345678901234567890"
 }
 
 export default function FreelancerProfileCard(props: FreelancerProfileProps = DefaultFreelancerProfileProps) 
@@ -32,10 +32,10 @@ export default function FreelancerProfileCard(props: FreelancerProfileProps = De
     experience: props.experience,
     rating: props.rating,
     matchScore: props.matchScore,
-    walletAddress: props.walletAddress
+    paymentWalletAddress: props.paymentWalletAddress
   }
 
-
+  const [contractAddress, setContractAddress] = useState('')
   const [isExpanded, setIsExpanded] = useState(false)
   const fullStars = Math.floor(props.rating)
   const hasHalfStar = props.rating % 1 !== 0
@@ -48,7 +48,8 @@ export default function FreelancerProfileCard(props: FreelancerProfileProps = De
 
   const handlePayEscrow = () => {
     // Replace this URL with the actual Escrow URL when available
-    const escrowUrl = `https://www.escrow.com/`
+    setContractAddress(props.paymentWalletAddress)
+    const escrowUrl = `http://localhost:3000/payment?address=${props.paymentWalletAddress}`
     window.open(escrowUrl, '_blank', 'noopener,noreferrer')
   }
 
