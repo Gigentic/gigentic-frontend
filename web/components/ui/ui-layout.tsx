@@ -1,24 +1,20 @@
 'use client';
 
 import { WalletButton } from '../solana/solana-provider';
-import * as React from 'react';
 import { ReactNode, Suspense, useEffect, useRef } from 'react';
-
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { Mail, Twitter } from 'lucide-react';
 
-import { AccountChecker } from '../account/account-ui';
+// import { AccountChecker } from '../account/account-ui';
 import {
-  ClusterChecker,
   ClusterUiSelect,
   ExplorerLink,
 } from '../cluster/cluster-ui';
 import toast, { Toaster } from 'react-hot-toast';
 
-import GigenticDemo from '@/components/gigentic-frontend/gigentic-demo';
-import Search from '../search-agent/search';
-import GigenticInterface from '../gigentic-frontend/gigentic-interface';
-import { ThemeProvider } from '@/components/theme-provider';
+// import { ThemeProvider } from '@/components/theme-provider';
 
 import {
   Tabs,
@@ -44,11 +40,8 @@ import {
   SelectValue,
 } from '@gigentic-frontend/ui-kit/ui';
 
-import { Mail, X } from 'lucide-react';
-import Image from 'next/image';
 
-// Import the Footer component
-import { Footer } from './footer';
+
 
 export function UiLayout({
   children,
@@ -126,7 +119,7 @@ export function UiLayout({
         <footer className="fixed bottom-0 left-0 right-0 flex items-center justify-between p-4 border-t bg-background">
           <div className="flex space-x-4">
             <Link href="https://x.com/GigenticAI" className="">
-              <X className="w-6 h-6" />
+              <Twitter className="w-6 h-6" />
               <span className="sr-only">Twitter</span>
             </Link>
             <Link href="mailto:info@gigentic.com" className="">
@@ -135,6 +128,8 @@ export function UiLayout({
             </Link>
           </div>
           <p className="text-sm ">© 2024 Gigentic</p>
+
+          <ClusterUiSelect />
         </footer>
       </div>
       {/* </ThemeProvider> */}
