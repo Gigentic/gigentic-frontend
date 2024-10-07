@@ -84,7 +84,7 @@ export default function CryptoTool() {
         <ChatScrollAnchor />
       </div>
       <div
-          className="fixed inset-x-0 bottom-0 w-full bg-gradient-to-b
+          className="fixed inset-x-0 bottom-20 w-full bg-gradient-to-b
                     from-muted/30 from-0% to-muted/30 to-50% peer-[[data-state=open]]:group-[]:lg:pl-[250px]
                     peer-[[data-state=open]]:group-[]:xl:pr-[300px]"
       >
@@ -135,7 +135,6 @@ export default function CryptoTool() {
           </div>
         </div>
       </div>
-      <h1>This is the anchored content</h1>
     </div>
   );
 }
