@@ -42,12 +42,16 @@ export default function EscrowManagement() {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
   const transactionToast = useTransactionToast();
-  const { programId, accounts, getProgramAccount } = useGigenticProgram();
-
+  //const { programId, accounts, getProgramAccount } = useGigenticProgram();
+  const { programId } = useGigenticProgram();
   const [contractId, setContractId] = useState('');
   const [amount, setAmount] = useState('');
+  const [finalAmount, setFinalAmount] = useState('');
   const [agreed, setAgreed] = useState(false);
   const [userEscrows, setUserEscrows] = useState([]);
+  const [title, setTitle] = useState('');
+  const [avgRating, setAvgRating] = useState('');
+  const [matchPercentage, setMatchPercentage] = useState('');
 
   const fetchAllEscrows = useCallback(async () => {
     if (!publicKey || !programId) return;
@@ -78,8 +82,21 @@ export default function EscrowManagement() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const contractIdParam = params.get('contractId');
+    const titleParam = params.get('title');
+    const avgRatingParam = params.get('avgRating');
+    const matchPercentageParam = params.get('matchPercentage');
+
     if (contractIdParam) {
       setContractId(contractIdParam);
+    }
+    if (titleParam) {
+      setTitle(titleParam);
+    }
+    if (avgRatingParam) {
+      setAvgRating(avgRatingParam);
+    }
+    if (matchPercentageParam) {
+      setMatchPercentage(matchPercentageParam);
     }
   }, []);
 
@@ -138,7 +155,8 @@ export default function EscrowManagement() {
       console.error('Wallet not connected');
       return;
     }
-
+    setFinalAmount(amount);
+    setAmount("0");
     try {
       const escrowPubkey = new PublicKey(escrowId);
 
@@ -263,22 +281,20 @@ export default function EscrowManagement() {
             </TabsContent>
             <TabsContent value="release">
               <div className="space-y-4">
-                {userEscrows.length === 0 ? (
+                {userEscrows.length === 0 ? (   // in case there is no data; default as currently reading from blockchain is not working
                   <div>
-                    <EscrowCard />
-
                     <EscrowCard
-                      providerName="John Doe"
+                      providerName={title}
                       providerLink="https://www.solchat.app/"
-                      serviceId="SRV123"
-                      rating={11.1}
-                      matchPercentage={90}
-                      amountInEscrow={500}
-                      totalAmount={1000}
-                      onReleaseEscrow={() => console.log('Escrow released')}
+                      serviceId={contractId.slice(0, 8) + "..."}
+                      rating={Number(avgRating)}
+                      matchPercentage={Number(matchPercentage)}
+                      amountInEscrow={Number(amount)}
+                      totalAmount={Number(finalAmount)}
+                      onReleaseEscrow={() => handleReleaseEscrow(contractId)}
                     />
 
-                    <p>No active escrows found.</p>
+                    
                   </div>
                 ) : (
                   userEscrows.map((escrow: any) => (
@@ -297,7 +313,7 @@ export default function EscrowManagement() {
 
               {/* add a new card to show some info parsed from the contract from the blockchain */}
               <div className="flex items-center justify-between p-4 border rounded-lg">
-                data
+                
               </div>
             </TabsContent>
           </Tabs>

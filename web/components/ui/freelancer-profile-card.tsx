@@ -47,7 +47,7 @@ export default function FreelancerProfileCard(props: FreelancerProfileProps = De
   }
 
   const handlePayEscrow = () => {
-    const escrowUrl = `/payment?contractId=${encodeURIComponent(props.paymentWalletAddress)}`;
+    const escrowUrl = `/payment?contractId=${encodeURIComponent(props.paymentWalletAddress)}&title=${encodeURIComponent(props.title)}&avgRating=${encodeURIComponent(props.rating)}&matchPercentage=${encodeURIComponent(props.matchScore)}`;
     window.open(escrowUrl, '_blank', 'noopener,noreferrer');
   }
 

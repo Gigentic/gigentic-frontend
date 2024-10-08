@@ -119,12 +119,12 @@ export default function EscrowCard({
             </div>
           </div>
         </div>
-        <div className="text-right">
+        <div className="text-left">
           <p className="text-sm">
-            Amount in Escrow: ${amountInEscrow?.toFixed(2) ?? '0.00'}
+            Amount in Escrow: {amountInEscrow?.toFixed(3) ?? '0.000'} Sol
           </p>
           <p className="text-sm">
-            Total Amount: ${totalAmount?.toFixed(2) ?? '0.00'}
+            Final Amount Paid: {totalAmount?.toFixed(3) ?? '0.000'} Sol
           </p>
         </div>
         <ReviewPopup />
