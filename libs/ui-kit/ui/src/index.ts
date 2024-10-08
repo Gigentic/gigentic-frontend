@@ -15,3 +15,4 @@ export * from './lib/ui/skeleton';
 export * from './lib/ui/badge';
 export * from './lib/ui/tooltip';
 export * from './lib/ui/checkbox';
+export * from './lib/ui/dialog';
