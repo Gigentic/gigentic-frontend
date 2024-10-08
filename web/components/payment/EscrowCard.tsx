@@ -30,8 +30,8 @@ export default function EscrowCard({
     if (onReleaseEscrow) {
       onReleaseEscrow();
     } else {
-      alert('Cool, done! Do a rating here');
       // Add nice popup here for giving a rating
+      console.log('Yes! Release escrow');
     }
   };
 
