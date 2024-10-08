@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@gigentic-frontend/ui-kit/ui"
 import { Badge } from "@gigentic-frontend/ui-kit/ui"
 import { Button } from "@gigentic-frontend/ui-kit/ui"
-import { Star, MessageSquare, Zap } from "lucide-react"
+import { Star, MessageSquare, Zap, Lock } from "lucide-react"
 
 interface FreelancerProfileProps {
   title: string
@@ -12,19 +12,19 @@ interface FreelancerProfileProps {
   experience: string
   rating: number
   matchScore: number
-  walletAddress: string
+  paymentWalletAddress: string
 }
 
 const DefaultFreelancerProfileProps: FreelancerProfileProps = {
-  title: "Frontend Developer",
+  title: "Test",
   pricePerHour: 50,
-  experience: "5+ years of experience in developing responsive web applications using React, Next.js, and TypeScript. Proficient in modern frontend technologies and best practices.",
+  experience: "Test",
   rating: 4.5,
   matchScore: 80,
-  walletAddress: "0x1234567890123456789012345678901234567890"
+  paymentWalletAddress: "0x1234567890123456789012345678901234567890"
 }
 
-export default function FreelancerProfileCard(props: FreelancerProfileProps = DefaultFreelancerProfileProps) 
+export default function FreelancerProfileCard(props: FreelancerProfileProps = DefaultFreelancerProfileProps)
 {
   const freelancerProfileProps: FreelancerProfileProps = {
     title: props.title,
@@ -32,18 +32,23 @@ export default function FreelancerProfileCard(props: FreelancerProfileProps = De
     experience: props.experience,
     rating: props.rating,
     matchScore: props.matchScore,
-    walletAddress: props.walletAddress
+    paymentWalletAddress: props.paymentWalletAddress
   }
 
-
+  const [contractAddress, setContractAddress] = useState('')
   const [isExpanded, setIsExpanded] = useState(false)
   const fullStars = Math.floor(props.rating)
   const hasHalfStar = props.rating % 1 !== 0
 
   const handleContactNow = () => {
     // Replace this URL with the actual Solchat URL when available
-    const solchatUrl = `https://www.solchat.app/${props.walletAddress}`
+    const solchatUrl = `https://www.solchat.app/`
     window.open(solchatUrl, '_blank', 'noopener,noreferrer')
+  }
+
+  const handlePayEscrow = () => {
+    const escrowUrl = `/payment?contractId=${encodeURIComponent(props.paymentWalletAddress)}`;
+    window.open(escrowUrl, '_blank', 'noopener,noreferrer');
   }
 
   const getMatchScoreColor = (score: number) => {
@@ -123,10 +128,14 @@ export default function FreelancerProfileCard(props: FreelancerProfileProps = De
             )}
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex flex-col gap-2">
           <Button className="w-full" onClick={handleContactNow}>
             <MessageSquare className="w-4 h-4 mr-2" />
             Contact Now
+          </Button>
+          <Button className="w-full" variant="outline" onClick={handlePayEscrow}>
+            <Lock className="w-4 h-4 mr-2" />
+            Pay into Escrow
           </Button>
         </CardFooter>
       </Card>

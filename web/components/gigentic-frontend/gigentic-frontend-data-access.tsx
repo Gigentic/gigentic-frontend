@@ -131,15 +131,15 @@ export function useGigenticProgram() {
   );
   const program = getGigenticProgram(provider);
 
-  // const accounts = useQuery({
-  //   queryKey: ['gigentic', 'all', { cluster }],
-  //   queryFn: () => program.account.gigentic.all(),
-  // });
+  const accounts = useQuery({
+    queryKey: ['gigentic', 'all', { cluster }],
+    queryFn: () => program.account.escrow.all(),
+  });
 
-  // const getProgramAccount = useQuery({
-  //   queryKey: ['get-program-account', { cluster }],
-  //   queryFn: () => connection.getParsedAccountInfo(programId),
-  // });
+  const getProgramAccount = useQuery({
+    queryKey: ['get-program-account', { cluster }],
+    queryFn: () => connection.getParsedAccountInfo(programId),
+  });
 
   // const initialize = useMutation({
   //   mutationKey: ['gigentic', 'initialize', { cluster }],
@@ -159,8 +159,8 @@ export function useGigenticProgram() {
   return {
     program,
     programId,
-    // accounts,
-    // getProgramAccount,
+    accounts,
+    getProgramAccount,
     // initialize,
   };
 }
