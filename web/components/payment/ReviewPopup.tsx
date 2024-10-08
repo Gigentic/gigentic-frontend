@@ -10,44 +10,106 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
   Label,
   Textarea,
 } from '@gigentic-frontend/ui-kit/ui';
 
-export default function ReviewPopup() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [rating, setRating] = useState(0);
-  const [review, setReview] = useState('');
+export interface ReviewFormProps {
+  contractId: string;
+  serviceName: string;
+  amount: string;
+  provider: string;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-  const handleReviewSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Here you would typically send the review data to your backend
-    console.log('Submitted review:', { rating, review });
-    setIsOpen(false);
-    setRating(0);
-    setReview('');
-  };
+export default function ReviewPopup({
+  contractId = 'xxasdf',
+  serviceName = 'Unnamed Service',
+  amount = '0',
+  provider = 'Unknown Provider',
+}: ReviewFormProps) {
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Leave a Review</Button>
+        <Button>Release Escrow and Review</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>Leave a Review</DialogTitle>
+          <DialogTitle>Contract Escrow Released!</DialogTitle>
           <DialogDescription>
-            Share your experience with the service provider
+            Now you can rate and share your experience with the service provider
+            attached to this contract!
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleReviewSubmit} className="space-y-4">
+        <ReviewForm
+          contractId={contractId}
+          serviceName={serviceName}
+          amount={amount}
+          provider={provider}
+          setIsOpen={setIsOpen}
+        />
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function ReviewForm({
+  contractId,
+  serviceName,
+  amount,
+  provider,
+  setIsOpen,
+}: ReviewFormProps) {
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Submitted review:', { rating, review });
+    setRating(0);
+    setReview('');
+    setIsOpen(false);
+    // Here you would typically send the review data to your backend
+  };
+
+  return (
+    <Card className="w-full max-w-2xl mx-auto">
+      <CardHeader className="space-y-1.5">
+        <CardTitle className="text-l font-bold">
+          Released Contract Infos:
+        </CardTitle>
+        <CardDescription className="space-y-0.5">
+          {/* Deploy your new project in one-click. */}
+        </CardDescription>
+        <div className="flex flex-col">
+          <p>Contract ID: {contractId}</p>
+          <p>Service: {serviceName}</p>
+          <p>Amount: {amount}</p>
+          <p>Provider: {provider}</p>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="space-y-1">
+            <CardTitle className="text-xl">Leave a Review</CardTitle>
+            <CardDescription>
+              Share your experience with the service provider
+            </CardDescription>
+          </div>
           <div>
             <Label htmlFor="rating">Rating</Label>
             <div className="flex space-x-1 mt-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
-                  className={`w-6 h-6 cursor-pointer ${star <= rating ? 'fill-primary text-primary' : 'fill-muted text-muted-foreground'}`}
+                  className={`w-6 h-6 cursor-pointer ${star <= rating ? 'fill-primary text-primary' : 'text-muted-foreground'}`}
                   onClick={() => setRating(star)}
                 />
               ))}
@@ -59,18 +121,50 @@ export default function ReviewPopup() {
               id="review"
               placeholder="Write your review here"
               value={review}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setReview(e.target.value)
-              }
+              onChange={(e) => setReview(e.target.value)}
               className="mt-1"
+              rows={4}
               required
             />
           </div>
-          <Button type="submit" className="w-full">
-            Submit Review
-          </Button>
+          <div className="flex justify-center">
+            <Button type="submit">Submit Review</Button>
+          </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </CardContent>
+    </Card>
   );
+}
+
+{
+  /* <form onSubmit={handleReviewSubmit} className="space-y-4">
+<div>
+  <Label htmlFor="rating">Rating</Label>
+  <div className="flex space-x-1 mt-1">
+    {[1, 2, 3, 4, 5].map((star) => (
+      <Star
+        key={star}
+        className={`w-6 h-6 cursor-pointer ${star <= rating ? 'fill-primary text-primary' : 'fill-muted text-muted-foreground'}`}
+        onClick={() => setRating(star)}
+      />
+    ))}
+  </div>
+</div>
+<div>
+  <Label htmlFor="review">Review</Label>
+  <Textarea
+    id="review"
+    placeholder="Write your review here"
+    value={review}
+    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+      setReview(e.target.value)
+    }
+    className="mt-1"
+    required
+  />
+</div>
+<Button type="submit" className="w-full">
+  Submit Review
+</Button>
+</form> */
 }

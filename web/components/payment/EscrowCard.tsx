@@ -2,7 +2,8 @@ import { Star } from 'lucide-react';
 import { Button } from '@gigentic-frontend/ui-kit/ui';
 import { Card, CardContent } from '@gigentic-frontend/ui-kit/ui';
 import Link from 'next/link';
-import ReviewPopup from './ReviewPopup';
+import ReviewPopup, { ReviewFormProps } from './ReviewPopup';
+import { SetStateAction } from 'react';
 
 interface EscrowCardProps {
   providerName?: string;
@@ -35,6 +36,10 @@ export default function EscrowCard({
       console.log('Yes! Release escrow');
     }
   };
+
+  function setIsOpen(value: SetStateAction<boolean>): void {
+    throw new Error('Function not implemented.');
+  }
 
   // const handleReleaseEscrow = async (escrowId: string) => {
   //   if (!publicKey) {
@@ -127,10 +132,13 @@ export default function EscrowCard({
             Total Amount: ${totalAmount?.toFixed(2) ?? '0.00'}
           </p>
         </div>
-        <ReviewPopup />
-        <Button onClick={handleRelease} className="ml-4">
-          Release Escrow
-        </Button>
+        <ReviewPopup
+          setIsOpen={setIsOpen}
+          contractId={serviceId}
+          serviceName={providerName}
+          amount={amountInEscrow?.toFixed(2) ?? '0.00'}
+          provider={providerName}
+        />
       </CardContent>
     </Card>
   );
