@@ -7,7 +7,7 @@ import { ExplorerLink } from '../cluster/cluster-ui';
 import { useGigenticProgram } from './gigentic-frontend-data-access';
 import {
   GigenticFrontendCreate,
-  // GigenticFrontendList,
+  GigenticFrontendList,
 } from './gigentic-frontend-ui';
 
 export default function GigenticFrontendFeature() {
@@ -16,12 +16,7 @@ export default function GigenticFrontendFeature() {
 
   return publicKey ? (
     <div>
-      <AppHero
-        title="GigenticFrontend"
-        subtitle={
-          'Create a new account by clicking the "Create" button. The state of a account is stored on-chain and can be manipulated by calling the program\'s methods (increment, decrement, set, and close).'
-        }
-      >
+      <AppHero title="GigenticFrontend" subtitle={'Program ID'}>
         <p className="mb-6">
           <ExplorerLink
             path={`account/${programId}`}
@@ -30,7 +25,7 @@ export default function GigenticFrontendFeature() {
         </p>
         <GigenticFrontendCreate />
       </AppHero>
-      {/* <GigenticFrontendList /> */}
+      <GigenticFrontendList />
     </div>
   ) : (
     <div className="max-w-4xl mx-auto">

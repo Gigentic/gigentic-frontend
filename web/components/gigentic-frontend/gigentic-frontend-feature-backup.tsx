@@ -28,7 +28,7 @@ import {
 // Program Data Access
 import {
   useGigenticProgram,
-  fundAndLogAccount,
+  // fundAndLogAccount,
   // SERVICE_REGISTRY_SPACE,
   // SERVICE_REGISTRY_DEPLOYER,
   // SERVICE_REGISTRY_KEYPAIR,

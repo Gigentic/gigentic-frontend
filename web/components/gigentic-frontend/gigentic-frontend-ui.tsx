@@ -13,11 +13,7 @@ export function GigenticFrontendCreate() {
   // const { initialize } = useGigenticProgram();
 
   return (
-    <p>
-      Hello from Gigentic MVP Frontend! This is where we first interact with the
-      Gigentic program.
-      {/* {process.env.NEXT_PUBLIC_SERVICE_REGISTRY_KEYPAIR_SECRETKEY_BS58} */}
-    </p>
+    <p>..</p>
 
     // <button
     //   className="btn btn-xs lg:btn-md btn-primary"
@@ -29,44 +25,48 @@ export function GigenticFrontendCreate() {
   );
 }
 
-// export function GigenticFrontendList() {
-//   const { accounts, getProgramAccount } = useGigenticProgram();
+export function GigenticFrontendList() {
+  const { accounts, getProgramAccount } = useGigenticProgram();
 
-//   if (getProgramAccount.isLoading) {
-//     return <span className="loading loading-spinner loading-lg"></span>;
-//   }
-//   if (!getProgramAccount.data?.value) {
-//     return (
-//       <div className="alert alert-info flex justify-center">
-//         <span>
-//           Program account not found. Make sure you have deployed the program and
-//           are on the correct cluster.
-//         </span>
-//       </div>
-//     );
-//   }
-//   return (
-//     <div className={'space-y-6'}>
-//       {accounts.isLoading ? (
-//         <span className="loading loading-spinner loading-lg"></span>
-//       ) : accounts.data?.length ? (
-//         <div className="grid md:grid-cols-2 gap-4">
-//           {accounts.data?.map((account) => (
-//             <GigenticFrontendCard
-//               key={account.publicKey.toString()}
-//               account={account.publicKey}
-//             />
-//           ))}
-//         </div>
-//       ) : (
-//         <div className="text-center">
-//           <h2 className={'text-2xl'}>No accounts</h2>
-//           No accounts found. Create one above to get started.
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
+  if (getProgramAccount.isLoading) {
+    return <span className="loading loading-spinner loading-lg"></span>;
+  }
+  if (!getProgramAccount.data?.value) {
+    return (
+      <div className="alert alert-info flex justify-center">
+        <span>
+          Program account not found. Make sure you have deployed the program and
+          are on the correct cluster.
+        </span>
+      </div>
+    );
+  }
+  return (
+    <div className={'space-y-6'}>
+      {accounts.isLoading ? (
+        <span className="loading loading-spinner loading-lg"></span>
+      ) : accounts.data?.length ? (
+        <div className="grid md:grid-cols-2 gap-4">
+          <p>GigenticFrontendCard</p>
+          {accounts.data?.map((account) => (
+            <p key={account.publicKey.toString()}>
+              {account.publicKey.toString()}
+            </p>
+            // <GigenticFrontendCard
+            //   key={account.publicKey.toString()}
+            //   account={account.publicKey}
+            // />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center">
+          <h2 className={'text-2xl'}>No accounts</h2>
+          No accounts found. Create one above to get started.
+        </div>
+      )}
+    </div>
+  );
+}
 
 // function GigenticFrontendCard({ account }: { account: PublicKey }) {
 //   const {
