@@ -52,12 +52,14 @@ function FreelancerProfileCard({
   const hasHalfStar = rating % 1 !== 0
 
   const handleContactNow = () => {
-    const solchatUrl = `https://example.com/solchat/${paymentWalletAddress}`
+    const solchatUrl = `https://www.solchat.app/`
     window.open(solchatUrl, '_blank', 'noopener,noreferrer')
   }
 
   const handlePayEscrow = () => {
-    console.log("Initiating escrow payment process")
+    //setContractAddress(props.paymentWalletAddress)
+    const escrowUrl = `http://localhost:3000/payment?address=${paymentWalletAddress}`
+    window.open(escrowUrl, '_blank', 'noopener,noreferrer')
   }
 
   const getMatchScoreColor = (score: number) => {
