@@ -9,7 +9,7 @@ export function ChatList({ messages }: MessagesProps) {
     return (
         <div className="flex flex-col gap-4">
             {messages.map((message) => (
-                <div key={message.id}>
+                <div key={message.id} >
                     {message.display}
                 </div>
             ))}
