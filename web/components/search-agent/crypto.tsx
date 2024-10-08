@@ -8,8 +8,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { ArrowDownIcon, PlusIcon } from 'lucide-react';
 import { useUIState, useActions } from 'ai/rsc';
 import type { AI } from '../../app/actions';
-import { sendMessage } from '../../app/actions';
-import { UserMessage, BotMessage } from '../llm/message';
+import { UserMessage } from '../llm/message';
 import { Button } from '@gigentic-frontend/ui-kit/ui';
 import { z } from 'zod';
 
@@ -25,12 +24,13 @@ export default function CryptoTool() {
   const [messages, setMessages] = useUIState<typeof AI>();
   const { sendMessage } = useActions<typeof AI>();
 
-
+  // handle the form submission
   const onSubmit: SubmitHandler<ChatInput> = async (data) => {
     const value = data.message.trim();
     formRef.current?.reset();
     if (!value) return;
 
+    // add the user message to the chat history
     setMessages((currentMessages) => [
       ...currentMessages,
       {
@@ -40,6 +40,7 @@ export default function CryptoTool() {
       },
     ]);
 
+    // send the message to the LLM
     try {
       const responseMessage = await sendMessage(value);
       setMessages((currentMessages) => [...currentMessages, responseMessage]);
@@ -48,6 +49,7 @@ export default function CryptoTool() {
     }
   };
 
+  // render the chat UI
   return (
     <div>
       <div className="pb-[200px] pt-4 md:pt-10">
@@ -78,6 +80,7 @@ export default function CryptoTool() {
                   rows={1}
                   {...form.register('message')}
                 />
+                {/* render the button to send the message */}
                 <div className="absolute right-0 top-4 sm:right-4">
                   <Button
                     type="submit"
@@ -91,6 +94,7 @@ export default function CryptoTool() {
               </div>
             </form>
 
+            {/* render the button to start a new chat */}
             <Button
               variant="outline"
               size="lg"

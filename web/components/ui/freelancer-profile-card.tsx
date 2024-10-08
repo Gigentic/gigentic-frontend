@@ -24,6 +24,7 @@ const DefaultFreelancerProfileProps: FreelancerProfileProps = {
   paymentWalletAddress: "0x1234567890123456789012345678901234567890"
 }
 
+// render the profile card for one freelancer
 export default function FreelancerProfileCard(props: FreelancerProfileProps = DefaultFreelancerProfileProps)
 {
   const freelancerProfileProps: FreelancerProfileProps = {

@@ -1,7 +1,5 @@
 'use client';
 
-import { Card, CardContent, Input, Button } from '@gigentic-frontend/ui-kit/ui';
-
 export default function DashboardFeature() {
   return (
     <div>

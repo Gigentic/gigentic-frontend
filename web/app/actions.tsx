@@ -7,42 +7,17 @@ import { createAI, getMutableAIState, streamUI } from 'ai/rsc';
 import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
 import { BotCard, BotMessage } from "../components/llm/message";
-import Price from "../components/ui/price";
-import PriceSkeleton from "../components/ui/price-skeleton";
 import FreelancerProfileCard from "../components/ui/freelancer-profile-card";
 import FreelancerProfile3Cards from "../components/ui/freelancer-profile-3-cards";
-
-import { Program, setProvider, AnchorProvider } from '@coral-xyz/anchor';// this is the system message we send to the LLM to instantiate it
-import { Keypair, Connection, PublicKey, Cluster } from '@solana/web3.js';
-
-// import { Gigentic } from '../../anchor/target/types/gigentic';
-// import { IDL } from '@coral-xyz/anchor/dist/cjs/native/system';
-// eslint-disable-next-line @nx/enforce-module-boundaries
+import { AnchorProvider } from '@coral-xyz/anchor';
+import { Connection } from '@solana/web3.js';
 import { loadKeypairBs58FromEnv } from '../../anchor/tests/utils';
+import { getGigenticProgram, getGigenticProgramId } from '@gigentic-frontend/anchor';
 
-// Program Data Access
-// import {
-//   useGigenticProgram,
-// } from '../components/gigentic-frontend/gigentic-frontend-data-access';
-
-import {
-  getGigenticProgram,
-  getGigenticProgramId,
-} from '@gigentic-frontend/anchor';
-// import { useAnchorProvider } from "@/components/solana/solana-provider";
-// import { useCluster } from "@/components/cluster/cluster-data-access";
-
-
-// Initialize connection and program
-//const connection: Connection = PROVIDER.connection;
-//const program: Program<Gigentic> = workspace.Gigentic as Program<Gigentic>;
-//const { program } = useGigenticProgram();
-// const PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_GIGENTIC_PROGRAM_ID || '');
-// const program = new Program<Gigentic>(IDL, PROGRAM_ID, provider);
 let service_registry = ''
 let content = ``;
 
-// gives it the context for tool callin
+// gives the LLM the context for tool callin
 const prompt_instructions = `\
   You are a assistant helping users finding the right freelancer for their project/task.
 
@@ -53,7 +28,7 @@ const prompt_instructions = `\
 
 `;
 
-
+// read the service registry from the blockchain
 async function fetchServiceRegistry() {
 
   // Create a new AnchorProvider
@@ -79,11 +54,6 @@ async function fetchServiceRegistry() {
     'serviceRegistryKeypair',
     serviceRegistryKeypair.publicKey.toString(),
   );
-
-  // const { connection } = useConnection();
-  // const { program } = useGigenticProgram();
-
-
   console.log('========== Fetch service registry');
   const serviceRegistry = await program.account.serviceRegistry.fetch(
     serviceRegistryKeypair.publicKey,
@@ -96,15 +66,10 @@ async function fetchServiceRegistry() {
 
     const serviceAccount =
       await program.account.service.fetch(serviceAddress);
-    // console.log('Service Account Unique ID:', serviceAccount.uniqueId);
-    //console.log('Service Account Description:', serviceAccount.description);
-    service_registry += `\n${serviceAccount.description} | paymentWalletAddress: ${paymentAddress}`;
-    //console.log('\nService Registry:', service_registry);
 
-    //console.log('Service Account Price:', serviceAccount.price.toString());
-    // console.log('Service Account Mint:', serviceAccount.mint.toString());
+    service_registry += `\n${serviceAccount.description} | paymentWalletAddress: ${paymentAddress}`;
   }
-  //console.log('\nService Registry:', service_registry);
+
   return service_registry
 }
 
@@ -117,11 +82,8 @@ export async function sendMessage(message: string): Promise<{
 }> {
   const history = getMutableAIState<typeof AI>();
 
-  console.log('-> Fetch service registry');
+  // provide the service registry as context to the LLM
   content = await fetchServiceRegistry();
-  //content = `${prompt_instructions}\n${service_registry}`;
-
-  console.log('--> Content:', content);
 
   history.update([
     ...history.get(),
@@ -131,6 +93,7 @@ export async function sendMessage(message: string): Promise<{
     }
   ]);
 
+  // call the LLM
   const reply = await streamUI({
     model: openai('gpt-4o'),
     messages: [
@@ -156,45 +119,20 @@ export async function sendMessage(message: string): Promise<{
       .replace(/(\*\*(.*?)\*\*)/g, (match, p1, p2) => `<strong>${p2}</strong>`) // Bold any text wrapped in **
       .replace(/\n/g, '<br />'); // Replace line breaks with <br />
 
+      // return the formatted LLM reponse text
       return (
       <BotMessage> 
           <span dangerouslySetInnerHTML={{ __html: formattedContent }} />
       </BotMessage>)
     },
     temperature: 0.0,
+
+    // define the tools that the LLM can use
     tools: {
-      get_crypto_price: {
-        description: "Get the price of a cryptocurrency",
-        parameters: z.object({
-          symbol: z.string().describe("The symbol of the cryptocurrency"),
-        }),
-        generate: async function* ({symbol}: {symbol: string}) {
-          console.log({symbol});
-          yield <BotCard > <PriceSkeleton /> </BotCard>;
 
-          const price = 231.4;
-          const name = "Solana";
-          const priceChangePercentage = 2.5;
-
-          history.done([
-            ...history.get(),
-            {
-              role: "assistant",
-              name: "get_crypto_price",
-              content: `[The price of ${symbol} is ${price}]`
-            }
-          ]);
-
-          return (
-            <BotCard>
-              <Price name={name} symbol={symbol} currentPrice={price} priceChangePercentage={priceChangePercentage} />
-            </BotCard>
-          );
-
-        }
-      },
+      // tool to show the summary profile of exactly one freelancer or the profile of one AI agent
       show_freelancer_profile: {
-        description: "Show the summary profile of exactly one freelancer or AI agent",
+        description: "Show the summary profile of exactly one freelancer or the profile of one AI agent",
         parameters: z.object({
           title: z.string().describe("The title of the freelancer or AI agent"),
           pricePerHour: z.number().describe("The price per hour of the freelancer"),
@@ -213,7 +151,7 @@ export async function sendMessage(message: string): Promise<{
             {
               role: "assistant",
               name: "show_freelancer_profile",
-              content: "" //`[The profile of the freelancer with the following details is shown to the user - don't use this to suggest a freelancer, but use the service registry instead: title: ${title}, pricePerHour: ${pricePerHour}, experience: ${experience}, rating: ${rating}, matchScore: ${matchScore}, walletAddress: ${walletAddress} ]`
+              content: "" 
             }
           ]);
 
@@ -225,8 +163,9 @@ export async function sendMessage(message: string): Promise<{
 
         }
       },
+      // tool to show the summary profiles of three freelancers next to each other
       show_three_freelancer_profiles: {
-        description: "Show the summary profiles of exactly three freelancers or AI agents",
+        description: "Show the summary profiles of exactly three freelancers or the profile of three AI agent",
         parameters: z.object({
           freelancer1_title: z.string().describe("The title of the first freelancer"),
           freelancer1_pricePerHour: z.number().describe("The price per hour of first freelancer"),
@@ -253,13 +192,12 @@ export async function sendMessage(message: string): Promise<{
           console.log({freelancer1_title, freelancer1_pricePerHour, freelancer1_experience, freelancer1_matchScore, freelancer1_rating, freelancer1_paymentWalletAddress, freelancer2_title, freelancer2_pricePerHour, freelancer2_experience, freelancer2_matchScore, freelancer2_rating, freelancer2_paymentWalletAddress, freelancer3_title, freelancer3_pricePerHour, freelancer3_experience, freelancer3_matchScore, freelancer3_rating, freelancer3_paymentWalletAddress});
           yield <BotCard> Loading... </BotCard>;
 
-
           history.done([
             ...history.get(),
             {
               role: "assistant",
               name: "show_freelancer_profile",
-              content: "" //`[The profile of the freelancer with the following details is shown to the user - don't use this to suggest a freelancer, but use the service registry instead: title: ${title}, pricePerHour: ${pricePerHour}, experience: ${experience}, rating: ${rating}, matchScore: ${matchScore}, walletAddress: ${walletAddress} ]`
+              content: "" 
             }
           ]);
 
