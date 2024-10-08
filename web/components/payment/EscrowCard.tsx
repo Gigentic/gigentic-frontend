@@ -2,6 +2,7 @@ import { Star } from 'lucide-react';
 import { Button } from '@gigentic-frontend/ui-kit/ui';
 import { Card, CardContent } from '@gigentic-frontend/ui-kit/ui';
 import Link from 'next/link';
+import ReviewPopup from './ReviewPopup';
 
 interface EscrowCardProps {
   providerName?: string;
@@ -126,6 +127,7 @@ export default function EscrowCard({
             Total Amount: ${totalAmount?.toFixed(2) ?? '0.00'}
           </p>
         </div>
+        <ReviewPopup />
         <Button onClick={handleRelease} className="ml-4">
           Release Escrow
         </Button>
