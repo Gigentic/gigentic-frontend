@@ -869,11 +869,6 @@ jayson@^4.1.0, jayson@^4.1.1:
     uuid "^8.3.2"
     ws "^7.5.10"
 
-jinx-rust@0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/jinx-rust/-/jinx-rust-0.1.6.tgz#c7bce55d97bfbad76a9b930c01fe6a8629a170d7"
-  integrity sha512-qP+wtQL1PrDDFwtPKhNGtjWOmijCrKdfUHWTV2G/ikxfjrh+cjdvkQTmny9RAsVF0jiui9m+F0INWu4cuRcZeQ==
-
 js-yaml@4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-4.1.0.tgz#c1fb65f8f5017901cdd2c951864ba18458a10602"
@@ -1073,19 +1068,6 @@ picomatch@^2.0.4, picomatch@^2.2.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.3.1.tgz#3ba3833733646d9d3e4995946c1365a67fb07a42"
   integrity sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==
-
-prettier-plugin-rust@^0.1.9:
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/prettier-plugin-rust/-/prettier-plugin-rust-0.1.9.tgz#1a93b035743fa02a006b4980a1035a260ea9e501"
-  integrity sha512-n1DTTJQaHMdnoG/+nKUvBm3EKsMVWsYES2UPCiOPiZdBrmuAO/pX++m7L3+Hz3uuhtddpH0HRKHB2F3jbtJBOQ==
-  dependencies:
-    jinx-rust "0.1.6"
-    prettier "^2.7.1"
-
-prettier@^2.7.1:
-  version "2.8.8"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.8.tgz#e8c5d7e98a4305ffe3de2e1fc4aca1a71c28b1da"
-  integrity sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==
 
 prettier@^3.3.3:
   version "3.3.3"
