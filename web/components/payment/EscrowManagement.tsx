@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { useEffect, useState, useCallback } from 'react'
-import { InfoIcon } from 'lucide-react'
+import { useEffect, useState, useCallback } from 'react';
+import { InfoIcon } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -19,44 +19,45 @@ import {
   TabsTrigger,
 } from '@gigentic-frontend/ui-kit/ui';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL, ParsedAccountData } from '@solana/web3.js';
+import {
+  PublicKey,
+  Transaction,
+  SystemProgram,
+  LAMPORTS_PER_SOL,
+  ParsedAccountData,
+} from '@solana/web3.js';
 import { useTransactionToast } from '../ui/ui-layout';
 
 import { useGigenticProgram } from '../gigentic-frontend/gigentic-frontend-data-access';
 import EscrowCard from './EscrowCard';
-
 
 // Mock data for open escrows
 const openEscrows = [
   { id: 'ESC001', amount: 5, contractId: 'CNT123' },
   { id: 'ESC002', amount: 10, contractId: 'CNT456' },
   { id: 'ESC003', amount: 7.5, contractId: 'CNT789' },
-]
+];
 
 export default function EscrowManagement() {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
   const transactionToast = useTransactionToast();
-  const {programId, accounts, getProgramAccount } = useGigenticProgram();
+  const { programId, accounts, getProgramAccount } = useGigenticProgram();
 
-
-  const [contractId, setContractId] = useState('')
-  const [amount, setAmount] = useState('')
-  const [agreed, setAgreed] = useState(false)
+  const [contractId, setContractId] = useState('');
+  const [amount, setAmount] = useState('');
+  const [agreed, setAgreed] = useState(false);
   const [userEscrows, setUserEscrows] = useState([]);
 
   const fetchAllEscrows = useCallback(async () => {
     if (!publicKey || !programId) return;
 
     try {
-      const accounts = await connection.getParsedProgramAccounts(
-        programId,
-        {
-          filters: [
-            { dataSize: 165 }, // Adjust this size based on your Escrow struct size
-          ],
-        }
-      );
+      const accounts = await connection.getParsedProgramAccounts(programId, {
+        filters: [
+          { dataSize: 165 }, // Adjust this size based on your Escrow struct size
+        ],
+      });
 
       const allEscrows = accounts.map((account) => {
         const parsedData = (account.account.data as ParsedAccountData).parsed;
@@ -89,7 +90,7 @@ export default function EscrowManagement() {
   }, [publicKey, programId, fetchAllEscrows]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!publicKey) {
       console.error('Wallet not connected');
       return;
@@ -104,7 +105,7 @@ export default function EscrowManagement() {
           fromPubkey: publicKey,
           toPubkey: escrowPubkey,
           lamports,
-        })
+        }),
       );
 
       const { blockhash } = await connection.getLatestBlockhash();
@@ -114,7 +115,10 @@ export default function EscrowManagement() {
       const signed = await sendTransaction(transaction, connection);
       console.log('Transaction sent:', signed);
 
-      const confirmation = await connection.confirmTransaction(signed, 'confirmed');
+      const confirmation = await connection.confirmTransaction(
+        signed,
+        'confirmed',
+      );
       if (confirmation.value.err) {
         throw new Error('Transaction failed to confirm');
       }
@@ -123,11 +127,11 @@ export default function EscrowManagement() {
     } catch (error) {
       console.error('Error sending transaction:', error);
     }
-  }
+  };
 
   const handleBuySol = () => {
-    console.log('Initiating SOL purchase process')
-  }
+    console.log('Initiating SOL purchase process');
+  };
 
   const handleReleaseEscrow = async (escrowId: string) => {
     if (!publicKey) {
@@ -140,9 +144,10 @@ export default function EscrowManagement() {
 
       // Create the transaction to release the escrow
       // This is a placeholder - you need to replace this with your actual program instruction
-      const transaction = new Transaction().add(
+      const transaction = new Transaction()
+        .add
         // Your program instruction to release the escrow
-      );
+        ();
 
       const { blockhash } = await connection.getLatestBlockhash();
       transaction.recentBlockhash = blockhash;
@@ -151,7 +156,10 @@ export default function EscrowManagement() {
       const signed = await sendTransaction(transaction, connection);
       console.log('Release transaction sent:', signed);
 
-      const confirmation = await connection.confirmTransaction(signed, 'confirmed');
+      const confirmation = await connection.confirmTransaction(
+        signed,
+        'confirmed',
+      );
       if (confirmation.value.err) {
         throw new Error('Transaction failed to confirm');
       }
@@ -163,7 +171,7 @@ export default function EscrowManagement() {
     } catch (error) {
       console.error('Error releasing escrow:', error);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -223,18 +231,11 @@ export default function EscrowManagement() {
                     checked={agreed}
                     onCheckedChange={(checked) => setAgreed(checked as boolean)}
                   />
-                  <Label
-                    htmlFor="terms"
-                    className="ml-2 text-sm"
-                  >
+                  <Label htmlFor="terms" className="ml-2 text-sm">
                     I agree to the terms and conditions
                   </Label>
                 </div>
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={!agreed}
-                >
+                <Button type="submit" className="w-full" disabled={!agreed}>
                   Initiate Escrow Payment
                 </Button>
               </form>
@@ -251,7 +252,10 @@ export default function EscrowManagement() {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Purchase SOL, the native cryptocurrency of the Solana blockchain, required for transactions on Gigentic</p>
+                      <p>
+                        Purchase SOL, the native cryptocurrency of the Solana
+                        blockchain, required for transactions on Gigentic
+                      </p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -262,6 +266,18 @@ export default function EscrowManagement() {
                 {userEscrows.length === 0 ? (
                   <div>
                     <EscrowCard />
+
+                    <EscrowCard
+                      providerName="John Doe"
+                      providerLink="https://www.solchat.app/john-doe"
+                      serviceId="SRV123"
+                      rating={3.9}
+                      matchPercentage={90}
+                      amountInEscrow={500}
+                      totalAmount={1000}
+                      onReleaseEscrow={() => console.log('Escrow released')}
+                    />
+
                     <p>No active escrows found.</p>
                   </div>
                 ) : (
@@ -271,7 +287,9 @@ export default function EscrowManagement() {
                       providerName={`Provider ${escrow.serviceProvider.slice(0, 8)}...`}
                       serviceId={escrow.pubkey.toString().slice(0, 8)}
                       amountInEscrow={escrow.amount}
-                      onReleaseEscrow={() => handleReleaseEscrow(escrow.pubkey.toString())}
+                      onReleaseEscrow={() =>
+                        handleReleaseEscrow(escrow.pubkey.toString())
+                      }
                     />
                   ))
                 )}
@@ -279,15 +297,12 @@ export default function EscrowManagement() {
 
               {/* add a new card to show some info parsed from the contract from the blockchain */}
               <div className="flex items-center justify-between p-4 border rounded-lg">
-
-                  data
-
+                data
               </div>
-
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
