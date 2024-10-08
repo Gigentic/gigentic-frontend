@@ -3,7 +3,6 @@
 import { ChatList } from './chat-list';
 import ChatScrollAnchor from './chat-scroll-anchor';
 import { useEnterSubmit } from '@/lib/use-enter-submit';
-//import { Button } from '@solana/wallet-adapter-react-ui/lib/types/Button';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import TextareaAutosize from 'react-textarea-autosize';
 import { ArrowDownIcon, PlusIcon } from 'lucide-react';
@@ -11,7 +10,6 @@ import { useUIState, useActions } from 'ai/rsc';
 import type { AI } from '../../app/actions';
 import { sendMessage } from '../../app/actions';
 import { UserMessage, BotMessage } from '../llm/message';
-
 import { Button } from '@gigentic-frontend/ui-kit/ui';
 import { z } from 'zod';
 
@@ -48,10 +46,6 @@ export default function CryptoTool() {
     } catch (error) {
       console.error(error);
     }
-    //console.log("window.innerHeight: ", window.innerHeight);
-    //console.log("window.scrollY: ", window.scrollY);
-    //console.log("document.body.offsetHeight: ", document.body.offsetHeight);
-    //console.log("window.innerHeight - window.scrollY 2: ", window.innerHeight - window.scrollY);
   };
 
   return (

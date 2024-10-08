@@ -11,8 +11,8 @@ interface FreelancerProfileProps {
   pricePerHour: number
   experience: string
   rating: number
-  walletAddress: string
   matchScore: number
+  paymentWalletAddress: string
 }
 
 
@@ -21,22 +21,22 @@ interface FreelancerProfile3CardsProps {
     freelancer1_pricePerHour: number
     freelancer1_experience: string
     freelancer1_rating: number
-    freelancer1_walletAddress: string
     freelancer1_matchScore: number
+    freelancer1_paymentWalletAddress: string
 
     freelancer2_title: string
     freelancer2_pricePerHour: number
     freelancer2_experience: string
     freelancer2_rating: number
-    freelancer2_walletAddress: string
     freelancer2_matchScore: number
+    freelancer2_paymentWalletAddress: string
 
     freelancer3_title: string
     freelancer3_pricePerHour: number
     freelancer3_experience: string
     freelancer3_rating: number
-    freelancer3_walletAddress: string
     freelancer3_matchScore: number
+    freelancer3_paymentWalletAddress: string
   }
 
 function FreelancerProfileCard({ 
@@ -44,20 +44,22 @@ function FreelancerProfileCard({
   pricePerHour,
   experience,
   rating,
-  walletAddress,
-  matchScore
+  matchScore,
+  paymentWalletAddress
 }: FreelancerProfileProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const fullStars = Math.floor(rating)
   const hasHalfStar = rating % 1 !== 0
 
   const handleContactNow = () => {
-    const solchatUrl = `https://example.com/solchat/${walletAddress}`
+    const solchatUrl = `https://www.solchat.app/`
     window.open(solchatUrl, '_blank', 'noopener,noreferrer')
   }
 
   const handlePayEscrow = () => {
-    console.log("Initiating escrow payment process")
+    //setContractAddress(props.paymentWalletAddress)
+    const escrowUrl = `http://localhost:3000/payment?address=${paymentWalletAddress}`
+    window.open(escrowUrl, '_blank', 'noopener,noreferrer')
   }
 
   const getMatchScoreColor = (score: number) => {
@@ -157,29 +159,29 @@ export default function FreelancerProfile3Cards(props: FreelancerProfile3CardsPr
       pricePerHour: props.freelancer1_pricePerHour,
       experience: props.freelancer1_experience,
       rating: props.freelancer1_rating,
-      walletAddress: props.freelancer1_walletAddress,
-      matchScore: props.freelancer1_matchScore
+      matchScore: props.freelancer1_matchScore,
+      paymentWalletAddress: props.freelancer1_paymentWalletAddress
     },
     {
       title: props.freelancer2_title,
       pricePerHour: props.freelancer2_pricePerHour,
       experience: props.freelancer2_experience,
       rating: props.freelancer2_rating,
-      walletAddress: props.freelancer2_walletAddress,
-      matchScore: props.freelancer2_matchScore
+      matchScore: props.freelancer2_matchScore,
+      paymentWalletAddress: props.freelancer2_paymentWalletAddress
     },
     {
       title: props.freelancer3_title,
       pricePerHour: props.freelancer3_pricePerHour,
       experience: props.freelancer3_experience,
       rating: props.freelancer3_rating,
-      walletAddress: props.freelancer3_walletAddress,
-      matchScore: props.freelancer3_matchScore
+      matchScore: props.freelancer3_matchScore,
+      paymentWalletAddress: props.freelancer3_paymentWalletAddress
     }
   ]
 
   return (
-    <div className="bg-gray-100 min-h-screen p-4">
+    <div className="bg-gray-100 p-4">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {freelancers.map((freelancer, index) => (
           <FreelancerProfileCard key={index} {...freelancer} />
