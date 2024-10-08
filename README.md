@@ -4,6 +4,8 @@
 
 [https://gigentic-frontend.vercel.app](https://gigentic-frontend.vercel.app)
 
+[Link to 3-minute pitch of the project](https://www.youtube.com/watch?v=_CxF3BPZblo)
+
 ## Table of Contents
 
 - [Introduction](#introduction)
