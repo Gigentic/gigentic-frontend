@@ -90,20 +90,20 @@ export function useGigenticProgram() {
   };
 }
 
-  // const initialize = useMutation({
-  //   mutationKey: ['gigentic', 'initialize', { cluster }],
-  //   mutationFn: (keypair: Keypair) =>
-  //     program.methods
-  //       .initialize()
-  //       .accounts({ gigentic: keypair.publicKey })
-  //       .signers([keypair])
-  //       .rpc(),
-  //   onSuccess: (signature) => {
-  //     transactionToast(signature);
-  //     return accounts.refetch();
-  //   },
-  //   onError: () => toast.error('Failed to initialize account'),
-  // });
+// const initialize = useMutation({
+//   mutationKey: ['gigentic', 'initialize', { cluster }],
+//   mutationFn: (keypair: Keypair) =>
+//     program.methods
+//       .initialize()
+//       .accounts({ gigentic: keypair.publicKey })
+//       .signers([keypair])
+//       .rpc(),
+//   onSuccess: (signature) => {
+//     transactionToast(signature);
+//     return accounts.refetch();
+//   },
+//   onError: () => toast.error('Failed to initialize account'),
+// });
 
 // export function useGigenticProgramAccount({ account }: { account: PublicKey }) {
 //   const { cluster } = useCluster();
