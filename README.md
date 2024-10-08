@@ -2,6 +2,8 @@
 
 *A decentralized "Upwork" to help humans and AI agents work together.*
 
+[https://gigentic-frontend.vercel.app](https://gigentic-frontend.vercel.app)
+
 ## Table of Contents
 
 - [Introduction](#introduction)
@@ -15,7 +17,6 @@
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
-- [License](#license)
 
 
 ## Introduction
@@ -141,7 +142,7 @@ Gigentic's architecture consists of a frontend built with modern web technologie
 
 ## Installation
 
-If you want to have a quick look at the app, you can directly go to http://gigentic.com and check it out.
+If you want to have a quick look at the app, you can directly go and [check it out](https://gigentic-frontend.vercel.app).
 
 To set up the project locally, follow these steps:
 
@@ -212,227 +213,67 @@ Navigate to the root directory and start the development server:
    ```
 
 
+## Contributing
 
+We’re excited to help you contribute to our project! Whether you’re fixing a bug, improving documentation, or adding new features, your contributions are valuable. Here’s how you can get started:
 
+1. **Fork the Repository**
+   
+   Click the **Fork** button at the top right corner of the repository page to create your own copy of the project.
 
+2. **Clone Your Fork**
+   
+   Clone the forked repository to your local machine using the following command:
 
+   ```bash
+   git clone https://github.com/your-username/your-repo.git
+   ```
 
+3. **Create a New Branch**
+   
+   Create a new branch for your work to keep changes organized:
 
+   ```bash
+   git checkout -b feature/awesome-feature
+   ```
 
+4. **Make Your Changes**
+   
+   Implement your changes or additions. Ensure your code follows the project's coding standards and includes appropriate tests.
 
+5. **Commit Your Changes**
+   
+   Commit your changes with a clear and descriptive message:
 
+   ```bash
+   git commit -m "Add awesome feature"
+   ```
 
+6. **Push to Your Fork**
+   
+   Push your changes to your forked repository:
 
+   ```bash
+   git push origin feature/awesome-feature
+   ```
 
+7. **Submit a Pull Request**
+   
+   Go to the original repository and click on **New Pull Request**. Provide a clear description of your changes and submit the pull request for review.
 
+8. **Address Feedback**
+   
+   Be prepared to make additional changes based on feedback from the project maintainers. Collaboration is key to improving the project!
 
+### Guidelines
 
+- **Issue Reporting**
+  
+  If you find a bug or have a feature request, please open an issue to discuss it before working on it.
 
+- **Testing**
+  
+  Make sure to add tests for your changes to maintain the project's reliability.
 
-# new notes to deploy to localnet:
+Thank you for considering contributing to our project! Your support helps us improve and grow.
 
-restart program:
-solana-keygen new --no-bip39-passphrase --force; rm -rf test-ledger; solana-test-validator
-
-yarn anchor deploy
-
-yarn anchor run deploy-registry
-yarn anchor run write-services
----
-
-solana-keygen new --no-bip39-passphrase --force
-solana config set --url localhost
-
-in new tab:
-rm -rf test-ledger; solana-test-validator
-
-yarn anchor build
-yarn anchor-keys
-yarn anchor deploy
-yarn anchor-test
-
----
-
-from here we can re-run scripts:
-
-yarn anchor run deploy-registry
-
-# new notes to deploy to devnet:
-
-solana-keygen new
-
-solana address
-solana balance
-
-solana airdrop 100
-solana balance
-
-connect to local validator:
-
-`solana config set --url localhost`
-`solana config set --url http://127.0.0.1:8899`
-
-connect to devnet:
-
-`solana config set --url https://api.devnet.solana.com`
-
-default keypair location on Mac OS:
-`/Users/marci/.config/solana/id.json`
-
-deploy program to devnet:
-
-`anchor deploy --provider.cluster devnet`
-
-run service registry deployer script:
-
-`yarn anchor run deploy-registry`
-
-initialize script pointed at devnet:
-
-# Gigentic Frontend
-
-Solana anchor + Next.js full stack setup generated with the [create-solana-dapp](https://github.com/solana-developers/create-solana-dapp) generator.
-
-Notes:
-
-- Make sure to downgrade rust to version rustc 1.79.0 to avoid problems running anchor
-
-- Next.js
-- Tailwind
-- Counter Anchor template program
-
-Install dependencies in main gigentic-frontend folder:
-`yarn`
-
-### Run frontend
-
-In main gigentic-frontend folder:
-`yarn dev`
-
-#### Local validator setup
-
-Clear validator state:
-`rm -rf test-ledger`
-
-Start local validator:
-`solana-test-validator`
-
-### Chain code test and typescript setup
-
-Set up libs in main anchor folder as well
-
-`cd anchor`
-
-`yarn`
-
-#### build
-
-`anchor build`
-`anchor keys sync`
-
-#### test
-
-`anchor test --skip-local-validator`
-
-### .env file setup
-
-Set up .env file. (See Google folder for sample keys for a reproducible local-dev setup.)
-
-==============================================================================
-
-# Docs from the solana-starter-dapp
-
-This project was originally generated with the [create-solana-dapp](https://github.com/solana-developers/create-solana-dapp) generator.
-
-## Getting Started
-
-### Prerequisites
-
-- Node v18.18.0 or higher
-
-- Rust v1.77.2 or higher
-- Anchor CLI 0.30.1 or higher
-- Solana CLI 1.18.17 or higher
-
-### Installation
-
-#### Clone the repo
-
-```shell
-git clone <repo-url>
-cd <repo-name>
-```
-
-#### Install Dependencies
-
-```shell
-npm install
-```
-
-#### Start the web app
-
-```
-npm run dev
-```
-
-## Apps
-
-### anchor
-
-This is a Solana program written in Rust using the Anchor framework.
-
-#### Commands
-
-You can use any normal anchor commands. Either move to the `anchor` directory and run the `anchor` command or prefix the command with `npm run`, eg: `npm run anchor`.
-
-#### Sync the program id:
-
-Running this command will create a new keypair in the `anchor/target/deploy` directory and save the address to the Anchor config file and update the `declare_id!` macro in the `./src/lib.rs` file of the program.
-
-You will manually need to update the constant in `anchor/lib/counter-exports.ts` to match the new program id.
-
-```shell
-npm run anchor keys sync
-```
-
-#### Build the program:
-
-```shell
-npm run anchor-build
-```
-
-#### Start the test validator with the program deployed:
-
-```shell
-npm run anchor-localnet
-```
-
-#### Run the tests
-
-```shell
-npm run anchor-test
-```
-
-#### Deploy to Devnet
-
-```shell
-npm run anchor deploy --provider.cluster devnet
-```
-
-### web
-
-This is a React app that uses the Anchor generated client to interact with the Solana program.
-
-#### Commands
-
-Start the web app
-
-```shell
-npm run dev
-```
-
-Build the web app
-
-```shell
-npm run build
-```
