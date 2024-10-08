@@ -58,7 +58,7 @@ function FreelancerProfileCard({
 
   const handlePayEscrow = () => {
     //setContractAddress(props.paymentWalletAddress)
-    const escrowUrl = `http://localhost:3000/payment?address=${paymentWalletAddress}`
+    const escrowUrl = `/payment?contractId=${encodeURIComponent(paymentWalletAddress)}&title=${encodeURIComponent(title)}&avgRating=${encodeURIComponent(rating)}&matchPercentage=${encodeURIComponent(matchScore)}`;
     window.open(escrowUrl, '_blank', 'noopener,noreferrer')
   }
 

@@ -29,8 +29,6 @@ export default function Payment() {
   const [amount, setAmount] = useState('')
   const [agreed, setAgreed] = useState(false)
 
-  const serviceAccountAddress = '8GEujj99kRkEcpJLSGXDj8L45u2daDYufMueu14q1t4c'
-
   useEffect(() => {
     const address = searchParams.get('address')
     if (address) {
@@ -40,9 +38,9 @@ export default function Payment() {
   }, [searchParams])
 
     // Add this useEffect for debugging
-    useEffect(() => {
-      console.log('Current contract address state:', contractAddress)
-    }, [contractAddress])
+  useEffect(() => {
+    console.log('Current contract address state:', contractAddress)
+  }, [contractAddress])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
