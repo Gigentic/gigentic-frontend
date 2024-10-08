@@ -28,58 +28,18 @@ export default function EscrowCard({
 }: EscrowCardProps) {
   const fullStars = Math.floor(rating);
 
-  const handleRelease = () => {
+  const handleRelease = (contractId: string) => {
     if (onReleaseEscrow) {
       onReleaseEscrow();
+      console.log('Releasing escrow:', contractId);
     } else {
-      // Add nice popup here for giving a rating
-      console.log('Yes! Release escrow');
+      console.log('onReleaseEscrow not provided');
     }
   };
 
   function setIsOpen(value: SetStateAction<boolean>): void {
     throw new Error('Function not implemented.');
   }
-
-  // const handleReleaseEscrow = async (escrowId: string) => {
-  //   if (!publicKey) {
-  //     console.error('Wallet not connected');
-  //     return;
-  //   }
-
-  //   try {
-  //     const escrowPubkey = new PublicKey(escrowId);
-
-  //     // Create the transaction to release the escrow
-  //     // This is a placeholder - you need to replace this with your actual program instruction
-  //     const transaction = new Transaction()
-  //       .add
-  //       // Your program instruction to release the escrow
-  //       ();
-
-  //     const { blockhash } = await connection.getLatestBlockhash();
-  //     transaction.recentBlockhash = blockhash;
-  //     transaction.feePayer = publicKey;
-
-  //     const signed = await sendTransaction(transaction, connection);
-  //     console.log('Release transaction sent:', signed);
-
-  //     const confirmation = await connection.confirmTransaction(
-  //       signed,
-  //       'confirmed',
-  //     );
-  //     if (confirmation.value.err) {
-  //       throw new Error('Transaction failed to confirm');
-  //     }
-
-  //     transactionToast(signed);
-
-  //     // Refresh the list of escrows
-  //     fetchAllEscrows();
-  //   } catch (error) {
-  //     console.error('Error releasing escrow:', error);
-  //   }
-  // };
 
   return (
     <Card className="w-full max-w-4xl">
@@ -138,6 +98,7 @@ export default function EscrowCard({
           serviceName={providerName}
           amount={amountInEscrow?.toFixed(2) ?? '0.00'}
           provider={providerName}
+          onReleaseEscrow={handleRelease}
         />
       </CardContent>
     </Card>
