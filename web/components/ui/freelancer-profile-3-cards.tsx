@@ -14,8 +14,6 @@ interface FreelancerProfileProps {
   matchScore: number
   paymentWalletAddress: string
 }
-
-
 interface FreelancerProfile3CardsProps {
     freelancer1_title: string
     freelancer1_pricePerHour: number
@@ -39,6 +37,7 @@ interface FreelancerProfile3CardsProps {
     freelancer3_paymentWalletAddress: string
   }
 
+  // render the profile card for one freelancer (will be called from the function to render three cards)
 function FreelancerProfileCard({ 
   title,
   pricePerHour,
@@ -57,7 +56,6 @@ function FreelancerProfileCard({
   }
 
   const handlePayEscrow = () => {
-    //setContractAddress(props.paymentWalletAddress)
     const escrowUrl = `/payment?contractId=${encodeURIComponent(paymentWalletAddress)}&title=${encodeURIComponent(title)}&avgRating=${encodeURIComponent(rating)}&matchPercentage=${encodeURIComponent(matchScore)}`;
     window.open(escrowUrl, '_blank', 'noopener,noreferrer')
   }
@@ -152,6 +150,7 @@ function FreelancerProfileCard({
   )
 }
 
+// render the profile card for three freelancers
 export default function FreelancerProfile3Cards(props: FreelancerProfile3CardsProps) {
   const freelancers: FreelancerProfileProps[] = [
     {

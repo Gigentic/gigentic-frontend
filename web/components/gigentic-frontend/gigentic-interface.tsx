@@ -25,8 +25,7 @@ import {
   SelectValue,
 } from '@gigentic-frontend/ui-kit/ui';
 
-// import WeatherTool from '@/components/search-agent/weather-tool';
-import CryptoTool from '@/components/search-agent/crypto';
+import ChatAgent from '@/components/search-agent/chat-agent';
 
 export default function GigenticInterface() {
   const [selectedNetwork, setSelectedNetwork] = useState('devnet');
@@ -84,7 +83,7 @@ export default function GigenticInterface() {
           Gigentic Frontend Feature Hello
         </h1>
         <div>
-          <CryptoTool />
+          <ChatAgent />
         </div>
         <div className="grid md:grid-cols-2 gap-8">
           <Card>
