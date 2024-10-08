@@ -1,17 +1,17 @@
-import { SERVICE_REGISTRY_KEYPAIR } from "./constants";
-import { program, connection } from "./init";
-import { fund_account } from "./utils";
-import { PublicKey } from "@solana/web3.js";
-import * as anchor from "@coral-xyz/anchor";
-import { SendTransactionError } from "@solana/web3.js";
-import { expect } from "chai";
-import { SERVICE_DEPLOYERS, SERVICE_USERS } from "./constants";
+import { TEST_SERVICE_REGISTRY_KEYPAIR } from './constants';
+import { program, connection } from './init';
+import { fund_account } from './utils';
+import { PublicKey } from '@solana/web3.js';
+import * as anchor from '@coral-xyz/anchor';
+import { SendTransactionError } from '@solana/web3.js';
+import { expect } from 'chai';
+import { TEST_SERVICE_DEPLOYERS, TEST_SERVICE_USERS } from './constants';
 
-describe("Customer to agent review", () => {
-  it("Gives the service review to the customer and checks if the review has the values assigned", async () => {
+describe('Customer to agent review', () => {
+  it('Gives the service review to the customer and checks if the review has the values assigned', async () => {
     // Select the buyer (consumer) from the predefined list of service users
     // The buyer will be reviewing the service provided by the agent
-    const buyer = SERVICE_USERS[0];
+    const buyer = TEST_SERVICE_USERS[0];
 
     // Fund the buyer's account with enough SOL to pay transaction fees
     await fund_account(connection, buyer.publicKey);
@@ -22,14 +22,14 @@ describe("Customer to agent review", () => {
     // Verify that the buyer has at least 0.01 SOL in their account (for transaction fees)
     if (buyerBalance < 0.01 * anchor.web3.LAMPORTS_PER_SOL) {
       throw new Error(
-        "Buyer does not have enough SOL to pay transaction fees.",
+        'Buyer does not have enough SOL to pay transaction fees.',
       );
     }
 
     // Fetch the service registry account using the program and its public key.
     // The service registry holds references to the services deployed by agents.
     const serviceRegistry = await program.account.serviceRegistry.fetch(
-      SERVICE_REGISTRY_KEYPAIR.publicKey,
+      TEST_SERVICE_REGISTRY_KEYPAIR.publicKey,
     );
 
     // Retrieve the public key of the first service account from the service registry
@@ -42,7 +42,7 @@ describe("Customer to agent review", () => {
 
     // Define the rating (out of 5) and the review for the service provider
     const rating = 5;
-    const review = "Great service";
+    const review = 'Great service';
 
     // Create a transaction to record the consumer's rating and review for the agent.
     // The consumer (buyer) is interacting with the service account created by the agent.
@@ -69,9 +69,10 @@ describe("Customer to agent review", () => {
     } catch (err) {
       // Handle transaction errors
       if (err instanceof SendTransactionError) {
-        // If there's a transaction error, retrieve and log the transaction's logs
-        const logs = await err.getLogs(connection);
-        console.error("Transaction Logs:", logs);
+        console.error('SendTransactionError:', err.message);
+        // If there's an error, retrieve and log the transaction's logs for debugging
+        // const logs = await err.getLogs(connection);
+        // console.error('Transaction Logs:', logs);
       }
       throw err; // Re-throw the error to ensure the test fails
     }
@@ -79,7 +80,7 @@ describe("Customer to agent review", () => {
     // Find the program address for the review account.
     // The review account stores the review and rating data linked to the service account.
     const [reviewPubKey] = PublicKey.findProgramAddressSync(
-      [Buffer.from("review_service"), serviceAccountPubKey.toBuffer()], // Seed for generating address
+      [Buffer.from('review_service'), serviceAccountPubKey.toBuffer()], // Seed for generating address
       program.programId, // Program ID to scope the address generation
     );
 
@@ -88,26 +89,26 @@ describe("Customer to agent review", () => {
 
     // Validate that the service provider stored in the review account matches the expected service provider
     expect(reviewAccount.serviceProvider.toBase58()).to.equal(
-      SERVICE_DEPLOYERS[0].publicKey.toBase58(),
-      "The service provider in the review account should match the service provider who owns the service.",
+      TEST_SERVICE_DEPLOYERS[0].publicKey.toBase58(),
+      'The service provider in the review account should match the service provider who owns the service.',
     );
 
     // Validate that the consumer (buyer) stored in the review account matches the buyer who submitted the review
     expect(reviewAccount.consumer.toBase58()).to.equal(
       buyer.publicKey.toBase58(),
-      "The consumer in the review account should match the buyer who submitted the review.",
+      'The consumer in the review account should match the buyer who submitted the review.',
     );
 
     // Validate that the rating given by the consumer matches the rating stored in the review account
     expect(reviewAccount.consumerToAgentRating).to.equal(
       rating,
-      "The rating given by the consumer should match the rating stored in the review account.",
+      'The rating given by the consumer should match the rating stored in the review account.',
     );
 
     // Validate that the review comment matches the comment stored in the review account
     expect(reviewAccount.customerToAgentReview).to.equal(
       review,
-      "The review comment given by the consumer should match the comment stored in the review account.",
+      'The review comment given by the consumer should match the comment stored in the review account.',
     );
   });
 });

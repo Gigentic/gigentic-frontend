@@ -1,5 +1,5 @@
-import SearchAgent from '@/components/search-agent/search-agent';
+import ChatAgent from '@/components/search-agent/chat-agent';
 
 export default function Page() {
-  return <SearchAgent />;
+  return <ChatAgent />;
 }

@@ -4,6 +4,9 @@ import { ClusterProvider } from '@/components/cluster/cluster-data-access';
 import { SolanaProvider } from '@/components/solana/solana-provider';
 import { ReactQueryProvider } from './react-query-provider';
 
+import { AI } from '@/app/actions';
+import { ThemeProvider } from 'next-themes';
+
 export const metadata = {
   title: 'gigentic-frontend',
   description:
@@ -11,10 +14,9 @@ export const metadata = {
 };
 
 const links: { label: string; path: string }[] = [
-  // { label: 'Account', path: '/account' },
-  // { label: 'Clusters', path: '/clusters' },
-  // { label: 'Gigentic', path: '/gigentic-frontend' },
-  // { label: 'SearchAgent', path: '/search-agent' },
+  { label: 'Search', path: '/search-agent' },
+  { label: 'Payment', path: '/payment' },
+  { label: 'Account', path: '/account' },
 ];
 
 export default function RootLayout({
@@ -23,15 +25,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+    // <html lang="en" suppressHydrationWarning>
     <html lang="en">
       <body>
+        {/* <ThemeProvider> */}
         <ReactQueryProvider>
           <ClusterProvider>
             <SolanaProvider>
-              <UiLayout links={links}>{children}</UiLayout>
+              <AI>
+                <UiLayout links={links}>{children}</UiLayout>
+              </AI>
             </SolanaProvider>
           </ClusterProvider>
         </ReactQueryProvider>
+        {/* </ThemeProvider> */}
       </body>
     </html>
   );

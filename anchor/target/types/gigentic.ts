@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/gigentic.json`.
  */
 export type Gigentic = {
-  "address": "HFFspJHrCTbgo6Vwq84d3DH3qiL22M9NGiLJn1cGaCL2",
+  "address": "3E8qHURSLd6P1cWR5Bwbekvn9P9cwN637dhjNRsVwuCH",
   "metadata": {
     "name": "gigentic",
     "version": "0.1.0",
@@ -180,11 +180,6 @@ export type Gigentic = {
         {
           "name": "service",
           "writable": true,
-          "signer": true
-        },
-        {
-          "name": "serviceAuthority",
-          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -196,22 +191,16 @@ export type Gigentic = {
                   118,
                   105,
                   99,
-                  101,
-                  95,
-                  97,
-                  117,
-                  116,
-                  104,
-                  111,
-                  114,
-                  105,
-                  116,
-                  121
+                  101
                 ]
               },
               {
+                "kind": "arg",
+                "path": "uniqueId"
+              },
+              {
                 "kind": "account",
-                "path": "service"
+                "path": "provider"
               }
             ]
           }
@@ -228,6 +217,10 @@ export type Gigentic = {
         }
       ],
       "args": [
+        {
+          "name": "uniqueId",
+          "type": "string"
+        },
         {
           "name": "description",
           "type": "string"
@@ -480,19 +473,6 @@ export type Gigentic = {
       ]
     },
     {
-      "name": "serviceAuthority",
-      "discriminator": [
-        199,
-        242,
-        58,
-        222,
-        53,
-        161,
-        60,
-        220
-      ]
-    },
-    {
       "name": "serviceRegistry",
       "discriminator": [
         105,
@@ -647,13 +627,6 @@ export type Gigentic = {
             }
           }
         ]
-      }
-    },
-    {
-      "name": "serviceAuthority",
-      "type": {
-        "kind": "struct",
-        "fields": []
       }
     },
     {

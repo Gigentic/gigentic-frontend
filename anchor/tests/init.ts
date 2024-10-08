@@ -1,8 +1,10 @@
+import { before } from 'mocha';
+
 import {
-  SERVICE_REGISTRY_DEPLOYER,
+  TEST_SERVICE_REGISTRY_DEPLOYER,
   MINT_AUTHORITY,
   PROVIDER,
-  SERVICE_DEPLOYERS,
+  TEST_SERVICE_DEPLOYERS,
 } from './constants';
 
 import { fund_account } from './utils';
@@ -30,11 +32,11 @@ export let mint: PublicKey;
  * It ensures that necessary accounts are funded and a new mint is created.
  */
 before(async () => {
-  // Fund the SERVICE_REGISTRY_DEPLOYER, MINT_AUTHORITY, and SERVICE_DEPLOYERS accounts with SOL
+  // Fund the TEST_SERVICE_REGISTRY_DEPLOYER, MINT_AUTHORITY, and SERVICE_DEPLOYERS accounts with SOL
   const fundingPromises = [
-    fund_account(connection, SERVICE_REGISTRY_DEPLOYER.publicKey),
+    fund_account(connection, TEST_SERVICE_REGISTRY_DEPLOYER.publicKey),
     fund_account(connection, MINT_AUTHORITY.publicKey),
-    ...SERVICE_DEPLOYERS.map((deployer) =>
+    ...TEST_SERVICE_DEPLOYERS.map((deployer) =>
       fund_account(connection, deployer.publicKey),
     ),
   ];
