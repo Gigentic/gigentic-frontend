@@ -30,6 +30,7 @@ import { useTransactionToast } from '../ui/ui-layout';
 
 import { useGigenticProgram } from '../gigentic-frontend/gigentic-frontend-data-access';
 import EscrowCard from './EscrowCard';
+import MercuryoButton from './MercuryoButton';
 
 // Mock data for open escrows
 const openEscrows = [
@@ -261,7 +262,8 @@ export default function EscrowManagement() {
                 </Button>
               </form>
               <div className="mt-4">
-                <TooltipProvider>
+                <MercuryoButton />
+                {/* <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
@@ -279,7 +281,7 @@ export default function EscrowManagement() {
                       </p>
                     </TooltipContent>
                   </Tooltip>
-                </TooltipProvider>
+                </TooltipProvider> */}
               </div>
             </TabsContent>
             <TabsContent value="release">
