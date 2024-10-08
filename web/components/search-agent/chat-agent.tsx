@@ -18,7 +18,7 @@ const chatSchema = z.object({
 
 export type ChatInput = z.infer<typeof chatSchema>;
 
-export default function CryptoTool() {
+export default function ChatAgent() {
   const form = useForm<ChatInput>();
   const { formRef, onKeyDown } = useEnterSubmit();
   const [messages, setMessages] = useUIState<typeof AI>();
