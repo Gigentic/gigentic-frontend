@@ -2,8 +2,6 @@
 
 // React
 import { useState } from 'react';
-import ServiceRequestForm from './ServiceRequestForm';
-import GigenticDemo from './gigentic-demo';
 
 // Solana
 import {
@@ -270,15 +268,11 @@ export default function GigenticFrontendFeature() {
           />
         </p>
         <div className="flex items-center justify-center min-h-screen bg-neutral-100">
-          <div className="w-full max-w-md">
-            <ServiceRequestForm />
-          </div>
+          <div className="w-full max-w-md">ServiceRequestForm</div>
         </div>
 
         <div className="flex items-center justify-center min-h-screen bg-neutral-100">
-          <div className="w-full max-w-md">
-            <GigenticDemo />
-          </div>
+          <div className="w-full max-w-md">GigenticDemo</div>
         </div>
 
         <GigenticFrontendCreate />
