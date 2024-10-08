@@ -1,5 +1,5 @@
-import CryptoTool from '@/components/search-agent/crypto';
+import ChatAgent from '@/components/search-agent/chat-agent';
 
 export default function Page() {
-  return <CryptoTool />;
+  return <ChatAgent />;
 }
