@@ -89,7 +89,7 @@ export default function EscrowManagement() {
     }
   }, [publicKey, programId, fetchAllEscrows]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmitPay = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!publicKey) {
       console.error('Wallet not connected');
@@ -183,7 +183,7 @@ export default function EscrowManagement() {
               <TabsTrigger value="release">Release</TabsTrigger>
             </TabsList>
             <TabsContent value="pay">
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmitPay} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="contractId" className="text-sm font-medium">
                     Service Contract ID
@@ -236,7 +236,7 @@ export default function EscrowManagement() {
                   </Label>
                 </div>
                 <Button type="submit" className="w-full" disabled={!agreed}>
-                  Initiate Escrow Payment
+                  Pay into Escrow
                 </Button>
               </form>
               <div className="mt-4">
@@ -269,9 +269,9 @@ export default function EscrowManagement() {
 
                     <EscrowCard
                       providerName="John Doe"
-                      providerLink="https://www.solchat.app/john-doe"
+                      providerLink="https://www.solchat.app/"
                       serviceId="SRV123"
-                      rating={3.9}
+                      rating={11.1}
                       matchPercentage={90}
                       amountInEscrow={500}
                       totalAmount={1000}
