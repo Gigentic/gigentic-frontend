@@ -25,6 +25,7 @@ export interface ReviewFormProps {
   amount: string;
   provider: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onReleaseEscrow: (contractId: string) => void;
 }
 
 export default function ReviewPopup({
@@ -32,6 +33,7 @@ export default function ReviewPopup({
   serviceName = 'Unnamed Service',
   amount = '0',
   provider = 'Unknown Provider',
+  onReleaseEscrow,
 }: ReviewFormProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -54,6 +56,7 @@ export default function ReviewPopup({
           amount={amount}
           provider={provider}
           setIsOpen={setIsOpen}
+          onReleaseEscrow={onReleaseEscrow}
         />
       </DialogContent>
     </Dialog>
@@ -66,6 +69,7 @@ function ReviewForm({
   amount,
   provider,
   setIsOpen,
+  onReleaseEscrow,
 }: ReviewFormProps) {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState('');
@@ -76,6 +80,9 @@ function ReviewForm({
     setRating(0);
     setReview('');
     setIsOpen(false);
+    // Call the onReleaseEscrow function passed from the parent component
+    onReleaseEscrow(contractId);
+
     // Here you would typically send the review data to your backend
   };
 

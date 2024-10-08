@@ -155,40 +155,43 @@ export default function EscrowManagement() {
       console.error('Wallet not connected');
       return;
     }
+    console.log('Releasing escrow:', escrowId);
     setFinalAmount(amount);
-    setAmount("0");
-    try {
-      const escrowPubkey = new PublicKey(escrowId);
+    setAmount('0');
+    console.log('blockchain stuff');
 
-      // Create the transaction to release the escrow
-      // This is a placeholder - you need to replace this with your actual program instruction
-      const transaction = new Transaction()
-        .add
-        // Your program instruction to release the escrow
-        ();
+    // try {
+    //   const escrowPubkey = new PublicKey(escrowId);
 
-      const { blockhash } = await connection.getLatestBlockhash();
-      transaction.recentBlockhash = blockhash;
-      transaction.feePayer = publicKey;
+    //   // Create the transaction to release the escrow
+    //   // This is a placeholder - you need to replace this with your actual program instruction
+    //   const transaction = new Transaction()
+    //     .add
+    //     // Your program instruction to release the escrow
+    //     ();
 
-      const signed = await sendTransaction(transaction, connection);
-      console.log('Release transaction sent:', signed);
+    //   const { blockhash } = await connection.getLatestBlockhash();
+    //   transaction.recentBlockhash = blockhash;
+    //   transaction.feePayer = publicKey;
 
-      const confirmation = await connection.confirmTransaction(
-        signed,
-        'confirmed',
-      );
-      if (confirmation.value.err) {
-        throw new Error('Transaction failed to confirm');
-      }
+    //   const signed = await sendTransaction(transaction, connection);
+    //   console.log('Release transaction sent:', signed);
 
-      transactionToast(signed);
+    //   const confirmation = await connection.confirmTransaction(
+    //     signed,
+    //     'confirmed',
+    //   );
+    //   if (confirmation.value.err) {
+    //     throw new Error('Transaction failed to confirm');
+    //   }
 
-      // Refresh the list of escrows
-      fetchAllEscrows();
-    } catch (error) {
-      console.error('Error releasing escrow:', error);
-    }
+    //   transactionToast(signed);
+
+    //   // Refresh the list of escrows
+    //   fetchAllEscrows();
+    // } catch (error) {
+    //   console.error('Error releasing escrow:', error);
+    // }
   };
 
   return (
@@ -281,20 +284,18 @@ export default function EscrowManagement() {
             </TabsContent>
             <TabsContent value="release">
               <div className="space-y-4">
-                {userEscrows.length === 0 ? (   // in case there is no data; default as currently reading from blockchain is not working
+                {userEscrows.length === 0 ? ( // in case there is no data; default as currently reading from blockchain is not working
                   <div>
                     <EscrowCard
                       providerName={title}
                       providerLink="https://www.solchat.app/"
-                      serviceId={contractId.slice(0, 8) + "..."}
+                      serviceId={contractId.slice(0, 8) + '...'}
                       rating={Number(avgRating)}
                       matchPercentage={Number(matchPercentage)}
                       amountInEscrow={Number(amount)}
                       totalAmount={Number(finalAmount)}
                       onReleaseEscrow={() => handleReleaseEscrow(contractId)}
                     />
-
-                    
                   </div>
                 ) : (
                   userEscrows.map((escrow: any) => (
@@ -312,9 +313,7 @@ export default function EscrowManagement() {
               </div>
 
               {/* add a new card to show some info parsed from the contract from the blockchain */}
-              <div className="flex items-center justify-between p-4 border rounded-lg">
-                
-              </div>
+              <div className="flex items-center justify-between p-4 border rounded-lg"></div>
             </TabsContent>
           </Tabs>
         </CardContent>
