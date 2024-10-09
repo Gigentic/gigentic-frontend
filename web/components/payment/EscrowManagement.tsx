@@ -24,7 +24,6 @@ import {
   Transaction,
   SystemProgram,
   LAMPORTS_PER_SOL,
-  ParsedAccountData,
 } from '@solana/web3.js';
 import { useTransactionToast } from '../ui/ui-layout';
 
@@ -32,20 +31,11 @@ import { useGigenticProgram } from '../gigentic-frontend/gigentic-frontend-data-
 import EscrowCard from './EscrowCard';
 import MercuryoButton from './MercuryoButton';
 
-// Mock data for open escrows
-const openEscrows = [
-  { id: 'ESC001', amount: 5, contractId: 'CNT123' },
-  { id: 'ESC002', amount: 10, contractId: 'CNT456' },
-  { id: 'ESC003', amount: 7.5, contractId: 'CNT789' },
-];
-
 export default function EscrowManagement() {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
   const transactionToast = useTransactionToast();
 
-  //const { programId, accounts, getProgramAccount } = useGigenticProgram();
-  // const { program, programId, getEscrowDetails } = useGigenticProgram();
   const { program, programId } = useGigenticProgram();
   const [userEscrows, setUserEscrows] = useState([]);
 
@@ -57,53 +47,11 @@ export default function EscrowManagement() {
   const [avgRating, setAvgRating] = useState('');
   const [matchPercentage, setMatchPercentage] = useState('');
 
-  // Later in your component...
-  // const handleFetchEscrowDetails = async (escrowPubKey: PublicKey) => {
-  //   const escrowDetails = await getEscrowDetails(escrowPubKey);
-  //   if (escrowDetails) {
-  //     // Do something with the escrow details
-  //   }
-  // };
-
   const fetchAllEscrows = useCallback(async () => {
     // if (!publicKey || !programId) return;
 
     try {
-      // console.log('fetching all escrows');
-
-      // console.log('accounts', accounts.data);
-      // console.log('program', program);
-      // console.log('programId', programId.toString());
-      // console.log('connection', connection);
-      // console.log('cluster', cluster);
-
-      // Get the public key of the service account from the registry
-      const serviceAccountPubKey = new PublicKey(
-        'G7Z3mz6Q2KdKMp74N1b5YNkv2vB9A1TRVViQXRMkF4ey',
-      );
-      // const serviceAccountPubKey = serviceRegistry.serviceAccountAddresses[0];
-
-      // const serviceAccount =
-      //   await program.account.service.fetch(serviceAccountPubKey);
-      // console.log('FUUH Service Account:', serviceAccount);
-
-      // // Find the program address for the escrow account
-      // const [escrowPubKey, escrowBump] = PublicKey.findProgramAddressSync(
-      //   [Buffer.from('escrow'), serviceAccountPubKey.toBuffer()],
-      //   program.programId,
-      // );
-
-      // console.log('Escrow Pubkey:', escrowPubKey.toBase58());
-
-      // mock allEscrows
-      const allEscrows = [
-        {
-          pubkey: '123',
-          amount: 10,
-          serviceProvider: '456',
-          buyer: '789',
-        },
-      ];
+      const allEscrows: never[] = [];
 
       setUserEscrows(allEscrows as any);
     } catch (error) {
