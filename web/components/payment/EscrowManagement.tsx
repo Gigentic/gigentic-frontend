@@ -184,43 +184,64 @@ export default function EscrowManagement() {
       console.error('Wallet not connected');
       return;
     }
-    console.log('Releasing escrow:', escrowId);
-    // setFinalAmount(amount);
-    // setAmount('0');
-    console.log('blockchain stuff');
 
-    // try {
-    //   const escrowPubkey = new PublicKey(escrowId);
+    try {
+      const serviceRegistryPubKey = new PublicKey(
+        'SAn6VFDzvDPGbD5yiDC7MDLCfRTwSqdM2Gg2kNqxZKT',
+      );
+      const serviceAccountPubKey = new PublicKey(
+        'G7Z3mz6Q2KdKMp74N1b5YNkv2vB9A1TRVViQXRMkF4ey',
+      );
 
-    //   // Create the transaction to release the escrow
-    //   // This is a placeholder - you need to replace this with your actual program instruction
-    //   const transaction = new Transaction()
-    //     .add
-    //     // Your program instruction to release the escrow
-    //     ();
+      // Find the program address for the escrow account
+      const [escrowPubKey] = PublicKey.findProgramAddressSync(
+        [Buffer.from('escrow'), serviceAccountPubKey.toBuffer()],
+        program.programId,
+      );
 
-    //   const { blockhash } = await connection.getLatestBlockhash();
-    //   transaction.recentBlockhash = blockhash;
-    //   transaction.feePayer = publicKey;
+      // Fetch the service registry account to get the fee account
+      const serviceRegistry = await program.account.serviceRegistry.fetch(
+        serviceRegistryPubKey,
+      );
 
-    //   const signed = await sendTransaction(transaction, connection);
-    //   console.log('Release transaction sent:', signed);
+      // Create the transaction
+      const transaction = await program.methods
+        .signService()
+        .accounts({
+          signer: publicKey,
+          service: serviceAccountPubKey,
+          escrow: escrowPubKey,
+          serviceProvider: serviceAccountPubKey,
+          feeAccount: serviceRegistry.feeAccount,
+          systemProgram: SystemProgram.programId,
+        })
+        .transaction();
 
-    //   const confirmation = await connection.confirmTransaction(
-    //     signed,
-    //     'confirmed',
-    //   );
-    //   if (confirmation.value.err) {
-    //     throw new Error('Transaction failed to confirm');
-    //   }
+      // Send the transaction
+      const signature = await sendTransaction(transaction, connection);
 
-    //   transactionToast(signed);
+      // Wait for confirmation
+      const confirmation = await connection.confirmTransaction(
+        signature,
+        'confirmed',
+      );
 
-    //   // Refresh the list of escrows
-    //   fetchAllEscrows();
-    // } catch (error) {
-    //   console.error('Error releasing escrow:', error);
-    // }
+      if (confirmation.value.err) {
+        throw new Error('Transaction failed to confirm');
+      }
+
+      transactionToast(signature);
+      console.log('Escrow released successfully:', signature);
+
+      // Refresh the list of escrows
+      fetchAllEscrows();
+    } catch (error) {
+      console.error('Error releasing escrow:', error);
+      if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      }
+    }
   };
 
   return (
