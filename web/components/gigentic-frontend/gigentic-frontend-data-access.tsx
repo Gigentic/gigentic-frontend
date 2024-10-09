@@ -42,12 +42,6 @@ export function useGigenticProgram() {
     queryFn: () => program.account.escrow.all(),
   });
 
-  console.log('accounts', accounts.data);
-  console.log('program', program);
-  console.log('programId', programId);
-  console.log('connection', connection);
-  console.log('cluster', cluster);
-
   const getEscrowDetails = useCallback(
     async (escrowPubKey: PublicKey) => {
       if (!program) return null;

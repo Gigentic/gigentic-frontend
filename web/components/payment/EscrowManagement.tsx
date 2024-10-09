@@ -43,42 +43,76 @@ export default function EscrowManagement() {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
   const transactionToast = useTransactionToast();
+
   //const { programId, accounts, getProgramAccount } = useGigenticProgram();
-  const { programId } = useGigenticProgram();
+  const { program, programId, getEscrowDetails } = useGigenticProgram();
+  const [userEscrows, setUserEscrows] = useState([]);
+
   const [contractId, setContractId] = useState('');
   const [amount, setAmount] = useState('');
   const [finalAmount, setFinalAmount] = useState('');
   const [agreed, setAgreed] = useState(false);
-  const [userEscrows, setUserEscrows] = useState([]);
   const [title, setTitle] = useState('');
   const [avgRating, setAvgRating] = useState('');
   const [matchPercentage, setMatchPercentage] = useState('');
+
+  // Later in your component...
+  const handleFetchEscrowDetails = async (escrowPubKey: PublicKey) => {
+    const escrowDetails = await getEscrowDetails(escrowPubKey);
+    if (escrowDetails) {
+      // Do something with the escrow details
+    }
+  };
 
   const fetchAllEscrows = useCallback(async () => {
     if (!publicKey || !programId) return;
 
     try {
+      console.log('fetching all escrows');
+
+      // console.log('accounts', accounts.data);
+      console.log('program', program);
+      console.log('programId', programId.toString());
+      // console.log('connection', connection);
+      // console.log('cluster', cluster);
+
       const accounts = await connection.getParsedProgramAccounts(programId, {
         filters: [
           { dataSize: 165 }, // Adjust this size based on your Escrow struct size
         ],
       });
 
-      const allEscrows = accounts.map((account) => {
-        const parsedData = (account.account.data as ParsedAccountData).parsed;
-        return {
-          pubkey: account.pubkey,
-          amount: parsedData.info.expectedAmount / LAMPORTS_PER_SOL,
-          serviceProvider: parsedData.info.serviceProvider,
-          buyer: parsedData.info.buyer,
-        };
-      });
+      // const allEscrows = accounts.map((account) => {
+      //   const parsedData = (account.account.data as ParsedAccountData).parsed;
+      //   return {
+      //     pubkey: account.pubkey,
+      //     amount: parsedData.info.expectedAmount / LAMPORTS_PER_SOL,
+      //     serviceProvider: parsedData.info.serviceProvider,
+      //     buyer: parsedData.info.buyer,
+      //   };
+      // });
+
+      // mock allEscrows
+      const allEscrows = [
+        {
+          pubkey: '123',
+          amount: 10,
+          serviceProvider: '456',
+          buyer: '789',
+        },
+      ];
 
       setUserEscrows(allEscrows as any);
     } catch (error) {
       console.error('Error fetching escrows:', error);
     }
   }, [publicKey, programId, connection]);
+
+  useEffect(() => {
+    if (publicKey && programId) {
+      fetchAllEscrows();
+    }
+  }, [publicKey, programId, fetchAllEscrows]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -100,12 +134,6 @@ export default function EscrowManagement() {
       setMatchPercentage(matchPercentageParam);
     }
   }, []);
-
-  useEffect(() => {
-    if (publicKey && programId) {
-      fetchAllEscrows();
-    }
-  }, [publicKey, programId, fetchAllEscrows]);
 
   const handleSubmitPay = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,18 +175,14 @@ export default function EscrowManagement() {
     }
   };
 
-  const handleBuySol = () => {
-    console.log('Initiating SOL purchase process');
-  };
-
   const handleReleaseEscrow = async (escrowId: string) => {
     if (!publicKey) {
       console.error('Wallet not connected');
       return;
     }
     console.log('Releasing escrow:', escrowId);
-    setFinalAmount(amount);
-    setAmount('0');
+    // setFinalAmount(amount);
+    // setAmount('0');
     console.log('blockchain stuff');
 
     // try {
@@ -263,25 +287,6 @@ export default function EscrowManagement() {
               </form>
               <div className="mt-4">
                 <MercuryoButton />
-                {/* <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        onClick={handleBuySol}
-                        className="w-full"
-                        variant="outline"
-                      >
-                        Buy SOL
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>
-                        Purchase SOL, the native cryptocurrency of the Solana
-                        blockchain, required for transactions on Gigentic
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider> */}
               </div>
             </TabsContent>
             <TabsContent value="release">
