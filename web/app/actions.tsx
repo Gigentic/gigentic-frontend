@@ -39,7 +39,8 @@ async function fetchServiceRegistry() {
   // Create a new AnchorProvider
 
   // Initialize connection
-  const connection = new Connection('http://localhost:8899');
+  // todo fix local vs devnet
+  const connection = new Connection('https://api.devnet.solana.com');
   const provider = new AnchorProvider(connection, {} as any, {
     commitment: 'confirmed',
   });
