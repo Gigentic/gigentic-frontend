@@ -70,9 +70,6 @@ describe('Customer to agent review', () => {
       // Handle transaction errors
       if (err instanceof SendTransactionError) {
         console.error('SendTransactionError:', err.message);
-        // If there's an error, retrieve and log the transaction's logs for debugging
-        // const logs = await err.getLogs(connection);
-        // console.error('Transaction Logs:', logs);
       }
       throw err; // Re-throw the error to ensure the test fails
     }
