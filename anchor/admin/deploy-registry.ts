@@ -7,6 +7,7 @@ import {
   SystemProgram,
   Transaction,
   sendAndConfirmTransaction,
+  Keypair,
 } from '@solana/web3.js';
 
 import { Gigentic } from '../target/types/gigentic';
@@ -26,9 +27,15 @@ const program: Program<Gigentic> = workspace.Gigentic as Program<Gigentic>;
 const serviceRegistryDeployer = loadKeypairBs58FromEnv(
   'SERVICE_REGISTRY_DEPLOYER',
 );
+// const serviceRegistryDeployer = Keypair.generate();
 const serviceRegistryKeypair = loadKeypairBs58FromEnv(
   'SERVICE_REGISTRY_KEYPAIR',
 );
+// const serviceRegistryKeypair = Keypair.generate();
+// console.log(
+//   'serviceRegistryKeypair',
+//   serviceRegistryKeypair.secretKey.toString(),
+// );
 console.log(
   'serviceRegistryDeployer',
   serviceRegistryDeployer.publicKey.toString(),
@@ -93,7 +100,8 @@ async function initServiceRegistry() {
 async function main() {
   try {
     console.log('========== Airdrop serviceRegistry deployer');
-    await airdrop(connection, serviceRegistryDeployer.publicKey);
+    // await airdrop(connection, serviceRegistryDeployer.publicKey);
+    console.log('skip airdrop serviceRegistryDeployer');
     console.log('\n');
 
     console.log('========== Initialize service registry');
