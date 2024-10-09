@@ -14,7 +14,7 @@ import { fetchServiceRegistryPubkey } from '../../app/actions'; // Import the ac
 
 export default function GigenticFrontendFeature() {
   const { publicKey } = useWallet();
-  const { programId } = useGigenticProgram();
+  const { program, programId } = useGigenticProgram();
   const [serviceRegistryPubkey, setServiceRegistryPubkey] = useState<
     string | null
   >(null);
@@ -24,6 +24,9 @@ export default function GigenticFrontendFeature() {
       try {
         const result = await fetchServiceRegistryPubkey();
         setServiceRegistryPubkey(result);
+
+        console.log('Service Registry Pubkey:', result);
+        console.log('Program:', program);
       } catch (error) {
         console.error('Error fetching services:', error);
       }
