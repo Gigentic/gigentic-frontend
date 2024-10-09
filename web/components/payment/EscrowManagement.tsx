@@ -24,7 +24,6 @@ import {
   Transaction,
   SystemProgram,
   LAMPORTS_PER_SOL,
-  ParsedAccountData,
 } from '@solana/web3.js';
 import { useTransactionToast } from '../ui/ui-layout';
 
@@ -32,53 +31,40 @@ import { useGigenticProgram } from '../gigentic-frontend/gigentic-frontend-data-
 import EscrowCard from './EscrowCard';
 import MercuryoButton from './MercuryoButton';
 
-// Mock data for open escrows
-const openEscrows = [
-  { id: 'ESC001', amount: 5, contractId: 'CNT123' },
-  { id: 'ESC002', amount: 10, contractId: 'CNT456' },
-  { id: 'ESC003', amount: 7.5, contractId: 'CNT789' },
-];
-
 export default function EscrowManagement() {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
   const transactionToast = useTransactionToast();
-  //const { programId, accounts, getProgramAccount } = useGigenticProgram();
-  const { programId } = useGigenticProgram();
+
+  const { program, programId } = useGigenticProgram();
+  const [userEscrows, setUserEscrows] = useState([]);
+
   const [contractId, setContractId] = useState('');
   const [amount, setAmount] = useState('');
   const [finalAmount, setFinalAmount] = useState('');
   const [agreed, setAgreed] = useState(false);
-  const [userEscrows, setUserEscrows] = useState([]);
   const [title, setTitle] = useState('');
   const [avgRating, setAvgRating] = useState('');
   const [matchPercentage, setMatchPercentage] = useState('');
 
   const fetchAllEscrows = useCallback(async () => {
-    if (!publicKey || !programId) return;
+    // if (!publicKey || !programId) return;
 
     try {
-      const accounts = await connection.getParsedProgramAccounts(programId, {
-        filters: [
-          { dataSize: 165 }, // Adjust this size based on your Escrow struct size
-        ],
-      });
-
-      const allEscrows = accounts.map((account) => {
-        const parsedData = (account.account.data as ParsedAccountData).parsed;
-        return {
-          pubkey: account.pubkey,
-          amount: parsedData.info.expectedAmount / LAMPORTS_PER_SOL,
-          serviceProvider: parsedData.info.serviceProvider,
-          buyer: parsedData.info.buyer,
-        };
-      });
+      const allEscrows: never[] = [];
 
       setUserEscrows(allEscrows as any);
     } catch (error) {
       console.error('Error fetching escrows:', error);
     }
-  }, [publicKey, programId, connection]);
+    // }, [publicKey, programId, program]);
+  }, []);
+
+  useEffect(() => {
+    if (publicKey && programId) {
+      fetchAllEscrows();
+    }
+  }, [publicKey, programId, fetchAllEscrows]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -100,12 +86,6 @@ export default function EscrowManagement() {
       setMatchPercentage(matchPercentageParam);
     }
   }, []);
-
-  useEffect(() => {
-    if (publicKey && programId) {
-      fetchAllEscrows();
-    }
-  }, [publicKey, programId, fetchAllEscrows]);
 
   const handleSubmitPay = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,52 +127,71 @@ export default function EscrowManagement() {
     }
   };
 
-  const handleBuySol = () => {
-    console.log('Initiating SOL purchase process');
-  };
-
   const handleReleaseEscrow = async (escrowId: string) => {
     if (!publicKey) {
       console.error('Wallet not connected');
       return;
     }
+
     console.log('Releasing escrow:', escrowId);
     setFinalAmount(amount);
     setAmount('0');
-    console.log('blockchain stuff');
 
-    // try {
-    //   const escrowPubkey = new PublicKey(escrowId);
+    try {
+      const serviceRegistryPubKey = new PublicKey(
+        'SAn6VFDzvDPGbD5yiDC7MDLCfRTwSqdM2Gg2kNqxZKT',
+      );
+      const serviceAccountPubKey = new PublicKey(
+        '89EtQYWiKyA9BHi38uHueAyoxq7vYbZYu94NXzejKELv',
+      );
 
-    //   // Create the transaction to release the escrow
-    //   // This is a placeholder - you need to replace this with your actual program instruction
-    //   const transaction = new Transaction()
-    //     .add
-    //     // Your program instruction to release the escrow
-    //     ();
+      // Find the program address for the escrow account
+      const [escrowPubKey] = PublicKey.findProgramAddressSync(
+        [Buffer.from('escrow'), serviceAccountPubKey.toBuffer()],
+        program.programId,
+      );
 
-    //   const { blockhash } = await connection.getLatestBlockhash();
-    //   transaction.recentBlockhash = blockhash;
-    //   transaction.feePayer = publicKey;
+      // Fetch the service registry account to get the fee account
+      const serviceRegistry = await program.account.serviceRegistry.fetch(
+        serviceRegistryPubKey,
+      );
 
-    //   const signed = await sendTransaction(transaction, connection);
-    //   console.log('Release transaction sent:', signed);
+      // Create the transaction
+      const transaction = await program.methods
+        .signService()
+        .accounts({
+          signer: publicKey,
+          service: serviceAccountPubKey,
+          serviceProvider: serviceAccountPubKey,
+          feeAccount: serviceRegistry.feeAccount,
+        })
+        .transaction();
 
-    //   const confirmation = await connection.confirmTransaction(
-    //     signed,
-    //     'confirmed',
-    //   );
-    //   if (confirmation.value.err) {
-    //     throw new Error('Transaction failed to confirm');
-    //   }
+      // Send the transaction
+      const signature = await sendTransaction(transaction, connection);
 
-    //   transactionToast(signed);
+      // Wait for confirmation
+      const confirmation = await connection.confirmTransaction(
+        signature,
+        'confirmed',
+      );
 
-    //   // Refresh the list of escrows
-    //   fetchAllEscrows();
-    // } catch (error) {
-    //   console.error('Error releasing escrow:', error);
-    // }
+      if (confirmation.value.err) {
+        throw new Error('Transaction failed to confirm');
+      }
+
+      transactionToast(signature);
+      console.log('Escrow released successfully:', signature);
+
+      // Refresh the list of escrows
+      fetchAllEscrows();
+    } catch (error) {
+      console.error('Error releasing escrow:', error);
+      if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      }
+    }
   };
 
   return (
@@ -263,25 +262,6 @@ export default function EscrowManagement() {
               </form>
               <div className="mt-4">
                 <MercuryoButton />
-                {/* <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        onClick={handleBuySol}
-                        className="w-full"
-                        variant="outline"
-                      >
-                        Buy SOL
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>
-                        Purchase SOL, the native cryptocurrency of the Solana
-                        blockchain, required for transactions on Gigentic
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider> */}
               </div>
             </TabsContent>
             <TabsContent value="release">

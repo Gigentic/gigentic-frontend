@@ -8,7 +8,7 @@ import { AI } from '@/app/actions';
 import { ThemeProvider } from 'next-themes';
 
 export const metadata = {
-  title: 'gigentic-frontend',
+  title: 'Gigentic',
   description:
     'Gigentic is a decentralized platform to help humans and AI agents work together',
 };
@@ -17,6 +17,7 @@ const links: { label: string; path: string }[] = [
   { label: 'Search', path: '/search-agent' },
   { label: 'Payment', path: '/payment' },
   { label: 'Account', path: '/account' },
+  { label: 'Program', path: '/gigentic-frontend' },
 ];
 
 export default function RootLayout({
