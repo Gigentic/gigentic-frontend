@@ -47,24 +47,9 @@ async function fetchServiceRegistry() {
   });
   const program = getGigenticProgram(provider);
 
-  // Load service registry keypairs
-  const serviceRegistryDeployer = loadKeypairBs58FromEnv(
-    'SERVICE_REGISTRY_DEPLOYER',
-  );
-  const serviceRegistryKeypair = loadKeypairBs58FromEnv(
-    'SERVICE_REGISTRY_KEYPAIR',
-  );
-  console.log(
-    'serviceRegistryDeployer',
-    serviceRegistryDeployer.publicKey.toString(),
-  );
-  console.log(
-    'serviceRegistryKeypair',
-    serviceRegistryKeypair.publicKey.toString(),
-  );
   console.log('========== Fetch service registry');
   const serviceRegistry = await program.account.serviceRegistry.fetch(
-    serviceRegistryKeypair.publicKey,
+    await fetchServiceRegistryPubkey(),
   );
 
   for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
