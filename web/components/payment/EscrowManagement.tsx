@@ -185,6 +185,10 @@ export default function EscrowManagement() {
       return;
     }
 
+    console.log('Releasing escrow:', escrowId);
+    setFinalAmount(amount);
+    setAmount('0');
+
     try {
       const serviceRegistryPubKey = new PublicKey(
         'SAn6VFDzvDPGbD5yiDC7MDLCfRTwSqdM2Gg2kNqxZKT',
