@@ -36,7 +36,7 @@ export default function GigenticFrontendFeature() {
 
   return publicKey ? (
     <div>
-      <AppHero title="GigenticFrontend" subtitle={'Program ID'}>
+      <AppHero title="Gigentic Program" subtitle={'Program ID'}>
         <p className="mb-6">
           <ExplorerLink
             path={`account/${programId}`}
