@@ -190,7 +190,7 @@ export default function EscrowManagement() {
         'SAn6VFDzvDPGbD5yiDC7MDLCfRTwSqdM2Gg2kNqxZKT',
       );
       const serviceAccountPubKey = new PublicKey(
-        'G7Z3mz6Q2KdKMp74N1b5YNkv2vB9A1TRVViQXRMkF4ey',
+        '89EtQYWiKyA9BHi38uHueAyoxq7vYbZYu94NXzejKELv',
       );
 
       // Find the program address for the escrow account
@@ -210,10 +210,8 @@ export default function EscrowManagement() {
         .accounts({
           signer: publicKey,
           service: serviceAccountPubKey,
-          escrow: escrowPubKey,
           serviceProvider: serviceAccountPubKey,
           feeAccount: serviceRegistry.feeAccount,
-          systemProgram: SystemProgram.programId,
         })
         .transaction();
 
