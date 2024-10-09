@@ -13,10 +13,7 @@ import { Connection } from '@solana/web3.js';
 
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { loadKeypairBs58FromEnv } from '../../anchor/tests/utils';
-import {
-  getGigenticProgram,
-  getGigenticProgramId,
-} from '@gigentic-frontend/anchor';
+import { getGigenticProgram } from '@gigentic-frontend/anchor';
 
 import { BotCard, BotMessage } from '../components/llm/message';
 import FreelancerProfileCard from '../components/ui/freelancer-profile-card';
@@ -25,16 +22,19 @@ import FreelancerProfile3Cards from '../components/ui/freelancer-profile-3-cards
 let service_registry = '';
 let content = ``;
 
-// gives the LLM the context for tool callin
-const prompt_instructions = `\
-  You are a assistant helping users finding the right freelancer for their project/task.
+export async function fetchServiceRegistryPubkey() {
+  // Load service registry public key from environment variable
+  const serviceRegistryPubkey = process.env.SERVICE_REGISTRY_PUBKEY;
+  if (!serviceRegistryPubkey) {
+    throw new Error(
+      'SERVICE_REGISTRY_PUBKEY is not set in environment variables',
+    );
+  }
 
-    If the user is looking for help / a freelancer, look for the right freelancer or AI agent in the service registry and show a summary of the profile to the user by calling \`show_freelancer_profile\` or \`show_three_freelancer_profiles\`, never return a profile summary in text format. Always give a only 1 option (by calling \`show_freelancer_profile\`) or 3 options (by calling \`show_three_freelancer_profiles\`) to the user to choose from.
-    If the user wants the price of a cryptocurrency, call \`get_crypto_price\` to show the price of the cryptocurrency.
-    If the user wants anything else unrelated to the functions calls \`get_crypto_price\` or \`show_freelancer_profile\`, you should chat with the user. Answer any
-    questions they may have that are unrelated to cryptocurrencies or freelancers.
+  console.log('serviceRegistryPubkey', serviceRegistryPubkey.toString());
 
-`;
+  return serviceRegistryPubkey.toString();
+}
 
 // read the service registry from the blockchain
 async function fetchServiceRegistry() {
