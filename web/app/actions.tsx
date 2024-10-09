@@ -11,8 +11,6 @@ import { openai } from '@ai-sdk/openai';
 import { AnchorProvider } from '@coral-xyz/anchor';
 import { Connection } from '@solana/web3.js';
 
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { loadKeypairBs58FromEnv } from '../../anchor/tests/utils';
 import { getGigenticProgram } from '@gigentic-frontend/anchor';
 
 import { BotCard, BotMessage } from '../components/llm/message';

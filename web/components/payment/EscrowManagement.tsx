@@ -45,7 +45,8 @@ export default function EscrowManagement() {
   const transactionToast = useTransactionToast();
 
   //const { programId, accounts, getProgramAccount } = useGigenticProgram();
-  const { program, programId, getEscrowDetails } = useGigenticProgram();
+  // const { program, programId, getEscrowDetails } = useGigenticProgram();
+  const { program, programId } = useGigenticProgram();
   const [userEscrows, setUserEscrows] = useState([]);
 
   const [contractId, setContractId] = useState('');
@@ -57,40 +58,42 @@ export default function EscrowManagement() {
   const [matchPercentage, setMatchPercentage] = useState('');
 
   // Later in your component...
-  const handleFetchEscrowDetails = async (escrowPubKey: PublicKey) => {
-    const escrowDetails = await getEscrowDetails(escrowPubKey);
-    if (escrowDetails) {
-      // Do something with the escrow details
-    }
-  };
+  // const handleFetchEscrowDetails = async (escrowPubKey: PublicKey) => {
+  //   const escrowDetails = await getEscrowDetails(escrowPubKey);
+  //   if (escrowDetails) {
+  //     // Do something with the escrow details
+  //   }
+  // };
 
   const fetchAllEscrows = useCallback(async () => {
-    if (!publicKey || !programId) return;
+    // if (!publicKey || !programId) return;
 
     try {
-      console.log('fetching all escrows');
+      // console.log('fetching all escrows');
 
       // console.log('accounts', accounts.data);
-      console.log('program', program);
-      console.log('programId', programId.toString());
+      // console.log('program', program);
+      // console.log('programId', programId.toString());
       // console.log('connection', connection);
       // console.log('cluster', cluster);
 
-      const accounts = await connection.getParsedProgramAccounts(programId, {
-        filters: [
-          { dataSize: 165 }, // Adjust this size based on your Escrow struct size
-        ],
-      });
+      // Get the public key of the service account from the registry
+      const serviceAccountPubKey = new PublicKey(
+        'G7Z3mz6Q2KdKMp74N1b5YNkv2vB9A1TRVViQXRMkF4ey',
+      );
+      // const serviceAccountPubKey = serviceRegistry.serviceAccountAddresses[0];
 
-      // const allEscrows = accounts.map((account) => {
-      //   const parsedData = (account.account.data as ParsedAccountData).parsed;
-      //   return {
-      //     pubkey: account.pubkey,
-      //     amount: parsedData.info.expectedAmount / LAMPORTS_PER_SOL,
-      //     serviceProvider: parsedData.info.serviceProvider,
-      //     buyer: parsedData.info.buyer,
-      //   };
-      // });
+      // const serviceAccount =
+      //   await program.account.service.fetch(serviceAccountPubKey);
+      // console.log('FUUH Service Account:', serviceAccount);
+
+      // // Find the program address for the escrow account
+      // const [escrowPubKey, escrowBump] = PublicKey.findProgramAddressSync(
+      //   [Buffer.from('escrow'), serviceAccountPubKey.toBuffer()],
+      //   program.programId,
+      // );
+
+      // console.log('Escrow Pubkey:', escrowPubKey.toBase58());
 
       // mock allEscrows
       const allEscrows = [
@@ -106,7 +109,8 @@ export default function EscrowManagement() {
     } catch (error) {
       console.error('Error fetching escrows:', error);
     }
-  }, [publicKey, programId, connection]);
+    // }, [publicKey, programId, program]);
+  }, []);
 
   useEffect(() => {
     if (publicKey && programId) {

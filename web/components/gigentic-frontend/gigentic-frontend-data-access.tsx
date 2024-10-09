@@ -39,35 +39,8 @@ export function useGigenticProgram() {
 
   const accounts = useQuery({
     queryKey: ['gigentic', 'all', { cluster }],
-    queryFn: () => program.account.escrow.all(),
+    queryFn: () => program.account.service.all(),
   });
-
-  const getEscrowDetails = useCallback(
-    async (escrowPubKey: PublicKey) => {
-      if (!program) return null;
-      try {
-        const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
-
-        console.log('Buyer:', escrowAccount.buyer.toString());
-        console.log(
-          'Service Provider:',
-          escrowAccount.serviceProvider.toString(),
-        );
-        console.log('Fee Percentage:', escrowAccount.feePercentage);
-        console.log(
-          'Expected Amount:',
-          escrowAccount.expectedAmount.toString(),
-        );
-        console.log('Fee Account:', escrowAccount.feeAccount.toString());
-
-        return escrowAccount;
-      } catch (error) {
-        console.error('Error fetching escrow details:', error);
-        return null;
-      }
-    },
-    [program],
-  );
 
   const getProgramAccount = useQuery({
     queryKey: ['get-program-account', { cluster }],
@@ -79,7 +52,6 @@ export function useGigenticProgram() {
     programId,
     accounts,
     getProgramAccount,
-    getEscrowDetails,
     // initialize,
   };
 }
@@ -157,3 +129,30 @@ export function useGigenticProgram() {
 //     setMutation,
 //   };
 // }
+
+// const getEscrowDetails = useCallback(
+//   async (escrowPubKey: PublicKey) => {
+//     if (!program) return null;
+//     try {
+//       const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
+
+//       console.log('Buyer:', escrowAccount.buyer.toString());
+//       console.log(
+//         'Service Provider:',
+//         escrowAccount.serviceProvider.toString(),
+//       );
+//       console.log('Fee Percentage:', escrowAccount.feePercentage);
+//       console.log(
+//         'Expected Amount:',
+//         escrowAccount.expectedAmount.toString(),
+//       );
+//       console.log('Fee Account:', escrowAccount.feeAccount.toString());
+
+//       return escrowAccount;
+//     } catch (error) {
+//       console.error('Error fetching escrow details:', error);
+//       return null;
+//     }
+//   },
+//   [program],
+// );

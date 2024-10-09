@@ -11,6 +11,7 @@ import {
   GigenticFrontendList,
 } from './gigentic-frontend-ui';
 import { fetchServiceRegistryPubkey } from '../../app/actions'; // Import the action
+import { PublicKey } from '@solana/web3.js';
 
 export default function GigenticFrontendFeature() {
   const { publicKey } = useWallet();
@@ -20,20 +21,21 @@ export default function GigenticFrontendFeature() {
   >(null);
 
   useEffect(() => {
-    async function getServices() {
+    async function getServiceRegistryPubkey() {
       try {
         const result = await fetchServiceRegistryPubkey();
         setServiceRegistryPubkey(result);
-
-        console.log('Service Registry Pubkey:', result);
-        console.log('Program:', program);
+        const serviceRegistryPubkey = new PublicKey(result);
+        const serviceRegistry = await program.account.serviceRegistry.fetch(
+          serviceRegistryPubkey,
+        );
       } catch (error) {
         console.error('Error fetching services:', error);
       }
     }
 
-    getServices();
-  }, []);
+    getServiceRegistryPubkey();
+  }, [program]);
 
   return publicKey ? (
     <div>
