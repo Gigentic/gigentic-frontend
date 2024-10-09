@@ -31,21 +31,25 @@ export function GigenticFrontendList() {
       {accounts.isLoading ? (
         <span className="loading loading-spinner loading-lg"></span>
       ) : accounts.data?.length ? (
-        <div className="grid md:grid-cols-2 gap-4">
-          {accounts.data?.map((account) => (
-            // <ServiceAccountCard
-            //   key={account.publicKey.toString()}
-            //   account={account.publicKey}
-            // />
-            <p key={account.publicKey.toString()}>
-              {account.publicKey.toString()}
-            </p>
+        <div>
+          <p> Service Contract IDs:</p>
 
-            // <GigenticFrontendCard
-            //     key={account.publicKey.toString()}
-            //     account={account.publicKey}
-            //   />
-          ))}
+          <div className="grid md:grid-cols-2 gap-4">
+            {accounts.data?.map((account) => (
+              // <ServiceAccountCard
+              //   key={account.publicKey.toString()}
+              //   account={account.publicKey}
+              // />
+              <p key={account.publicKey.toString()}>
+                {account.publicKey.toString()}
+              </p>
+
+              // <GigenticFrontendCard
+              //     key={account.publicKey.toString()}
+              //     account={account.publicKey}
+              //   />
+            ))}
+          </div>
         </div>
       ) : (
         <div className="text-center">
