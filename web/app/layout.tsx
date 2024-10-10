@@ -3,6 +3,7 @@ import { UiLayout } from '@/components/ui/ui-layout';
 import { ClusterProvider } from '@/components/cluster/cluster-data-access';
 import { SolanaProvider } from '@/components/solana/solana-provider';
 import { ReactQueryProvider } from './react-query-provider';
+import { Analytics } from '@vercel/analytics/react';
 
 import { AI } from '@/app/actions';
 import { ThemeProvider } from 'next-themes';
@@ -39,6 +40,7 @@ export default function RootLayout({
             </SolanaProvider>
           </ClusterProvider>
         </ReactQueryProvider>
+        <Analytics />
         {/* </ThemeProvider> */}
       </body>
     </html>
