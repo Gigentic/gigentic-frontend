@@ -1,70 +1,76 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@gigentic-frontend/ui-kit/ui"
-import { Badge } from "@gigentic-frontend/ui-kit/ui"
-import { Button } from "@gigentic-frontend/ui-kit/ui"
-import { Star, MessageSquare, Zap, Lock } from "lucide-react"
+import { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from '@gigentic-frontend/ui-kit/ui';
+import { Badge } from '@gigentic-frontend/ui-kit/ui';
+import { Button } from '@gigentic-frontend/ui-kit/ui';
+import { Star, MessageSquare, Zap, Lock } from 'lucide-react';
 
 interface FreelancerProfileProps {
-  title: string
-  pricePerHour: number
-  experience: string
-  rating: number
-  matchScore: number
-  paymentWalletAddress: string
+  title: string;
+  pricePerHour: number;
+  experience: string;
+  rating: number;
+  matchScore: number;
+  paymentWalletAddress: string;
 }
 interface FreelancerProfile3CardsProps {
-    freelancer1_title: string
-    freelancer1_pricePerHour: number
-    freelancer1_experience: string
-    freelancer1_rating: number
-    freelancer1_matchScore: number
-    freelancer1_paymentWalletAddress: string
+  freelancer1_title: string;
+  freelancer1_pricePerHour: number;
+  freelancer1_experience: string;
+  freelancer1_rating: number;
+  freelancer1_matchScore: number;
+  freelancer1_paymentWalletAddress: string;
 
-    freelancer2_title: string
-    freelancer2_pricePerHour: number
-    freelancer2_experience: string
-    freelancer2_rating: number
-    freelancer2_matchScore: number
-    freelancer2_paymentWalletAddress: string
+  freelancer2_title: string;
+  freelancer2_pricePerHour: number;
+  freelancer2_experience: string;
+  freelancer2_rating: number;
+  freelancer2_matchScore: number;
+  freelancer2_paymentWalletAddress: string;
 
-    freelancer3_title: string
-    freelancer3_pricePerHour: number
-    freelancer3_experience: string
-    freelancer3_rating: number
-    freelancer3_matchScore: number
-    freelancer3_paymentWalletAddress: string
-  }
+  freelancer3_title: string;
+  freelancer3_pricePerHour: number;
+  freelancer3_experience: string;
+  freelancer3_rating: number;
+  freelancer3_matchScore: number;
+  freelancer3_paymentWalletAddress: string;
+}
 
-  // render the profile card for one freelancer (will be called from the function to render three cards)
-function FreelancerProfileCard({ 
+// render the profile card for one freelancer (will be called from the function to render three cards)
+function FreelancerProfileCard({
   title,
   pricePerHour,
   experience,
   rating,
   matchScore,
-  paymentWalletAddress
+  paymentWalletAddress,
 }: FreelancerProfileProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
-  const fullStars = Math.floor(rating)
-  const hasHalfStar = rating % 1 !== 0
+  const [isExpanded, setIsExpanded] = useState(false);
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 !== 0;
 
   const handleContactNow = () => {
-    const solchatUrl = `https://www.solchat.app/`
-    window.open(solchatUrl, '_blank', 'noopener,noreferrer')
-  }
+    const solchatUrl = `https://www.solchat.app/`;
+    window.open(solchatUrl, '_blank', 'noopener,noreferrer');
+  };
 
   const handlePayEscrow = () => {
     const escrowUrl = `/payment?contractId=${encodeURIComponent(paymentWalletAddress)}&title=${encodeURIComponent(title)}&avgRating=${encodeURIComponent(rating)}&matchPercentage=${encodeURIComponent(matchScore)}`;
-    window.open(escrowUrl, '_blank', 'noopener,noreferrer')
-  }
+    window.open(escrowUrl, '_blank', 'noopener,noreferrer');
+  };
 
   const getMatchScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-500'
-    if (score >= 60) return 'text-yellow-500'
-    return 'text-red-500'
-  }
+    if (score >= 80) return 'text-green-500';
+    if (score >= 60) return 'text-yellow-500';
+    return 'text-red-500';
+  };
 
   return (
     <Card className="w-full bg-white shadow-lg">
@@ -87,8 +93,12 @@ function FreelancerProfileCard({
           <div className="flex justify-between items-center">
             <CardTitle className="text-xl">{title}</CardTitle>
             <div className="flex items-center">
-              <Zap className={`w-4 h-4 mr-1 ${getMatchScoreColor(matchScore)}`} />
-              <span className={`font-semibold ${getMatchScoreColor(matchScore)}`}>
+              <Zap
+                className={`w-4 h-4 mr-1 ${getMatchScoreColor(matchScore)}`}
+              />
+              <span
+                className={`font-semibold ${getMatchScoreColor(matchScore)}`}
+              >
                 {matchScore}% match
               </span>
             </div>
@@ -101,8 +111,8 @@ function FreelancerProfileCard({
                   i < fullStars
                     ? 'text-yellow-400 fill-yellow-400'
                     : i === fullStars && hasHalfStar
-                    ? 'text-yellow-400 fill-yellow-400'
-                    : 'text-gray-300 fill-gray-300'
+                      ? 'text-yellow-400 fill-yellow-400'
+                      : 'text-gray-300 fill-gray-300'
                 }`}
                 strokeWidth={1.5}
               />
@@ -117,12 +127,14 @@ function FreelancerProfileCard({
         <div className="flex justify-between items-center">
           <span className="font-semibold">Price per hour</span>
           <Badge variant="secondary" className="text-lg">
-            ${pricePerHour}
+            {pricePerHour} SOL
           </Badge>
         </div>
         <div>
           <span className="font-semibold">Experience</span>
-          <p className={`mt-1 text-sm text-muted-foreground ${!isExpanded && 'line-clamp-3'}`}>
+          <p
+            className={`mt-1 text-sm text-muted-foreground ${!isExpanded && 'line-clamp-3'}`}
+          >
             {experience}
           </p>
           {experience.length > 150 && (
@@ -147,11 +159,13 @@ function FreelancerProfileCard({
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }
 
 // render the profile card for three freelancers
-export default function FreelancerProfile3Cards(props: FreelancerProfile3CardsProps) {
+export default function FreelancerProfile3Cards(
+  props: FreelancerProfile3CardsProps,
+) {
   const freelancers: FreelancerProfileProps[] = [
     {
       title: props.freelancer1_title,
@@ -159,7 +173,7 @@ export default function FreelancerProfile3Cards(props: FreelancerProfile3CardsPr
       experience: props.freelancer1_experience,
       rating: props.freelancer1_rating,
       matchScore: props.freelancer1_matchScore,
-      paymentWalletAddress: props.freelancer1_paymentWalletAddress
+      paymentWalletAddress: props.freelancer1_paymentWalletAddress,
     },
     {
       title: props.freelancer2_title,
@@ -167,7 +181,7 @@ export default function FreelancerProfile3Cards(props: FreelancerProfile3CardsPr
       experience: props.freelancer2_experience,
       rating: props.freelancer2_rating,
       matchScore: props.freelancer2_matchScore,
-      paymentWalletAddress: props.freelancer2_paymentWalletAddress
+      paymentWalletAddress: props.freelancer2_paymentWalletAddress,
     },
     {
       title: props.freelancer3_title,
@@ -175,9 +189,9 @@ export default function FreelancerProfile3Cards(props: FreelancerProfile3CardsPr
       experience: props.freelancer3_experience,
       rating: props.freelancer3_rating,
       matchScore: props.freelancer3_matchScore,
-      paymentWalletAddress: props.freelancer3_paymentWalletAddress
-    }
-  ]
+      paymentWalletAddress: props.freelancer3_paymentWalletAddress,
+    },
+  ];
 
   return (
     <div className="bg-gray-100 p-4">
@@ -187,5 +201,5 @@ export default function FreelancerProfile3Cards(props: FreelancerProfile3CardsPr
         ))}
       </div>
     </div>
-  )
+  );
 }

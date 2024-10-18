@@ -1,62 +1,69 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@gigentic-frontend/ui-kit/ui"
-import { Badge } from "@gigentic-frontend/ui-kit/ui"
-import { Button } from "@gigentic-frontend/ui-kit/ui"
-import { Star, MessageSquare, Zap, Lock } from "lucide-react"
+import { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from '@gigentic-frontend/ui-kit/ui';
+import { Badge } from '@gigentic-frontend/ui-kit/ui';
+import { Button } from '@gigentic-frontend/ui-kit/ui';
+import { Star, MessageSquare, Zap, Lock } from 'lucide-react';
 
 interface FreelancerProfileProps {
-  title: string
-  pricePerHour: number
-  experience: string
-  rating: number
-  matchScore: number
-  paymentWalletAddress: string
+  title: string;
+  pricePerHour: number;
+  experience: string;
+  rating: number;
+  matchScore: number;
+  paymentWalletAddress: string;
 }
 
 const DefaultFreelancerProfileProps: FreelancerProfileProps = {
-  title: "Test",
+  title: 'Test',
   pricePerHour: 50,
-  experience: "Test",
+  experience: 'Test',
   rating: 4.5,
   matchScore: 80,
-  paymentWalletAddress: "0x1234567890123456789012345678901234567890"
-}
+  paymentWalletAddress: '0x1234567890123456789012345678901234567890',
+};
 
 // render the profile card for one freelancer
-export default function FreelancerProfileCard(props: FreelancerProfileProps = DefaultFreelancerProfileProps)
-{
+export default function FreelancerProfileCard(
+  props: FreelancerProfileProps = DefaultFreelancerProfileProps,
+) {
   const freelancerProfileProps: FreelancerProfileProps = {
     title: props.title,
     pricePerHour: props.pricePerHour,
     experience: props.experience,
     rating: props.rating,
     matchScore: props.matchScore,
-    paymentWalletAddress: props.paymentWalletAddress
-  }
+    paymentWalletAddress: props.paymentWalletAddress,
+  };
 
-  const [contractAddress, setContractAddress] = useState('')
-  const [isExpanded, setIsExpanded] = useState(false)
-  const fullStars = Math.floor(props.rating)
-  const hasHalfStar = props.rating % 1 !== 0
+  const [contractAddress, setContractAddress] = useState('');
+  const [isExpanded, setIsExpanded] = useState(false);
+  const fullStars = Math.floor(props.rating);
+  const hasHalfStar = props.rating % 1 !== 0;
 
   const handleContactNow = () => {
     // Replace this URL with the actual Solchat URL when available
-    const solchatUrl = `https://www.solchat.app/`
-    window.open(solchatUrl, '_blank', 'noopener,noreferrer')
-  }
+    const solchatUrl = `https://www.solchat.app/`;
+    window.open(solchatUrl, '_blank', 'noopener,noreferrer');
+  };
 
   const handlePayEscrow = () => {
     const escrowUrl = `/payment?contractId=${encodeURIComponent(props.paymentWalletAddress)}&title=${encodeURIComponent(props.title)}&avgRating=${encodeURIComponent(props.rating)}&matchPercentage=${encodeURIComponent(props.matchScore)}`;
     window.open(escrowUrl, '_blank', 'noopener,noreferrer');
-  }
+  };
 
   const getMatchScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-500'
-    if (score >= 60) return 'text-yellow-500'
-    return 'text-red-500'
-  }
+    if (score >= 80) return 'text-green-500';
+    if (score >= 60) return 'text-yellow-500';
+    return 'text-red-500';
+  };
 
   return (
     <div className="bg-gray-100 p-4">
@@ -80,8 +87,12 @@ export default function FreelancerProfileCard(props: FreelancerProfileProps = De
             <div className="flex justify-between items-center">
               <CardTitle className="text-xl">{props.title}</CardTitle>
               <div className="flex items-center">
-                <Zap className={`w-4 h-4 mr-1 ${getMatchScoreColor(props.matchScore)}`} />
-                <span className={`font-semibold ${getMatchScoreColor(props.matchScore)}`}>
+                <Zap
+                  className={`w-4 h-4 mr-1 ${getMatchScoreColor(props.matchScore)}`}
+                />
+                <span
+                  className={`font-semibold ${getMatchScoreColor(props.matchScore)}`}
+                >
                   {props.matchScore}% match
                 </span>
               </div>
@@ -94,8 +105,8 @@ export default function FreelancerProfileCard(props: FreelancerProfileProps = De
                     i < fullStars
                       ? 'text-yellow-400 fill-yellow-400'
                       : i === fullStars && hasHalfStar
-                      ? 'text-yellow-400 fill-yellow-400'
-                      : 'text-gray-300 fill-gray-300'
+                        ? 'text-yellow-400 fill-yellow-400'
+                        : 'text-gray-300 fill-gray-300'
                   }`}
                   strokeWidth={1.5}
                 />
@@ -110,12 +121,14 @@ export default function FreelancerProfileCard(props: FreelancerProfileProps = De
           <div className="flex justify-between items-center">
             <span className="font-semibold">Price per hour</span>
             <Badge variant="secondary" className="text-lg">
-              ${props.pricePerHour}
+              {props.pricePerHour} SOL
             </Badge>
           </div>
           <div>
             <span className="font-semibold">Experience</span>
-            <p className={`mt-1 text-sm text-muted-foreground ${!isExpanded && 'line-clamp-3'}`}>
+            <p
+              className={`mt-1 text-sm text-muted-foreground ${!isExpanded && 'line-clamp-3'}`}
+            >
               {props.experience}
             </p>
             {props.experience.length > 150 && (
@@ -134,12 +147,16 @@ export default function FreelancerProfileCard(props: FreelancerProfileProps = De
             <MessageSquare className="w-4 h-4 mr-2" />
             Contact Now
           </Button>
-          <Button className="w-full" variant="outline" onClick={handlePayEscrow}>
+          <Button
+            className="w-full"
+            variant="outline"
+            onClick={handlePayEscrow}
+          >
             <Lock className="w-4 h-4 mr-2" />
             Pay into Escrow
           </Button>
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

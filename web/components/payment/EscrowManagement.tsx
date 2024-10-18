@@ -196,7 +196,7 @@ export default function EscrowManagement() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-4xl">
+      <Card className="w-full max-w-4xl bg-background">
         <CardContent className="p-6">
           <Tabs defaultValue="pay" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
