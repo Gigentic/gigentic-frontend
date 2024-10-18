@@ -216,7 +216,7 @@ export default function EscrowManagement() {
                       placeholder="Enter contract ID"
                       value={contractId}
                       onChange={(e) => setContractId(e.target.value)}
-                      className="w-full pr-10"
+                      className="w-full pr-10 border-neutral-200"
                       required
                     />
                     <TooltipProvider>
@@ -242,7 +242,7 @@ export default function EscrowManagement() {
                     placeholder="Enter amount in SOL"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="w-full"
+                    className="w-full border-neutral-200"
                     required
                   />
                 </div>
@@ -293,9 +293,6 @@ export default function EscrowManagement() {
                   ))
                 )}
               </div>
-
-              {/* add a new card to show some info parsed from the contract from the blockchain */}
-              <div className="flex items-center justify-between p-4 border rounded-lg"></div>
             </TabsContent>
           </Tabs>
         </CardContent>

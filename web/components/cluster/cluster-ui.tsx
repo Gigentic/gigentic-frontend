@@ -80,7 +80,7 @@ export function ClusterUiSelect() {
         }
       }}
     >
-      <SelectTrigger className="w-[100px]">
+      <SelectTrigger className="w-[100px] border-neutral-200">
         <SelectValue placeholder="Select network" />
       </SelectTrigger>
       <SelectContent>
