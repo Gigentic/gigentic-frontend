@@ -57,7 +57,7 @@ export default function ChatAgent() {
         <ChatScrollAnchor />
       </div>
       <div
-          className="fixed inset-x-0 bottom-20 w-full bg-gradient-to-b
+        className="fixed inset-x-0 bottom-20 w-full bg-gradient-to-b
                     from-muted/30 from-0% to-muted/30 to-50% peer-[[data-state=open]]:group-[]:lg:pl-[250px]
                     peer-[[data-state=open]]:group-[]:xl:pr-[300px]"
       >
@@ -66,12 +66,16 @@ export default function ChatAgent() {
             className="px-3 flex justify-center flex-col py-2 space-y-4 border-t
               shadow-lg bg-background sm:rounded-t-xl sm:border md:py-4 bg-white"
           >
-            <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)} action="">
+            <form
+              ref={formRef}
+              onSubmit={form.handleSubmit(onSubmit)}
+              action=""
+            >
               <div className="relative flex flex-col w-full overflow-hidden max-h-60 grow bg-background sm:rounded-md sm:border">
                 <TextareaAutosize
                   tabIndex={0}
                   onKeyDown={onKeyDown}
-                  placeholder="Ask me anything..."
+                  placeholder="Find backend developer..."
                   className="min-h-[60px] w-full resize-none bg-transparent pl-4 pr-16 py-[1.375rem] focus-within:outline-none sm:text-sm"
                   autoFocus
                   spellCheck={false}

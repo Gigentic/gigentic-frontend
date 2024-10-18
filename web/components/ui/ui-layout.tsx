@@ -8,10 +8,7 @@ import { usePathname } from 'next/navigation';
 import { Mail, Twitter } from 'lucide-react';
 
 // import { AccountChecker } from '../account/account-ui';
-import {
-  ClusterUiSelect,
-  ExplorerLink,
-} from '../cluster/cluster-ui';
+import { ClusterUiSelect, ExplorerLink } from '../cluster/cluster-ui';
 import toast, { Toaster } from 'react-hot-toast';
 
 // import { ThemeProvider } from '@/components/theme-provider';
@@ -67,7 +64,9 @@ export function UiLayout({
             </nav>
           </div>
           <div className="">
-            <WalletButton />
+            <div className="hidden sm:block">
+              <WalletButton />
+            </div>
           </div>
         </header>
         <main className="flex-1 overflow-hidden">
