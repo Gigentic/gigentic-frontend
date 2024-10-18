@@ -57,8 +57,8 @@ export default function ChatAgent() {
         <ChatScrollAnchor />
       </div>
       <div
-        className="fixed inset-x-0 bottom-20 w-full bg-gradient-to-b
-                    from-muted/30 from-0% to-muted/30 to-50% peer-[[data-state=open]]:group-[]:lg:pl-[250px]
+        className="fixed inset-x-0 bottom-20 w-full
+                    peer-[[data-state=open]]:group-[]:lg:pl-[250px]
                     peer-[[data-state=open]]:group-[]:xl:pr-[300px]"
       >
         <div className="mx-auto sm:max-w-2xl sm:px-4">
