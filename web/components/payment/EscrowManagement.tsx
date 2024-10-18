@@ -47,24 +47,28 @@ export default function EscrowManagement() {
   const [avgRating, setAvgRating] = useState('');
   const [matchPercentage, setMatchPercentage] = useState('');
 
-  const fetchAllEscrows = useCallback(async () => {
-    // if (!publicKey || !programId) return;
+  // TODO: remove this after testing
+  const escrow_index = 5;
 
-    try {
-      const allEscrows: never[] = [];
+  // const fetchAllEscrows = useCallback(async () => {
+  //   // if (!publicKey || !programId) return;
 
-      setUserEscrows(allEscrows as any);
-    } catch (error) {
-      console.error('Error fetching escrows:', error);
-    }
-    // }, [publicKey, programId, program]);
-  }, []);
+  //   console.log('Fetching all escrows');
+  //   // try {
+  //   //   const allEscrows: never[] = [];
 
-  useEffect(() => {
-    if (publicKey && programId) {
-      fetchAllEscrows();
-    }
-  }, [publicKey, programId, fetchAllEscrows]);
+  //   //   setUserEscrows(allEscrows as any);
+  //   // } catch (error) {
+  //   //   console.error('Error fetching escrows:', error);
+  //   // }
+  //   // }, [publicKey, programId, program]);
+  // }, []);
+
+  // useEffect(() => {
+  //   if (publicKey && programId) {
+  //     fetchAllEscrows();
+  //   }
+  // }, [publicKey, programId, fetchAllEscrows]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -95,33 +99,58 @@ export default function EscrowManagement() {
     }
 
     try {
-      const escrowPubkey = new PublicKey(contractId);
-      const lamports = parseFloat(amount) * LAMPORTS_PER_SOL;
+      // TODO: get this from environment variables
+      const serviceRegistryPubKey = new PublicKey(
+        '6Gj3RPAsZPn9u9S5jVfh9AuvfaBR2mvDofec9nCbVAmA',
+      );
+      const serviceRegistry = await program.account.serviceRegistry.fetch(
+        serviceRegistryPubKey,
+      );
+
+      // TODO: change this to the correct service account
+      const serviceAccountPubKey =
+        serviceRegistry.serviceAccountAddresses[escrow_index];
+      console.log('Service Account:', serviceAccountPubKey.toString());
 
       const transaction = new Transaction().add(
-        SystemProgram.transfer({
-          fromPubkey: publicKey,
-          toPubkey: escrowPubkey,
-          lamports,
-        }),
+        await program.methods
+          .payService()
+          .accounts({
+            buyer: publicKey,
+            service: serviceAccountPubKey,
+            serviceRegistry: serviceRegistryPubKey,
+          })
+          .instruction(),
       );
 
       const { blockhash } = await connection.getLatestBlockhash();
       transaction.recentBlockhash = blockhash;
       transaction.feePayer = publicKey;
 
-      const signed = await sendTransaction(transaction, connection);
-      console.log('Transaction sent:', signed);
+      const signature = await sendTransaction(transaction, connection);
+      console.log('Transaction sent:', signature);
 
       const confirmation = await connection.confirmTransaction(
-        signed,
+        signature,
         'confirmed',
       );
       if (confirmation.value.err) {
         throw new Error('Transaction failed to confirm');
       }
 
-      transactionToast(signed);
+      transactionToast(signature);
+
+      // Find the program address for the escrow account
+      const [escrowPubKey] = PublicKey.findProgramAddressSync(
+        [Buffer.from('escrow'), serviceAccountPubKey.toBuffer()],
+        program.programId,
+      );
+
+      // Fetch the escrow account details
+      const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
+      console.log('Escrow account:', escrowAccount);
+
+      // Update UI or state with escrow details if needed
     } catch (error) {
       console.error('Error sending transaction:', error);
     }
@@ -134,27 +163,56 @@ export default function EscrowManagement() {
     }
 
     console.log('Releasing escrow:', escrowId);
-    setFinalAmount(amount);
-    setAmount('0');
+    // TODO: read amount from the escrow account
+    // setFinalAmount(amount);
+    // setAmount('0');
 
     try {
       const serviceRegistryPubKey = new PublicKey(
-        'SAn6VFDzvDPGbD5yiDC7MDLCfRTwSqdM2Gg2kNqxZKT',
+        '6Gj3RPAsZPn9u9S5jVfh9AuvfaBR2mvDofec9nCbVAmA',
       );
-      const serviceAccountPubKey = new PublicKey(
-        '89EtQYWiKyA9BHi38uHueAyoxq7vYbZYu94NXzejKELv',
-      );
-
-      // Find the program address for the escrow account
-      const [escrowPubKey] = PublicKey.findProgramAddressSync(
-        [Buffer.from('escrow'), serviceAccountPubKey.toBuffer()],
-        program.programId,
-      );
-
       // Fetch the service registry account to get the fee account
       const serviceRegistry = await program.account.serviceRegistry.fetch(
         serviceRegistryPubKey,
       );
+
+      // TODO: change this to the correct service account
+      const serviceAccountPubKey =
+        serviceRegistry.serviceAccountAddresses[escrow_index];
+      console.log(
+        'Selected Service Account for transaction:',
+        serviceAccountPubKey.toString(),
+      );
+
+      console.log('Service Account:', serviceAccountPubKey.toString());
+
+      const [escrowPubKey] = PublicKey.findProgramAddressSync(
+        [Buffer.from('escrow'), serviceAccountPubKey.toBuffer()],
+        program.programId,
+      );
+      console.log('Escrow pubkey:', escrowPubKey.toString());
+
+      try {
+        const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
+        console.log('Escrow account data:', escrowAccount);
+        console.log('Buyer:', escrowAccount.buyer.toString());
+        console.log(
+          'Service Provider:',
+          escrowAccount.serviceProvider.toString(),
+        );
+        console.log('Fee Percentage:', escrowAccount.feePercentage);
+        console.log(
+          'Expected Amount:',
+          escrowAccount.expectedAmount.toString(),
+        );
+        console.log('Fee Account:', escrowAccount.feeAccount.toString());
+        console.log('---');
+      } catch (error) {
+        console.error(
+          `Error fetching escrow account for service ${serviceAccountPubKey.toString()}:`,
+          error,
+        );
+      }
 
       // Create the transaction
       const transaction = await program.methods
@@ -184,7 +242,7 @@ export default function EscrowManagement() {
       console.log('Escrow released successfully:', signature);
 
       // Refresh the list of escrows
-      fetchAllEscrows();
+      // fetchAllEscrows();
     } catch (error) {
       console.error('Error releasing escrow:', error);
       if (error instanceof Error) {
