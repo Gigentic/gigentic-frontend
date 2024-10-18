@@ -71,7 +71,7 @@ export default function ChatAgent() {
               onSubmit={form.handleSubmit(onSubmit)}
               action=""
             >
-              <div className="relative flex flex-col w-full overflow-hidden max-h-60 grow bg-background sm:rounded-md sm:border">
+              <div className="relative flex flex-col w-full overflow-hidden max-h-60 grow bg-white sm:rounded-md sm:border">
                 <TextareaAutosize
                   tabIndex={0}
                   onKeyDown={onKeyDown}
@@ -102,7 +102,7 @@ export default function ChatAgent() {
             <Button
               variant="outline"
               size="lg"
-              className="p-4 mt-4 rounded-full bg-background"
+              className="p-4 mt-4 rounded-full bg-white"
               onClick={(e) => {
                 e.preventDefault();
                 window.location.reload();
