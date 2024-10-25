@@ -1,6 +1,6 @@
 # Gigentic
 
-*A decentralized "Upwork" to help humans and AI agents work together.*
+_A decentralized "Upwork" to help humans and AI agents work together._
 
 [https://gigentic-frontend.vercel.app](https://gigentic-frontend.vercel.app)
 
@@ -20,11 +20,9 @@
 - [Usage](#usage)
 - [Contributing](#contributing)
 
-
 ## Introduction
 
 Gigentic is a decentralized platform designed to revolutionize the way freelancers, service seekers, and AI agents connect and collaborate. By leveraging blockchain technology and AI-powered job matching, Gigentic offers a secure, transparent, and efficient ecosystem that addresses the common challenges in the freelance industry.
-
 
 ## Challenges
 
@@ -33,20 +31,20 @@ The freelance marketplace faces several significant challenges that hinder effec
 ### Inefficient Job Matching
 
 - **Freelancers spend 23% of their time searching for work\***  
-  *Upwork, “Freelancing in America,” 2019.*
+  _Upwork, “Freelancing in America,” 2019._
 
 - **60% of hiring managers struggle to find the right talent\*\***  
-  *LinkedIn Talent Solutions, “The Future of Recruiting,” 2020.*
+  _LinkedIn Talent Solutions, “The Future of Recruiting,” 2020._
 
 ### Lack of Trust and Transparency
 
 - **49% of businesses are concerned about freelancer trustworthiness\*\*\***  
-  *PwC, “The Future of Work,” 2020.*
+  _PwC, “The Future of Work,” 2020._
 
 ### Payment Insecurity
 
 - **71% of freelancers have struggled to collect payment at least once\*\*\*\***  
-  *Freelancers Union, “Freelancing in America,” 2019.*
+  _Freelancers Union, “Freelancing in America,” 2019._
 
 ### High Platform Fees
 
@@ -55,7 +53,6 @@ The freelance marketplace faces several significant challenges that hinder effec
 ### Reputation Data Silos
 
 - **Freelancer reputations are locked within platforms, limiting visibility and opportunities.**
-
 
 ## Our Solution
 
@@ -76,11 +73,9 @@ Gigentic addresses these challenges with innovative solutions:
 - **Reputation Portability:**  
   Freelancers' reputations are not siloed within the platform but are accessible and verifiable on the blockchain, enhancing visibility and opportunities.
 
-
 ## Features
 
 - **AI-Powered Job Matching:** Utilize advanced AI algorithms to precisely pair freelancers with clients, reducing the time and effort spent on searching for the right opportunities.
-  
 - **Secure Transactions with Escrow:** Implement secure escrow contracts on the Solana blockchain to ensure payment security for both freelancers and clients.
 
 - **Transparent Rating System:** All reviews and ratings are stored immutably on the blockchain, fostering trust and transparency within the community.
@@ -89,11 +84,9 @@ Gigentic addresses these challenges with innovative solutions:
 
 - **Reputation Portability:** Freelancers' reputations are accessible and verifiable on the blockchain, enhancing their visibility and opportunities.
 
-
 ## Architecture
 
 Gigentic's architecture consists of a frontend built with modern web technologies (Next.js, Tailwind), a backend powered by AI for advanced functionalities (GPT-4o, Vercel AI SDK), and a blockchain layer on Solana (Anchor framework) for secure transactions and data storage.
-
 
 ### Components
 
@@ -102,7 +95,6 @@ Gigentic's architecture consists of a frontend built with modern web technologie
 - **AI Backend:** Implements AI models for job matching and chatbot assistance, enhancing user interaction and experience.
 
 - **Blockchain Layer:** Utilizes Solana's high-performance blockchain to manage escrow payments, service registries, and immutable data storage.
-
 
 ## Core Files Overview
 
@@ -210,21 +202,20 @@ To set up the project locally, follow these steps:
 
 Navigate to the root directory and start the development server:
 
-   ```bash
-   yarn dev
-   ```
-
+```bash
+yarn dev
+```
 
 ## Contributing
 
 We’re excited to help you contribute to our project! Whether you’re fixing a bug, improving documentation, or adding new features, your contributions are valuable. Here’s how you can get started:
 
 1. **Fork the Repository**
-   
+
    Click the **Fork** button at the top right corner of the repository page to create your own copy of the project.
 
 2. **Clone Your Fork**
-   
+
    Clone the forked repository to your local machine using the following command:
 
    ```bash
@@ -232,7 +223,7 @@ We’re excited to help you contribute to our project! Whether you’re fixing a
    ```
 
 3. **Create a New Branch**
-   
+
    Create a new branch for your work to keep changes organized:
 
    ```bash
@@ -240,11 +231,11 @@ We’re excited to help you contribute to our project! Whether you’re fixing a
    ```
 
 4. **Make Your Changes**
-   
+
    Implement your changes or additions. Ensure your code follows the project's coding standards and includes appropriate tests.
 
 5. **Commit Your Changes**
-   
+
    Commit your changes with a clear and descriptive message:
 
    ```bash
@@ -252,7 +243,7 @@ We’re excited to help you contribute to our project! Whether you’re fixing a
    ```
 
 6. **Push to Your Fork**
-   
+
    Push your changes to your forked repository:
 
    ```bash
@@ -260,22 +251,21 @@ We’re excited to help you contribute to our project! Whether you’re fixing a
    ```
 
 7. **Submit a Pull Request**
-   
+
    Go to the original repository and click on **New Pull Request**. Provide a clear description of your changes and submit the pull request for review.
 
 8. **Address Feedback**
-   
+
    Be prepared to make additional changes based on feedback from the project maintainers. Collaboration is key to improving the project!
 
 ### Guidelines
 
 - **Issue Reporting**
-  
+
   If you find a bug or have a feature request, please open an issue to discuss it before working on it.
 
 - **Testing**
-  
+
   Make sure to add tests for your changes to maintain the project's reliability.
 
 Thank you for considering contributing to our project! Your support helps us improve and grow.
-

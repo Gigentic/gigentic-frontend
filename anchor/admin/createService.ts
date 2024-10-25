@@ -12,7 +12,7 @@ export function loadKeypairBs58FromEnv(envVarName: string): Keypair {
   if (!encodedKey) throw new Error(`${envVarName} is not set`);
   return Keypair.fromSecretKey(bs58.decode(encodedKey));
 }
-  
+
 dotenv.config();
 
 const serviceDeployer = loadKeypairBs58FromEnv('SERVICE_DEPLOYER');
