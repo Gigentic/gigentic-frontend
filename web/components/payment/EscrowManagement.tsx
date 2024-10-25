@@ -311,7 +311,8 @@ export default function EscrowManagement() {
                     onCheckedChange={(checked) => setAgreed(checked as boolean)}
                   />
                   <Label htmlFor="terms" className="ml-2 text-sm">
-                    I agree to the terms and conditions
+                    I agree to release the funds once the service is completed
+                    to my satisfaction.
                   </Label>
                 </div>
                 <Button type="submit" className="w-full" disabled={!agreed}>
