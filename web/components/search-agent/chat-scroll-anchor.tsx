@@ -4,7 +4,6 @@ import { useAtBottom } from '@/lib/use-at-bottom';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
 
-
 export default function ChatScrollAnchor() {
   const trackVisibility = true;
 

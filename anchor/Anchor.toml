@@ -15,7 +15,8 @@ gigentic = "J2UENgBQrdJFy2NcFbBsxyHHdi4CZVuBg5FXmbYxfu4"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Devnet"
+# cluster = "Devnet"
+cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

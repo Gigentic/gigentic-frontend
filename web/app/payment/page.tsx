@@ -1,4 +1,4 @@
-import EscrowManagement from "@/components/payment/EscrowManagement";
+import EscrowManagement from '@/components/payment/EscrowManagement';
 
 export default function PaymentPage() {
   return <EscrowManagement />;

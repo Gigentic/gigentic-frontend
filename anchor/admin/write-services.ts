@@ -1,9 +1,9 @@
 import * as dotenv from 'dotenv';
-  
+
 import { Program, workspace, setProvider } from '@coral-xyz/anchor';
 import { createMint } from '@solana/spl-token';
 
-import { Connection, PublicKey } from '@solana/web3.js';
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
 import { services } from './Services'; // Import services from Services.ts
 import { Gigentic } from '../target/types/gigentic';
@@ -77,14 +77,18 @@ async function main() {
       console.log(description);
 
       // Update to use services array
-      console.log(`Creating service ${index + 1}/${services.length}:`);
+      const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+      console.log(
+        `Creating service ${index + 1}/${services.length} with ID ${uniqueId}:`,
+      );
       await createService(
         serviceRegistryKeypair.publicKey,
         mint,
         program,
-        service.price, // Use price from services
+        LAMPORTS_PER_SOL * service.price, // Use price from services
         description, // Use description from services
-        index.toString(), // unique id
+        // index.toString(), // unique id
+        uniqueId,
       );
       index++;
     }

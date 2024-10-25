@@ -1,6 +1,6 @@
 export const services = [
   {
-    price: 30,
+    price: 3,
     currency: 'SOL',
     title: 'Backend Developer',
     experience:
@@ -9,7 +9,7 @@ export const services = [
     avgRating: 2.9,
   },
   {
-    price: 40,
+    price: 2,
     currency: 'SOL',
     title: 'Frontend Developer',
     experience: 'Specialist in React, also some experience in UX design',
@@ -17,7 +17,7 @@ export const services = [
     avgRating: 4.2,
   },
   {
-    price: 25,
+    price: 2.5,
     currency: 'SOL',
     title: 'Senior Full Stack Developer',
     experience:
@@ -26,7 +26,7 @@ export const services = [
     avgRating: 4.1,
   },
   {
-    price: 20,
+    price: 2,
     currency: 'SOL',
     title: 'DevOps Engineer',
     experience:
@@ -35,7 +35,7 @@ export const services = [
     avgRating: 3.8,
   },
   {
-    price: 25,
+    price: 2.5,
     currency: 'SOL',
     title: 'Data Scientist',
     experience:
@@ -44,7 +44,7 @@ export const services = [
     avgRating: 3.9,
   },
   {
-    price: 20,
+    price: 2,
     currency: 'SOL',
     title: 'Machine Learning Engineer',
     experience:
@@ -53,7 +53,7 @@ export const services = [
     avgRating: 3.7,
   },
   {
-    price: 25,
+    price: 2.5,
     currency: 'SOL',
     title: 'Smart Contract Auditor',
     experience:
@@ -62,7 +62,7 @@ export const services = [
     avgRating: 4.8,
   },
   {
-    price: 30,
+    price: 3,
     currency: 'SOL',
     title: 'Smart Contract Audit AI Agent',
     experience:
@@ -71,7 +71,7 @@ export const services = [
     avgRating: 4.9,
   },
   {
-    price: 30,
+    price: 3,
     currency: 'SOL',
     title: 'Smart Contract Developer',
     experience: 'Specialist in Solidity, 4 years of experience in the field',
@@ -79,7 +79,7 @@ export const services = [
     avgRating: 3.2,
   },
   {
-    price: 25,
+    price: 2.5,
     currency: 'SOL',
     title: 'Blockchain Developer',
     experience: 'Specialist in Rust, 2 years of experience in the field',
@@ -87,7 +87,7 @@ export const services = [
     avgRating: 3.1,
   },
   {
-    price: 20,
+    price: 2,
     currency: 'SOL',
     title: 'Solana Developer',
     experience:
@@ -96,7 +96,7 @@ export const services = [
     avgRating: 3.9,
   },
   {
-    price: 15,
+    price: 1.5,
     currency: 'SOL',
     title: 'Rust Developer',
     experience:
@@ -105,7 +105,7 @@ export const services = [
     avgRating: 3.5,
   },
   {
-    price: 10,
+    price: 1,
     currency: 'SOL',
     title: 'Python Developer',
     experience:
@@ -114,7 +114,7 @@ export const services = [
     avgRating: 3.3,
   },
   {
-    price: 12,
+    price: 1.2,
     currency: 'SOL',
     title: 'Javascript Developer',
     experience: '3 years of experience in Javascript',
@@ -122,7 +122,7 @@ export const services = [
     avgRating: 3.7,
   },
   {
-    price: 15,
+    price: 1.5,
     currency: 'SOL',
     title: 'React Developer',
     experience: '2 years of experience in React',
@@ -130,7 +130,7 @@ export const services = [
     avgRating: 4.1,
   },
   {
-    price: 10,
+    price: 1,
     currency: 'SOL',
     title: 'Next.js Developer',
     experience: '2 years of experience in Next.js, various css frameworks',
