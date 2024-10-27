@@ -13,18 +13,18 @@ pub struct SignService<'info> {
 
     #[account(
         mut,
-        seeds = [b"escrow", service.key().as_ref()],
+        close = signer, // Transfer remaining lamports to the buyer when the account is closed
+        seeds = [b"escrow", service.key().as_ref(), service.provider.key().as_ref(), signer.key().as_ref()],
         bump,
-        close = signer // Transfer remaining lamports to the buyer when the account is closed
     )]
     pub escrow: Account<'info, Escrow>,
 
-    /// CHECK : SAFE
-    #[account(mut)]
+     /// CHECK : This is a account info, not an account
+    #[account(mut, constraint = service_provider.key() == escrow.service_provider.key() && service_provider.key() == service.provider.key())]
     pub service_provider: AccountInfo<'info>,
 
     /// CHECK : SAFE    
-    #[account(mut)]
+    #[account(mut, constraint = fee_account.key() == escrow.fee_account.key())]
     pub fee_account: AccountInfo<'info>,
 
     pub system_program: Program<'info, System>,

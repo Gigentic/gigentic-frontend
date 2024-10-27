@@ -1,20 +1,15 @@
-use crate::constants::MAX_DESCRIPTION_LENGTH;
+use crate::constants::{MAX_DESCRIPTION_LENGTH, MAX_REVIEWS};
 use anchor_lang::prelude::*;
 
 #[account]
+#[derive(InitSpace)]
 pub struct Service {
     pub provider: Pubkey,
     pub mint: Pubkey,
+    #[max_len(MAX_DESCRIPTION_LENGTH)]
     pub description: String,
     pub price: u64,
+    #[max_len(MAX_REVIEWS)]
     pub reviews: Vec<Pubkey>,
 }
 
-impl Space for Service {
-    const INIT_SPACE: usize = 8 + // discriminator
-        32 + // provider
-        32 + // mint
-        4 + MAX_DESCRIPTION_LENGTH + // description (with max length)
-        8 + // price
-        4 + (32 * 10); // reviews (assuming a maximum of 10 reviews)
-}
