@@ -18,7 +18,7 @@ const links: { label: string; path: string }[] = [
   { label: 'Search', path: '/search-agent' },
   { label: 'Payment', path: '/payment' },
   { label: 'Account', path: '/account' },
-  // { label: 'Program', path: '/gigentic-frontend' },
+  { label: 'Program', path: '/gigentic-frontend' },
 ];
 
 export default function RootLayout({

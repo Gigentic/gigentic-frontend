@@ -48,7 +48,7 @@ export default function EscrowManagement() {
   const [matchPercentage, setMatchPercentage] = useState('');
 
   // TODO: remove this after testing
-  const escrow_index = 5;
+  const escrow_index = 6;
 
   // const fetchAllEscrows = useCallback(async () => {
   //   // if (!publicKey || !programId) return;
