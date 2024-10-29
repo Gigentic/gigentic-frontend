@@ -1,28 +1,18 @@
 use crate::states::review::Review;
-use crate::states::Service;
 use crate::ErrorCode;
 use anchor_lang::prelude::*;
+
 #[derive(Accounts)]
-#[instruction(_review_no: String)]
 pub struct ReviewCustomerToAgentService<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
-    #[account(mut)]
-    pub service: Account<'info, Service>,
-    #[account(
-        mut,
-        seeds = [b"review_service", _review_no.as_bytes(), service.key().as_ref()],
-        bump,
-    )]
+    #[account(mut, constraint = review.consumer == signer.key())]
     pub review: Account<'info, Review>,
     pub system_program: Program<'info, System>,
 }
+
 impl<'info> ReviewCustomerToAgentService<'info> {
-    pub fn handler(&mut self, rating: u8, review: String, _review_no: String) -> Result<()> {
-        require!(
-            self.signer.key() == self.review.consumer,
-            ErrorCode::UnauthorizedAccess
-        );
+    pub fn handler(&mut self, rating: u8, review: String) -> Result<()> {
         require!(rating <= 5, ErrorCode::InvalidRating);
         self.review.consumer_to_agent_rating = rating;
         self.review.customer_to_agent_review = review;

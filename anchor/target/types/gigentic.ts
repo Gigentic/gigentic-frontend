@@ -36,43 +36,8 @@ export type Gigentic = {
           "signer": true
         },
         {
-          "name": "service",
-          "writable": true
-        },
-        {
           "name": "review",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  114,
-                  101,
-                  118,
-                  105,
-                  101,
-                  119,
-                  95,
-                  115,
-                  101,
-                  114,
-                  118,
-                  105,
-                  99,
-                  101
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "reviewNo"
-              },
-              {
-                "kind": "account",
-                "path": "service"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "systemProgram",
@@ -86,10 +51,6 @@ export type Gigentic = {
         },
         {
           "name": "review",
-          "type": "string"
-        },
-        {
-          "name": "reviewNo",
           "type": "string"
         }
       ]
@@ -113,43 +74,8 @@ export type Gigentic = {
           "signer": true
         },
         {
-          "name": "service",
-          "writable": true
-        },
-        {
           "name": "review",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  114,
-                  101,
-                  118,
-                  105,
-                  101,
-                  119,
-                  95,
-                  115,
-                  101,
-                  114,
-                  118,
-                  105,
-                  99,
-                  101
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "reviewNo"
-              },
-              {
-                "kind": "account",
-                "path": "service"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "systemProgram",
@@ -163,10 +89,6 @@ export type Gigentic = {
         },
         {
           "name": "review",
-          "type": "string"
-        },
-        {
-          "name": "reviewNo",
           "type": "string"
         }
       ]

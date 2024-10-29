@@ -1,7 +1,6 @@
-import { REVIEW_NO, TEST_SERVICE_REGISTRY_KEYPAIR } from './constants';
+import { TEST_SERVICE_REGISTRY_KEYPAIR } from './constants';
 import { program, connection } from './init';
 import { fund_account } from './utils';
-import { PublicKey } from '@solana/web3.js';
 import * as anchor from '@coral-xyz/anchor';
 import { SendTransactionError } from '@solana/web3.js';
 import { expect } from 'chai';
@@ -44,28 +43,15 @@ describe('Customer to agent review', () => {
     const rating = 5;
     const review = 'Great service';
 
-    // Create a transaction to record the consumer's rating and review for the agent.
-    // The consumer (buyer) is interacting with the service account created by the agent.
-    const transaction = new anchor.web3.Transaction().add(
-      await program.methods
-        .consumerToAgentRating(rating, review, REVIEW_NO) // The program method to submit rating and review
-        .accounts({
-          signer: buyer.publicKey, // The buyer signs the transaction
-          service: serviceAccountPubKey, // The service account being reviewed
-        })
-        .instruction(),
-    );
-
-    // Set the fee payer for the transaction to be the buyer
-    transaction.feePayer = buyer.publicKey;
-
-    // Try to send and confirm the transaction
     try {
-      const txSignature = await anchor.web3.sendAndConfirmTransaction(
-        connection,
-        transaction,
-        [buyer], // The buyer signs and pays for the transaction
-      );
+      await program.methods
+        .consumerToAgentRating(rating, review)
+        .accounts({
+          signer: buyer.publicKey,
+          review: serviceAccount.reviews[0],
+        })
+        .signers([buyer])
+        .rpc();
     } catch (err) {
       // Handle transaction errors
       if (err instanceof SendTransactionError) {
@@ -76,13 +62,11 @@ describe('Customer to agent review', () => {
 
     // Find the program address for the review account.
     // The review account stores the review and rating data linked to the service account.
-    const [reviewPubKey] = PublicKey.findProgramAddressSync(
-      [Buffer.from('review_service'), serviceAccountPubKey.toBuffer()], // Seed for generating address
-      program.programId, // Program ID to scope the address generation
-    );
 
     // Fetch the review account details using the generated program address
-    const reviewAccount = await program.account.review.fetch(reviewPubKey);
+    const reviewAccount = await program.account.review.fetch(
+      serviceAccount.reviews[0],
+    );
 
     // Validate that the service provider stored in the review account matches the expected service provider
     expect(reviewAccount.serviceProvider.toBase58()).to.equal(

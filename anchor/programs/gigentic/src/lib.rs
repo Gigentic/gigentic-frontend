@@ -55,9 +55,8 @@ pub mod gigentic {
         ctx: Context<ReviewAgentToCustomerService>,
         rating: u8,
         review: String,
-        review_no: String,
     ) -> Result<()> {
-        ctx.accounts.handler(rating, review, review_no)?;
+        ctx.accounts.handler(rating, review)?;
         Ok(())
     }
 
@@ -65,9 +64,8 @@ pub mod gigentic {
         ctx: Context<ReviewCustomerToAgentService>,
         rating: u8,
         review: String,
-        review_no: String,  
     ) -> Result<()> {
-        ctx.accounts.handler(rating, review, review_no)?;
+        ctx.accounts.handler(rating, review)?;
         Ok(())
     }
 }

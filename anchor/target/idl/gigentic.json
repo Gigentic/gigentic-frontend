@@ -30,43 +30,8 @@
           "signer": true
         },
         {
-          "name": "service",
-          "writable": true
-        },
-        {
           "name": "review",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  114,
-                  101,
-                  118,
-                  105,
-                  101,
-                  119,
-                  95,
-                  115,
-                  101,
-                  114,
-                  118,
-                  105,
-                  99,
-                  101
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "_review_no"
-              },
-              {
-                "kind": "account",
-                "path": "service"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "system_program",
@@ -80,10 +45,6 @@
         },
         {
           "name": "review",
-          "type": "string"
-        },
-        {
-          "name": "review_no",
           "type": "string"
         }
       ]
@@ -107,43 +68,8 @@
           "signer": true
         },
         {
-          "name": "service",
-          "writable": true
-        },
-        {
           "name": "review",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  114,
-                  101,
-                  118,
-                  105,
-                  101,
-                  119,
-                  95,
-                  115,
-                  101,
-                  114,
-                  118,
-                  105,
-                  99,
-                  101
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "_review_no"
-              },
-              {
-                "kind": "account",
-                "path": "service"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "system_program",
@@ -157,10 +83,6 @@
         },
         {
           "name": "review",
-          "type": "string"
-        },
-        {
-          "name": "review_no",
           "type": "string"
         }
       ]
