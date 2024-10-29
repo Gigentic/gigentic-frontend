@@ -120,9 +120,32 @@ describe('Gigentic Service Buying', () => {
       "Escrow account fee percentage should match the service registry's fee percentage",
     ).to.equal(expectedFeePercentage.toString());
 
-    console.log(
-      'length of service account reviews',
-      serviceAccount.reviews.length,
-    );
+    const service = await program.account.service.fetch(serviceAccountPubKey);
+
+    const review = await program.account.review.fetch(service.reviews[0]);
+
+    expect(review.reviewNo, 'Review number should match').to.equal(REVIEW_NO);
+
+    expect(
+      review.agentToConsumerRating,
+      'Agent to consumer rating should be 0',
+    ).to.equal(0);
+
+    expect(
+      review.consumerToAgentRating,
+      'Consumer to agent rating should be 0',
+    ).to.equal(0);
+
+    expect(
+      review.agentToCustomerReview,
+      'Agent to customer review should be empty',
+    ).to.equal('');
+
+    expect(
+      review.customerToAgentReview,
+      'Customer to agent review should be empty',
+    ).to.equal('');
+
+    expect(service.reviews.length, 'Service should have 1 review').to.equal(1);
   });
 });

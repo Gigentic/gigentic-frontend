@@ -3,8 +3,8 @@ mod constants;
 mod contexts;
 mod errors;
 mod states;
-// use contexts::agent_to_consumer_rating::*;
-// use contexts::consumer_to_agent_rating::*;
+use contexts::agent_to_consumer_rating::*;
+use contexts::consumer_to_agent_rating::*;
 use contexts::init_service::*;
 use contexts::init_service_registry::*;
 use contexts::pay_service::*;
@@ -51,23 +51,23 @@ pub mod gigentic {
         Ok(())
     }
 
-    // pub fn agent_to_consumer_rating(
-    //     ctx: Context<ReviewAgentToCustomerService>,
-    //     rating: u8,
-    //     review: String,
-    //     review_no: String,
-    // ) -> Result<()> {
-    //     ctx.accounts.handler(rating, review, review_no  )?;
-    //     Ok(())
-    // }
+    pub fn agent_to_consumer_rating(
+        ctx: Context<ReviewAgentToCustomerService>,
+        rating: u8,
+        review: String,
+        review_no: String,
+    ) -> Result<()> {
+        ctx.accounts.handler(rating, review, review_no)?;
+        Ok(())
+    }
 
-    // pub fn consumer_to_agent_rating(
-    //     ctx: Context<ReviewCustomerToAgentService>,
-    //     rating: u8,
-    //     review: String,
-    //     review_no: String,  
-    // ) -> Result<()> {
-    //     ctx.accounts.handler(rating, review, review_no)?;
-    //     Ok(())
-    // }
+    pub fn consumer_to_agent_rating(
+        ctx: Context<ReviewCustomerToAgentService>,
+        rating: u8,
+        review: String,
+        review_no: String,  
+    ) -> Result<()> {
+        ctx.accounts.handler(rating, review, review_no)?;
+        Ok(())
+    }
 }

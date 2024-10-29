@@ -5,7 +5,7 @@ import { PublicKey } from '@solana/web3.js';
 import * as anchor from '@coral-xyz/anchor';
 import { SendTransactionError } from '@solana/web3.js';
 import { expect } from 'chai';
-import { TEST_SERVICE_DEPLOYERS } from './constants';
+import { TEST_SERVICE_DEPLOYERS, REVIEW_NO } from './constants';
 
 describe('Agent to customer review', () => {
   it('Rates the customer through the service provider and checks if the values are initialized correctly', async () => {
@@ -39,7 +39,7 @@ describe('Agent to customer review', () => {
     // necessary parameters: the rating and review.
     const transaction = new anchor.web3.Transaction().add(
       await program.methods
-        .agentToConsumerRating(rating, review)
+        .agentToConsumerRating(rating, review, REVIEW_NO)
         .accounts({
           signer: serviceProvider.publicKey, // The service provider signs the transaction
           service: serviceAccountPubKey, // The service account being reviewed

@@ -1,4 +1,4 @@
-import { TEST_SERVICE_REGISTRY_KEYPAIR } from './constants';
+import { REVIEW_NO, TEST_SERVICE_REGISTRY_KEYPAIR } from './constants';
 import { program, connection } from './init';
 import { fund_account } from './utils';
 import { PublicKey } from '@solana/web3.js';
@@ -48,7 +48,7 @@ describe('Customer to agent review', () => {
     // The consumer (buyer) is interacting with the service account created by the agent.
     const transaction = new anchor.web3.Transaction().add(
       await program.methods
-        .consumerToAgentRating(rating, review) // The program method to submit rating and review
+        .consumerToAgentRating(rating, review, REVIEW_NO) // The program method to submit rating and review
         .accounts({
           signer: buyer.publicKey, // The buyer signs the transaction
           service: serviceAccountPubKey, // The service account being reviewed

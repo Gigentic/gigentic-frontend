@@ -14,6 +14,164 @@ export type Gigentic = {
   },
   "instructions": [
     {
+      "name": "agentToConsumerRating",
+      "discriminator": [
+        76,
+        242,
+        9,
+        100,
+        82,
+        123,
+        175,
+        129
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "docs": [
+            "The account of the user deploying and paying for the initialization.",
+            "Marked as `mut` because it will be charged for rent."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "service",
+          "writable": true
+        },
+        {
+          "name": "review",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  118,
+                  105,
+                  101,
+                  119,
+                  95,
+                  115,
+                  101,
+                  114,
+                  118,
+                  105,
+                  99,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "reviewNo"
+              },
+              {
+                "kind": "account",
+                "path": "service"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "rating",
+          "type": "u8"
+        },
+        {
+          "name": "review",
+          "type": "string"
+        },
+        {
+          "name": "reviewNo",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "consumerToAgentRating",
+      "discriminator": [
+        20,
+        65,
+        222,
+        1,
+        186,
+        152,
+        255,
+        154
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "service",
+          "writable": true
+        },
+        {
+          "name": "review",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  118,
+                  105,
+                  101,
+                  119,
+                  95,
+                  115,
+                  101,
+                  114,
+                  118,
+                  105,
+                  99,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "reviewNo"
+              },
+              {
+                "kind": "account",
+                "path": "service"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "rating",
+          "type": "u8"
+        },
+        {
+          "name": "review",
+          "type": "string"
+        },
+        {
+          "name": "reviewNo",
+          "type": "string"
+        }
+      ]
+    },
+    {
       "name": "initializeService",
       "discriminator": [
         201,
@@ -421,6 +579,11 @@ export type Gigentic = {
       "code": 6009,
       "name": "invalidRating",
       "msg": "Invalid rating. Rating must be between 0 and 5."
+    },
+    {
+      "code": 6010,
+      "name": "noReviews",
+      "msg": "No reviews found"
     }
   ],
   "types": [

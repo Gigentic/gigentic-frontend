@@ -17,7 +17,7 @@ pub struct InitializeService<'info> {
     // The service account being initialized
     #[account(
         init,
-        space = Service::INIT_SPACE,
+        space = 8+Service::INIT_SPACE,
         payer = provider,
         seeds = [b"service", _unique_id.as_bytes(), provider.key().as_ref() ],
         bump
