@@ -6,16 +6,15 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-gigentic = "J2UENgBQrdJFy2NcFbBsxyHHdi4CZVuBg5FXmbYxfu4"
+gigentic = "2xtwCiDhiQ9vuTFpR3wECJaHyvtE7L9pBPbNHdnsk1YS"
 
 [programs.localnet]
-gigentic = "J2UENgBQrdJFy2NcFbBsxyHHdi4CZVuBg5FXmbYxfu4"
+gigentic = "2xtwCiDhiQ9vuTFpR3wECJaHyvtE7L9pBPbNHdnsk1YS"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-# cluster = "Devnet"
 cluster = "Localnet"
 wallet = "~/.config/solana/id.json"
 
