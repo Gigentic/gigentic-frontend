@@ -6,20 +6,18 @@ import {
   TEST_SERVICE_REGISTRY_KEYPAIR,
   TEST_SERVICE_DEPLOYERS,
   TEST_SERVICE_USERS,
-  TEST_FEE_ACCOUNT,
-  FEE_PERCENTAGE,
 } from './constants';
-
 import {
   feeTokenAccount,
   serviceProviderTokenAccount,
 } from './init_service_registry';
-import { SendTransactionError } from '@solana/web3.js';
 
-describe('SignService: Transfers money to the service provider and sends fees to the fee account', () => {
+import { SendTransactionError } from '@solana/web3.js';
+import { getAccount } from '@solana/spl-token';
+import { tokenMint } from './init_service_registry';
+describe('SignService: Transfers SPL to the service provider and sends fees to the fee account', () => {
   it('Transfers money to the service provider and sends fees', async () => {
-    // Select the buyer from the predefined service users
-    const buyer = TEST_SERVICE_USERS[0];
+    const signer = TEST_SERVICE_USERS[0];
 
     // Fetch the service registry account
     const serviceRegistry = await program.account.serviceRegistry.fetch(
@@ -29,7 +27,6 @@ describe('SignService: Transfers money to the service provider and sends fees to
     // Get the public key of the service account from the registry
     const serviceAccountPubKey = serviceRegistry.serviceAccountAddresses[0];
 
-    // Fetch the service account details
     const serviceAccount =
       await program.account.service.fetch(serviceAccountPubKey);
 
@@ -39,7 +36,7 @@ describe('SignService: Transfers money to the service provider and sends fees to
         Buffer.from('escrow'),
         serviceAccountPubKey.toBuffer(),
         serviceAccount.provider.toBuffer(),
-        buyer.publicKey.toBuffer(),
+        signer.publicKey.toBuffer(),
       ],
       program.programId,
     );
@@ -47,71 +44,80 @@ describe('SignService: Transfers money to the service provider and sends fees to
     // Fetch the escrow account details
     const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
 
+    const [escrow_token_pkey, escrow_token_bump] =
+      anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from('escrow-token-account'), escrowPubKey.toBuffer()],
+        program.programId,
+      );
+
+    const EscrowTokenAccount = await getAccount(
+      connection,
+      escrow_token_pkey,
+      'confirmed',
+    );
+
+    const feeTokenAccountInfo = await getAccount(connection, feeTokenAccount);
+
+    const serviceProviderTokenAccountInfo = await getAccount(
+      connection,
+      serviceProviderTokenAccount,
+    );
+
+    const serviceProviderTokenAccountBefore = Number(
+      serviceProviderTokenAccountInfo.amount,
+    );
+    const feeTokenAccountBefore = Number(feeTokenAccountInfo.amount);
+
     // Construct the transaction to sign the service
     const transaction = new anchor.web3.Transaction().add(
       await program.methods
         .signServiceSpl()
         .accounts({
-          signer: buyer.publicKey,
+          signer: signer.publicKey,
           service: serviceAccountPubKey,
           serviceProvider: TEST_SERVICE_DEPLOYERS[0].publicKey,
-          feeTokenAccount: feeTokenAccount,
           serviceProviderTokenAccount: serviceProviderTokenAccount,
+          feeTokenAccount: feeTokenAccount,
+          mint: tokenMint,
         })
-        .signers([buyer])
+        .signers([signer])
         .instruction(),
     );
-
-
-    // Set the fee payer for the transaction
-    transaction.feePayer = buyer.publicKey;
-
-    // Get the balance of the service provider account before the transaction
-    const balancebeforeServiceProviderAccount = await connection.getBalance(
-      TEST_SERVICE_DEPLOYERS[0].publicKey,
-    );
-
-    // Get the balance of the fee account before the transaction
-    const balancebeforeFeeAccount = await connection.getBalance(
-      TEST_FEE_ACCOUNT.publicKey,
-    );
-
-    // Send and confirm the transaction
+    transaction.feePayer = signer.publicKey;
     try {
       const txSignature = await anchor.web3.sendAndConfirmTransaction(
         connection,
         transaction,
-        [buyer],
+        [signer],
       );
     } catch (err) {
-      // Handle transaction errors
       if (err instanceof SendTransactionError) {
-        console.error('SendTransactionError:', err.message);
-        // If there's an error, retrieve and log the transaction's logs for debugging
-        // const logs = await err.getLogs(connection);
-        // console.error('Transaction Logs:', logs);
       }
       throw err;
     }
 
-    // Get the balance of the service provider account after the transaction
-    const balanceAfterServiceProviderAccount = await connection.getBalance(
-      TEST_SERVICE_DEPLOYERS[0].publicKey,
+    const feeTokenAccountInfoAfter = await getAccount(
+      connection,
+      feeTokenAccount,
     );
 
-    // Get the balance of the fee account after the transaction
-    const balanceAfterFeeAccount = await connection.getBalance(
-      TEST_FEE_ACCOUNT.publicKey,
+    const serviceProviderTokenAccountInfoAfter = await getAccount(
+      connection,
+      serviceProviderTokenAccount,
     );
 
-    // Check if the fee percentage is defined and assert the fee account balance increased
-    if (FEE_PERCENTAGE) {
-      expect(balanceAfterFeeAccount > balancebeforeFeeAccount).to.be.true;
+    if (escrowAccount.feePercentage == 0) {
+      expect(Number(feeTokenAccountInfoAfter.amount)).to.equal(0);
+      expect(Number(serviceProviderTokenAccountInfoAfter.amount)).to.equal(
+        Number(escrowAccount.expectedAmount),
+      );
+    } else {
+      expect(Number(feeTokenAccountInfoAfter.amount)).to.be.greaterThan(
+        Number(0),
+      );
+      expect(
+        Number(serviceProviderTokenAccountInfoAfter.amount),
+      ).to.be.greaterThan(Number(serviceProviderTokenAccountBefore));
     }
-
-    // Assert the service provider account balance increased
-    expect(
-      balanceAfterServiceProviderAccount > balancebeforeServiceProviderAccount,
-    ).to.be.true;
   });
 });

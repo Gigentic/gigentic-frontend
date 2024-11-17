@@ -7,12 +7,7 @@ import {
   TEST_SERVICE_DEPLOYERS,
   TEST_SERVICE_USERS,
 } from './constants';
-import {
-  feeTokenAccount,
-  serviceProviderTokenAccount,
-  buyerTokenAccount,
-  tokenMint,
-} from './init_service_registry';
+import { buyerTokenAccount, tokenMint } from './init_service_registry';
 import { REVIEW_NO_2 } from './constants';
 import { SendTransactionError } from '@solana/web3.js';
 import { getAccount, createAccount, mintTo } from '@solana/spl-token';
