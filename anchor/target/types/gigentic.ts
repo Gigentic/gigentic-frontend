@@ -29,16 +29,9 @@ export type Gigentic = {
       discriminator: [188, 220, 123, 11, 148, 57, 198, 128];
       accounts: [
         {
-          name: 'signer';
-          docs: [
-            'The account of the user deploying and paying for the initialization.',
-            'Marked as `mut` because it will be charged for rent.',
-          ];
-          writable: true;
-          signer: true;
-          name: 'signer';
-          writable: true;
-          signer: true;
+          "name": "signer",
+          "writable": true,
+          "signer": true
         },
         {
           "name": "review",
@@ -787,18 +780,11 @@ export type Gigentic = {
           }
         },
         {
-          name: 'serviceProvider';
-          docs: ['CHECK : This is a account info, not an account'];
-          writable: true;
-          name: 'serviceProvider';
-          docs: ['CHECK : This is an account info, not an account'];
-          writable: true;
+          "name": "serviceProvider",
+          "writable": true
         },
         {
           "name": "feeAccount",
-          "docs": [
-            "CHECK : SAFE"
-          ],
           "writable": true
         },
         {
