@@ -227,17 +227,142 @@ export type Gigentic = {
           writable: true;
         },
         {
+          name: 'serviceRegistry';
+          docs: ['The service registry account.'];
+          writable: true;
+        },
+        {
+          name: 'escrow';
+          docs: [
+            'The escrow account, initialized with a specific space and seeds.',
+          ];
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [101, 115, 99, 114, 111, 119];
+              },
+              {
+                kind: 'account';
+                path: 'service';
+              },
+              {
+                kind: 'account';
+                path: 'service.provider';
+                account: 'service';
+              },
+              {
+                kind: 'account';
+                path: 'buyer';
+              },
+            ];
+          };
+        },
+        {
+          name: 'buyerTokenAccount';
+          docs: [
+            'The source token account from which tokens will be transferred.',
+          ];
+          writable: true;
+        },
+        {
+          name: 'review';
+          docs: ['The review account.'];
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [
+                  114,
+                  101,
+                  118,
+                  105,
+                  101,
+                  119,
+                  95,
+                  115,
+                  101,
+                  114,
+                  118,
+                  105,
+                  99,
+                  101,
+                ];
+              },
+              {
+                kind: 'arg';
+                path: 'reviewNo';
+              },
+              {
+                kind: 'account';
+                path: 'service';
+              },
+            ];
+          };
+        },
+        {
+          name: 'mint';
+          docs: ['The mint account.'];
+        },
+        {
+          name: 'escrowTokenAccount';
+          docs: ['Token account for escrow (only for SPL tokens)'];
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  45,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  45,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                ];
+              },
+              {
+                kind: 'account';
+                path: 'escrow';
+              },
+            ];
+          };
+        },
+        {
+          name: 'tokenProgram';
+          docs: ['The token program.'];
+          address: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+        },
+        {
+          name: 'rent';
+          docs: ['The rent sysvar.'];
+          address: 'SysvarRent111111111111111111111111111111111';
+        },
+        {
           name: 'systemProgram';
+          docs: ['The system program.'];
           address: '11111111111111111111111111111111';
         },
       ];
       args: [
         {
-          name: 'rating';
-          type: 'u8';
-        },
-        {
-          name: 'review';
+          name: 'reviewNo';
           type: 'string';
         },
       ];
