@@ -1,9 +1,10 @@
-use crate::states::{service_registry::ServiceRegistry, Service, service_authority::ServiceAuthority
+use crate::states::{
+    service_authority::ServiceAuthority, service_registry::ServiceRegistry, Service,
 };
 use crate::ErrorCode;
 use anchor_lang::prelude::*;
-use anchor_spl::token_interface::{Mint, TokenInterface};
 use anchor_spl::token::TokenAccount;
+use anchor_spl::token_interface::{Mint, TokenInterface};
 
 #[derive(Accounts)]
 #[instruction(_unique_id: String)]
@@ -80,7 +81,6 @@ impl<'info> InitializeService<'info> {
             return err!(ErrorCode::NoServicesRegistered);
         }
 
-        
         // Initialize the service with the provided details
         self.service.set_inner(Service {
             provider: self.provider.key(),

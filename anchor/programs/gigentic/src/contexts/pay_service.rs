@@ -28,11 +28,10 @@ pub struct PayService<'info> {
     init,
     payer = customer,
     space =8+ Review::INIT_SPACE,
-    seeds=[b"review",review_id.as_bytes(),service.key().as_ref()],
+    seeds=[b"review_service",review_no.as_bytes(),service.key().as_ref()],
     bump,
     )]
     pub review: Account<'info, Review>,
-
     pub system_program: Program<'info, System>,
 }
 
@@ -55,6 +54,12 @@ impl<'info> PayService<'info> {
             ],
         )?;
 
+        self.service.reviews.push(self.review.key());
+        if let Some(last_address) = self.service.reviews.last() {
+            msg!(" Last review address: {}", last_address);
+        } else {
+            return err!(ErrorCode::NoReviews);
+        }
         self.review.set_inner(Review {
             review_id,
             provider_to_customer_rating: 0,

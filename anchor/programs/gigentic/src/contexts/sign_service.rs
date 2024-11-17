@@ -18,7 +18,7 @@ pub struct SignService<'info> {
     )]
     pub escrow: Account<'info, Escrow>,
 
-    /// CHECK : This is an account info, not an account
+    /// CHECK : This is a account info, not an account
     #[account(mut, constraint = service_provider.key() == escrow.service_provider.key() && service_provider.key() == service.provider.key())]
     pub service_provider: AccountInfo<'info>,
 
