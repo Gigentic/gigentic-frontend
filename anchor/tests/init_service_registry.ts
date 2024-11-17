@@ -1,9 +1,9 @@
 import { expect } from 'chai';
-import { before } from 'mocha';
 import {
   SystemProgram,
   Transaction,
   sendAndConfirmTransaction,
+  PublicKey,
 } from '@solana/web3.js';
 import { connection, program } from './init';
 import {
@@ -11,13 +11,80 @@ import {
   TEST_SERVICE_REGISTRY_KEYPAIR,
   TEST_FEE_ACCOUNT,
   SERVICE_REGISTRY_SPACE,
+  TEST_FEE_ACCOUNT,
   FEE_PERCENTAGE,
+  TEST_SERVICE_REGISTRY_KEYPAIR,
+  TEST_SERVICE_DEPLOYERS,
+  TEST_SERVICE_USERS,
 } from './constants';
+import {
+  createAccount,
+  createMint,
+  mintTo,
+  getAccount,
+} from '@solana/spl-token';
+import { fund_account } from './utils';
 
-describe('Initialize Service Registry and checks for correct fee_account and correct fee percentage ', () => {
+// Define the variables at the top of the file
+let tokenMint: PublicKey;
+let feeTokenAccount: PublicKey;
+let serviceProviderTokenAccount: PublicKey;
+let buyerTokenAccount: PublicKey;
+
+describe('Initialize Service Registry and checks for correct TEST_FEE_ACCOUNT and correct fee percentage', () => {
   before(async function () {
+    // Fund necessary accounts
+    await fund_account(connection, TEST_SERVICE_REGISTRY_DEPLOYER.publicKey);
+    await fund_account(connection, TEST_SERVICE_DEPLOYERS[0].publicKey);
+    await fund_account(connection, TEST_SERVICE_USERS[0].publicKey);
+    await fund_account(connection, TEST_FEE_ACCOUNT.publicKey);
+
+    try {
+      tokenMint = await createMint(
+        connection,
+        TEST_SERVICE_REGISTRY_DEPLOYER, // Payer
+        TEST_SERVICE_REGISTRY_DEPLOYER.publicKey, // Mint authority
+        null, // Freeze authority
+        0, // Decimals
+      );
+
+      // Create token accounts
+      feeTokenAccount = await createAccount(
+        connection,
+        TEST_FEE_ACCOUNT, // Payer
+        tokenMint, // Mint
+        TEST_FEE_ACCOUNT.publicKey, // Owner
+      );
+
+      serviceProviderTokenAccount = await createAccount(
+        connection,
+        TEST_SERVICE_DEPLOYERS[0], // Payer
+        tokenMint, // Mint
+        TEST_SERVICE_DEPLOYERS[0].publicKey, // Owner
+      );
+
+      buyerTokenAccount = await createAccount(
+        connection,
+        TEST_SERVICE_USERS[0], // Payer
+        tokenMint, // Mint
+        TEST_SERVICE_USERS[0].publicKey, // Owner
+      );
+
+      // Mint tokens to the buyer's token account
+      await mintTo(
+        connection,
+        TEST_SERVICE_REGISTRY_DEPLOYER, // Payer
+        tokenMint, // Mint
+        buyerTokenAccount, // Destination
+        TEST_SERVICE_REGISTRY_DEPLOYER, // Authority
+        1000000000, // Amount
+      );
+    } catch (error) {
+      console.error('Error during token minting and account creation:', error);
+      throw error; // Re-throw the error after logging it
+    }
+
     // Calculate the minimum balance required for rent exemption for an account of a given size.
-    // This prevents the account from being deleted due to insufficient balance.
     const rentExemptionAmount =
       await connection.getMinimumBalanceForRentExemption(
         SERVICE_REGISTRY_SPACE,
@@ -48,7 +115,11 @@ describe('Initialize Service Registry and checks for correct fee_account and cor
   it('initializes a service registry', async () => {
     // Call the 'initializeServiceRegistry' method on the program to initialize the service registry account.
     await program.methods
-      .initializeServiceRegistry(TEST_FEE_ACCOUNT.publicKey, FEE_PERCENTAGE) //  sets the fee_Account owner to the deployer, and for now sets the initial fee to 0
+      .initializeServiceRegistry(
+        TEST_FEE_ACCOUNT.publicKey,
+        feeTokenAccount,
+        FEE_PERCENTAGE,
+      )
       .accounts({
         initializer: TEST_SERVICE_REGISTRY_DEPLOYER_KEYPAIR.publicKey, // Account that initializes the registry
         serviceRegistry: TEST_SERVICE_REGISTRY_KEYPAIR.publicKey, // The new service registry account being initialized
@@ -72,6 +143,9 @@ describe('Initialize Service Registry and checks for correct fee_account and cor
     // Getting the actual Fee percentage
     const actualFeePercentage = fetchedRegistryAccount.feePercentage;
 
+    // Getting the actual fee token account
+    const actualFeeTokenAccount = fetchedRegistryAccount.feeTokenAccount;
+
     // Verify that the actual service account addresses match the expected initial state.
     expect(
       actualServiceAccountAddresses,
@@ -83,7 +157,13 @@ describe('Initialize Service Registry and checks for correct fee_account and cor
       TEST_FEE_ACCOUNT.publicKey.toBase58(),
     );
 
-    // verify that the actual fee percentage matches the expected fee percentage
+    // Verify that the actual fee token account matches the expected fee token account
+    expect(
+      actualFeeTokenAccount.toBase58(),
+      'Fee token account does not match',
+    ).to.equal(feeTokenAccount.toBase58());
+
+    // Verify that the actual fee percentage matches the expected fee percentage
     expect(actualFeePercentage, 'Fee percentage does not match').to.equal(
       FEE_PERCENTAGE,
     );
@@ -93,5 +173,28 @@ describe('Initialize Service Registry and checks for correct fee_account and cor
       actualServiceAccountAddresses.length,
       'Service registry length does not match',
     ).to.equal(expectedServiceAccountAddresses.length);
+
+    // Fetch the token balance of the buyerTokenAccount
+    const buyerTokenAccountInfo = await getAccount(
+      connection,
+      buyerTokenAccount,
+    );
+
+    // Verify that the buyerTokenAccount has the expected token balance
+    const expectedTokenBalance = 1000000000; // Adjust the expected amount as needed
+    const actualTokenBalance = buyerTokenAccountInfo.amount;
+
+    expect(
+      actualTokenBalance.toString(),
+      'Buyer token account balance does not match',
+    ).to.equal(expectedTokenBalance.toString());
   });
 });
+
+// Export the variables
+export {
+  tokenMint,
+  feeTokenAccount,
+  serviceProviderTokenAccount,
+  buyerTokenAccount,
+};
