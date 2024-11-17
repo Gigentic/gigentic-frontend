@@ -8,6 +8,59 @@
   },
   "instructions": [
     {
+      "name": "agent_to_consumer_rating",
+      "discriminator": [
+        76,
+        242,
+        9,
+        100,
+        82,
+        123,
+        175,
+        129
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "docs": [
+            "The account of the user deploying and paying for the initialization.",
+            "Marked as `mut` because it will be charged for rent."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "review",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "rating",
+          "type": "u8"
+        },
+        {
+          "name": "review",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "consumer_to_agent_rating",
+      "discriminator": [
+        20,
+        65,
+        222,
+        1,
+        186,
+        152,
+        255,
+        154
+      ],
       "name": "customer_to_provider_rating",
       "discriminator": [
         188,
@@ -275,6 +328,20 @@
               {
                 "kind": "const",
                 "value": [
+                  114,
+                  101,
+                  118,
+                  105,
+                  101,
+                  119,
+                  95,
+                  115,
+                  101,
+                  114,
+                  118,
+                  105,
+                  99,
+                  101
                   114,
                   101,
                   118,
@@ -584,6 +651,9 @@
         },
         {
           "name": "service_provider",
+          "docs": [
+            "CHECK : This is a account info, not an account"
+          ],
           "docs": [
             "CHECK : This is an account info, not an account"
           ],
