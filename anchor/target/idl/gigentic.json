@@ -22,10 +22,6 @@
       "accounts": [
         {
           "name": "signer",
-          "docs": [
-            "The account of the user deploying and paying for the initialization.",
-            "Marked as `mut` because it will be charged for rent."
-          ],
           "writable": true,
           "signer": true
         },
@@ -596,16 +592,10 @@
         },
         {
           "name": "service_provider",
-          "docs": [
-            "CHECK : This is a account info, not an account"
-          ],
           "writable": true
         },
         {
           "name": "fee_account",
-          "docs": [
-            "CHECK : SAFE"
-          ],
           "writable": true
         },
         {

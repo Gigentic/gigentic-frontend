@@ -79,7 +79,6 @@ impl<'info> PayServiceSpl<'info> {
         self.escrow.escrow_token_account = Some(self.escrow_token_account.key());
 
         // Sets the review details
-
         self.review.set_inner(Review {
             review_no,
             agent_to_consumer_rating: 0,

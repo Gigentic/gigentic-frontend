@@ -28,10 +28,6 @@ export type Gigentic = {
       "accounts": [
         {
           "name": "signer",
-          "docs": [
-            "The account of the user deploying and paying for the initialization.",
-            "Marked as `mut` because it will be charged for rent."
-          ],
           "writable": true,
           "signer": true
         },
@@ -602,16 +598,10 @@ export type Gigentic = {
         },
         {
           "name": "serviceProvider",
-          "docs": [
-            "CHECK : This is a account info, not an account"
-          ],
           "writable": true
         },
         {
           "name": "feeAccount",
-          "docs": [
-            "CHECK : SAFE"
-          ],
           "writable": true
         },
         {
