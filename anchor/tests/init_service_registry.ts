@@ -7,10 +7,10 @@ import {
 } from '@solana/web3.js';
 import { connection, program } from './init';
 import {
-  TEST_SERVICE_REGISTRY_DEPLOYER,
   SERVICE_REGISTRY_SPACE,
-  TEST_FEE_ACCOUNT,
   FEE_PERCENTAGE,
+  TEST_FEE_ACCOUNT,
+  TEST_SERVICE_REGISTRY_DEPLOYER,
   TEST_SERVICE_REGISTRY_KEYPAIR,
   TEST_SERVICE_DEPLOYERS,
   TEST_SERVICE_USERS,
@@ -29,7 +29,7 @@ let feeTokenAccount: PublicKey;
 let serviceProviderTokenAccount: PublicKey;
 let buyerTokenAccount: PublicKey;
 
-describe('Initialize Service Registry and checks for correct TEST_FEE_ACCOUNT and correct fee percentage', () => {
+describe('Initialize Service Registry and checks for correct fee account and correct fee percentage', () => {
   before(async function () {
     // Fund necessary accounts
     await fund_account(connection, TEST_SERVICE_REGISTRY_DEPLOYER.publicKey);
@@ -109,7 +109,7 @@ describe('Initialize Service Registry and checks for correct TEST_FEE_ACCOUNT an
     ]);
   });
 
-  it('initializes a service registry', async () => {
+  it('Initializes a service registry', async () => {
     // Call the 'initializeServiceRegistry' method on the program to initialize the service registry account.
     await program.methods
       .initializeServiceRegistry(
