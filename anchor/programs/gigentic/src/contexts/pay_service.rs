@@ -8,9 +8,6 @@ use crate::states::{Escrow, Service};
 pub struct PayService<'info> {
     #[account(mut)]
     pub buyer: Signer<'info>,
-
-
-    
     #[account(mut)]
     pub service: Account<'info, Service>,
     #[account(mut)]
@@ -77,9 +74,10 @@ impl<'info> PayService<'info> {
             buyer: self.buyer.key(),
             service_provider: self.service.provider,
             expected_amount: service_price,
+            escrow_token_account: None,
+            fee_token_account: None,
+            service_provider_token_account: None
         });
-        
-
         Ok(())
     }
 }

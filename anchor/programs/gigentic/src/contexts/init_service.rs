@@ -1,7 +1,9 @@
-use crate::states::{service_registry::ServiceRegistry, Service};
+use crate::states::{service_registry::ServiceRegistry, Service, service_authority::ServiceAuthority
+};
 use crate::ErrorCode;
 use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{Mint, TokenInterface};
+use anchor_spl::token::TokenAccount;
 
 #[derive(Accounts)]
 #[instruction(_unique_id: String)]
@@ -23,6 +25,17 @@ pub struct InitializeService<'info> {
         bump
     )]
     service: Account<'info, Service>,
+
+    pub service_provider_token_account: Account<'info, TokenAccount>,
+
+    #[account(
+        init,
+        payer = provider,
+        space = 8,
+        seeds = ["service_authority".as_bytes(), service.key().as_ref()],
+        bump
+    )]
+    service_authority: Account<'info, ServiceAuthority>,
 
     // The mint account for the token
     #[account(
@@ -67,6 +80,7 @@ impl<'info> InitializeService<'info> {
             return err!(ErrorCode::NoServicesRegistered);
         }
 
+        
         // Initialize the service with the provided details
         self.service.set_inner(Service {
             provider: self.provider.key(),
@@ -74,8 +88,8 @@ impl<'info> InitializeService<'info> {
             description,
             price,
             reviews: Vec::new(), // Initialize reviews as an empty vector
+            service_provider_token_account: self.service_provider_token_account.key(),
         });
-
         Ok(())
     }
 }

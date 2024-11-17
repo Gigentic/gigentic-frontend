@@ -9,4 +9,5 @@ pub struct ServiceRegistry {
     pub service_account_addresses: Vec<Pubkey>,
     pub fee_account: Pubkey,
     pub fee_percentage: u8,
+    pub fee_token_account: Pubkey,
 }

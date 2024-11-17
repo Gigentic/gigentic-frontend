@@ -19,12 +19,19 @@ pub struct InitServiceRegistry<'info> {
 }
 
 impl<'info> InitServiceRegistry<'info> {
-    pub fn handler(&mut self, fee_account: Pubkey, fee_percentage: u8) -> Result<()> {
+    pub fn handler(
+        &mut self,
+        fee_account: Pubkey,
+        fee_token_account: Pubkey,
+        fee_percentage: u8,
+    ) -> Result<()> {
         self.service_registry.fee_account = fee_account;
         self.service_registry.fee_percentage = fee_percentage;
+        self.service_registry.fee_token_account = fee_token_account;
         msg!(
-            "Service Registry Initialized with fee account: {} and fee percentage: {}",
+            "Service Registry Initialized with fee account: {} and token account:{} and fee percentage: {}",
             fee_account,
+            fee_token_account,
             fee_percentage
         );
         Ok(())

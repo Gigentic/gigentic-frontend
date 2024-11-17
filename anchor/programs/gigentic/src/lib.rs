@@ -9,20 +9,24 @@ use contexts::init_service::*;
 use contexts::init_service_registry::*;
 use contexts::pay_service::*;
 use contexts::sign_service::*;
+use contexts::pay_service_spl::*;
+use contexts::sign_service_spl::*;
 use errors::ErrorCode;
-
 declare_id!("J2UENgBQrdJFy2NcFbBsxyHHdi4CZVuBg5FXmbYxfu4");
 
 #[program]
 pub mod gigentic {
+
     use super::*;
 
     pub fn initialize_service_registry(
         ctx: Context<InitServiceRegistry>,
         fee_account: Pubkey,
+        fee_token_account: Pubkey,
         fee_percentage: u8,
     ) -> Result<()> {
-        ctx.accounts.handler(fee_account, fee_percentage)?;
+        ctx.accounts
+            .handler(fee_account, fee_token_account, fee_percentage)?;
         Ok(())
     }
 
@@ -66,6 +70,17 @@ pub mod gigentic {
         review: String,
     ) -> Result<()> {
         ctx.accounts.handler(rating, review)?;
+        Ok(())
+    }
+
+     pub fn pay_service_spl(ctx: Context<PayServiceSpl>, review_no: String) -> Result<()> {
+        ctx.accounts.handler(review_no)?;
+        Ok(())
+    }
+
+      pub fn sign_service_spl(ctx: Context<SignServiceSpl>) -> Result<()> {
+        let bump = &ctx.bumps.escrow_token_account;
+        ctx.accounts.handler(bump)?;
         Ok(())
     }
 }
