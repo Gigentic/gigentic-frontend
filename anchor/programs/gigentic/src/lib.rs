@@ -12,6 +12,7 @@ use contexts::pay_service_spl::*;
 use contexts::sign_service::*;
 use contexts::sign_service_spl::*;
 use errors::ErrorCode;
+
 declare_id!("2xtwCiDhiQ9vuTFpR3wECJaHyvtE7L9pBPbNHdnsk1YS");
 
 #[program]

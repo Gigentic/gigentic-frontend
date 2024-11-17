@@ -8,10 +8,13 @@ use anchor_lang::prelude::*;
 pub struct PayService<'info> {
     #[account(mut)]
     pub buyer: Signer<'info>,
+
     #[account(mut)]
     pub service: Account<'info, Service>,
+
     #[account(mut)]
     service_registry: Account<'info, ServiceRegistry>,
+
     #[account(
         init,
         payer = buyer,
@@ -20,6 +23,7 @@ pub struct PayService<'info> {
         bump
     )]
     pub escrow: Account<'info, Escrow>,
+
     #[account(
     init,
     payer = buyer,
@@ -28,6 +32,7 @@ pub struct PayService<'info> {
     bump,
     )]
     pub review: Account<'info, Review>,
+
     pub system_program: Program<'info, System>,
 }
 
@@ -52,7 +57,7 @@ impl<'info> PayService<'info> {
 
         self.service.reviews.push(self.review.key());
         if let Some(last_address) = self.service.reviews.last() {
-            msg!(" Last review address: {}", last_address);
+            msg!("Review added. Last address: {}", last_address);
         } else {
             return err!(ErrorCode::NoReviews);
         }
@@ -76,6 +81,7 @@ impl<'info> PayService<'info> {
             fee_token_account: None,
             service_provider_token_account: None,
         });
+
         Ok(())
     }
 }

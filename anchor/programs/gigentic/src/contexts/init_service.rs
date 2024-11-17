@@ -70,13 +70,13 @@ impl<'info> InitializeService<'info> {
         );
 
         // Add the service to the registry
-        self.service_registry
-            .service_account_addresses
-            .push(self.service.key());
+        self.service_registry // Access the service registry account
+            .service_account_addresses // Access the vector of service addresses
+            .push(self.service.key()); // Push the public key of the new service account
 
         // Log the last service address or return an error if none are registered
         if let Some(last_address) = self.service_registry.service_account_addresses.last() {
-            msg!("Hello Last service address: {}", last_address);
+            msg!("New service added. Last address: {}", last_address);
         } else {
             return err!(ErrorCode::NoServicesRegistered);
         }
