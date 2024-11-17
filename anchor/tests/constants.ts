@@ -3,6 +3,7 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { Keypair, PublicKey } from '@solana/web3.js';
 
 export const REVIEW_NO = '1';
+export const REVIEW_NO_2 = '2';
 export const PROVIDER = AnchorProvider.env();
 export const SERVICE_REGISTRY_SPACE = 10_000_000;
 export const SERVICE_REGISTRY_SPACE_SMALL = 1000;

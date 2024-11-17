@@ -434,48 +434,7 @@ export type Gigentic = {
         },
         {
           "name": "buyerTokenAccount",
-          "docs": [
-            "The source token account from which tokens will be transferred."
-          ],
           "writable": true
-        },
-        {
-          "name": "review",
-          "docs": [
-            "The review account."
-          ],
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  114,
-                  101,
-                  118,
-                  105,
-                  101,
-                  119,
-                  95,
-                  115,
-                  101,
-                  114,
-                  118,
-                  105,
-                  99,
-                  101
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "reviewNo"
-              },
-              {
-                "kind": "account",
-                "path": "service"
-              }
-            ]
-          }
         },
         {
           "name": "mint",
@@ -486,7 +445,7 @@ export type Gigentic = {
         {
           "name": "escrowTokenAccount",
           "docs": [
-            "Token account for escrow (only for SPL tokens)"
+            "The token account for the escrow, initialized with the mint and authority."
           ],
           "writable": true,
           "pda": {
@@ -519,6 +478,41 @@ export type Gigentic = {
               {
                 "kind": "account",
                 "path": "escrow"
+              }
+            ]
+          }
+        },
+        {
+          "name": "review",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  118,
+                  105,
+                  101,
+                  119,
+                  95,
+                  115,
+                  101,
+                  114,
+                  118,
+                  105,
+                  99,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "reviewNo"
+              },
+              {
+                "kind": "account",
+                "path": "service"
               }
             ]
           }
