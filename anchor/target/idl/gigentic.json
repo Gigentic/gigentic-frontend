@@ -9,7 +9,16 @@
   "instructions": [
     {
       "name": "customer_to_provider_rating",
-      "discriminator": [188, 220, 123, 11, 148, 57, 198, 128],
+      "discriminator": [
+        188,
+        220,
+        123,
+        11,
+        148,
+        57,
+        198,
+        128
+      ],
       "accounts": [
         {
           "name": "signer",
@@ -38,7 +47,16 @@
     },
     {
       "name": "initialize_service",
-      "discriminator": [201, 217, 126, 168, 40, 110, 122, 89],
+      "discriminator": [
+        201,
+        217,
+        126,
+        168,
+        40,
+        110,
+        122,
+        89
+      ],
       "accounts": [
         {
           "name": "provider",
@@ -56,7 +74,15 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [115, 101, 114, 118, 105, 99, 101]
+                "value": [
+                  115,
+                  101,
+                  114,
+                  118,
+                  105,
+                  99,
+                  101
+                ]
               },
               {
                 "kind": "arg",
@@ -134,7 +160,16 @@
     },
     {
       "name": "initialize_service_registry",
-      "discriminator": [84, 8, 210, 235, 241, 25, 15, 155],
+      "discriminator": [
+        84,
+        8,
+        210,
+        235,
+        241,
+        25,
+        15,
+        155
+      ],
       "accounts": [
         {
           "name": "initializer",
@@ -176,7 +211,16 @@
     },
     {
       "name": "pay_service",
-      "discriminator": [181, 29, 236, 80, 246, 226, 34, 174],
+      "discriminator": [
+        181,
+        29,
+        236,
+        80,
+        246,
+        226,
+        34,
+        174
+      ],
       "accounts": [
         {
           "name": "customer",
@@ -198,7 +242,14 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [101, 115, 99, 114, 111, 119]
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
               },
               {
                 "kind": "account",
@@ -223,7 +274,14 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [114, 101, 118, 105, 101, 119]
+                "value": [
+                  114,
+                  101,
+                  118,
+                  105,
+                  101,
+                  119
+                ]
               },
               {
                 "kind": "arg",
@@ -250,7 +308,16 @@
     },
     {
       "name": "provider_to_customer_rating",
-      "discriminator": [107, 198, 87, 138, 229, 212, 60, 70],
+      "discriminator": [
+        107,
+        198,
+        87,
+        138,
+        229,
+        212,
+        60,
+        70
+      ],
       "accounts": [
         {
           "name": "signer",
@@ -463,7 +530,16 @@
     },
     {
       "name": "sign_service",
-      "discriminator": [170, 73, 190, 114, 213, 177, 176, 218],
+      "discriminator": [
+        170,
+        73,
+        190,
+        114,
+        213,
+        177,
+        176,
+        218
+      ],
       "accounts": [
         {
           "name": "signer",
@@ -481,7 +557,14 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [101, 115, 99, 114, 111, 119]
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
               },
               {
                 "kind": "account",
@@ -501,12 +584,16 @@
         },
         {
           "name": "service_provider",
-          "docs": ["CHECK : This is an account info, not an account"],
+          "docs": [
+            "CHECK : This is an account info, not an account"
+          ],
           "writable": true
         },
         {
           "name": "fee_account",
-          "docs": ["CHECK : SAFE"],
+          "docs": [
+            "CHECK : SAFE"
+          ],
           "writable": true
         },
         {
@@ -636,15 +723,42 @@
   "accounts": [
     {
       "name": "Escrow",
-      "discriminator": [31, 213, 123, 187, 186, 22, 218, 155]
+      "discriminator": [
+        31,
+        213,
+        123,
+        187,
+        186,
+        22,
+        218,
+        155
+      ]
     },
     {
       "name": "Review",
-      "discriminator": [124, 63, 203, 215, 226, 30, 222, 15]
+      "discriminator": [
+        124,
+        63,
+        203,
+        215,
+        226,
+        30,
+        222,
+        15
+      ]
     },
     {
       "name": "Service",
-      "discriminator": [144, 62, 76, 129, 167, 36, 151, 250]
+      "discriminator": [
+        144,
+        62,
+        76,
+        129,
+        167,
+        36,
+        151,
+        250
+      ]
     },
     {
       "name": "ServiceAuthority",
@@ -661,7 +775,16 @@
     },
     {
       "name": "ServiceRegistry",
-      "discriminator": [105, 133, 96, 79, 207, 176, 202, 71]
+      "discriminator": [
+        105,
+        133,
+        96,
+        79,
+        207,
+        176,
+        202,
+        71
+      ]
     }
   ],
   "errors": [
