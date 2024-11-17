@@ -62,10 +62,10 @@ impl<'info> SignServiceSpl<'info> {
         let amount_after_fee = amount.checked_sub(fee).ok_or(ErrorCode::Overflow)?;
         let escrow_key = self.escrow.key();
         let seeds = &[
-                    b"escrow-token-account".as_ref(),
-                    escrow_key.as_ref(),
-                    &[*bump],
-                ];
+            b"escrow-token-account".as_ref(),
+            escrow_key.as_ref(),
+            &[*bump],
+        ];
         let signer = [&seeds[..]];
 
         // Transfer amount after fee to service provider

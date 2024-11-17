@@ -8,8 +8,7 @@ pub struct Escrow {
     pub fee_percentage: u8,       // The fee%
     pub expected_amount: u64,
     pub fee_account: Pubkey,
-    pub fee_token_account:Option<Pubkey>,
-    pub service_provider_token_account:Option<Pubkey>,
+    pub fee_token_account: Option<Pubkey>,
+    pub service_provider_token_account: Option<Pubkey>,
     pub escrow_token_account: Option<Pubkey>,
 }
-

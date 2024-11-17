@@ -13,4 +13,3 @@ pub struct Service {
     pub reviews: Vec<Pubkey>,
     pub service_provider_token_account: Pubkey,
 }
-

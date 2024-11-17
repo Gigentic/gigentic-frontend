@@ -8,8 +8,8 @@ use contexts::consumer_to_agent_rating::*;
 use contexts::init_service::*;
 use contexts::init_service_registry::*;
 use contexts::pay_service::*;
-use contexts::sign_service::*;
 use contexts::pay_service_spl::*;
+use contexts::sign_service::*;
 use contexts::sign_service_spl::*;
 use errors::ErrorCode;
 declare_id!("J2UENgBQrdJFy2NcFbBsxyHHdi4CZVuBg5FXmbYxfu4");
@@ -73,12 +73,12 @@ pub mod gigentic {
         Ok(())
     }
 
-     pub fn pay_service_spl(ctx: Context<PayServiceSpl>, review_no: String) -> Result<()> {
+    pub fn pay_service_spl(ctx: Context<PayServiceSpl>, review_no: String) -> Result<()> {
         ctx.accounts.handler(review_no)?;
         Ok(())
     }
 
-      pub fn sign_service_spl(ctx: Context<SignServiceSpl>) -> Result<()> {
+    pub fn sign_service_spl(ctx: Context<SignServiceSpl>) -> Result<()> {
         let bump = &ctx.bumps.escrow_token_account;
         ctx.accounts.handler(bump)?;
         Ok(())

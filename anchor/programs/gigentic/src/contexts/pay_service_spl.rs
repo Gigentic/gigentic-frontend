@@ -1,9 +1,8 @@
+use crate::states::review::Review;
 use crate::states::service_registry::ServiceRegistry;
 use crate::states::{Escrow, Service};
-use crate::states::review::Review;
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Mint, Token, TokenAccount, Transfer};
-
 
 /// Accounts required for the `PayServiceSPl` instruction.
 #[derive(Accounts)]
@@ -22,7 +21,7 @@ pub struct PayServiceSpl<'info> {
     service_registry: Box<Account<'info, ServiceRegistry>>,
 
     /// The escrow account, initialized with a specific space and seeds.
-     #[account(
+    #[account(
         init,
         payer = buyer,
         space = 8 + Escrow::INIT_SPACE,
@@ -67,19 +66,17 @@ pub struct PayServiceSpl<'info> {
     pub system_program: Program<'info, System>,
 }
 impl<'info> PayServiceSpl<'info> {
-    pub fn handler(&mut self,review_no:String) -> Result<()> {
-        
-
+    pub fn handler(&mut self, review_no: String) -> Result<()> {
         // Setting up escrow details
         self.escrow.buyer = self.buyer.key();
         self.escrow.service_provider = self.service.provider;
         self.escrow.fee_percentage = self.service_registry.fee_percentage;
         self.escrow.expected_amount = self.service.price;
         self.escrow.fee_account = self.service_registry.fee_account;
-        self.escrow.service_provider_token_account = Some(self.service.service_provider_token_account);
+        self.escrow.service_provider_token_account =
+            Some(self.service.service_provider_token_account);
         self.escrow.fee_token_account = Some(self.escrow_token_account.key());
         self.escrow.escrow_token_account = Some(self.escrow_token_account.key());
-
 
         // Sets the review details
 
@@ -93,28 +90,25 @@ impl<'info> PayServiceSpl<'info> {
             customer_to_agent_review: String::from(""),
         });
 
-        self.service
-            .reviews
-            .push(self.review.key());
+        self.service.reviews.push(self.review.key());
 
         // Transfers spl tokens
         self.transfer_spl_tokens(self.service.price)?;
 
-
         Ok(())
     }
     fn transfer_spl_tokens(&self, amount: u64) -> Result<()> {
-       token::transfer(
-           CpiContext::new(
-               self.token_program.to_account_info(),
-               Transfer {
-                   from: self.buyer_token_account.to_account_info(),
-                   to: self.escrow_token_account.to_account_info(),
-                   authority: self.buyer.to_account_info(),
-               },
-           ),
-           amount,
-       )?;
-       Ok(())
-   }
+        token::transfer(
+            CpiContext::new(
+                self.token_program.to_account_info(),
+                Transfer {
+                    from: self.buyer_token_account.to_account_info(),
+                    to: self.escrow_token_account.to_account_info(),
+                    authority: self.buyer.to_account_info(),
+                },
+            ),
+            amount,
+        )?;
+        Ok(())
+    }
 }

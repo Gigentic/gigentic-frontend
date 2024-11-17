@@ -1,8 +1,8 @@
 use crate::states::review::Review;
-use anchor_lang::prelude::*;
-use crate::ErrorCode;
 use crate::states::service_registry::ServiceRegistry;
 use crate::states::{Escrow, Service};
+use crate::ErrorCode;
+use anchor_lang::prelude::*;
 #[derive(Accounts)]
 #[instruction(review_no: String)]
 pub struct PayService<'info> {
@@ -25,9 +25,9 @@ pub struct PayService<'info> {
     payer = buyer,
     space =8+ Review::INIT_SPACE,
     seeds=[b"review_service",review_no.as_bytes(),service.key().as_ref()],
-    bump,       
+    bump,
     )]
-    pub review: Account<'info, Review>, 
+    pub review: Account<'info, Review>,
     pub system_program: Program<'info, System>,
 }
 
@@ -50,9 +50,7 @@ impl<'info> PayService<'info> {
             ],
         )?;
 
-        self.service
-            .reviews
-            .push(self.review.key());
+        self.service.reviews.push(self.review.key());
         if let Some(last_address) = self.service.reviews.last() {
             msg!(" Last review address: {}", last_address);
         } else {
@@ -76,9 +74,8 @@ impl<'info> PayService<'info> {
             expected_amount: service_price,
             escrow_token_account: None,
             fee_token_account: None,
-            service_provider_token_account: None
+            service_provider_token_account: None,
         });
         Ok(())
     }
 }
-

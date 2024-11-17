@@ -17,7 +17,6 @@ pub struct ReviewAgentToCustomerService<'info> {
 
 impl<'info> ReviewAgentToCustomerService<'info> {
     pub fn handler(&mut self, rating: u8, review: String) -> Result<()> {
-
         require!(rating <= 5, ErrorCode::InvalidRating);
         self.review.agent_to_consumer_rating = rating;
         self.review.agent_to_customer_review = review;
