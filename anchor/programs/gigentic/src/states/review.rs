@@ -1,5 +1,6 @@
-use anchor_lang::prelude::*;
 use crate::constants::MAX_REVIEW_LENGTH;
+use anchor_lang::prelude::*;
+
 #[account]
 #[derive(InitSpace)]
 pub struct Review {
@@ -14,5 +15,3 @@ pub struct Review {
     #[max_len(MAX_REVIEW_LENGTH)]
     pub customer_to_agent_review: String,
 }
-
-
