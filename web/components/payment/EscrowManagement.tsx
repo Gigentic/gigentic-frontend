@@ -319,9 +319,6 @@ export default function EscrowManagement() {
                   Pay into Escrow
                 </Button>
               </form>
-              <div className="mt-4">
-                <MercuryoButton />
-              </div>
             </TabsContent>
             <TabsContent value="release">
               <div className="space-y-4">
