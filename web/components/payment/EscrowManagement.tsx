@@ -48,27 +48,7 @@ export default function EscrowManagement() {
   const [matchPercentage, setMatchPercentage] = useState('');
 
   // TODO: remove this after testing
-  const escrow_index = 5;
-
-  // const fetchAllEscrows = useCallback(async () => {
-  //   // if (!publicKey || !programId) return;
-
-  //   console.log('Fetching all escrows');
-  //   // try {
-  //   //   const allEscrows: never[] = [];
-
-  //   //   setUserEscrows(allEscrows as any);
-  //   // } catch (error) {
-  //   //   console.error('Error fetching escrows:', error);
-  //   // }
-  //   // }, [publicKey, programId, program]);
-  // }, []);
-
-  // useEffect(() => {
-  //   if (publicKey && programId) {
-  //     fetchAllEscrows();
-  //   }
-  // }, [publicKey, programId, fetchAllEscrows]);
+  const escrow_index = 0;
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -112,9 +92,52 @@ export default function EscrowManagement() {
         serviceRegistry.serviceAccountAddresses[escrow_index];
       console.log('Service Account:', serviceAccountPubKey.toString());
 
+      const serviceAccount =
+        await program.account.service.fetch(serviceAccountPubKey);
+
+      // Derive Escrow PDA
+      const [escrowPubKey] = PublicKey.findProgramAddressSync(
+        [
+          Buffer.from('escrow'),
+          serviceAccountPubKey.toBuffer(),
+          serviceAccount.provider.toBuffer(),
+          publicKey.toBuffer(),
+        ],
+        program.programId,
+      );
+      // Fetch the escrow account details
+      // const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
+      console.log('Escrow pubkey:', escrowPubKey.toString());
+      // console.log('Escrow buyer:', escrowAccount.buyer.toString());
+      // console.log(
+      //   'Escrow service provider:',
+      //   escrowAccount.serviceProvider.toString(),
+      // );
+      // console.log('Escrow fee percentage:', escrowAccount.feePercentage);
+      // console.log(
+      //   'Escrow expected amount:',
+      //   escrowAccount.expectedAmount.toString(),
+      // );
+      // console.log('Escrow fee account:', escrowAccount.feeAccount.toString());
+
+      // Generate a unique review_no (e.g., using timestamp or UUID)
+      const review_no = '2';
+
+      // // Derive Review PDA
+      // const [reviewPubKey] = PublicKey.findProgramAddressSync(
+      //   [
+      //     Buffer.from('review_service'),
+      //     Buffer.from(review_no),
+      //     serviceAccountPubKey.toBuffer(),
+      //   ],
+      //   program.programId,
+      // );
+      // const reviewAccount = await program.account.review.fetch(reviewPubKey);
+      // console.log('Review pubkey:', reviewPubKey.toString());
+
       const transaction = new Transaction().add(
         await program.methods
-          .payService()
+          .payService(review_no)
           .accounts({
             buyer: publicKey,
             service: serviceAccountPubKey,
@@ -139,16 +162,6 @@ export default function EscrowManagement() {
       }
 
       transactionToast(signature);
-
-      // Find the program address for the escrow account
-      const [escrowPubKey] = PublicKey.findProgramAddressSync(
-        [Buffer.from('escrow'), serviceAccountPubKey.toBuffer()],
-        program.programId,
-      );
-
-      // Fetch the escrow account details
-      const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
-      console.log('Escrow account:', escrowAccount);
 
       // Update UI or state with escrow details if needed
     } catch (error) {
@@ -186,8 +199,17 @@ export default function EscrowManagement() {
 
       console.log('Service Account:', serviceAccountPubKey.toString());
 
+      const serviceAccount =
+        await program.account.service.fetch(serviceAccountPubKey);
+
+      // Derive Escrow PDA with the correct seeds
       const [escrowPubKey] = PublicKey.findProgramAddressSync(
-        [Buffer.from('escrow'), serviceAccountPubKey.toBuffer()],
+        [
+          Buffer.from('escrow'),
+          serviceAccountPubKey.toBuffer(),
+          serviceAccount.provider.toBuffer(),
+          publicKey.toBuffer(),
+        ],
         program.programId,
       );
       console.log('Escrow pubkey:', escrowPubKey.toString());
@@ -215,18 +237,35 @@ export default function EscrowManagement() {
       }
 
       // Create the transaction
-      const transaction = await program.methods
-        .signService()
-        .accounts({
-          signer: publicKey,
-          service: serviceAccountPubKey,
-          serviceProvider: serviceAccountPubKey,
-          feeAccount: serviceRegistry.feeAccount,
-        })
-        .transaction();
+      // const transaction = await program.methods
+      //   .signService()
+      //   .accounts({
+      //     signer: publicKey,
+      //     service: serviceAccountPubKey,
+      //     serviceProvider: serviceAccount.provider,
+      //     feeAccount: serviceRegistry.feeAccount,
+      //   })
+      //   .transaction();
+
+      const transaction = new Transaction().add(
+        await program.methods
+          .signService()
+          .accounts({
+            signer: publicKey,
+            service: serviceAccountPubKey,
+            serviceProvider: serviceAccount.provider,
+            feeAccount: serviceRegistry.feeAccount,
+          })
+          .instruction(),
+      );
+
+      // const { blockhash } = await connection.getLatestBlockhash();
+      // transaction.recentBlockhash = blockhash;
+      // transaction.feePayer = publicKey;
 
       // Send the transaction
       const signature = await sendTransaction(transaction, connection);
+      console.log('Transaction sent:', signature);
 
       // Wait for confirmation
       const confirmation = await connection.confirmTransaction(

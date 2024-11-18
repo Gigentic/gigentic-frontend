@@ -55,12 +55,6 @@ impl<'info> PayService<'info> {
             ],
         )?;
 
-        self.service.reviews.push(self.review.key());
-        if let Some(last_address) = self.service.reviews.last() {
-            msg!("Review added. Last address: {}", last_address);
-        } else {
-            return err!(ErrorCode::NoReviews);
-        }
         self.review.set_inner(Review {
             review_no,
             agent_to_consumer_rating: 0,
@@ -78,6 +72,13 @@ impl<'info> PayService<'info> {
             service_provider: self.service.provider,
             expected_amount: service_price,
         });
+
+        self.service.reviews.push(self.review.key());
+        if let Some(last_address) = self.service.reviews.last() {
+            msg!("Review added. Last address: {}", last_address);
+        } else {
+            return err!(ErrorCode::NoReviews);
+        }
 
         Ok(())
     }
