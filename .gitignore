@@ -54,3 +54,6 @@ filesScript.js
 accounts.csv
 log*.md
 /keys
+.fileadd
+filescript-add.js
+.fileignore
