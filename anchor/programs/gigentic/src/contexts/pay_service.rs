@@ -1,23 +1,25 @@
 use crate::states::review::Review;
-use anchor_lang::prelude::*;
-// use crate::{states::service, ErrorCode};
-// use anchor_spl::{ token::{self, Token, TokenAccount, Transfer}};
 use crate::states::service_registry::ServiceRegistry;
 use crate::states::{Escrow, Service};
+use crate::ErrorCode;
+use anchor_lang::prelude::*;
 #[derive(Accounts)]
+#[instruction(review_no: String)]
 pub struct PayService<'info> {
-    // The signer who will sign the transaction
     #[account(mut)]
     pub buyer: Signer<'info>,
+
     #[account(mut)]
     pub service: Account<'info, Service>,
+
     #[account(mut)]
     service_registry: Account<'info, ServiceRegistry>,
+
     #[account(
         init,
         payer = buyer,
-        space = Escrow::INIT_SPACE,
-        seeds = [b"escrow", service.key().as_ref()],
+        space = 8+ Escrow::INIT_SPACE,
+        seeds = [b"escrow", service.key().as_ref(), service.provider.key().as_ref(), buyer.key().as_ref()],
         bump
     )]
     pub escrow: Account<'info, Escrow>,
@@ -25,16 +27,17 @@ pub struct PayService<'info> {
     #[account(
     init,
     payer = buyer,
-    space = Review::INIT_SPACE,
-    seeds=[b"review_service",service.key().as_ref()],
+    space =8+ Review::INIT_SPACE,
+    seeds=[b"review_service",review_no.as_bytes(),service.key().as_ref()],
     bump,
     )]
     pub review: Account<'info, Review>,
+
     pub system_program: Program<'info, System>,
 }
 
 impl<'info> PayService<'info> {
-    pub fn handler(&mut self) -> Result<()> {
+    pub fn handler(&mut self, review_no: String) -> Result<()> {
         let service_price = self.service.price;
 
         let transfer_instruction = anchor_lang::solana_program::system_instruction::transfer(
@@ -53,6 +56,7 @@ impl<'info> PayService<'info> {
         )?;
 
         self.review.set_inner(Review {
+            review_no,
             agent_to_consumer_rating: 0,
             consumer_to_agent_rating: 0,
             consumer: self.buyer.key(),
@@ -70,6 +74,12 @@ impl<'info> PayService<'info> {
         });
 
         self.service.reviews.push(self.review.key());
+        if let Some(last_address) = self.service.reviews.last() {
+            msg!("Review added. Last address: {}", last_address);
+        } else {
+            return err!(ErrorCode::NoReviews);
+        }
+
         Ok(())
     }
 }

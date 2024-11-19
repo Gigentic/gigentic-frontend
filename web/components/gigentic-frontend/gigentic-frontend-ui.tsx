@@ -35,13 +35,13 @@ export function GigenticFrontendList() {
           <p> Service Contract IDs:</p>
 
           <div className="grid md:grid-cols-2 gap-4">
-            {accounts.data?.map((account) => (
+            {accounts.data?.map((account, idx) => (
               // <ServiceAccountCard
               //   key={account.publicKey.toString()}
               //   account={account.publicKey}
               // />
-              <p key={account.publicKey.toString()}>
-                {account.publicKey.toString()}
+              <p key={idx}>
+                {idx} {account.publicKey.toString()}
               </p>
 
               // <GigenticFrontendCard

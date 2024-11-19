@@ -50,7 +50,11 @@ test-ledger
 .env
 web/.env.local
 concat-all.txt
-filesScript.js
-accounts.csv
+concat-selected.txt
+fileScript.js
+fileScript-add.js
+.fileadd
+.fileignore
 log*.md
+accounts.csv
 /keys

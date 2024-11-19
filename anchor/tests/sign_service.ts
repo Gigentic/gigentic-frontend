@@ -30,7 +30,12 @@ describe('SignService: Transfers money to the service provider and sends fees to
 
     // Find the program address for the escrow account
     const [escrowPubKey, escrowBump] = PublicKey.findProgramAddressSync(
-      [Buffer.from('escrow'), serviceAccountPubKey.toBuffer()],
+      [
+        Buffer.from('escrow'),
+        serviceAccountPubKey.toBuffer(),
+        serviceAccount.provider.toBuffer(),
+        buyer.publicKey.toBuffer(),
+      ],
       program.programId,
     );
 

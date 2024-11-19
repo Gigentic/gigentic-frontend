@@ -11,7 +11,10 @@ describe('Gigentic Service Deployment', () => {
   it('Initializes a service with correct description, price, and unique ID!', async () => {
     // Set up parameters for the test
     const deployerIndex = 0;
+
+    // ANCHOR Generate a random unique ID for the service
     // const uniqueId = 'service_' + Math.random().toString(36).substring(2, 15);
+
     const uniqueId = '1';
     const description = 'Test description h';
     const price = new anchor.BN(1000);

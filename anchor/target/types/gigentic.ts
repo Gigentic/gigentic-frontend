@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/gigentic.json`.
  */
 export type Gigentic = {
-  address: 'J2UENgBQrdJFy2NcFbBsxyHHdi4CZVuBg5FXmbYxfu4';
+  address: '2xtwCiDhiQ9vuTFpR3wECJaHyvtE7L9pBPbNHdnsk1YS';
   metadata: {
     name: 'gigentic';
     version: '0.1.0';
@@ -19,47 +19,12 @@ export type Gigentic = {
       accounts: [
         {
           name: 'signer';
-          docs: [
-            'The account of the user deploying and paying for the initialization.',
-            'Marked as `mut` because it will be charged for rent.',
-          ];
           writable: true;
           signer: true;
         },
         {
-          name: 'service';
-          writable: true;
-        },
-        {
           name: 'review';
           writable: true;
-          pda: {
-            seeds: [
-              {
-                kind: 'const';
-                value: [
-                  114,
-                  101,
-                  118,
-                  105,
-                  101,
-                  119,
-                  95,
-                  115,
-                  101,
-                  114,
-                  118,
-                  105,
-                  99,
-                  101,
-                ];
-              },
-              {
-                kind: 'account';
-                path: 'service';
-              },
-            ];
-          };
         },
         {
           name: 'systemProgram';
@@ -87,39 +52,8 @@ export type Gigentic = {
           signer: true;
         },
         {
-          name: 'service';
-          writable: true;
-        },
-        {
           name: 'review';
           writable: true;
-          pda: {
-            seeds: [
-              {
-                kind: 'const';
-                value: [
-                  114,
-                  101,
-                  118,
-                  105,
-                  101,
-                  119,
-                  95,
-                  115,
-                  101,
-                  114,
-                  118,
-                  105,
-                  99,
-                  101,
-                ];
-              },
-              {
-                kind: 'account';
-                path: 'service';
-              },
-            ];
-          };
         },
         {
           name: 'systemProgram';
@@ -264,6 +198,15 @@ export type Gigentic = {
                 kind: 'account';
                 path: 'service';
               },
+              {
+                kind: 'account';
+                path: 'service.provider';
+                account: 'service';
+              },
+              {
+                kind: 'account';
+                path: 'buyer';
+              },
             ];
           };
         },
@@ -292,6 +235,10 @@ export type Gigentic = {
                 ];
               },
               {
+                kind: 'arg';
+                path: 'reviewNo';
+              },
+              {
                 kind: 'account';
                 path: 'service';
               },
@@ -303,7 +250,12 @@ export type Gigentic = {
           address: '11111111111111111111111111111111';
         },
       ];
-      args: [];
+      args: [
+        {
+          name: 'reviewNo';
+          type: 'string';
+        },
+      ];
     },
     {
       name: 'signService';
@@ -331,12 +283,21 @@ export type Gigentic = {
                 kind: 'account';
                 path: 'service';
               },
+              {
+                kind: 'account';
+                path: 'service.provider';
+                account: 'service';
+              },
+              {
+                kind: 'account';
+                path: 'signer';
+              },
             ];
           };
         },
         {
           name: 'serviceProvider';
-          docs: ['CHECK : SAFE'];
+          docs: ['CHECK : This is an account info, not an account'];
           writable: true;
         },
         {
@@ -421,6 +382,11 @@ export type Gigentic = {
       name: 'invalidRating';
       msg: 'Invalid rating. Rating must be between 0 and 5.';
     },
+    {
+      code: 6010;
+      name: 'noReviews';
+      msg: 'No reviews found';
+    },
   ];
   types: [
     {
@@ -456,6 +422,10 @@ export type Gigentic = {
       type: {
         kind: 'struct';
         fields: [
+          {
+            name: 'reviewNo';
+            type: 'string';
+          },
           {
             name: 'agentToConsumerRating';
             type: 'u8';

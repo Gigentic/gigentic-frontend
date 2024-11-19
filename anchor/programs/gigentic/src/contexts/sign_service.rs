@@ -1,7 +1,6 @@
-use anchor_lang::prelude::*;
-
 use crate::states::{Escrow, Service};
 use crate::ErrorCode;
+use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
 pub struct SignService<'info> {
@@ -13,18 +12,18 @@ pub struct SignService<'info> {
 
     #[account(
         mut,
-        seeds = [b"escrow", service.key().as_ref()],
+        close = signer, // Transfer remaining lamports to the buyer when the account is closed
+        seeds = [b"escrow", service.key().as_ref(), service.provider.key().as_ref(), signer.key().as_ref()],
         bump,
-        close = signer // Transfer remaining lamports to the buyer when the account is closed
     )]
     pub escrow: Account<'info, Escrow>,
 
-    /// CHECK : SAFE
-    #[account(mut)]
+    /// CHECK : This is an account info, not an account
+    #[account(mut, constraint = service_provider.key() == escrow.service_provider.key() && service_provider.key() == service.provider.key())]
     pub service_provider: AccountInfo<'info>,
 
-    /// CHECK : SAFE    
-    #[account(mut)]
+    /// CHECK : SAFE
+    #[account(mut, constraint = fee_account.key() == escrow.fee_account.key())]
     pub fee_account: AccountInfo<'info>,
 
     pub system_program: Program<'info, System>,
@@ -44,19 +43,13 @@ impl<'info> SignService<'info> {
             .ok_or(ErrorCode::Overflow)?;
 
         let amount_after_fee = amount.checked_sub(fee).ok_or(ErrorCode::Overflow)?;
-
         let fee_account = &mut self.fee_account.to_account_info();
-
         let service_provider = &mut self.service_provider.to_account_info();
-
         let escrow = &mut self.escrow.to_account_info();
 
         **escrow.try_borrow_mut_lamports()? -= fee;
-
         **escrow.try_borrow_mut_lamports()? -= amount_after_fee;
-
         **fee_account.try_borrow_mut_lamports()? += fee;
-
         **service_provider.try_borrow_mut_lamports()? += amount_after_fee;
 
         Ok(())

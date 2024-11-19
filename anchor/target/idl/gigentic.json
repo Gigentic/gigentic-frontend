@@ -1,5 +1,5 @@
 {
-  "address": "J2UENgBQrdJFy2NcFbBsxyHHdi4CZVuBg5FXmbYxfu4",
+  "address": "2xtwCiDhiQ9vuTFpR3wECJaHyvtE7L9pBPbNHdnsk1YS",
   "metadata": {
     "name": "gigentic",
     "version": "0.1.0",
@@ -13,35 +13,12 @@
       "accounts": [
         {
           "name": "signer",
-          "docs": [
-            "The account of the user deploying and paying for the initialization.",
-            "Marked as `mut` because it will be charged for rent."
-          ],
           "writable": true,
           "signer": true
         },
         {
-          "name": "service",
-          "writable": true
-        },
-        {
           "name": "review",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  114, 101, 118, 105, 101, 119, 95, 115, 101, 114, 118, 105, 99,
-                  101
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "service"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "system_program",
@@ -69,27 +46,8 @@
           "signer": true
         },
         {
-          "name": "service",
-          "writable": true
-        },
-        {
           "name": "review",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  114, 101, 118, 105, 101, 119, 95, 115, 101, 114, 118, 105, 99,
-                  101
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "service"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "system_program",
@@ -233,6 +191,15 @@
               {
                 "kind": "account",
                 "path": "service"
+              },
+              {
+                "kind": "account",
+                "path": "service.provider",
+                "account": "Service"
+              },
+              {
+                "kind": "account",
+                "path": "buyer"
               }
             ]
           }
@@ -250,6 +217,10 @@
                 ]
               },
               {
+                "kind": "arg",
+                "path": "review_no"
+              },
+              {
                 "kind": "account",
                 "path": "service"
               }
@@ -261,7 +232,12 @@
           "address": "11111111111111111111111111111111"
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "review_no",
+          "type": "string"
+        }
+      ]
     },
     {
       "name": "sign_service",
@@ -288,13 +264,22 @@
               {
                 "kind": "account",
                 "path": "service"
+              },
+              {
+                "kind": "account",
+                "path": "service.provider",
+                "account": "Service"
+              },
+              {
+                "kind": "account",
+                "path": "signer"
               }
             ]
           }
         },
         {
           "name": "service_provider",
-          "docs": ["CHECK : SAFE"],
+          "docs": ["CHECK : This is an account info, not an account"],
           "writable": true
         },
         {
@@ -378,6 +363,11 @@
       "code": 6009,
       "name": "InvalidRating",
       "msg": "Invalid rating. Rating must be between 0 and 5."
+    },
+    {
+      "code": 6010,
+      "name": "NoReviews",
+      "msg": "No reviews found"
     }
   ],
   "types": [
@@ -414,6 +404,10 @@
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "review_no",
+            "type": "string"
+          },
           {
             "name": "agent_to_consumer_rating",
             "type": "u8"

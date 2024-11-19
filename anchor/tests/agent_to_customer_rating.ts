@@ -5,7 +5,7 @@ import { PublicKey } from '@solana/web3.js';
 import * as anchor from '@coral-xyz/anchor';
 import { SendTransactionError } from '@solana/web3.js';
 import { expect } from 'chai';
-import { TEST_SERVICE_DEPLOYERS } from './constants';
+import { TEST_SERVICE_DEPLOYERS, REVIEW_NO } from './constants';
 
 describe('Agent to customer review', () => {
   it('Rates the customer through the service provider and checks if the values are initialized correctly', async () => {
@@ -34,29 +34,18 @@ describe('Agent to customer review', () => {
     // The agent's review comment about the consumer
     const review = 'Great Consumer was very polite';
 
-    // Create a transaction to record the agent's rating and review for the consumer.
-    // This calls the `agentToConsumerRating` method in the Solana program and passes the
-    // necessary parameters: the rating and review.
-    const transaction = new anchor.web3.Transaction().add(
-      await program.methods
-        .agentToConsumerRating(rating, review)
-        .accounts({
-          signer: serviceProvider.publicKey, // The service provider signs the transaction
-          service: serviceAccountPubKey, // The service account being reviewed
-        })
-        .instruction(),
-    );
-
     // Set the fee payer for the transaction. The service provider will pay the fees.
-    transaction.feePayer = serviceProvider.publicKey;
 
     // Attempt to send and confirm the transaction on the Solana blockchain
     try {
-      const txSignature = await anchor.web3.sendAndConfirmTransaction(
-        connection,
-        transaction,
-        [serviceProvider], // The service provider is the signer
-      );
+      await program.methods
+        .agentToConsumerRating(rating, review)
+        .accounts({
+          signer: serviceProvider.publicKey,
+          review: serviceAccount.reviews[0],
+        })
+        .signers([serviceProvider])
+        .rpc();
     } catch (err) {
       // Handle transaction errors
       if (err instanceof SendTransactionError) {
@@ -67,13 +56,11 @@ describe('Agent to customer review', () => {
 
     // Find the program address for the review account
     // This is where the review data (rating, comment) is stored for the specific service
-    const [reviewPubKey] = PublicKey.findProgramAddressSync(
-      [Buffer.from('review_service'), serviceAccountPubKey.toBuffer()], // Seed for address generation
-      program.programId, // Program ID to tie it to
-    );
 
     // Fetch the review account details using the program address
-    const reviewAccount = await program.account.review.fetch(reviewPubKey);
+    const reviewAccount = await program.account.review.fetch(
+      serviceAccount.reviews[0],
+    );
 
     // Validate that the service provider for this review matches the expected service provider
     expect(reviewAccount.serviceProvider.toBase58()).to.equal(

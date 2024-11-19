@@ -11,7 +11,7 @@ use contexts::pay_service::*;
 use contexts::sign_service::*;
 use errors::ErrorCode;
 
-declare_id!("J2UENgBQrdJFy2NcFbBsxyHHdi4CZVuBg5FXmbYxfu4");
+declare_id!("2xtwCiDhiQ9vuTFpR3wECJaHyvtE7L9pBPbNHdnsk1YS");
 
 #[program]
 pub mod gigentic {
@@ -41,8 +41,8 @@ pub mod gigentic {
         Ok(())
     }
 
-    pub fn pay_service(ctx: Context<PayService>) -> Result<()> {
-        ctx.accounts.handler()?;
+    pub fn pay_service(ctx: Context<PayService>, review_no: String) -> Result<()> {
+        ctx.accounts.handler(review_no)?;
         Ok(())
     }
 

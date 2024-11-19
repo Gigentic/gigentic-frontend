@@ -5,7 +5,11 @@ import { PublicKey } from '@solana/web3.js';
 import * as anchor from '@coral-xyz/anchor';
 import { SendTransactionError } from '@solana/web3.js';
 import { expect } from 'chai';
-import { TEST_SERVICE_DEPLOYERS, TEST_SERVICE_USERS } from './constants';
+import {
+  TEST_SERVICE_DEPLOYERS,
+  TEST_SERVICE_USERS,
+  REVIEW_NO,
+} from './constants';
 
 describe('Gigentic Service Buying', () => {
   it('Checks if the service is paid correctly and escrow has the correct values', async () => {
@@ -38,7 +42,7 @@ describe('Gigentic Service Buying', () => {
     // Create a transaction to pay for the service
     const transaction = new anchor.web3.Transaction().add(
       await program.methods
-        .payService()
+        .payService(REVIEW_NO)
         .accounts({
           buyer: buyer.publicKey,
           service: serviceAccountPubKey,
@@ -68,7 +72,12 @@ describe('Gigentic Service Buying', () => {
 
     // Find the program address for the escrow account
     const [escrowPubKey] = PublicKey.findProgramAddressSync(
-      [Buffer.from('escrow'), serviceAccountPubKey.toBuffer()],
+      [
+        Buffer.from('escrow'),
+        serviceAccountPubKey.toBuffer(),
+        serviceAccount.provider.toBuffer(),
+        buyer.publicKey.toBuffer(),
+      ],
       program.programId,
     );
 
@@ -110,5 +119,33 @@ describe('Gigentic Service Buying', () => {
       escrowAccount.feePercentage.toString(),
       "Escrow account fee percentage should match the service registry's fee percentage",
     ).to.equal(expectedFeePercentage.toString());
+
+    const service = await program.account.service.fetch(serviceAccountPubKey);
+
+    const review = await program.account.review.fetch(service.reviews[0]);
+
+    expect(review.reviewNo, 'Review number should match').to.equal(REVIEW_NO);
+
+    expect(
+      review.agentToConsumerRating,
+      'Agent to consumer rating should be 0',
+    ).to.equal(0);
+
+    expect(
+      review.consumerToAgentRating,
+      'Consumer to agent rating should be 0',
+    ).to.equal(0);
+
+    expect(
+      review.agentToCustomerReview,
+      'Agent to customer review should be empty',
+    ).to.equal('');
+
+    expect(
+      review.customerToAgentReview,
+      'Customer to agent review should be empty',
+    ).to.equal('');
+
+    expect(service.reviews.length, 'Service should have 1 review').to.equal(1);
   });
 });
