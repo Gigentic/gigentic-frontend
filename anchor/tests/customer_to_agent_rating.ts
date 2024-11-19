@@ -8,20 +8,20 @@ import { TEST_SERVICE_DEPLOYERS, TEST_SERVICE_USERS } from './constants';
 
 describe('Customer to agent review', () => {
   it('Gives the service review to the customer and checks if the review has the values assigned', async () => {
-    // Select the buyer (consumer) from the predefined list of service users
-    // The buyer will be reviewing the service provided by the agent
-    const buyer = TEST_SERVICE_USERS[0];
+    // Select the consumer (consumer) from the predefined list of service users
+    // The consumer will be reviewing the service provided by the agent
+    const consumer = TEST_SERVICE_USERS[0];
 
-    // Fund the buyer's account with enough SOL to pay transaction fees
-    await fund_account(connection, buyer.publicKey);
+    // Fund the consumer's account with enough SOL to pay transaction fees
+    await fund_account(connection, consumer.publicKey);
 
-    // Check the balance of the buyer's account to ensure it has sufficient SOL for fees
-    const buyerBalance = await connection.getBalance(buyer.publicKey);
+    // Check the balance of the consumer's account to ensure it has sufficient SOL for fees
+    const consumerBalance = await connection.getBalance(consumer.publicKey);
 
-    // Verify that the buyer has at least 0.01 SOL in their account (for transaction fees)
-    if (buyerBalance < 0.01 * anchor.web3.LAMPORTS_PER_SOL) {
+    // Verify that the consumer has at least 0.01 SOL in their account (for transaction fees)
+    if (consumerBalance < 0.01 * anchor.web3.LAMPORTS_PER_SOL) {
       throw new Error(
-        'Buyer does not have enough SOL to pay transaction fees.',
+        'consumer does not have enough SOL to pay transaction fees.',
       );
     }
 
@@ -47,10 +47,10 @@ describe('Customer to agent review', () => {
       await program.methods
         .consumerToAgentRating(rating, review)
         .accounts({
-          signer: buyer.publicKey,
+          signer: consumer.publicKey,
           review: serviceAccount.reviews[0],
         })
-        .signers([buyer])
+        .signers([consumer])
         .rpc();
     } catch (err) {
       // Handle transaction errors
@@ -74,10 +74,10 @@ describe('Customer to agent review', () => {
       'The service provider in the review account should match the service provider who owns the service.',
     );
 
-    // Validate that the consumer (buyer) stored in the review account matches the buyer who submitted the review
+    // Validate that the consumer (consumer) stored in the review account matches the consumer who submitted the review
     expect(reviewAccount.consumer.toBase58()).to.equal(
-      buyer.publicKey.toBase58(),
-      'The consumer in the review account should match the buyer who submitted the review.',
+      consumer.publicKey.toBase58(),
+      'The consumer in the review account should match the consumer who submitted the review.',
     );
 
     // Validate that the rating given by the consumer matches the rating stored in the review account

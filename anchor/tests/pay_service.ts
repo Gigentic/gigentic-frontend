@@ -13,17 +13,17 @@ import {
 
 describe('Gigentic Service Buying', () => {
   it('Checks if the service is paid correctly and escrow has the correct values', async () => {
-    // Select the buyer from the predefined service users
-    const buyer = TEST_SERVICE_USERS[0];
+    // Select the consumer from the predefined service users
+    const consumer = TEST_SERVICE_USERS[0];
 
-    // Fund the buyer's account
-    await fund_account(connection, buyer.publicKey);
-    const buyerBalance = await connection.getBalance(buyer.publicKey);
+    // Fund the consumer's account
+    await fund_account(connection, consumer.publicKey);
+    const consumerBalance = await connection.getBalance(consumer.publicKey);
 
-    // Check if the buyer has enough SOL to pay transaction fees
-    if (buyerBalance < 0.01 * anchor.web3.LAMPORTS_PER_SOL) {
+    // Check if the consumer has enough SOL to pay transaction fees
+    if (consumerBalance < 0.01 * anchor.web3.LAMPORTS_PER_SOL) {
       throw new Error(
-        'Buyer does not have enough SOL to pay transaction fees.',
+        'consumer does not have enough SOL to pay transaction fees.',
       );
     }
 
@@ -44,7 +44,7 @@ describe('Gigentic Service Buying', () => {
       await program.methods
         .payService(REVIEW_ID)
         .accounts({
-          buyer: buyer.publicKey,
+          consumer: consumer.publicKey,
           service: serviceAccountPubKey,
           serviceRegistry: TEST_SERVICE_REGISTRY_KEYPAIR.publicKey,
         })
@@ -52,12 +52,12 @@ describe('Gigentic Service Buying', () => {
     );
 
     // Set the fee payer for the transaction
-    transaction.feePayer = buyer.publicKey;
+    transaction.feePayer = consumer.publicKey;
 
     // Send and confirm the transaction
     try {
       await anchor.web3.sendAndConfirmTransaction(connection, transaction, [
-        buyer,
+        consumer,
       ]);
     } catch (err) {
       // Handle transaction errors
@@ -76,7 +76,7 @@ describe('Gigentic Service Buying', () => {
         Buffer.from('escrow'),
         serviceAccountPubKey.toBuffer(),
         serviceAccount.provider.toBuffer(),
-        buyer.publicKey.toBuffer(),
+        consumer.publicKey.toBuffer(),
       ],
       program.programId,
     );
@@ -91,12 +91,12 @@ describe('Gigentic Service Buying', () => {
       'Escrow account expected amount should match the service price',
     ).to.equal(expectedAmount.toString());
 
-    // Check if the escrow account has the correct buyer
-    const expectedBuyer = buyer.publicKey.toBase58();
+    // Check if the escrow account has the correct consumer
+    const expectedconsumer = consumer.publicKey.toBase58();
     expect(
-      escrowAccount.buyer.toBase58(),
-      'Escrow account buyer should match the buyer public key',
-    ).to.equal(expectedBuyer);
+      escrowAccount.consumer.toBase58(),
+      'Escrow account consumer should match the consumer public key',
+    ).to.equal(expectedconsumer);
 
     // Check if the escrow account has the correct service provider
     const expectedServiceProvider =
