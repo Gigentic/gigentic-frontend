@@ -7,7 +7,6 @@ import { Loader2 } from 'lucide-react';
 import type { CoreMessage, ToolInvocation } from 'ai';
 import { createAI, getMutableAIState, streamUI } from 'ai/rsc';
 import { openai } from '@ai-sdk/openai';
-import { embed, cosineSimilarity } from 'ai';
 
 import { AnchorProvider } from '@coral-xyz/anchor';
 import { Connection } from '@solana/web3.js';
@@ -36,16 +35,7 @@ export async function fetchServiceRegistryPubkey() {
 }
 
 // read the service registry from the blockchain
-async function fetchServiceRegistry(message: string) {
-  
-  const { embedding: message_embedding } = await embed({
-    model: openai.embedding('text-embedding-3-small'),
-    value: message,
-  });
-  console.log('message:', message);
-  console.log('message_embedding:', message_embedding);
-  
-  
+async function fetchServiceRegistry() {
   // Create a new AnchorProvider
 
   // Initialize connection
@@ -63,22 +53,11 @@ async function fetchServiceRegistry(message: string) {
 
   for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
     const paymentAddress = serviceAddress.toString();
-    //console.log('Service Account Address:', paymentAddress);
+    console.log('Service Account Address:', paymentAddress);
 
     const serviceAccount = await program.account.service.fetch(serviceAddress);
-    //console.log('serviceAccount.description:', serviceAccount.description);
 
-    // 'embedding' is a single embedding object (number[])
-    const { embedding } = await embed({
-      model: openai.embedding('text-embedding-3-small'),
-      value: serviceAccount.description,
-    });
-    //console.log('Embedding:', embedding);
-
-    const similarity = (cosineSimilarity(message_embedding, embedding) * 100).toFixed(0);
-    console.log('similarity:', similarity);
-
-    service_registry += `\n${serviceAccount.description} | paymentWalletAddress: ${paymentAddress} | matchScore: ${similarity} | message: ${message}`;
+    service_registry += `\n${serviceAccount.description} | paymentWalletAddress: ${paymentAddress}`;
   }
 
   return service_registry;
@@ -94,7 +73,7 @@ export async function sendMessage(message: string): Promise<{
 
   try {
     // provide the service registry as context to the LLM
-    content = await fetchServiceRegistry(message);
+    content = await fetchServiceRegistry();
 
     history.update([
       ...history.get(),
@@ -103,7 +82,7 @@ export async function sendMessage(message: string): Promise<{
         content: message,
       },
     ]);
-    
+
     // call the LLM
     const reply = await streamUI({
       model: openai('gpt-4o'),
@@ -163,7 +142,7 @@ export async function sendMessage(message: string): Promise<{
             matchScore: z
               .number()
               .describe(
-                "The match score of the freelancer to the user's task. This number is updated for every new message.",
+                "Give a match score of the freelancer to the user's task",
               ),
             rating: z.number().describe('The rating of the freelancer'),
             paymentWalletAddress: z
