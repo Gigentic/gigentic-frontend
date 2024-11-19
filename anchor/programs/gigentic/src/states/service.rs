@@ -12,4 +12,3 @@ pub struct Service {
     #[max_len(MAX_REVIEWS)]
     pub reviews: Vec<Pubkey>,
 }
-

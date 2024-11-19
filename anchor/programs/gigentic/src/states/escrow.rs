@@ -9,4 +9,3 @@ pub struct Escrow {
     pub expected_amount: u64,
     pub fee_account: Pubkey,
 }
-
