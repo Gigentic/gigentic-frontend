@@ -1,13 +1,10 @@
 import { TEST_SERVICE_REGISTRY_KEYPAIR } from './constants';
-import { program, connection } from './init';
-// import { fund_account } from './utils';
-import { PublicKey } from '@solana/web3.js';
-import * as anchor from '@coral-xyz/anchor';
+import { program } from './init';
 import { SendTransactionError } from '@solana/web3.js';
 import { expect } from 'chai';
-import { TEST_SERVICE_DEPLOYERS, REVIEW_ID } from './constants';
+import { TEST_SERVICE_DEPLOYERS } from './constants';
 
-describe('Agent to customer review', () => {
+describe('Provider to customer review', () => {
   it('Rates the customer through the service provider and checks if the values are initialized correctly', async () => {
     // Select the service provider from the predefined service deployers array
     // Assume the service provider is the first one in the SERVICE_DEPLOYERS array
@@ -28,10 +25,10 @@ describe('Agent to customer review', () => {
     const serviceAccount =
       await program.account.service.fetch(serviceAccountPubKey);
 
-    // The agent's rating for the consumer (out of 5)
+    // The provider's rating for the consumer (out of 5)
     const rating = 4;
 
-    // The agent's review comment about the consumer
+    // The provider's review comment about the consumer
     const review = 'Great Consumer was very polite';
 
     // Set the fee payer for the transaction. The service provider will pay the fees.
@@ -39,7 +36,7 @@ describe('Agent to customer review', () => {
     // Attempt to send and confirm the transaction on the Solana blockchain
     try {
       await program.methods
-        .agentToConsumerRating(rating, review)
+        .providerToConsumerRating(rating, review)
         .accounts({
           signer: serviceProvider.publicKey,
           review: serviceAccount.reviews[0],
@@ -68,16 +65,16 @@ describe('Agent to customer review', () => {
       'The service provider in the review should match the service account provider.',
     );
 
-    // Validate that the agent-to-consumer rating in the review matches the rating that was submitted
-    expect(reviewAccount.agentToConsumerRating).to.equal(
+    // Validate that the provider-to-consumer rating in the review matches the rating that was submitted
+    expect(reviewAccount.providerToConsumerRating).to.equal(
       rating,
-      'The rating given by the agent should match the rating stored in the review account.',
+      'The rating given by the provider should match the rating stored in the review account.',
     );
 
-    // Validate that the agent's review comment matches the review stored in the account
-    expect(reviewAccount.agentToCustomerReview).to.equal(
+    // Validate that the provider's review comment matches the review stored in the account
+    expect(reviewAccount.providerToCustomerReview).to.equal(
       review,
-      'The review comment given by the agent should match the comment stored in the review account.',
+      'The review comment given by the provider should match the comment stored in the review account.',
     );
   });
 });

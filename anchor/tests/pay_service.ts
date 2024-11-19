@@ -127,23 +127,23 @@ describe('Gigentic Service Buying', () => {
     expect(review.reviewNo, 'Review number should match').to.equal(REVIEW_ID);
 
     expect(
-      review.agentToConsumerRating,
-      'Agent to consumer rating should be 0',
+      review.providerToConsumerRating,
+      'Provider to consumer rating should be 0',
     ).to.equal(0);
 
     expect(
-      review.consumerToAgentRating,
-      'Consumer to agent rating should be 0',
+      review.consumerToProviderRating,
+      'Consumer to provider rating should be 0',
     ).to.equal(0);
 
     expect(
-      review.agentToCustomerReview,
-      'Agent to customer review should be empty',
+      review.providerToCustomerReview,
+      'Provider to customer review should be empty',
     ).to.equal('');
 
     expect(
-      review.customerToAgentReview,
-      'Customer to agent review should be empty',
+      review.customerToProviderReview,
+      'Customer to provider review should be empty',
     ).to.equal('');
 
     expect(service.reviews.length, 'Service should have 1 review').to.equal(1);

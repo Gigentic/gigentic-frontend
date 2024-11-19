@@ -6,10 +6,10 @@ import { SendTransactionError } from '@solana/web3.js';
 import { expect } from 'chai';
 import { TEST_SERVICE_DEPLOYERS, TEST_SERVICE_USERS } from './constants';
 
-describe('Customer to agent review', () => {
+describe('Customer to provider review', () => {
   it('Gives the service review to the customer and checks if the review has the values assigned', async () => {
     // Select the consumer from the predefined list of service users
-    // The consumer will be reviewing the service provided by the agent
+    // The consumer will be reviewing the service provided by the provider
     const consumer = TEST_SERVICE_USERS[0];
 
     // Fund the consumer's account with enough SOL to pay transaction fees
@@ -26,13 +26,13 @@ describe('Customer to agent review', () => {
     }
 
     // Fetch the service registry account using the program and its public key.
-    // The service registry holds references to the services deployed by agents.
+    // The service registry holds references to the services deployed by providers.
     const serviceRegistry = await program.account.serviceRegistry.fetch(
       TEST_SERVICE_REGISTRY_KEYPAIR.publicKey,
     );
 
     // Retrieve the public key of the first service account from the service registry
-    // This service account holds information about the service provided by the agent.
+    // This service account holds information about the service provided by the provider.
     const serviceAccountPubKey = serviceRegistry.serviceAccountAddresses[0];
 
     // Fetch the service account details using the service account public key
@@ -45,7 +45,7 @@ describe('Customer to agent review', () => {
 
     try {
       await program.methods
-        .consumerToAgentRating(rating, review)
+        .consumerToProviderRating(rating, review)
         .accounts({
           signer: consumer.publicKey,
           review: serviceAccount.reviews[0],
@@ -81,13 +81,13 @@ describe('Customer to agent review', () => {
     );
 
     // Validate that the rating given by the consumer matches the rating stored in the review account
-    expect(reviewAccount.consumerToAgentRating).to.equal(
+    expect(reviewAccount.consumerToProviderRating).to.equal(
       rating,
       'The rating given by the consumer should match the rating stored in the review account.',
     );
 
     // Validate that the review comment matches the comment stored in the review account
-    expect(reviewAccount.customerToAgentReview).to.equal(
+    expect(reviewAccount.customerToProviderReview).to.equal(
       review,
       'The review comment given by the consumer should match the comment stored in the review account.',
     );
