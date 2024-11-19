@@ -3,7 +3,7 @@ use crate::ErrorCode;
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
-pub struct ReviewCustomerToAgentService<'info> {
+pub struct ReviewCustomerToProviderService<'info> {
     // The account of the user deploying and paying for the initialization.
     // Marked as `mut` because it will be charged for rent.
     #[account(mut)]
@@ -15,11 +15,11 @@ pub struct ReviewCustomerToAgentService<'info> {
     pub system_program: Program<'info, System>,
 }
 
-impl<'info> ReviewCustomerToAgentService<'info> {
+impl<'info> ReviewCustomerToProviderService<'info> {
     pub fn handler(&mut self, rating: u8, review: String) -> Result<()> {
         require!(rating <= 5, ErrorCode::InvalidRating);
-        self.review.consumer_to_agent_rating = rating;
-        self.review.customer_to_agent_review = review;
+        self.review.consumer_to_provider_rating = rating;
+        self.review.customer_to_provider_review = review;
         Ok(())
     }
 }

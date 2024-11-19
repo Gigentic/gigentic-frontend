@@ -57,12 +57,12 @@ impl<'info> PayService<'info> {
 
         self.review.set_inner(Review {
             review_no,
-            agent_to_consumer_rating: 0,
-            consumer_to_agent_rating: 0,
+            provider_to_consumer_rating: 0,
+            consumer_to_provider_rating: 0,
             consumer: self.buyer.key(),
             service_provider: self.service.provider.key(),
-            agent_to_customer_review: String::from(""),
-            customer_to_agent_review: String::from(""),
+            provider_to_customer_review: String::from(""),
+            customer_to_provider_review: String::from(""),
         });
 
         self.escrow.set_inner(Escrow {
