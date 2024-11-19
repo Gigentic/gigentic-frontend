@@ -124,7 +124,7 @@ describe('Gigentic Service Buying', () => {
 
     const review = await program.account.review.fetch(service.reviews[0]);
 
-    expect(review.reviewNo, 'Review number should match').to.equal(REVIEW_ID);
+    expect(review.reviewId, 'Review number should match').to.equal(REVIEW_ID);
 
     expect(
       review.providerToConsumerRating,
