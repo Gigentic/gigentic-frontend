@@ -57,7 +57,7 @@ export default function Component() {
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                $
+                SOL
               </span>
               <Input
                 id="project_rate"
@@ -65,7 +65,7 @@ export default function Component() {
                 min="0"
                 step="0.01"
                 placeholder="0.00"
-                className="pl-7"
+                className="pl-12"
                 value={projectRate}
                 onChange={(e) => setProjectRate(e.target.value)}
               />
