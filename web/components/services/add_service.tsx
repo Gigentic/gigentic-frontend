@@ -53,7 +53,7 @@ export default function Component() {
 
           <div className="space-y-2">
             <label htmlFor="rate" className="text-lg font-semibold">
-              Project Rate ($)
+              Project Rate (SOL)
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
