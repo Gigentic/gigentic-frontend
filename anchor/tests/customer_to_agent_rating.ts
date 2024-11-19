@@ -8,7 +8,7 @@ import { TEST_SERVICE_DEPLOYERS, TEST_SERVICE_USERS } from './constants';
 
 describe('Customer to agent review', () => {
   it('Gives the service review to the customer and checks if the review has the values assigned', async () => {
-    // Select the consumer (consumer) from the predefined list of service users
+    // Select the consumer from the predefined list of service users
     // The consumer will be reviewing the service provided by the agent
     const consumer = TEST_SERVICE_USERS[0];
 
