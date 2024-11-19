@@ -41,8 +41,8 @@ pub mod gigentic {
         Ok(())
     }
 
-    pub fn pay_service(ctx: Context<PayService>, review_no: String) -> Result<()> {
-        ctx.accounts.handler(review_no)?;
+    pub fn pay_service(ctx: Context<PayService>, review_id: String) -> Result<()> {
+        ctx.accounts.handler(review_id)?;
         Ok(())
     }
 

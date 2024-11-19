@@ -8,7 +8,7 @@ import { expect } from 'chai';
 import {
   TEST_SERVICE_DEPLOYERS,
   TEST_SERVICE_USERS,
-  REVIEW_NO,
+  REVIEW_ID,
 } from './constants';
 
 describe('Gigentic Service Buying', () => {
@@ -42,7 +42,7 @@ describe('Gigentic Service Buying', () => {
     // Create a transaction to pay for the service
     const transaction = new anchor.web3.Transaction().add(
       await program.methods
-        .payService(REVIEW_NO)
+        .payService(REVIEW_ID)
         .accounts({
           buyer: buyer.publicKey,
           service: serviceAccountPubKey,
@@ -124,7 +124,7 @@ describe('Gigentic Service Buying', () => {
 
     const review = await program.account.review.fetch(service.reviews[0]);
 
-    expect(review.reviewNo, 'Review number should match').to.equal(REVIEW_NO);
+    expect(review.reviewNo, 'Review number should match').to.equal(REVIEW_ID);
 
     expect(
       review.agentToConsumerRating,

@@ -120,14 +120,14 @@ export default function EscrowManagement() {
       // );
       // console.log('Escrow fee account:', escrowAccount.feeAccount.toString());
 
-      // Generate a unique review_no (e.g., using timestamp or UUID)
-      const review_no = '2';
+      // Generate a unique review_id (e.g., using timestamp or UUID)
+      const review_id = '2';
 
       // // Derive Review PDA
       // const [reviewPubKey] = PublicKey.findProgramAddressSync(
       //   [
-      //     Buffer.from('review_service'),
-      //     Buffer.from(review_no),
+      //     Buffer.from('review'),
+      //     Buffer.from(review_id),
       //     serviceAccountPubKey.toBuffer(),
       //   ],
       //   program.programId,
@@ -137,7 +137,7 @@ export default function EscrowManagement() {
 
       const transaction = new Transaction().add(
         await program.methods
-          .payService(review_no)
+          .payService(review_id)
           .accounts({
             buyer: publicKey,
             service: serviceAccountPubKey,

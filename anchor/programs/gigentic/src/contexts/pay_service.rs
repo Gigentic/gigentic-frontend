@@ -4,7 +4,7 @@ use crate::states::{Escrow, Service};
 use crate::ErrorCode;
 use anchor_lang::prelude::*;
 #[derive(Accounts)]
-#[instruction(review_no: String)]
+#[instruction(review_id: String)]
 pub struct PayService<'info> {
     #[account(mut)]
     pub buyer: Signer<'info>,
@@ -28,7 +28,7 @@ pub struct PayService<'info> {
     init,
     payer = buyer,
     space =8+ Review::INIT_SPACE,
-    seeds=[b"review_service",review_no.as_bytes(),service.key().as_ref()],
+    seeds=[b"review",review_id.as_bytes(),service.key().as_ref()],
     bump,
     )]
     pub review: Account<'info, Review>,
@@ -37,7 +37,7 @@ pub struct PayService<'info> {
 }
 
 impl<'info> PayService<'info> {
-    pub fn handler(&mut self, review_no: String) -> Result<()> {
+    pub fn handler(&mut self, review_id: String) -> Result<()> {
         let service_price = self.service.price;
 
         let transfer_instruction = anchor_lang::solana_program::system_instruction::transfer(
@@ -56,7 +56,7 @@ impl<'info> PayService<'info> {
         )?;
 
         self.review.set_inner(Review {
-            review_no,
+            review_id,
             provider_to_consumer_rating: 0,
             consumer_to_provider_rating: 0,
             consumer: self.buyer.key(),

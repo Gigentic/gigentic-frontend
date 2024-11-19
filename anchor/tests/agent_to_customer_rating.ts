@@ -5,7 +5,7 @@ import { PublicKey } from '@solana/web3.js';
 import * as anchor from '@coral-xyz/anchor';
 import { SendTransactionError } from '@solana/web3.js';
 import { expect } from 'chai';
-import { TEST_SERVICE_DEPLOYERS, REVIEW_NO } from './constants';
+import { TEST_SERVICE_DEPLOYERS, REVIEW_ID } from './constants';
 
 describe('Agent to customer review', () => {
   it('Rates the customer through the service provider and checks if the values are initialized correctly', async () => {

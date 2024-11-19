@@ -5,7 +5,7 @@ use anchor_lang::prelude::*;
 #[derive(InitSpace)]
 pub struct Review {
     #[max_len(10)]
-    pub review_no: String,
+    pub review_id: String,
     pub provider_to_consumer_rating: u8,
     pub consumer_to_provider_rating: u8,
     pub consumer: Pubkey,
