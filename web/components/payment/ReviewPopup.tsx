@@ -83,7 +83,7 @@ function ReviewForm({
     // Call the onReleaseEscrow function passed from the parent component
     onReleaseEscrow(contractId);
 
-    // Here you would typically send the review data to your backend
+    // TODO: send the review data to your backend
   };
 
   return (
@@ -141,37 +141,4 @@ function ReviewForm({
       </CardContent>
     </Card>
   );
-}
-
-{
-  /* <form onSubmit={handleReviewSubmit} className="space-y-4">
-<div>
-  <Label htmlFor="rating">Rating</Label>
-  <div className="flex space-x-1 mt-1">
-    {[1, 2, 3, 4, 5].map((star) => (
-      <Star
-        key={star}
-        className={`w-6 h-6 cursor-pointer ${star <= rating ? 'fill-primary text-primary' : 'fill-muted text-muted-foreground'}`}
-        onClick={() => setRating(star)}
-      />
-    ))}
-  </div>
-</div>
-<div>
-  <Label htmlFor="review">Review</Label>
-  <Textarea
-    id="review"
-    placeholder="Write your review here"
-    value={review}
-    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-      setReview(e.target.value)
-    }
-    className="mt-1"
-    required
-  />
-</div>
-<Button type="submit" className="w-full">
-  Submit Review
-</Button>
-</form> */
 }
