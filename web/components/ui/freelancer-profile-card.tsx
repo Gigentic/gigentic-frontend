@@ -15,6 +15,7 @@ import {
   useSelectFreelancer,
   useSelectedFreelancer,
 } from '@/lib/hooks/use-freelancer-query';
+import { useRouter } from 'next/navigation';
 
 interface FreelancerProfileProps {
   title: string;
@@ -38,6 +39,8 @@ const DefaultFreelancerProfileProps: FreelancerProfileProps = {
 export default function FreelancerProfileCard(
   props: FreelancerProfileProps = DefaultFreelancerProfileProps,
 ) {
+  const router = useRouter();
+
   const freelancerProfileProps: FreelancerProfileProps = {
     title: props.title,
     pricePerHour: props.pricePerHour,
@@ -73,13 +76,17 @@ export default function FreelancerProfileCard(
 
     console.log('💾 Preparing to cache freelancer:', freelancerData);
 
-    // Cache the freelancer data
-    selectFreelancer(freelancerData);
-
-    // Wait a moment for cache to be set before opening new tab
-    setTimeout(() => {
-      window.open('/payment', '_blank', 'noopener,noreferrer');
-    }, 100);
+    // Cache the freelancer data and navigate on success
+    selectFreelancer(freelancerData, {
+      onSuccess: () => {
+        console.log('✅ Freelancer data cached successfully');
+        router.push('/payment');
+      },
+      onError: (error) => {
+        console.error('❌ Failed to cache freelancer data:', error);
+        // Optionally handle error (e.g., show toast notification)
+      },
+    });
   };
 
   const getMatchScoreColor = (score: number) => {
