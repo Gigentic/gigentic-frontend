@@ -81,5 +81,4 @@ erDiagram
         Vec[Pubkey] reviews_given "Reviews to providers"
         Vec[Pubkey] reviews_received "Reviews from providers"
     }
-
 ```
