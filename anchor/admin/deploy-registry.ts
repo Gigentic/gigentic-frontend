@@ -25,25 +25,18 @@ const program: Program<Gigentic> = workspace.Gigentic as Program<Gigentic>;
 
 // Load service registry keypairs
 const serviceRegistryDeployer = loadKeypairBs58FromEnv(
-  'SERVICE_REGISTRY_DEPLOYER',
+  'SERVICE_REGISTRY_DEPLOYER_KEYPAIR',
 );
-// const serviceRegistryDeployer = Keypair.generate();
+
 const serviceRegistryKeypair = loadKeypairBs58FromEnv(
   'SERVICE_REGISTRY_KEYPAIR',
 );
-// const serviceRegistryKeypair = Keypair.generate();
-// console.log(
-//   'serviceRegistryKeypair',
-//   serviceRegistryKeypair.secretKey.toString(),
-// );
+
 console.log(
   'serviceRegistryDeployer',
   serviceRegistryDeployer.publicKey.toString(),
 );
-console.log(
-  'serviceRegistryKeypair',
-  serviceRegistryKeypair.publicKey.toString(),
-);
+console.log('serviceRegistry', serviceRegistryKeypair.publicKey.toString());
 
 async function initServiceRegistry() {
   try {
@@ -52,11 +45,12 @@ async function initServiceRegistry() {
     const feeAccount = serviceRegistryDeployer.publicKey;
     console.log('Fee Account Public Key:', feeAccount.toString());
 
-    const feePercentage = 0;
+    const feePercentage = 1;
     console.log('Fee Percentage:', feePercentage);
 
     // Create the service registry account
     const serviceRegistryAccountSize = 20000; // Adjust the size based on the ServiceRegistry struct
+    console.log('Service Registry Account Size: ', serviceRegistryAccountSize);
     const rentExemptionAmount =
       await connection.getMinimumBalanceForRentExemption(
         serviceRegistryAccountSize,
