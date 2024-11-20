@@ -9,6 +9,7 @@ import { createAI, getMutableAIState, streamUI } from 'ai/rsc';
 import { openai } from '@ai-sdk/openai';
 
 import { AnchorProvider } from '@coral-xyz/anchor';
+import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { Connection } from '@solana/web3.js';
 
 import { getGigenticProgram } from '@gigentic-frontend/anchor';
@@ -35,13 +36,9 @@ export async function fetchServiceRegistryPubkey() {
 }
 
 // read the service registry from the blockchain
-async function fetchServiceRegistry() {
-  // Create a new AnchorProvider
-
-  // Initialize connection
-  // todo fix local vs devnet
-  const connection = new Connection('https://api.devnet.solana.com');
-  const provider = new AnchorProvider(connection, {} as any, {
+async function fetchServiceRegistry(endpoint: string) {
+  const connection = new Connection(endpoint);
+  const provider = new AnchorProvider(connection, {} as AnchorWallet, {
     commitment: 'confirmed',
   });
   const program = getGigenticProgram(provider);
@@ -64,7 +61,10 @@ async function fetchServiceRegistry() {
 }
 
 //export const sendMessage = async () => {};
-export async function sendMessage(message: string): Promise<{
+export async function sendMessage(
+  message: string,
+  endpoint: string,
+): Promise<{
   id: number;
   role: 'user' | 'assistant';
   display: ReactNode;
@@ -73,7 +73,7 @@ export async function sendMessage(message: string): Promise<{
 
   try {
     // provide the service registry as context to the LLM
-    content = await fetchServiceRegistry();
+    content = await fetchServiceRegistry(endpoint);
 
     history.update([
       ...history.get(),
