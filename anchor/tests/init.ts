@@ -5,6 +5,7 @@ import {
   MINT_AUTHORITY,
   PROVIDER,
   TEST_SERVICE_DEPLOYERS,
+  TEST_FEE_ACCOUNT,
 } from './constants';
 
 import { fund_account } from './utils';
@@ -36,6 +37,7 @@ before(async () => {
   const fundingPromises = [
     fund_account(connection, TEST_SERVICE_REGISTRY_DEPLOYER.publicKey),
     fund_account(connection, MINT_AUTHORITY.publicKey),
+    fund_account(connection, TEST_FEE_ACCOUNT.publicKey),
     ...TEST_SERVICE_DEPLOYERS.map((deployer) =>
       fund_account(connection, deployer.publicKey),
     ),

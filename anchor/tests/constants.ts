@@ -11,7 +11,7 @@ export const SERVICE_REGISTRY_SPACE_SMALL = 1000;
 export const TEST_SERVICE_REGISTRY_DEPLOYER = Keypair.generate();
 export const TEST_SERVICE_REGISTRY_KEYPAIR = Keypair.generate();
 export const TEST_FEE_ACCOUNT = Keypair.generate();
-export const FEE_PERCENTAGE = 0;
+export const FEE_PERCENTAGE = 1;
 export const AIRDROP_SOL_AMOUNT = 1000; // Amount in SOL
 export const AIRDROP_LAMPORTS = AIRDROP_SOL_AMOUNT * LAMPORTS_PER_SOL;
 
