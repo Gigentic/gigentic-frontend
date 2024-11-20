@@ -20,17 +20,11 @@ export default function GigenticFrontendFeature() {
   useEffect(() => {
     async function getServiceRegistryPubkey() {
       try {
-        const result = await fetchServiceRegistryPubkey();
-        setServiceRegistryPubkey(result);
-        const serviceRegistryPubkey = new PublicKey(result);
-        const serviceRegistry = await program.account.serviceRegistry.fetch(
-          serviceRegistryPubkey,
-        );
+        setServiceRegistryPubkey(await fetchServiceRegistryPubkey());
       } catch (error) {
         console.error('Error fetching services:', error);
       }
     }
-
     getServiceRegistryPubkey();
   }, [program]);
 
