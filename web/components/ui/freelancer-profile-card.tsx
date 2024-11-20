@@ -11,6 +11,11 @@ import {
 import { Badge } from '@gigentic-frontend/ui-kit/ui';
 import { Button } from '@gigentic-frontend/ui-kit/ui';
 import { Star, MessageSquare, Zap, Lock } from 'lucide-react';
+import {
+  useSelectFreelancer,
+  useSelectedFreelancer,
+} from '@/lib/hooks/use-freelancer-query';
+import { useRouter } from 'next/navigation';
 
 interface FreelancerProfileProps {
   title: string;
@@ -34,6 +39,8 @@ const DefaultFreelancerProfileProps: FreelancerProfileProps = {
 export default function FreelancerProfileCard(
   props: FreelancerProfileProps = DefaultFreelancerProfileProps,
 ) {
+  const router = useRouter();
+
   const freelancerProfileProps: FreelancerProfileProps = {
     title: props.title,
     pricePerHour: props.pricePerHour,
@@ -54,15 +61,42 @@ export default function FreelancerProfileCard(
     window.open(solchatUrl, '_blank', 'noopener,noreferrer');
   };
 
+  const { mutate: selectFreelancer } = useSelectFreelancer();
+  const { data: cachedFreelancer } = useSelectedFreelancer();
+
   const handlePayEscrow = () => {
-    const escrowUrl = `/payment?contractId=${encodeURIComponent(props.paymentWalletAddress)}&title=${encodeURIComponent(props.title)}&avgRating=${encodeURIComponent(props.rating)}&matchPercentage=${encodeURIComponent(props.matchScore)}`;
-    window.open(escrowUrl, '_blank', 'noopener,noreferrer');
+    const freelancerData = {
+      title: props.title,
+      pricePerHour: props.pricePerHour,
+      experience: props.experience,
+      rating: props.rating,
+      matchScore: props.matchScore,
+      paymentWalletAddress: props.paymentWalletAddress,
+    };
+
+    console.log('💾 Preparing to cache freelancer:', freelancerData);
+
+    // Cache the freelancer data and navigate on success
+    selectFreelancer(freelancerData, {
+      onSuccess: () => {
+        console.log('✅ Freelancer data cached successfully');
+        router.push('/payment');
+      },
+      onError: (error) => {
+        console.error('❌ Failed to cache freelancer data:', error);
+        // Optionally handle error (e.g., show toast notification)
+      },
+    });
   };
 
   const getMatchScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-500';
     if (score >= 60) return 'text-yellow-500';
     return 'text-red-500';
+  };
+
+  const handleCheckCache = () => {
+    console.log('🔍 Current cache content:', cachedFreelancer);
   };
 
   return (
@@ -154,6 +188,13 @@ export default function FreelancerProfileCard(
           >
             <Lock className="w-4 h-4 mr-2" />
             Pay into Escrow
+          </Button>
+          <Button
+            className="w-full"
+            variant="secondary"
+            onClick={handleCheckCache}
+          >
+            Check Cache
           </Button>
         </CardFooter>
       </Card>
