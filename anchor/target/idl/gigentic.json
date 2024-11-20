@@ -8,37 +8,8 @@
   },
   "instructions": [
     {
-      "name": "agent_to_consumer_rating",
-      "discriminator": [76, 242, 9, 100, 82, 123, 175, 129],
-      "accounts": [
-        {
-          "name": "signer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "review",
-          "writable": true
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "rating",
-          "type": "u8"
-        },
-        {
-          "name": "review",
-          "type": "string"
-        }
-      ]
-    },
-    {
-      "name": "consumer_to_agent_rating",
-      "discriminator": [20, 65, 222, 1, 186, 152, 255, 154],
+      "name": "consumer_to_provider_rating",
+      "discriminator": [197, 46, 152, 225, 183, 186, 156, 186],
       "accounts": [
         {
           "name": "signer",
@@ -167,7 +138,7 @@
       "discriminator": [181, 29, 236, 80, 246, 226, 34, 174],
       "accounts": [
         {
-          "name": "buyer",
+          "name": "consumer",
           "writable": true,
           "signer": true
         },
@@ -199,7 +170,7 @@
               },
               {
                 "kind": "account",
-                "path": "buyer"
+                "path": "consumer"
               }
             ]
           }
@@ -211,14 +182,11 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  114, 101, 118, 105, 101, 119, 95, 115, 101, 114, 118, 105, 99,
-                  101
-                ]
+                "value": [114, 101, 118, 105, 101, 119]
               },
               {
                 "kind": "arg",
-                "path": "review_no"
+                "path": "review_id"
               },
               {
                 "kind": "account",
@@ -234,7 +202,36 @@
       ],
       "args": [
         {
-          "name": "review_no",
+          "name": "review_id",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "provider_to_consumer_rating",
+      "discriminator": [239, 50, 253, 210, 227, 54, 245, 169],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "review",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "rating",
+          "type": "u8"
+        },
+        {
+          "name": "review",
           "type": "string"
         }
       ]
@@ -377,7 +374,7 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "buyer",
+            "name": "consumer",
             "type": "pubkey"
           },
           {
@@ -405,15 +402,15 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "review_no",
+            "name": "review_id",
             "type": "string"
           },
           {
-            "name": "agent_to_consumer_rating",
+            "name": "provider_to_consumer_rating",
             "type": "u8"
           },
           {
-            "name": "consumer_to_agent_rating",
+            "name": "consumer_to_provider_rating",
             "type": "u8"
           },
           {
@@ -425,11 +422,11 @@
             "type": "pubkey"
           },
           {
-            "name": "agent_to_customer_review",
+            "name": "provider_to_customer_review",
             "type": "string"
           },
           {
-            "name": "customer_to_agent_review",
+            "name": "customer_to_provider_review",
             "type": "string"
           }
         ]

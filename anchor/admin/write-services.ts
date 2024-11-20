@@ -22,7 +22,7 @@ const program: Program<Gigentic> = workspace.Gigentic as Program<Gigentic>;
 
 // Load service registry keypairs
 const serviceRegistryDeployer = loadKeypairBs58FromEnv(
-  'SERVICE_REGISTRY_DEPLOYER',
+  'SERVICE_REGISTRY_DEPLOYER_KEYPAIR',
 );
 const serviceRegistryKeypair = loadKeypairBs58FromEnv(
   'SERVICE_REGISTRY_KEYPAIR',
@@ -37,7 +37,7 @@ console.log(
 );
 
 // Load service deployer keypair
-const serviceDeployer = loadKeypairBs58FromEnv('SERVICE_DEPLOYER');
+const serviceDeployer = loadKeypairBs58FromEnv('SERVICE_DEPLOYER_KEYPAIR');
 console.log('serviceDeployer', serviceDeployer.publicKey.toString());
 
 let mint: PublicKey;

@@ -15,7 +15,7 @@ export function loadKeypairBs58FromEnv(envVarName: string): Keypair {
 
 dotenv.config();
 
-const serviceDeployer = loadKeypairBs58FromEnv('SERVICE_DEPLOYER');
+const serviceDeployer = loadKeypairBs58FromEnv('SERVICE_DEPLOYER_KEYPAIR');
 
 export async function createService(
   serviceRegistryPubkey: PublicKey,

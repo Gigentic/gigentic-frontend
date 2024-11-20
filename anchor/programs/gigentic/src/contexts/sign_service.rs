@@ -12,7 +12,7 @@ pub struct SignService<'info> {
 
     #[account(
         mut,
-        close = signer, // Transfer remaining lamports to the buyer when the account is closed
+        close = signer, // Transfer remaining lamports to the consumer when the account is closed
         seeds = [b"escrow", service.key().as_ref(), service.provider.key().as_ref(), signer.key().as_ref()],
         bump,
     )]

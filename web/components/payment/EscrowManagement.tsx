@@ -108,7 +108,7 @@ export default function EscrowManagement() {
       // Fetch the escrow account details
       // const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
       console.log('Escrow pubkey:', escrowPubKey.toString());
-      // console.log('Escrow buyer:', escrowAccount.buyer.toString());
+      // console.log('Escrow consumer:', escrowAccount.consumer.toString());
       // console.log(
       //   'Escrow service provider:',
       //   escrowAccount.serviceProvider.toString(),
@@ -120,14 +120,14 @@ export default function EscrowManagement() {
       // );
       // console.log('Escrow fee account:', escrowAccount.feeAccount.toString());
 
-      // Generate a unique review_no (e.g., using timestamp or UUID)
-      const review_no = '2';
+      // Generate a unique review_id (e.g., using timestamp or UUID)
+      const review_id = '2';
 
       // // Derive Review PDA
       // const [reviewPubKey] = PublicKey.findProgramAddressSync(
       //   [
-      //     Buffer.from('review_service'),
-      //     Buffer.from(review_no),
+      //     Buffer.from('review'),
+      //     Buffer.from(review_id),
       //     serviceAccountPubKey.toBuffer(),
       //   ],
       //   program.programId,
@@ -137,9 +137,9 @@ export default function EscrowManagement() {
 
       const transaction = new Transaction().add(
         await program.methods
-          .payService(review_no)
+          .payService(review_id)
           .accounts({
-            buyer: publicKey,
+            consumer: publicKey,
             service: serviceAccountPubKey,
             serviceRegistry: serviceRegistryPubKey,
           })
@@ -217,7 +217,7 @@ export default function EscrowManagement() {
       try {
         const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
         console.log('Escrow account data:', escrowAccount);
-        console.log('Buyer:', escrowAccount.buyer.toString());
+        console.log('consumer:', escrowAccount.consumer.toString());
         console.log(
           'Service Provider:',
           escrowAccount.serviceProvider.toString(),

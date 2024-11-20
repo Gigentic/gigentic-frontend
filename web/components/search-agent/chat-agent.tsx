@@ -11,6 +11,7 @@ import type { AI } from '../../app/actions';
 import { UserMessage } from '../llm/message';
 import { Button } from '@gigentic-frontend/ui-kit/ui';
 import { z } from 'zod';
+import { useCluster } from '../cluster/cluster-data-access';
 
 const chatSchema = z.object({
   message: z.string().min(1, 'Message is required'),
@@ -23,13 +24,13 @@ export default function ChatAgent() {
   const { formRef, onKeyDown } = useEnterSubmit();
   const [messages, setMessages] = useUIState<typeof AI>();
   const { sendMessage } = useActions<typeof AI>();
+  const { cluster } = useCluster();
 
   // handle the form submission
   const onSubmit: SubmitHandler<ChatInput> = async (data) => {
     const value = data.message.trim();
     formRef.current?.reset();
     if (!value) return;
-
     // add the user message to the chat history
     setMessages((currentMessages) => [
       ...currentMessages,
@@ -39,10 +40,9 @@ export default function ChatAgent() {
         display: <UserMessage>{value}</UserMessage>,
       },
     ]);
-
     // send the message to the LLM
     try {
-      const responseMessage = await sendMessage(value);
+      const responseMessage = await sendMessage(value, cluster.endpoint);
       setMessages((currentMessages) => [...currentMessages, responseMessage]);
     } catch (error) {
       console.error(error);

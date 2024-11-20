@@ -175,9 +175,9 @@ To set up the project locally, follow these steps:
    Create a `.env` file in the root directory and add the necessary environment variables:
 
    ```env
-   SERVICE_REGISTRY_DEPLOYER=your_service_registry_deployer_key
+   SERVICE_REGISTRY_DEPLOYER_KEYPAIR=your_service_registry_deployer_key
    SERVICE_REGISTRY_KEYPAIR=your_service_registry_keypair
-   SERVICE_DEPLOYER=your_service_deployer_key
+   SERVICE_DEPLOYER_KEYPAIR=your_service_deployer_key
    ```
 
 4. **Deploy Solana Programs**

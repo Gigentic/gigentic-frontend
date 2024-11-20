@@ -3,11 +3,11 @@ mod constants;
 mod contexts;
 mod errors;
 mod states;
-use contexts::agent_to_consumer_rating::*;
-use contexts::consumer_to_agent_rating::*;
+use contexts::consumer_to_provider_rating::*;
 use contexts::init_service::*;
 use contexts::init_service_registry::*;
 use contexts::pay_service::*;
+use contexts::provider_to_consumer_rating::*;
 use contexts::sign_service::*;
 use errors::ErrorCode;
 
@@ -41,8 +41,8 @@ pub mod gigentic {
         Ok(())
     }
 
-    pub fn pay_service(ctx: Context<PayService>, review_no: String) -> Result<()> {
-        ctx.accounts.handler(review_no)?;
+    pub fn pay_service(ctx: Context<PayService>, review_id: String) -> Result<()> {
+        ctx.accounts.handler(review_id)?;
         Ok(())
     }
 
@@ -51,8 +51,8 @@ pub mod gigentic {
         Ok(())
     }
 
-    pub fn agent_to_consumer_rating(
-        ctx: Context<ReviewAgentToCustomerService>,
+    pub fn provider_to_consumer_rating(
+        ctx: Context<ReviewProviderToCustomerService>,
         rating: u8,
         review: String,
     ) -> Result<()> {
@@ -60,8 +60,8 @@ pub mod gigentic {
         Ok(())
     }
 
-    pub fn consumer_to_agent_rating(
-        ctx: Context<ReviewCustomerToAgentService>,
+    pub fn consumer_to_provider_rating(
+        ctx: Context<ReviewCustomerToProviderService>,
         rating: u8,
         review: String,
     ) -> Result<()> {

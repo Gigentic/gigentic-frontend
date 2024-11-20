@@ -7,7 +7,7 @@ import {
 } from '@solana/web3.js';
 import { connection, program } from './init';
 import {
-  TEST_SERVICE_REGISTRY_DEPLOYER,
+  TEST_SERVICE_REGISTRY_DEPLOYER_KEYPAIR,
   TEST_SERVICE_REGISTRY_KEYPAIR,
   TEST_FEE_ACCOUNT,
   SERVICE_REGISTRY_SPACE,
@@ -25,7 +25,7 @@ describe('Initialize Service Registry and checks for correct fee_account and cor
 
     // Prepare the parameters needed to create a new account on the Solana blockchain.
     const createAccountParams = {
-      fromPubkey: TEST_SERVICE_REGISTRY_DEPLOYER.publicKey, // Account paying for the creation of the new account
+      fromPubkey: TEST_SERVICE_REGISTRY_DEPLOYER_KEYPAIR.publicKey, // Account paying for the creation of the new account
       newAccountPubkey: TEST_SERVICE_REGISTRY_KEYPAIR.publicKey, // Public key of the new account to be created
       lamports: rentExemptionAmount, // Amount of SOL (in lamports) to transfer for rent exemption
       space: SERVICE_REGISTRY_SPACE, // Amount of space (in bytes) to allocate for the new account
@@ -38,9 +38,9 @@ describe('Initialize Service Registry and checks for correct fee_account and cor
     );
 
     // Send the transaction and wait for confirmation.
-    // Both TEST_SERVICE_REGISTRY_DEPLOYER and SERVICE_REGISTRY_KEYPAIR need to sign the transaction.
+    // Both TEST_SERVICE_REGISTRY_DEPLOYER_KEYPAIR and SERVICE_REGISTRY_KEYPAIR need to sign the transaction.
     await sendAndConfirmTransaction(connection, createAccountTransaction, [
-      TEST_SERVICE_REGISTRY_DEPLOYER,
+      TEST_SERVICE_REGISTRY_DEPLOYER_KEYPAIR,
       TEST_SERVICE_REGISTRY_KEYPAIR,
     ]);
   });
@@ -50,10 +50,10 @@ describe('Initialize Service Registry and checks for correct fee_account and cor
     await program.methods
       .initializeServiceRegistry(TEST_FEE_ACCOUNT.publicKey, FEE_PERCENTAGE) //  sets the fee_Account owner to the deployer, and for now sets the initial fee to 0
       .accounts({
-        initializer: TEST_SERVICE_REGISTRY_DEPLOYER.publicKey, // Account that initializes the registry
+        initializer: TEST_SERVICE_REGISTRY_DEPLOYER_KEYPAIR.publicKey, // Account that initializes the registry
         serviceRegistry: TEST_SERVICE_REGISTRY_KEYPAIR.publicKey, // The new service registry account being initialized
       })
-      .signers([TEST_SERVICE_REGISTRY_DEPLOYER]) // Sign the transaction with the deployer's keypair
+      .signers([TEST_SERVICE_REGISTRY_DEPLOYER_KEYPAIR]) // Sign the transaction with the deployer's keypair
       .rpc(); // Execute the Remote Procedure Call to perform the transaction
 
     // Fetch the service registry account data from the blockchain to validate its state.

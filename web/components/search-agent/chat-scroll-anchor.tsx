@@ -15,14 +15,10 @@ export default function ChatScrollAnchor() {
   });
 
   useEffect(() => {
-    //console.log("isAtBottom 2: ", isAtBottom);
-    //console.log("!inView: ", !inView);
-
     if (isAtBottom && trackVisibility && !inView) {
       entry?.target.scrollIntoView({
         block: 'start',
       });
-      //console.log("GOOOOO!");
     }
   }, [inView, entry, isAtBottom, trackVisibility]);
 

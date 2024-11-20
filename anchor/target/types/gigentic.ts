@@ -14,37 +14,8 @@ export type Gigentic = {
   };
   instructions: [
     {
-      name: 'agentToConsumerRating';
-      discriminator: [76, 242, 9, 100, 82, 123, 175, 129];
-      accounts: [
-        {
-          name: 'signer';
-          writable: true;
-          signer: true;
-        },
-        {
-          name: 'review';
-          writable: true;
-        },
-        {
-          name: 'systemProgram';
-          address: '11111111111111111111111111111111';
-        },
-      ];
-      args: [
-        {
-          name: 'rating';
-          type: 'u8';
-        },
-        {
-          name: 'review';
-          type: 'string';
-        },
-      ];
-    },
-    {
-      name: 'consumerToAgentRating';
-      discriminator: [20, 65, 222, 1, 186, 152, 255, 154];
+      name: 'consumerToProviderRating';
+      discriminator: [197, 46, 152, 225, 183, 186, 156, 186];
       accounts: [
         {
           name: 'signer';
@@ -173,7 +144,7 @@ export type Gigentic = {
       discriminator: [181, 29, 236, 80, 246, 226, 34, 174];
       accounts: [
         {
-          name: 'buyer';
+          name: 'consumer';
           writable: true;
           signer: true;
         },
@@ -205,7 +176,7 @@ export type Gigentic = {
               },
               {
                 kind: 'account';
-                path: 'buyer';
+                path: 'consumer';
               },
             ];
           };
@@ -217,26 +188,11 @@ export type Gigentic = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  114,
-                  101,
-                  118,
-                  105,
-                  101,
-                  119,
-                  95,
-                  115,
-                  101,
-                  114,
-                  118,
-                  105,
-                  99,
-                  101,
-                ];
+                value: [114, 101, 118, 105, 101, 119];
               },
               {
                 kind: 'arg';
-                path: 'reviewNo';
+                path: 'reviewId';
               },
               {
                 kind: 'account';
@@ -252,7 +208,36 @@ export type Gigentic = {
       ];
       args: [
         {
-          name: 'reviewNo';
+          name: 'reviewId';
+          type: 'string';
+        },
+      ];
+    },
+    {
+      name: 'providerToConsumerRating';
+      discriminator: [239, 50, 253, 210, 227, 54, 245, 169];
+      accounts: [
+        {
+          name: 'signer';
+          writable: true;
+          signer: true;
+        },
+        {
+          name: 'review';
+          writable: true;
+        },
+        {
+          name: 'systemProgram';
+          address: '11111111111111111111111111111111';
+        },
+      ];
+      args: [
+        {
+          name: 'rating';
+          type: 'u8';
+        },
+        {
+          name: 'review';
           type: 'string';
         },
       ];
@@ -395,7 +380,7 @@ export type Gigentic = {
         kind: 'struct';
         fields: [
           {
-            name: 'buyer';
+            name: 'consumer';
             type: 'pubkey';
           },
           {
@@ -423,15 +408,15 @@ export type Gigentic = {
         kind: 'struct';
         fields: [
           {
-            name: 'reviewNo';
+            name: 'reviewId';
             type: 'string';
           },
           {
-            name: 'agentToConsumerRating';
+            name: 'providerToConsumerRating';
             type: 'u8';
           },
           {
-            name: 'consumerToAgentRating';
+            name: 'consumerToProviderRating';
             type: 'u8';
           },
           {
@@ -443,11 +428,11 @@ export type Gigentic = {
             type: 'pubkey';
           },
           {
-            name: 'agentToCustomerReview';
+            name: 'providerToCustomerReview';
             type: 'string';
           },
           {
-            name: 'customerToAgentReview';
+            name: 'customerToProviderReview';
             type: 'string';
           },
         ];
