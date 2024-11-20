@@ -3,11 +3,11 @@ mod constants;
 mod contexts;
 mod errors;
 mod states;
-use contexts::consumer_to_provider_rating::*;
+use contexts::customer_to_provider_rating::*;
 use contexts::init_service::*;
 use contexts::init_service_registry::*;
 use contexts::pay_service::*;
-use contexts::provider_to_consumer_rating::*;
+use contexts::provider_to_customer_rating::*;
 use contexts::sign_service::*;
 use errors::ErrorCode;
 
@@ -51,7 +51,7 @@ pub mod gigentic {
         Ok(())
     }
 
-    pub fn provider_to_consumer_rating(
+    pub fn provider_to_customer_rating(
         ctx: Context<ReviewProviderToCustomerService>,
         rating: u8,
         review: String,
@@ -60,7 +60,7 @@ pub mod gigentic {
         Ok(())
     }
 
-    pub fn consumer_to_provider_rating(
+    pub fn customer_to_provider_rating(
         ctx: Context<ReviewCustomerToProviderService>,
         rating: u8,
         review: String,

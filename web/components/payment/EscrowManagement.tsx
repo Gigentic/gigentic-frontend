@@ -124,7 +124,7 @@ export default function EscrowManagement() {
       // Fetch the escrow account details
       // const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
       console.log('Escrow pubkey:', escrowPubKey.toString());
-      // console.log('Escrow consumer:', escrowAccount.consumer.toString());
+      // console.log('Escrow customer:', escrowAccount.customer.toString());
       // console.log(
       //   'Escrow service provider:',
       //   escrowAccount.serviceProvider.toString(),
@@ -155,7 +155,7 @@ export default function EscrowManagement() {
         await program.methods
           .payService(review_id)
           .accounts({
-            consumer: publicKey,
+            customer: publicKey,
             service: serviceAccountPubKey,
             serviceRegistry: serviceRegistryPubKey,
           })
@@ -233,7 +233,7 @@ export default function EscrowManagement() {
       try {
         const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
         console.log('Escrow account data:', escrowAccount);
-        console.log('consumer:', escrowAccount.consumer.toString());
+        console.log('customer:', escrowAccount.customer.toString());
         console.log(
           'Service Provider:',
           escrowAccount.serviceProvider.toString(),

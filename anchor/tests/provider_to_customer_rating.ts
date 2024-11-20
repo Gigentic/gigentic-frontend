@@ -25,18 +25,18 @@ describe('Provider to customer review', () => {
     const serviceAccount =
       await program.account.service.fetch(serviceAccountPubKey);
 
-    // The provider's rating for the consumer (out of 5)
+    // The provider's rating for the customer (out of 5)
     const rating = 4;
 
-    // The provider's review comment about the consumer
-    const review = 'Great Consumer was very polite';
+    // The provider's review comment about the customer
+    const review = 'Great Customer was very polite';
 
     // Set the fee payer for the transaction. The service provider will pay the fees.
 
     // Attempt to send and confirm the transaction on the Solana blockchain
     try {
       await program.methods
-        .providerToConsumerRating(rating, review)
+        .providerToCustomerRating(rating, review)
         .accounts({
           signer: serviceProvider.publicKey,
           review: serviceAccount.reviews[0],
@@ -65,8 +65,8 @@ describe('Provider to customer review', () => {
       'The service provider in the review should match the service account provider.',
     );
 
-    // Validate that the provider-to-consumer rating in the review matches the rating that was submitted
-    expect(reviewAccount.providerToConsumerRating).to.equal(
+    // Validate that the provider-to-customer rating in the review matches the rating that was submitted
+    expect(reviewAccount.providerToCustomerRating).to.equal(
       rating,
       'The rating given by the provider should match the rating stored in the review account.',
     );

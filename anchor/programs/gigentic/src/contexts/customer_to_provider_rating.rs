@@ -9,7 +9,7 @@ pub struct ReviewCustomerToProviderService<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
 
-    #[account(mut, constraint = review.consumer == signer.key())]
+    #[account(mut, constraint = review.customer == signer.key())]
     pub review: Account<'info, Review>,
 
     pub system_program: Program<'info, System>,
@@ -18,7 +18,7 @@ pub struct ReviewCustomerToProviderService<'info> {
 impl<'info> ReviewCustomerToProviderService<'info> {
     pub fn handler(&mut self, rating: u8, review: String) -> Result<()> {
         require!(rating <= 5, ErrorCode::InvalidRating);
-        self.review.consumer_to_provider_rating = rating;
+        self.review.customer_to_provider_rating = rating;
         self.review.customer_to_provider_review = review;
         Ok(())
     }
