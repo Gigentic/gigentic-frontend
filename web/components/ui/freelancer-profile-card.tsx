@@ -11,6 +11,10 @@ import {
 import { Badge } from '@gigentic-frontend/ui-kit/ui';
 import { Button } from '@gigentic-frontend/ui-kit/ui';
 import { Star, MessageSquare, Zap, Lock } from 'lucide-react';
+import {
+  useSelectFreelancer,
+  useSelectedFreelancer,
+} from '@/lib/hooks/use-freelancer-query';
 
 interface FreelancerProfileProps {
   title: string;
@@ -54,15 +58,38 @@ export default function FreelancerProfileCard(
     window.open(solchatUrl, '_blank', 'noopener,noreferrer');
   };
 
+  const { mutate: selectFreelancer } = useSelectFreelancer();
+  const { data: cachedFreelancer } = useSelectedFreelancer();
+
   const handlePayEscrow = () => {
-    const escrowUrl = `/payment?contractId=${encodeURIComponent(props.paymentWalletAddress)}&title=${encodeURIComponent(props.title)}&avgRating=${encodeURIComponent(props.rating)}&matchPercentage=${encodeURIComponent(props.matchScore)}`;
-    window.open(escrowUrl, '_blank', 'noopener,noreferrer');
+    const freelancerData = {
+      title: props.title,
+      pricePerHour: props.pricePerHour,
+      experience: props.experience,
+      rating: props.rating,
+      matchScore: props.matchScore,
+      paymentWalletAddress: props.paymentWalletAddress,
+    };
+
+    console.log('💾 Preparing to cache freelancer:', freelancerData);
+
+    // Cache the freelancer data
+    selectFreelancer(freelancerData);
+
+    // Wait a moment for cache to be set before opening new tab
+    setTimeout(() => {
+      window.open('/payment', '_blank', 'noopener,noreferrer');
+    }, 100);
   };
 
   const getMatchScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-500';
     if (score >= 60) return 'text-yellow-500';
     return 'text-red-500';
+  };
+
+  const handleCheckCache = () => {
+    console.log('🔍 Current cache content:', cachedFreelancer);
   };
 
   return (
@@ -154,6 +181,13 @@ export default function FreelancerProfileCard(
           >
             <Lock className="w-4 h-4 mr-2" />
             Pay into Escrow
+          </Button>
+          <Button
+            className="w-full"
+            variant="secondary"
+            onClick={handleCheckCache}
+          >
+            Check Cache
           </Button>
         </CardFooter>
       </Card>

@@ -30,6 +30,7 @@ import { useTransactionToast } from '../ui/ui-layout';
 import { useGigenticProgram } from '../gigentic-frontend/gigentic-frontend-data-access';
 import EscrowCard from './EscrowCard';
 import MercuryoButton from './MercuryoButton';
+import { useSelectedFreelancer } from '@/lib/hooks/use-freelancer-query';
 
 export default function EscrowManagement() {
   const { connection } = useConnection();
@@ -37,8 +38,9 @@ export default function EscrowManagement() {
   const transactionToast = useTransactionToast();
 
   const { program, programId } = useGigenticProgram();
-  const [userEscrows, setUserEscrows] = useState([]);
+  const { data: freelancer } = useSelectedFreelancer();
 
+  const [userEscrows, setUserEscrows] = useState([]);
   const [contractId, setContractId] = useState('');
   const [amount, setAmount] = useState('');
   const [finalAmount, setFinalAmount] = useState('');
@@ -51,6 +53,19 @@ export default function EscrowManagement() {
   const escrow_index = 0;
 
   useEffect(() => {
+    console.log('🔍 Attempting to read from cache...');
+    if (freelancer) {
+      console.log('✅ Found cached freelancer data:', freelancer);
+      setContractId(freelancer.paymentWalletAddress);
+      setTitle(freelancer.title);
+      setAvgRating(freelancer.rating.toString());
+      setMatchPercentage(freelancer.matchScore.toString());
+    } else {
+      console.log('❌ No cached freelancer data found');
+    }
+
+    // URL parameters code (commented out)
+    /*
     const params = new URLSearchParams(window.location.search);
     const contractIdParam = params.get('contractId');
     const titleParam = params.get('title');
@@ -69,7 +84,8 @@ export default function EscrowManagement() {
     if (matchPercentageParam) {
       setMatchPercentage(matchPercentageParam);
     }
-  }, []);
+    */
+  }, [freelancer]);
 
   const handleSubmitPay = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -291,6 +307,11 @@ export default function EscrowManagement() {
     }
   };
 
+  const handleCheckCache = () => {
+    console.log('🔍 Checking cache in Payment page');
+    console.log('💾 Cached freelancer data:', freelancer);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-4xl bg-background">
@@ -302,6 +323,14 @@ export default function EscrowManagement() {
             </TabsList>
             <TabsContent value="pay">
               <form onSubmit={handleSubmitPay} className="space-y-6">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="w-full mb-4"
+                  onClick={handleCheckCache}
+                >
+                  Check Cache
+                </Button>
                 <div className="space-y-2">
                   <Label htmlFor="contractId" className="text-sm font-medium">
                     Service Contract ID
