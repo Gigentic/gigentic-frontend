@@ -23,10 +23,10 @@ let content = ``;
 
 export async function fetchServiceRegistryPubkey() {
   // Load service registry public key from environment variable
-  const serviceRegistryPubkey = process.env.SERVICE_REGISTRY_PUBKEY;
+  const serviceRegistryPubkey = process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY;
   if (!serviceRegistryPubkey) {
     throw new Error(
-      'SERVICE_REGISTRY_PUBKEY is not set in environment variables',
+      'NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY is not set in environment variables',
     );
   }
 
