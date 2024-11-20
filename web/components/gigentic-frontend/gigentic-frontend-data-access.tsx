@@ -13,9 +13,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAnchorProvider } from '../solana/solana-provider';
 import { useCluster } from '../cluster/cluster-data-access';
 
-export const SERVICE_REGISTRY_SPACE = 10_000_000;
-export const FEE_PERCENTAGE = 0;
-
 export async function getBlockhash(connection: Connection, pubkey: PublicKey) {
   // Fetch the latest blockhash and last valid block height required for transaction confirmation
   const latestBlockhash = await connection.getLatestBlockhash();
