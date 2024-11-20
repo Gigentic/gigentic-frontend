@@ -17,6 +17,7 @@ export const metadata = {
 const links: { label: string; path: string }[] = [
   { label: 'Search', path: '/search-agent' },
   { label: 'Payment', path: '/payment' },
+  { label: 'Services', path: '/services' },
   { label: 'Account', path: '/account' },
   { label: 'Program', path: '/gigentic-frontend' },
 ];
