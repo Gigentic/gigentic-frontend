@@ -31,7 +31,6 @@ export default function EscrowCard({
   const handleRelease = (contractId: string) => {
     if (onReleaseEscrow) {
       onReleaseEscrow();
-      console.log('Releasing escrow:', contractId);
     } else {
       console.log('onReleaseEscrow not provided');
     }

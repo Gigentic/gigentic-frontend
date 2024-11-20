@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { InfoIcon } from 'lucide-react';
 import {
   Card,
@@ -21,15 +21,13 @@ import {
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import {
   PublicKey,
-  Transaction,
-  SystemProgram,
-  LAMPORTS_PER_SOL,
+  TransactionMessage,
+  VersionedTransaction,
 } from '@solana/web3.js';
 import { useTransactionToast } from '../ui/ui-layout';
 
 import { useGigenticProgram } from '../gigentic-frontend/gigentic-frontend-data-access';
 import EscrowCard from './EscrowCard';
-import MercuryoButton from './MercuryoButton';
 import { useSelectedFreelancer } from '@/lib/hooks/use-freelancer-query';
 
 export default function EscrowManagement() {
@@ -37,7 +35,7 @@ export default function EscrowManagement() {
   const { publicKey, sendTransaction } = useWallet();
   const transactionToast = useTransactionToast();
 
-  const { program, programId } = useGigenticProgram();
+  const { program } = useGigenticProgram();
   const { data: freelancer } = useSelectedFreelancer();
 
   const [userEscrows, setUserEscrows] = useState([]);
@@ -49,13 +47,14 @@ export default function EscrowManagement() {
   const [avgRating, setAvgRating] = useState('');
   const [matchPercentage, setMatchPercentage] = useState('');
 
-  // TODO: remove this after testing
-  const escrow_index = 0;
+  // TODO: this should be in the global state that identifies which service account to use for creating the escrow
+  const serviceAccountIndex = 0;
 
   useEffect(() => {
     console.log('🔍 Attempting to read from cache...');
     if (freelancer) {
       console.log('✅ Found cached freelancer data:', freelancer);
+      // this should be aligned with the service account index
       setContractId(freelancer.paymentWalletAddress);
       setTitle(freelancer.title);
       setAvgRating(freelancer.rating.toString());
@@ -63,28 +62,6 @@ export default function EscrowManagement() {
     } else {
       console.log('❌ No cached freelancer data found');
     }
-
-    // URL parameters code (commented out)
-    /*
-    const params = new URLSearchParams(window.location.search);
-    const contractIdParam = params.get('contractId');
-    const titleParam = params.get('title');
-    const avgRatingParam = params.get('avgRating');
-    const matchPercentageParam = params.get('matchPercentage');
-
-    if (contractIdParam) {
-      setContractId(contractIdParam);
-    }
-    if (titleParam) {
-      setTitle(titleParam);
-    }
-    if (avgRatingParam) {
-      setAvgRating(avgRatingParam);
-    }
-    if (matchPercentageParam) {
-      setMatchPercentage(matchPercentageParam);
-    }
-    */
   }, [freelancer]);
 
   const handleSubmitPay = async (e: React.FormEvent) => {
@@ -95,18 +72,71 @@ export default function EscrowManagement() {
     }
 
     try {
-      // TODO: get this from environment variables
-      const serviceRegistryPubKey = new PublicKey(
-        '6Gj3RPAsZPn9u9S5jVfh9AuvfaBR2mvDofec9nCbVAmA',
-      );
+      // Retrieve the service registry public key from environment variables
+      const serviceRegistryPubKeyString =
+        process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY;
+
+      if (!serviceRegistryPubKeyString) {
+        throw new Error(
+          'NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY is not defined in environment variables',
+        );
+      }
+
+      const serviceRegistryPubKey = new PublicKey(serviceRegistryPubKeyString);
+
       const serviceRegistry = await program.account.serviceRegistry.fetch(
         serviceRegistryPubKey,
       );
 
-      // TODO: change this to the correct service account
       const serviceAccountPubKey =
-        serviceRegistry.serviceAccountAddresses[escrow_index];
+        serviceRegistry.serviceAccountAddresses[serviceAccountIndex];
       console.log('Service Account:', serviceAccountPubKey.toString());
+
+      // Generate a unique review_id that is max 10 digits (e.g., using timestamp or UUID)
+      const review_id = new Date().getTime().toString().slice(0, 10);
+      console.log('Review ID:', review_id);
+
+      // Inside handleSubmitPay function
+      const latestBlockhash = await connection.getLatestBlockhash('confirmed');
+
+      // Create a new TransactionMessage
+      const messageV0 = new TransactionMessage({
+        payerKey: publicKey,
+        recentBlockhash: latestBlockhash.blockhash,
+        instructions: [
+          await program.methods
+            .payService(review_id)
+            .accounts({
+              customer: publicKey,
+              service: serviceAccountPubKey,
+              serviceRegistry: serviceRegistryPubKey,
+            })
+            .instruction(),
+        ],
+      }).compileToV0Message();
+
+      // Create a new VersionedTransaction
+      const transaction = new VersionedTransaction(messageV0);
+
+      // Send transaction
+      const signature = await sendTransaction(transaction, connection);
+      console.log('Transaction sent:', signature);
+
+      // Confirm using the new pattern
+      const confirmation = await connection.confirmTransaction(
+        {
+          signature,
+          blockhash: latestBlockhash.blockhash,
+          lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
+        },
+        'confirmed',
+      );
+
+      if (confirmation.value.err) {
+        throw new Error('Transaction failed to confirm');
+      }
+
+      transactionToast(signature);
 
       const serviceAccount =
         await program.account.service.fetch(serviceAccountPubKey);
@@ -121,23 +151,21 @@ export default function EscrowManagement() {
         ],
         program.programId,
       );
-      // Fetch the escrow account details
-      // const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
-      console.log('Escrow pubkey:', escrowPubKey.toString());
-      // console.log('Escrow consumer:', escrowAccount.consumer.toString());
-      // console.log(
-      //   'Escrow service provider:',
-      //   escrowAccount.serviceProvider.toString(),
-      // );
-      // console.log('Escrow fee percentage:', escrowAccount.feePercentage);
-      // console.log(
-      //   'Escrow expected amount:',
-      //   escrowAccount.expectedAmount.toString(),
-      // );
-      // console.log('Escrow fee account:', escrowAccount.feeAccount.toString());
 
-      // Generate a unique review_id (e.g., using timestamp or UUID)
-      const review_id = '2';
+      // Fetch the escrow account details
+      console.log('Escrow pubkey:', escrowPubKey.toString());
+      const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
+      console.log('Escrow customer:', escrowAccount.customer.toString());
+      console.log(
+        'Escrow service provider:',
+        escrowAccount.serviceProvider.toString(),
+      );
+      console.log('Escrow fee percentage:', escrowAccount.feePercentage);
+      console.log(
+        'Escrow expected amount:',
+        escrowAccount.expectedAmount.toString(),
+      );
+      console.log('Escrow fee account:', escrowAccount.feeAccount.toString());
 
       // // Derive Review PDA
       // const [reviewPubKey] = PublicKey.findProgramAddressSync(
@@ -148,38 +176,9 @@ export default function EscrowManagement() {
       //   ],
       //   program.programId,
       // );
-      // const reviewAccount = await program.account.review.fetch(reviewPubKey);
       // console.log('Review pubkey:', reviewPubKey.toString());
-
-      const transaction = new Transaction().add(
-        await program.methods
-          .payService(review_id)
-          .accounts({
-            consumer: publicKey,
-            service: serviceAccountPubKey,
-            serviceRegistry: serviceRegistryPubKey,
-          })
-          .instruction(),
-      );
-
-      const { blockhash } = await connection.getLatestBlockhash();
-      transaction.recentBlockhash = blockhash;
-      transaction.feePayer = publicKey;
-
-      const signature = await sendTransaction(transaction, connection);
-      console.log('Transaction sent:', signature);
-
-      const confirmation = await connection.confirmTransaction(
-        signature,
-        'confirmed',
-      );
-      if (confirmation.value.err) {
-        throw new Error('Transaction failed to confirm');
-      }
-
-      transactionToast(signature);
-
-      // Update UI or state with escrow details if needed
+      // const reviewAccount = await program.account.review.fetch(reviewPubKey);
+      // console.log('Review account:', reviewAccount);
     } catch (error) {
       console.error('Error sending transaction:', error);
     }
@@ -192,26 +191,27 @@ export default function EscrowManagement() {
     }
 
     console.log('Releasing escrow:', escrowId);
-    // TODO: read amount from the escrow account
-    // setFinalAmount(amount);
-    // setAmount('0');
+    // TODO: update / fix UI
 
     try {
-      const serviceRegistryPubKey = new PublicKey(
-        '6Gj3RPAsZPn9u9S5jVfh9AuvfaBR2mvDofec9nCbVAmA',
-      );
+      // Retrieve the service registry public key from environment variables
+      const serviceRegistryPubKeyString =
+        process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY;
+
+      if (!serviceRegistryPubKeyString) {
+        throw new Error(
+          'NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY is not defined in environment variables',
+        );
+      }
+
+      const serviceRegistryPubKey = new PublicKey(serviceRegistryPubKeyString);
       // Fetch the service registry account to get the fee account
       const serviceRegistry = await program.account.serviceRegistry.fetch(
         serviceRegistryPubKey,
       );
 
-      // TODO: change this to the correct service account
       const serviceAccountPubKey =
-        serviceRegistry.serviceAccountAddresses[escrow_index];
-      console.log(
-        'Selected Service Account for transaction:',
-        serviceAccountPubKey.toString(),
-      );
+        serviceRegistry.serviceAccountAddresses[serviceAccountIndex];
 
       console.log('Service Account:', serviceAccountPubKey.toString());
 
@@ -233,7 +233,7 @@ export default function EscrowManagement() {
       try {
         const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
         console.log('Escrow account data:', escrowAccount);
-        console.log('consumer:', escrowAccount.consumer.toString());
+        console.log('customer:', escrowAccount.customer.toString());
         console.log(
           'Service Provider:',
           escrowAccount.serviceProvider.toString(),
@@ -244,7 +244,6 @@ export default function EscrowManagement() {
           escrowAccount.expectedAmount.toString(),
         );
         console.log('Fee Account:', escrowAccount.feeAccount.toString());
-        console.log('---');
       } catch (error) {
         console.error(
           `Error fetching escrow account for service ${serviceAccountPubKey.toString()}:`,
@@ -252,40 +251,39 @@ export default function EscrowManagement() {
         );
       }
 
-      // Create the transaction
-      // const transaction = await program.methods
-      //   .signService()
-      //   .accounts({
-      //     signer: publicKey,
-      //     service: serviceAccountPubKey,
-      //     serviceProvider: serviceAccount.provider,
-      //     feeAccount: serviceRegistry.feeAccount,
-      //   })
-      //   .transaction();
+      // Inside handleSubmitPay function
+      const latestBlockhash = await connection.getLatestBlockhash('confirmed');
 
-      const transaction = new Transaction().add(
-        await program.methods
-          .signService()
-          .accounts({
-            signer: publicKey,
-            service: serviceAccountPubKey,
-            serviceProvider: serviceAccount.provider,
-            feeAccount: serviceRegistry.feeAccount,
-          })
-          .instruction(),
-      );
+      // Create a new TransactionMessage
+      const messageV0 = new TransactionMessage({
+        payerKey: publicKey,
+        recentBlockhash: latestBlockhash.blockhash,
+        instructions: [
+          await program.methods
+            .signService()
+            .accounts({
+              signer: publicKey,
+              service: serviceAccountPubKey,
+              serviceProvider: serviceAccount.provider,
+              feeAccount: serviceRegistry.feeAccount,
+            })
+            .instruction(),
+        ],
+      }).compileToV0Message();
 
-      // const { blockhash } = await connection.getLatestBlockhash();
-      // transaction.recentBlockhash = blockhash;
-      // transaction.feePayer = publicKey;
+      // Create a new VersionedTransaction
+      const transaction = new VersionedTransaction(messageV0);
 
-      // Send the transaction
+      // Send transaction
       const signature = await sendTransaction(transaction, connection);
-      console.log('Transaction sent:', signature);
 
-      // Wait for confirmation
+      // Confirm using the new pattern
       const confirmation = await connection.confirmTransaction(
-        signature,
+        {
+          signature,
+          blockhash: latestBlockhash.blockhash,
+          lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
+        },
         'confirmed',
       );
 
@@ -295,9 +293,6 @@ export default function EscrowManagement() {
 
       transactionToast(signature);
       console.log('Escrow released successfully:', signature);
-
-      // Refresh the list of escrows
-      // fetchAllEscrows();
     } catch (error) {
       console.error('Error releasing escrow:', error);
       if (error instanceof Error) {

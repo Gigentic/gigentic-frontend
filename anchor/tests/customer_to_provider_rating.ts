@@ -8,20 +8,20 @@ import { TEST_SERVICE_DEPLOYERS, TEST_SERVICE_USERS } from './constants';
 
 describe('Customer to provider review', () => {
   it('Gives the service review to the customer and checks if the review has the values assigned', async () => {
-    // Select the consumer from the predefined list of service users
-    // The consumer will be reviewing the service provided by the provider
-    const consumer = TEST_SERVICE_USERS[0];
+    // Select the customer from the predefined list of service users
+    // The customer will be reviewing the service provided by the provider
+    const customer = TEST_SERVICE_USERS[0];
 
-    // Fund the consumer's account with enough SOL to pay transaction fees
-    await fund_account(connection, consumer.publicKey);
+    // Fund the customer's account with enough SOL to pay transaction fees
+    await fund_account(connection, customer.publicKey);
 
-    // Check the balance of the consumer's account to ensure it has sufficient SOL for fees
-    const consumerBalance = await connection.getBalance(consumer.publicKey);
+    // Check the balance of the customer's account to ensure it has sufficient SOL for fees
+    const customerBalance = await connection.getBalance(customer.publicKey);
 
-    // Verify that the consumer has at least 0.01 SOL in their account (for transaction fees)
-    if (consumerBalance < 0.01 * anchor.web3.LAMPORTS_PER_SOL) {
+    // Verify that the customer has at least 0.01 SOL in their account (for transaction fees)
+    if (customerBalance < 0.01 * anchor.web3.LAMPORTS_PER_SOL) {
       throw new Error(
-        'consumer does not have enough SOL to pay transaction fees.',
+        'customer does not have enough SOL to pay transaction fees.',
       );
     }
 
@@ -45,12 +45,12 @@ describe('Customer to provider review', () => {
 
     try {
       await program.methods
-        .consumerToProviderRating(rating, review)
+        .customerToProviderRating(rating, review)
         .accounts({
-          signer: consumer.publicKey,
+          signer: customer.publicKey,
           review: serviceAccount.reviews[0],
         })
-        .signers([consumer])
+        .signers([customer])
         .rpc();
     } catch (err) {
       // Handle transaction errors
@@ -74,22 +74,22 @@ describe('Customer to provider review', () => {
       'The service provider in the review account should match the service provider who owns the service.',
     );
 
-    // Validate that the consumer (consumer) stored in the review account matches the consumer who submitted the review
-    expect(reviewAccount.consumer.toBase58()).to.equal(
-      consumer.publicKey.toBase58(),
-      'The consumer in the review account should match the consumer who submitted the review.',
+    // Validate that the customer (customer) stored in the review account matches the customer who submitted the review
+    expect(reviewAccount.customer.toBase58()).to.equal(
+      customer.publicKey.toBase58(),
+      'The customer in the review account should match the customer who submitted the review.',
     );
 
-    // Validate that the rating given by the consumer matches the rating stored in the review account
-    expect(reviewAccount.consumerToProviderRating).to.equal(
+    // Validate that the rating given by the customer matches the rating stored in the review account
+    expect(reviewAccount.customerToProviderRating).to.equal(
       rating,
-      'The rating given by the consumer should match the rating stored in the review account.',
+      'The rating given by the customer should match the rating stored in the review account.',
     );
 
     // Validate that the review comment matches the comment stored in the review account
     expect(reviewAccount.customerToProviderReview).to.equal(
       review,
-      'The review comment given by the consumer should match the comment stored in the review account.',
+      'The review comment given by the customer should match the comment stored in the review account.',
     );
   });
 });

@@ -7,7 +7,7 @@ use anchor_lang::prelude::*;
 #[instruction(review_id: String)]
 pub struct PayService<'info> {
     #[account(mut)]
-    pub consumer: Signer<'info>,
+    pub customer: Signer<'info>,
 
     #[account(mut)]
     pub service: Account<'info, Service>,
@@ -17,16 +17,16 @@ pub struct PayService<'info> {
 
     #[account(
         init,
-        payer = consumer,
+        payer = customer,
         space = 8+ Escrow::INIT_SPACE,
-        seeds = [b"escrow", service.key().as_ref(), service.provider.key().as_ref(), consumer.key().as_ref()],
+        seeds = [b"escrow", service.key().as_ref(), service.provider.key().as_ref(), customer.key().as_ref()],
         bump
     )]
     pub escrow: Account<'info, Escrow>,
 
     #[account(
     init,
-    payer = consumer,
+    payer = customer,
     space =8+ Review::INIT_SPACE,
     seeds=[b"review",review_id.as_bytes(),service.key().as_ref()],
     bump,
@@ -41,7 +41,7 @@ impl<'info> PayService<'info> {
         let service_price = self.service.price;
 
         let transfer_instruction = anchor_lang::solana_program::system_instruction::transfer(
-            &self.consumer.key(),
+            &self.customer.key(),
             &self.escrow.key(),
             service_price,
         );
@@ -49,7 +49,7 @@ impl<'info> PayService<'info> {
         anchor_lang::solana_program::program::invoke(
             &transfer_instruction,
             &[
-                self.consumer.to_account_info(),
+                self.customer.to_account_info(),
                 self.escrow.to_account_info(),
                 self.system_program.to_account_info(),
             ],
@@ -57,9 +57,9 @@ impl<'info> PayService<'info> {
 
         self.review.set_inner(Review {
             review_id,
-            provider_to_consumer_rating: 0,
-            consumer_to_provider_rating: 0,
-            consumer: self.consumer.key(),
+            provider_to_customer_rating: 0,
+            customer_to_provider_rating: 0,
+            customer: self.customer.key(),
             service_provider: self.service.provider.key(),
             provider_to_customer_review: String::from(""),
             customer_to_provider_review: String::from(""),
@@ -68,7 +68,7 @@ impl<'info> PayService<'info> {
         self.escrow.set_inner(Escrow {
             fee_account: self.service_registry.fee_account,
             fee_percentage: self.service_registry.fee_percentage,
-            consumer: self.consumer.key(),
+            customer: self.customer.key(),
             service_provider: self.service.provider,
             expected_amount: service_price,
         });

@@ -5,7 +5,7 @@
     ".er.relationshipLabel { fill: black; }",
     ".er.relationshipLabelBox { fill: white; }",
     ".er.entityBox { fill: lightgray; }",
-    "[id^=entity-Consumer] .er.entityBox { fill: lightgreen;} ",
+    "[id^=entity-Customer] .er.entityBox { fill: lightgreen;} ",
     "[id^=entity-Provider] .er.entityBox { fill: lightgreen;} ",
     "[id^=entity-ServiceRegistry] .er.entityBox { fill: powderblue;} ",
     "[id^=entity-Service] .er.entityBox { fill: powderblue;} ",
@@ -15,9 +15,9 @@
 }}%%
 
 erDiagram
-    Consumer ||--o{ Escrow : "deposits payment"
-    Consumer ||--o{ Service : "consumes"
-    Consumer ||--o{ Review : "writes consumer review"
+    Customer ||--o{ Escrow : "deposits payment"
+    Customer ||--o{ Service : "consumes"
+    Customer ||--o{ Review : "writes customer review"
 
     Provider ||--o{ Escrow : "receives payment"
     Provider ||--o{ Service : "provides"
@@ -50,36 +50,35 @@ erDiagram
     Review {
         Review_PDA seed "['review', review_id, service]"
         String review_id "Unique review identifier"
-        u8 provider_to_consumer_rating "0-5 rating"
-        u8 consumer_to_provider_rating "0-5 rating"
-        Pubkey consumer "Consumer's account"
+        u8 provider_to_customer_rating "0-5 rating"
+        u8 customer_to_provider_rating "0-5 rating"
+        Pubkey customer "Customer's account"
         Pubkey service_provider "Provider's account"
         String provider_to_customer_review "Provider's review text"
-        String customer_to_provider_review "Consumer's review text"
-        function provider_to_consumer_rating "Provider rates consumer"
-        function consumer_to_provider_rating "Consumer rates provider"
+        String customer_to_provider_review "Customer's review text"
+        function provider_to_customer_rating "Provider rates customer"
+        function customer_to_provider_rating "Customer rates provider"
     }
     Escrow {
-        Escrow_PDA seed "['escrow', service, provider, consumer]"
-        Pubkey consumer "Consumer's account"
+        Escrow_PDA seed "['escrow', service, provider, customer]"
+        Pubkey customer "Customer's account"
         Pubkey service_provider "Provider's account"
         u8 fee_percentage "Platform fee %"
         u64 expected_amount "Payment amount"
         Pubkey fee_account "Fee destination"
-        function pay_service "Consumer deposits payment"
+        function pay_service "Customer deposits payment"
         function sign_service "Release payment to provider"
     }
     Provider {
         Pubkey account "Provider account address"
         Vec[Pubkey] services "Provided services"
-        Vec[Pubkey] reviews_received "Reviews from consumers"
-        Vec[Pubkey] reviews_given "Reviews to consumers"
+        Vec[Pubkey] reviews_received "Reviews from customers"
+        Vec[Pubkey] reviews_given "Reviews to customers"
     }
-    Consumer {
-        Pubkey account "Consumer account address"
+    Customer {
+        Pubkey account "Customer account address"
         Vec[Pubkey] services_used "Consumed services"
         Vec[Pubkey] reviews_given "Reviews to providers"
         Vec[Pubkey] reviews_received "Reviews from providers"
     }
-
 ```

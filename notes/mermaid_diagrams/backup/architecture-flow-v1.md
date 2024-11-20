@@ -16,9 +16,9 @@ flowchart TD
  subgraph SDI["SDI"]
         SDI1["Price Paid"]
         SDI2["Duration of Service Delivery"]
-        SDI3["Indicated as Successfully Delivered by Consumer"]
-        SDI4["Consumer Rating of Service Quality"]
-        SDI5["Rating of Consumer Experience"]
+        SDI3["Indicated as Successfully Delivered by Customer"]
+        SDI4["Customer Rating of Service Quality"]
+        SDI5["Rating of Customer Experience"]
   end
  subgraph SCE["SCE"]
         SCE1["Smart Contract Executor (Solana SystemProgram)"]

@@ -21,7 +21,7 @@ end
         QueryState[Query State<br>on-chain data]
     end
 
-    subgraph Components["Component Layer (Consumers)"]
+    subgraph Components["Component Layer (Customers)"]
         AccountUI[Account UI]
         ChatAgent[Chat Agent]
         ClusterUI[Cluster UI]

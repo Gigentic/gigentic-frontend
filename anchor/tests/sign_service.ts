@@ -13,8 +13,8 @@ import { SendTransactionError } from '@solana/web3.js';
 
 describe('SignService: Transfers money to the service provider and sends fees to the fee account', () => {
   it('Transfers money to the service provider and sends fees', async () => {
-    // Select the consumer from the predefined service users
-    const consumer = TEST_SERVICE_USERS[0];
+    // Select the customer from the predefined service users
+    const customer = TEST_SERVICE_USERS[0];
 
     // Fetch the service registry account
     const serviceRegistry = await program.account.serviceRegistry.fetch(
@@ -34,7 +34,7 @@ describe('SignService: Transfers money to the service provider and sends fees to
         Buffer.from('escrow'),
         serviceAccountPubKey.toBuffer(),
         serviceAccount.provider.toBuffer(),
-        consumer.publicKey.toBuffer(),
+        customer.publicKey.toBuffer(),
       ],
       program.programId,
     );
@@ -47,17 +47,17 @@ describe('SignService: Transfers money to the service provider and sends fees to
       await program.methods
         .signService()
         .accounts({
-          signer: consumer.publicKey,
+          signer: customer.publicKey,
           service: serviceAccountPubKey,
           serviceProvider: TEST_SERVICE_DEPLOYERS[0].publicKey,
           feeAccount: TEST_FEE_ACCOUNT.publicKey,
         })
-        .signers([consumer])
+        .signers([customer])
         .instruction(),
     );
 
     // Set the fee payer for the transaction
-    transaction.feePayer = consumer.publicKey;
+    transaction.feePayer = customer.publicKey;
 
     // Get the balance of the service provider account before the transaction
     const balancebeforeServiceProviderAccount = await connection.getBalance(
@@ -74,7 +74,7 @@ describe('SignService: Transfers money to the service provider and sends fees to
       const txSignature = await anchor.web3.sendAndConfirmTransaction(
         connection,
         transaction,
-        [consumer],
+        [customer],
       );
     } catch (err) {
       // Handle transaction errors

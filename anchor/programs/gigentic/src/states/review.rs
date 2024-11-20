@@ -6,9 +6,9 @@ use anchor_lang::prelude::*;
 pub struct Review {
     #[max_len(10)]
     pub review_id: String,
-    pub provider_to_consumer_rating: u8,
-    pub consumer_to_provider_rating: u8,
-    pub consumer: Pubkey,
+    pub provider_to_customer_rating: u8,
+    pub customer_to_provider_rating: u8,
+    pub customer: Pubkey,
     pub service_provider: Pubkey,
     #[max_len(MAX_REVIEW_LENGTH)]
     pub provider_to_customer_review: String,

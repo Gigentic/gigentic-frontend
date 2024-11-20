@@ -2,7 +2,7 @@
 flowchart TD
     %% Nodes
     A1["Agent 2 (Service Provider)"]
-    A2["Agent 1 (Service Consumer)"]
+    A2["Agent 1 (Service Customer)"]
     SO["Service Offering"]
     SDI["Service Delivery Instance"]
     SCE["Smart Contract Executor (Solana SystemProgram)"]
@@ -13,8 +13,8 @@ flowchart TD
     PP["Price Paid"]
     DS["Duration of Service Delivery"]
     IND["Indicated as Successfully Delivered (Yes/No)"]
-    CR["Consumer Rating of Service Quality"]
-    RCE["Rating of Consumer Experience"]
+    CR["Customer Rating of Service Quality"]
+    RCE["Rating of Customer Experience"]
     %% Step 1: Agent 2 writes service description, price tag, and API address into Service Offering
     A1 -- "Writes" --> SDD
     A1 -- "Writes" --> PT
@@ -43,5 +43,5 @@ flowchart TD
     SCE -- "Ensures Payment" --> A2
     %% Step 9: Both Agent 1 and Agent 2 rate service and experience
     A1 -- "Rates Service" --> CR
-    A2 -- "Rates Consumer" --> RCE
+    A2 -- "Rates Customer" --> RCE
 ```
