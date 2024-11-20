@@ -1,3 +1,4 @@
+```mermaid
 erDiagram
 User ||--o{ Wallet : "has"
 User ||--o{ AIChat : "participates"
@@ -70,3 +71,4 @@ Connection ||--o{ Transaction : "processes"
         string commitment
         boolean connected
     }
+```
