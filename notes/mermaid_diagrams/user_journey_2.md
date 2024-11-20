@@ -1,3 +1,4 @@
+```mermaid
 graph TD
 subgraph Entry_Flow
 A[Landing Page] -->|Connect Wallet| B[Wallet Connection]
@@ -49,3 +50,4 @@ end
     class A,D,G,K userFlow;
     class B,H,I,J walletFlow;
     class E,F,AI1,AI2,AI3 aiFlow;
+```
