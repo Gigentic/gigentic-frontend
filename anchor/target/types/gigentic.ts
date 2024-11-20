@@ -14,8 +14,8 @@ export type Gigentic = {
   };
   instructions: [
     {
-      name: 'consumerToProviderRating';
-      discriminator: [197, 46, 152, 225, 183, 186, 156, 186];
+      name: 'customerToProviderRating';
+      discriminator: [188, 220, 123, 11, 148, 57, 198, 128];
       accounts: [
         {
           name: 'signer';
@@ -144,7 +144,7 @@ export type Gigentic = {
       discriminator: [181, 29, 236, 80, 246, 226, 34, 174];
       accounts: [
         {
-          name: 'consumer';
+          name: 'customer';
           writable: true;
           signer: true;
         },
@@ -176,7 +176,7 @@ export type Gigentic = {
               },
               {
                 kind: 'account';
-                path: 'consumer';
+                path: 'customer';
               },
             ];
           };
@@ -214,8 +214,8 @@ export type Gigentic = {
       ];
     },
     {
-      name: 'providerToConsumerRating';
-      discriminator: [239, 50, 253, 210, 227, 54, 245, 169];
+      name: 'providerToCustomerRating';
+      discriminator: [107, 198, 87, 138, 229, 212, 60, 70];
       accounts: [
         {
           name: 'signer';
@@ -380,7 +380,7 @@ export type Gigentic = {
         kind: 'struct';
         fields: [
           {
-            name: 'consumer';
+            name: 'customer';
             type: 'pubkey';
           },
           {
@@ -412,15 +412,15 @@ export type Gigentic = {
             type: 'string';
           },
           {
-            name: 'providerToConsumerRating';
+            name: 'providerToCustomerRating';
             type: 'u8';
           },
           {
-            name: 'consumerToProviderRating';
+            name: 'customerToProviderRating';
             type: 'u8';
           },
           {
-            name: 'consumer';
+            name: 'customer';
             type: 'pubkey';
           },
           {
