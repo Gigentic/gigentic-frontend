@@ -7,12 +7,11 @@ import {
   SystemProgram,
   Transaction,
   sendAndConfirmTransaction,
-  Keypair,
 } from '@solana/web3.js';
 
 import { Gigentic } from '../target/types/gigentic';
 import { PROVIDER } from '../tests/constants';
-import { loadKeypairBs58FromEnv, airdrop } from '../tests/utils';
+import { loadKeypairBs58FromEnv } from '../tests/utils';
 
 dotenv.config();
 
@@ -40,8 +39,6 @@ console.log('serviceRegistry', serviceRegistryKeypair.publicKey.toString());
 
 async function initServiceRegistry() {
   try {
-    // console.log('Initializing Service Registry...');
-
     const feeAccount = serviceRegistryDeployer.publicKey;
     console.log('Fee Account Public Key:', feeAccount.toString());
 
