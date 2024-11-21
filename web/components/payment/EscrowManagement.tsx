@@ -51,7 +51,6 @@ export default function EscrowManagement() {
   const serviceAccountIndex = 0;
 
   useEffect(() => {
-    console.log('🔍 Attempting to read from cache...');
     if (freelancer) {
       console.log('✅ Found cached freelancer data:', freelancer);
       // this should be aligned with the service account index
@@ -72,17 +71,10 @@ export default function EscrowManagement() {
     }
 
     try {
-      // Retrieve the service registry public key from environment variables
-      const serviceRegistryPubKeyString =
-        process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY;
-
-      if (!serviceRegistryPubKeyString) {
-        throw new Error(
-          'NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY is not defined in environment variables',
-        );
-      }
-
-      const serviceRegistryPubKey = new PublicKey(serviceRegistryPubKeyString);
+      // TODO: get this from environment variables
+      const serviceRegistryPubKey = new PublicKey(
+        process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
+      );
 
       const serviceRegistry = await program.account.serviceRegistry.fetch(
         serviceRegistryPubKey,
