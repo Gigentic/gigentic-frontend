@@ -4,7 +4,7 @@ import { cn } from '@gigentic-frontend/ui-kit/util';
 
 export function UserMessage({ children }: { children: React.ReactNode }) {
   return (
-    <div className="group relative flex items-start md:-ml-12">
+    <div className="group relative flex items-start">
       <div
         className="flex h-8 w-8 shrink-0 select-none items-center justify-center 
             rounded-md border shadow-sm bg-background"
@@ -26,7 +26,7 @@ export function BotMessage({
   className?: string;
 }) {
   return (
-    <div className="group relative flex items-start md:-ml-12">
+    <div className="group relative flex items-start">
       <div
         className="flex h-8 w-8 shrink-0 select-none items-center justify-center 
             rounded-md border shadow-sm bg-background"
@@ -48,7 +48,7 @@ export function BotCard({
   showAvatar?: boolean;
 }) {
   return (
-    <div className="group relative flex items-start md:-ml-12">
+    <div className="group relative flex items-start">
       <div
         className="flex h-8 w-8 select-none items-center justify-center
             rounded-md border shadow-sm bg-primary text-primary-background"
