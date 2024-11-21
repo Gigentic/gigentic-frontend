@@ -51,7 +51,6 @@ export default function EscrowManagement() {
   const serviceAccountIndex = 0;
 
   useEffect(() => {
-    console.log('🔍 Attempting to read from cache...');
     if (freelancer) {
       console.log('✅ Found cached freelancer data:', freelancer);
       // this should be aligned with the service account index

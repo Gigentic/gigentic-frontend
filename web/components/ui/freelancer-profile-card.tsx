@@ -74,8 +74,6 @@ export default function FreelancerProfileCard(
       paymentWalletAddress: props.paymentWalletAddress,
     };
 
-    console.log('💾 Preparing to cache freelancer:', freelancerData);
-
     // Cache the freelancer data and navigate on success
     selectFreelancer(freelancerData, {
       onSuccess: () => {

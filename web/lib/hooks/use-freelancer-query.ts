@@ -10,11 +10,6 @@ export function useSelectedFreelancer() {
     queryKey: FREELANCER_KEYS.selected,
     staleTime: 1000 * 60 * 5, // 5 minutes
     select: (data) => {
-      console.log(
-        '📖 Attempting to read freelancer from cache with key:',
-        FREELANCER_KEYS.selected,
-      );
-      console.log('📖 Found data:', data);
       return data;
     },
   });
@@ -25,12 +20,9 @@ export function useSelectFreelancer() {
 
   return useMutation({
     mutationFn: (freelancer: Freelancer) => {
-      console.log('📝 Starting mutation with freelancer:', freelancer);
       return Promise.resolve(freelancer);
     },
     onSuccess: (freelancer) => {
-      console.log('✨ Setting freelancer in cache:', freelancer);
-      console.log('🔑 Using query key:', FREELANCER_KEYS.selected);
       queryClient.setQueryData(FREELANCER_KEYS.selected, freelancer);
     },
   });
