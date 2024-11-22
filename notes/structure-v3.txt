@@ -1,0 +1,102 @@
+web
+├── app
+│   ├── dashboard
+│   ├── (solana)
+│   │   ├── account
+│   │   │   └── [address]
+│   │   └── clusters
+
+│   ├── api
+│   │   └── chat
+│   │       └── route.ts
+
+│   ├── service-discovery
+│   │   └── page.tsx
+│   ├── service-register
+│   │   └── page.tsx
+│   ├── payment
+│   │   └── page.tsx
+│   └── review
+│       └── page.tsx
+
+│   ├── actions.tsx                 // try to refactor this amd move it to a better place, maybe it has to stay here
+
+│   ├── global.css
+│   ├── layout.tsx
+│   ├── page.module.css
+│   ├── page.tsx
+
+├── components
+│   ├── account
+│   │   ├── account-data-access.tsx
+│   │   ├── account-detail-feature.tsx
+│   │   ├── account-list-feature.tsx
+│   │   └── account-ui.tsx
+│   ├── cluster
+│   │   ├── cluster-data-access.tsx
+│   │   ├── cluster-feature.tsx
+│   │   └── cluster-ui.tsx
+│   ├── dashboard
+│   │   └── dashboard-feature.tsx
+│   └── ui
+│       └── ui-layout.tsx
+
+│   ├── providers
+│   │   └── solana-provider.tsx
+│   │   └── theme-provider.tsx
+│   │   └── react-query-provider.tsx
+
+
+// Restructure the data access parts to helper folders or other places, the ui parts we "throw out"...:
+│   ├── gigentic-frontend
+│   │   ├── gigentic-frontend-data-access.tsx
+│   │   ├── gigentic-frontend-feature.tsx
+│   │   └── gigentic-frontend-ui.tsx
+
+
+// These are the feature components:
+│   ├── service
+│   │   └── register
+│   │       └── add_service.tsx
+│   │   └── discovery // this folder could be restructured/reoganized better
+    │   │   ├── llm
+    │   │   │   └── message.tsx
+    │   │   ├── search-agent
+    │   │   │   ├── chat-agent.tsx
+    │   │   │   ├── chat-list.tsx
+    │   │   │   └── chat-scroll-anchor.tsx
+        │   │   ├── freelancer-profile-3-cards.tsx
+        │   │   ├── freelancer-profile-card.tsx
+
+│   ├── payments
+│   │   ├── EscrowCard.tsx
+│   │   ├── EscrowManagement.tsx
+│   │   ├── MercuryoButton.tsx
+
+│   └── review
+│   │   └── ReviewPopup.tsx
+    ... new stuff here
+
+
+// And then we have extra helper folders
+├── lib
+    ├── hooks
+    │   ├── blockchain  // we can have a folder for each type of hook or maybe not needed, as you wish
+    │   ├── services
+    │   ├── ui
+    │   └── use-freelancer-query.ts
+    └── types
+        └── freelancer.ts
+│   ├── use-at-bottom.tsx  // maybe this could go to the hooks or some ui folder?
+│   └── use-enter-submit.tsx  // maybe this could go to the hooks or some ui folder?
+
+
+
+
+
+
+
+
+
+
+
