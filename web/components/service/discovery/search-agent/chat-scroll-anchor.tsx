@@ -1,6 +1,6 @@
 'use client';
 
-import { useAtBottom } from '@/lib/use-at-bottom';
+import { useAtBottom } from '@/hooks/ui/use-at-bottom';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
 

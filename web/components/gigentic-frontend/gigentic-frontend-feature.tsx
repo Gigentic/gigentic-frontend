@@ -1,9 +1,9 @@
 'use client';
 
 import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletButton } from '../solana/solana-provider';
-import { AppHero, ellipsify } from '../ui/ui-layout';
-import { ExplorerLink } from '../cluster/cluster-ui';
+import { WalletButton } from '@/providers/solana-provider';
+import { AppHero, ellipsify } from '@/ui/ui-layout';
+import { ExplorerLink } from '@/cluster/cluster-ui';
 import { useGigenticProgram } from './gigentic-frontend-data-access';
 import { GigenticFrontendList } from './gigentic-frontend-ui';
 

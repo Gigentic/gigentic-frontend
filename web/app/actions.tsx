@@ -14,9 +14,9 @@ import { Connection } from '@solana/web3.js';
 
 import { getGigenticProgram } from '@gigentic-frontend/anchor';
 
-import { BotCard, BotMessage } from '../components/llm/message';
-import FreelancerProfileCard from '../components/ui/freelancer-profile-card';
-import FreelancerProfile3Cards from '../components/ui/freelancer-profile-3-cards';
+import { BotCard, BotMessage } from '@/service/discovery/llm/message';
+import FreelancerProfileCard from '@/service/discovery/freelancer-profile-card';
+import FreelancerProfile3Cards from '@/service/discovery/freelancer-profile-3-cards';
 
 let service_registry = '';
 let content = ``;
