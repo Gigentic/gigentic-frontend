@@ -74,14 +74,14 @@ pub mod gigentic {
         Ok(())
     }
 
-    pub fn pay_service_spl(ctx: Context<PayServiceSpl>, review_id: String) -> Result<()> {
-        ctx.accounts.handler(review_id)?;
-        Ok(())
-    }
+    // pub fn pay_service_spl(ctx: Context<PayServiceSpl>, review_id: String) -> Result<()> {
+    //     ctx.accounts.handler(review_id)?;
+    //     Ok(())
+    // }
 
-    pub fn sign_service_spl(ctx: Context<SignServiceSpl>) -> Result<()> {
-        let bump = &ctx.bumps.escrow_token_account;
-        ctx.accounts.handler(bump)?;
-        Ok(())
-    }
+    // pub fn sign_service_spl(ctx: Context<SignServiceSpl>) -> Result<()> {
+    //     let bump = &ctx.bumps.escrow_token_account;
+    //     ctx.accounts.handler(bump)?;
+    //     Ok(())
+    // }
 }
