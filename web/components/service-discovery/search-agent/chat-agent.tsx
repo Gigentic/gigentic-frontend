@@ -8,7 +8,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { ArrowDownIcon, PlusIcon } from 'lucide-react';
 import { useUIState, useActions } from 'ai/rsc';
 import type { AI } from '@/app/actions';
-import { UserMessage } from '@/service/discovery/llm/message';
+import { UserMessage } from '@/components/service-discovery/llm/message';
 import { Button } from '@gigentic-frontend/ui-kit/ui';
 import { z } from 'zod';
 import { useCluster } from '@/cluster/cluster-data-access';
