@@ -4,17 +4,14 @@ import {
   getGigenticProgram,
   getGigenticProgramId,
 } from '@gigentic-frontend/anchor';
-
-import { useMemo } from 'react';
-
 import { Connection, Cluster, PublicKey } from '@solana/web3.js';
 import { useConnection } from '@solana/wallet-adapter-react';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useAnchorProvider } from '../solana/solana-provider';
-import { useCluster } from '../cluster/cluster-data-access';
+import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useAnchorProvider } from '@/providers/solana-provider';
+import { useCluster } from '@/cluster/cluster-data-access';
 
 export async function getBlockhash(connection: Connection, pubkey: PublicKey) {
-  // Fetch the latest blockhash and last valid block height required for transaction confirmation
   const latestBlockhash = await connection.getLatestBlockhash();
   console.log('latestBlockhash', latestBlockhash);
 }

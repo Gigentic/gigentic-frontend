@@ -14,7 +14,7 @@ import { Star, MessageSquare, Zap, Lock } from 'lucide-react';
 import {
   useSelectFreelancer,
   useSelectedFreelancer,
-} from '@/lib/hooks/use-freelancer-query';
+} from '@/hooks/services/use-freelancer-query';
 import { useRouter } from 'next/navigation';
 
 interface FreelancerProfileProps {

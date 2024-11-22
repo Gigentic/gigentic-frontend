@@ -1,6 +1,6 @@
 'use client';
 
-import { WalletButton } from '../solana/solana-provider';
+import { WalletButton } from '@/providers/solana-provider';
 import { ReactNode, Suspense, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation';
 import { Mail, Twitter } from 'lucide-react';
 
 // import { AccountChecker } from '../account/account-ui';
-import { ClusterUiSelect, ExplorerLink } from '../cluster/cluster-ui';
+import { ClusterUiSelect, ExplorerLink } from '@/cluster/cluster-ui';
 import toast, { Toaster } from 'react-hot-toast';
 
 // import { ThemeProvider } from '@/components/theme-provider';

@@ -1,14 +1,10 @@
 'use client';
 
-import { Keypair, PublicKey } from '@solana/web3.js';
-import { useMemo } from 'react';
+import { PublicKey } from '@solana/web3.js';
 import { ellipsify } from '../ui/ui-layout';
 import { ExplorerLink } from '../cluster/cluster-ui';
-import {
-  useGigenticProgram,
-  // useGigenticProgramAccount,
-} from './gigentic-frontend-data-access';
-import { useQuery } from '@tanstack/react-query';
+import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
+import { useServiceAccount } from '@/hooks/blockchain/use-service-account';
 
 export function GigenticFrontendList() {
   const { accounts, getProgramAccount } = useGigenticProgram();
@@ -62,11 +58,7 @@ export function GigenticFrontendList() {
 }
 
 function ServiceAccountCard({ account }: { account: PublicKey }) {
-  const { program } = useGigenticProgram();
-  const { data: serviceAccount, isLoading } = useQuery({
-    queryKey: ['service', account.toString()],
-    queryFn: () => program.account.service.fetch(account),
-  });
+  const { data: serviceAccount, isLoading } = useServiceAccount(account);
 
   if (isLoading) {
     return <span className="loading loading-spinner loading-lg"></span>;

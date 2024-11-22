@@ -2,16 +2,16 @@
 
 import { ChatList } from './chat-list';
 import ChatScrollAnchor from './chat-scroll-anchor';
-import { useEnterSubmit } from '@/lib/use-enter-submit';
+import { useEnterSubmit } from '@/hooks/ui/use-enter-submit';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import TextareaAutosize from 'react-textarea-autosize';
 import { ArrowDownIcon, PlusIcon } from 'lucide-react';
 import { useUIState, useActions } from 'ai/rsc';
-import type { AI } from '../../app/actions';
-import { UserMessage } from '../llm/message';
+import type { AI } from '@/app/actions';
+import { UserMessage } from '@/components/service-discovery/llm/message';
 import { Button } from '@gigentic-frontend/ui-kit/ui';
 import { z } from 'zod';
-import { useCluster } from '../cluster/cluster-data-access';
+import { useCluster } from '@/cluster/cluster-data-access';
 
 const chatSchema = z.object({
   message: z.string().min(1, 'Message is required'),

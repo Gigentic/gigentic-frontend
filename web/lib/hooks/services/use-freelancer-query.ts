@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { Freelancer } from '../types/freelancer';
+import type { Freelancer } from '@/types/freelancer';
 
 export const FREELANCER_KEYS = {
   selected: ['selectedFreelancer'] as const,
