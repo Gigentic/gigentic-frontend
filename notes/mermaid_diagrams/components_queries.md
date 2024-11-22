@@ -1,3 +1,4 @@
+```mermaid
 graph TD
 subgraph "Initial Access Layer"
 WC[WalletConnection]
@@ -90,3 +91,4 @@ end
     class EM,PM,SC transaction;
     class RV,RT,RP review;
     class NQ1,NQ2,NQ3,SQ1,SQ2,SQ3,TQ1,TQ2,TQ3,RQ1,RQ2 queries;
+```
