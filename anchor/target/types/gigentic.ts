@@ -656,6 +656,56 @@ export type Gigentic = {
           }
         },
         {
+          "name": "buyerTokenAccount",
+          "writable": true
+        },
+        {
+          "name": "mint",
+          "docs": [
+            "The mint account."
+          ]
+        },
+        {
+          "name": "escrowTokenAccount",
+          "docs": [
+            "The token account for the escrow, initialized with the mint and authority."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  45,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  45,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "escrow"
+              }
+            ]
+          }
+        },
+        {
           "name": "review",
           "writable": true,
           "pda": {

@@ -592,6 +592,190 @@
       ]
     },
     {
+      "name": "pay_service_spl",
+      "discriminator": [
+        170,
+        1,
+        4,
+        226,
+        23,
+        248,
+        125,
+        227
+      ],
+      "accounts": [
+        {
+          "name": "buyer",
+          "docs": [
+            "The buyer who will sign the transaction."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "service",
+          "docs": [
+            "The service account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "service_registry",
+          "docs": [
+            "The service registry account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "docs": [
+            "The escrow account, initialized with a specific space and seeds."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "service"
+              },
+              {
+                "kind": "account",
+                "path": "service.provider",
+                "account": "Service"
+              },
+              {
+                "kind": "account",
+                "path": "buyer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "buyer_token_account",
+          "writable": true
+        },
+        {
+          "name": "mint",
+          "docs": [
+            "The mint account."
+          ]
+        },
+        {
+          "name": "escrow_token_account",
+          "docs": [
+            "The token account for the escrow, initialized with the mint and authority."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  45,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  45,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "escrow"
+              }
+            ]
+          }
+        },
+        {
+          "name": "review",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  118,
+                  105,
+                  101,
+                  119,
+                  95,
+                  115,
+                  101,
+                  114,
+                  118,
+                  105,
+                  99,
+                  101
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "review_no"
+              },
+              {
+                "kind": "account",
+                "path": "service"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "The token program."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "rent",
+          "docs": [
+            "The rent sysvar."
+          ],
+          "address": "SysvarRent111111111111111111111111111111111"
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "The system program."
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "review_no",
+          "type": "string"
+        }
+      ]
+    },
+    {
       "name": "sign_service",
       "discriminator": [
         170,
