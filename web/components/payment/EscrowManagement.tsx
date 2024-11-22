@@ -26,7 +26,7 @@ import {
 } from '@solana/web3.js';
 import { useTransactionToast } from '../ui/ui-layout';
 
-import { useGigenticProgram } from '../gigentic-frontend/gigentic-frontend-data-access';
+import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
 import EscrowCard from './EscrowCard';
 import { useSelectedFreelancer } from '@/hooks/services/use-freelancer-query';
 
