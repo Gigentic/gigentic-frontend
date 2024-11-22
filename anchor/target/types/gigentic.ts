@@ -18,7 +18,7 @@ export type Gigentic = {
       discriminator: [188, 220, 123, 11, 148, 57, 198, 128];
       accounts: [
         {
-          name: 'signer';
+          name: 'customer';
           writable: true;
           signer: true;
         },
@@ -398,7 +398,7 @@ export type Gigentic = {
       discriminator: [107, 198, 87, 138, 229, 212, 60, 70];
       accounts: [
         {
-          name: 'signer';
+          name: 'provider';
           writable: true;
           signer: true;
         },

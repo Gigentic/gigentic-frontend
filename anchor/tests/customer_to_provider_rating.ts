@@ -47,7 +47,7 @@ describe('Customer to provider review', () => {
       await program.methods
         .customerToProviderRating(rating, review)
         .accounts({
-          signer: customer.publicKey,
+          customer: customer.publicKey,
           review: serviceAccount.reviews[0],
         })
         .signers([customer])
@@ -135,7 +135,7 @@ describe('Customer to provider review', () => {
       await program.methods
         .customerToProviderRating(rating, review)
         .accounts({
-          signer: customer.publicKey,
+          customer: customer.publicKey,
           review: serviceAccount.reviews[1], // use the second review account
         })
         .signers([customer])
