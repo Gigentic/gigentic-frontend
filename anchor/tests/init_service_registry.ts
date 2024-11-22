@@ -32,7 +32,10 @@ let buyerTokenAccount: PublicKey;
 describe('Initialize Service Registry and checks for correct fee account and correct fee percentage', () => {
   before(async function () {
     // Fund necessary accounts
-    await fund_account(connection, TEST_SERVICE_REGISTRY_DEPLOYER.publicKey);
+    await fund_account(
+      connection,
+      TEST_SERVICE_REGISTRY_DEPLOYER_KEYPAIR.publicKey,
+    );
     await fund_account(connection, TEST_SERVICE_DEPLOYERS[0].publicKey);
     await fund_account(connection, TEST_SERVICE_USERS[0].publicKey);
     await fund_account(connection, TEST_FEE_ACCOUNT.publicKey);
@@ -40,8 +43,8 @@ describe('Initialize Service Registry and checks for correct fee account and cor
     try {
       tokenMint = await createMint(
         connection,
-        TEST_SERVICE_REGISTRY_DEPLOYER, // Payer
-        TEST_SERVICE_REGISTRY_DEPLOYER.publicKey, // Mint authority
+        TEST_SERVICE_REGISTRY_DEPLOYER_KEYPAIR, // Payer
+        TEST_SERVICE_REGISTRY_DEPLOYER_KEYPAIR.publicKey, // Mint authority
         null, // Freeze authority
         0, // Decimals
       );
@@ -71,10 +74,10 @@ describe('Initialize Service Registry and checks for correct fee account and cor
       // Mint tokens to the buyer's token account
       await mintTo(
         connection,
-        TEST_SERVICE_REGISTRY_DEPLOYER, // Payer
+        TEST_SERVICE_REGISTRY_DEPLOYER_KEYPAIR, // Payer
         tokenMint, // Mint
         buyerTokenAccount, // Destination
-        TEST_SERVICE_REGISTRY_DEPLOYER, // Authority
+        TEST_SERVICE_REGISTRY_DEPLOYER_KEYPAIR, // Authority
         1000000000, // Amount
       );
     } catch (error) {
