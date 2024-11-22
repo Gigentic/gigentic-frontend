@@ -9,7 +9,16 @@
   "instructions": [
     {
       "name": "customer_to_provider_rating",
-      "discriminator": [188, 220, 123, 11, 148, 57, 198, 128],
+      "discriminator": [
+        188,
+        220,
+        123,
+        11,
+        148,
+        57,
+        198,
+        128
+      ],
       "accounts": [
         {
           "name": "signer",
@@ -38,7 +47,16 @@
     },
     {
       "name": "initialize_service",
-      "discriminator": [201, 217, 126, 168, 40, 110, 122, 89],
+      "discriminator": [
+        201,
+        217,
+        126,
+        168,
+        40,
+        110,
+        122,
+        89
+      ],
       "accounts": [
         {
           "name": "provider",
@@ -56,7 +74,15 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [115, 101, 114, 118, 105, 99, 101]
+                "value": [
+                  115,
+                  101,
+                  114,
+                  118,
+                  105,
+                  99,
+                  101
+                ]
               },
               {
                 "kind": "arg",
@@ -80,8 +106,23 @@
               {
                 "kind": "const",
                 "value": [
-                  115, 101, 114, 118, 105, 99, 101, 95, 97, 117, 116, 104, 111,
-                  114, 105, 116, 121
+                  115,
+                  101,
+                  114,
+                  118,
+                  105,
+                  99,
+                  101,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
                 ]
               },
               {
@@ -119,7 +160,16 @@
     },
     {
       "name": "initialize_service_registry",
-      "discriminator": [84, 8, 210, 235, 241, 25, 15, 155],
+      "discriminator": [
+        84,
+        8,
+        210,
+        235,
+        241,
+        25,
+        15,
+        155
+      ],
       "accounts": [
         {
           "name": "initializer",
@@ -161,7 +211,16 @@
     },
     {
       "name": "pay_service",
-      "discriminator": [181, 29, 236, 80, 246, 226, 34, 174],
+      "discriminator": [
+        181,
+        29,
+        236,
+        80,
+        246,
+        226,
+        34,
+        174
+      ],
       "accounts": [
         {
           "name": "customer",
@@ -183,7 +242,14 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [101, 115, 99, 114, 111, 119]
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
               },
               {
                 "kind": "account",
@@ -208,7 +274,14 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [114, 101, 118, 105, 101, 119]
+                "value": [
+                  114,
+                  101,
+                  118,
+                  105,
+                  101,
+                  119
+                ]
               },
               {
                 "kind": "arg",
@@ -234,8 +307,193 @@
       ]
     },
     {
+      "name": "pay_service_spl",
+      "discriminator": [
+        170,
+        1,
+        4,
+        226,
+        23,
+        248,
+        125,
+        227
+      ],
+      "accounts": [
+        {
+          "name": "customer",
+          "docs": [
+            "The customer who will sign the transaction."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "service",
+          "docs": [
+            "The service account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "service_registry",
+          "docs": [
+            "The service registry account."
+          ],
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "docs": [
+            "The escrow account, initialized with a specific space and seeds."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "service"
+              },
+              {
+                "kind": "account",
+                "path": "service.provider",
+                "account": "Service"
+              },
+              {
+                "kind": "account",
+                "path": "customer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "customer_token_account",
+          "writable": true
+        },
+        {
+          "name": "mint",
+          "docs": [
+            "The mint account."
+          ]
+        },
+        {
+          "name": "escrow_token_account",
+          "docs": [
+            "The token account for the escrow, initialized with the mint and authority."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  45,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  45,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "escrow"
+              }
+            ]
+          }
+        },
+        {
+          "name": "review",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  118,
+                  105,
+                  101,
+                  119
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "review_id"
+              },
+              {
+                "kind": "account",
+                "path": "service"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "The token program."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "rent",
+          "docs": [
+            "The rent sysvar."
+          ],
+          "address": "SysvarRent111111111111111111111111111111111"
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "The system program."
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "review_id",
+          "type": "string"
+        }
+      ]
+    },
+    {
       "name": "provider_to_customer_rating",
-      "discriminator": [107, 198, 87, 138, 229, 212, 60, 70],
+      "discriminator": [
+        107,
+        198,
+        87,
+        138,
+        229,
+        212,
+        60,
+        70
+      ],
       "accounts": [
         {
           "name": "signer",
@@ -264,7 +522,16 @@
     },
     {
       "name": "sign_service",
-      "discriminator": [170, 73, 190, 114, 213, 177, 176, 218],
+      "discriminator": [
+        170,
+        73,
+        190,
+        114,
+        213,
+        177,
+        176,
+        218
+      ],
       "accounts": [
         {
           "name": "signer",
@@ -282,7 +549,14 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [101, 115, 99, 114, 111, 119]
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
               },
               {
                 "kind": "account",
@@ -314,28 +588,189 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "sign_service_spl",
+      "discriminator": [
+        31,
+        15,
+        93,
+        60,
+        8,
+        175,
+        224,
+        119
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "service"
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "service"
+              },
+              {
+                "kind": "account",
+                "path": "service.provider",
+                "account": "Service"
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "service_provider",
+          "writable": true
+        },
+        {
+          "name": "fee_token_account",
+          "writable": true
+        },
+        {
+          "name": "service_provider_token_account",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "escrow_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  45,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  45,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "escrow"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
     {
       "name": "Escrow",
-      "discriminator": [31, 213, 123, 187, 186, 22, 218, 155]
+      "discriminator": [
+        31,
+        213,
+        123,
+        187,
+        186,
+        22,
+        218,
+        155
+      ]
     },
     {
       "name": "Review",
-      "discriminator": [124, 63, 203, 215, 226, 30, 222, 15]
+      "discriminator": [
+        124,
+        63,
+        203,
+        215,
+        226,
+        30,
+        222,
+        15
+      ]
     },
     {
       "name": "Service",
-      "discriminator": [144, 62, 76, 129, 167, 36, 151, 250]
+      "discriminator": [
+        144,
+        62,
+        76,
+        129,
+        167,
+        36,
+        151,
+        250
+      ]
     },
     {
       "name": "ServiceAuthority",
-      "discriminator": [199, 242, 58, 222, 53, 161, 60, 220]
+      "discriminator": [
+        199,
+        242,
+        58,
+        222,
+        53,
+        161,
+        60,
+        220
+      ]
     },
     {
       "name": "ServiceRegistry",
-      "discriminator": [105, 133, 96, 79, 207, 176, 202, 71]
+      "discriminator": [
+        105,
+        133,
+        96,
+        79,
+        207,
+        176,
+        202,
+        71
+      ]
     }
   ],
   "errors": [
