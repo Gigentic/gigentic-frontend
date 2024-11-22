@@ -7,21 +7,14 @@ import {
   TEST_SERVICE_DEPLOYERS,
   TEST_SERVICE_USERS,
 } from './constants';
-import { buyerTokenAccount, tokenMint } from './init_service_registry';
+import { customerTokenAccount, mint } from './init';
 import { REVIEW_ID_2 } from './constants';
 import { SendTransactionError } from '@solana/web3.js';
-import { getAccount, createAccount, mintTo } from '@solana/spl-token';
-import { fund_account } from './utils';
+import { getAccount } from '@solana/spl-token';
 
-describe('Gigentic Service Buying', () => {
-  before(async function () {
-    // Ensure the buyer's token account is created and funded
-    const buyer = TEST_SERVICE_USERS[0];
-    await fund_account(connection, buyer.publicKey);
-  });
-
+describe('Gigentic Service Buying SPL Tokens', () => {
   it('Checks if the service is paid correctly and escrow has the values supposed', async () => {
-    const buyer = TEST_SERVICE_USERS[0];
+    const customer = TEST_SERVICE_USERS[1];
 
     // Fetch the service registry account
     const serviceRegistry = await program.account.serviceRegistry.fetch(
@@ -40,23 +33,23 @@ describe('Gigentic Service Buying', () => {
       await program.methods
         .payServiceSpl(REVIEW_ID_2)
         .accounts({
-          buyer: buyer.publicKey,
+          customer: customer.publicKey,
           service: serviceAccountPubKey,
           serviceRegistry: TEST_SERVICE_REGISTRY_KEYPAIR.publicKey,
-          buyerTokenAccount: buyerTokenAccount,
-          mint: tokenMint,
+          customerTokenAccount: customerTokenAccount,
+          mint: mint,
         })
-        .signers([buyer])
+        .signers([customer])
         .instruction(),
     );
-    transaction.feePayer = buyer.publicKey;
+    transaction.feePayer = customer.publicKey;
 
     // Send and confirm the transaction
     try {
       const txSignature = await anchor.web3.sendAndConfirmTransaction(
         connection,
         transaction,
-        [buyer],
+        [customer],
       );
     } catch (err) {
       if (err instanceof SendTransactionError) {
@@ -72,7 +65,7 @@ describe('Gigentic Service Buying', () => {
         Buffer.from('escrow'),
         serviceAccountPubKey.toBuffer(),
         serviceAccount.provider.toBuffer(),
-        buyer.publicKey.toBuffer(),
+        customer.publicKey.toBuffer(),
       ],
       program.programId,
     );
@@ -100,11 +93,11 @@ describe('Gigentic Service Buying', () => {
       escrowAccount.expectedAmount.toString(),
       'Escrow account expected amount should match the service price',
     ).to.equal(expectedAmount.toString());
-    const expectedBuyer = buyer.publicKey.toBase58();
+    const expectedcustomer = customer.publicKey.toBase58();
     expect(
-      escrowAccount.buyer.toBase58(),
-      'Escrow account buyer should match the buyer public key',
-    ).to.equal(expectedBuyer);
+      escrowAccount.customer.toBase58(),
+      'Escrow account customer should match the customer public key',
+    ).to.equal(expectedcustomer);
     const expectedServiceProvider =
       TEST_SERVICE_DEPLOYERS[0].publicKey.toBase58();
 
@@ -126,34 +119,31 @@ describe('Gigentic Service Buying', () => {
       "Escrow account fee percentage should match the service registry's fee percentage",
     ).to.equal(expectedFeePercentage.toString());
 
-    // const review = await program.account.review.fetch(
-    //   serviceAccount.reviews[0],
-    // );
     const service = await program.account.service.fetch(serviceAccountPubKey);
-    const review = await program.account.review.fetch(service.reviews[0]);
+    const review = await program.account.review.fetch(service.reviews[1]);
 
     expect(review.reviewId, 'Review number should match').to.equal(REVIEW_ID_2);
 
     expect(
-      review.agentToConsumerRating,
+      review.providerToCustomerRating,
       'Agent to consumer rating should be 0',
     ).to.equal(0);
 
     expect(
-      review.consumerToAgentRating,
+      review.customerToProviderRating,
       'Consumer to agent rating should be 0',
     ).to.equal(0);
 
     expect(
-      review.agentToCustomerReview,
+      review.providerToCustomerReview,
       'Agent to customer review should be empty',
     ).to.equal('');
 
     expect(
-      review.customerToAgentReview,
+      review.providerToCustomerReview,
       'Customer to agent review should be empty',
     ).to.equal('');
 
-    expect(service.reviews.length, 'Service should have 1 review').to.equal(1);
+    expect(service.reviews.length, 'Service should have 1 review').to.equal(2);
   });
 });

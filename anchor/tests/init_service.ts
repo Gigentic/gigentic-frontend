@@ -5,10 +5,7 @@ import {
   TEST_SERVICE_REGISTRY_KEYPAIR,
 } from './constants';
 import { program } from './init';
-import {
-  tokenMint,
-  serviceProviderTokenAccount,
-} from './init_service_registry';
+import { mint, serviceProviderTokenAccount } from './init';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
 describe('Gigentic Service Deployment', () => {
@@ -31,7 +28,7 @@ describe('Gigentic Service Deployment', () => {
         .accounts({
           provider: deployerPublicKey,
           serviceRegistry: TEST_SERVICE_REGISTRY_KEYPAIR.publicKey,
-          mint: tokenMint,
+          mint: mint,
           serviceProviderTokenAccount: serviceProviderTokenAccount,
           tokenProgram: TOKEN_PROGRAM_ID,
         })
@@ -83,7 +80,7 @@ describe('Gigentic Service Deployment', () => {
         .accounts({
           provider: deployerPublicKey,
           serviceRegistry: TEST_SERVICE_REGISTRY_KEYPAIR.publicKey,
-          mint: tokenMint,
+          mint: mint,
           serviceProviderTokenAccount: serviceProviderTokenAccount,
           tokenProgram: TOKEN_PROGRAM_ID,
         })

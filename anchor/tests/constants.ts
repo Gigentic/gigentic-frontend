@@ -19,7 +19,7 @@ export let TOKEN_MINT: PublicKey;
 
 // KEYPAIRS
 // export const REGISTRY_KEYPAIR = Keypair.generate();
-export const MINT_AUTHORITY: Keypair = Keypair.generate();
+export const MINT_AUTHORITY_KEYPAIR: Keypair = Keypair.generate();
 
 // SERVICE DEPLOYERS
 export const TEST_SERVICE_DEPLOYERS: Keypair[] = [
