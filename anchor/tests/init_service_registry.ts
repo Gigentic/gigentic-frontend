@@ -15,19 +15,9 @@ import {
   TEST_SERVICE_DEPLOYERS,
   TEST_SERVICE_USERS,
 } from './constants';
-import {
-  createAccount,
-  createMint,
-  mintTo,
-  getAccount,
-} from '@solana/spl-token';
+import { getAccount } from '@solana/spl-token';
 import { fund_account } from './utils';
-
-// Define the variables at the top of the file
-let tokenMint: PublicKey;
-let feeTokenAccount: PublicKey;
-let serviceProviderTokenAccount: PublicKey;
-let buyerTokenAccount: PublicKey;
+import { feeTokenAccount, customerTokenAccount } from './init';
 
 describe('Initialize Service Registry and checks for correct fee account and correct fee percentage', () => {
   before(async function () {
@@ -39,51 +29,6 @@ describe('Initialize Service Registry and checks for correct fee account and cor
     await fund_account(connection, TEST_SERVICE_DEPLOYERS[0].publicKey);
     await fund_account(connection, TEST_SERVICE_USERS[0].publicKey);
     await fund_account(connection, TEST_FEE_ACCOUNT.publicKey);
-
-    try {
-      tokenMint = await createMint(
-        connection,
-        TEST_SERVICE_REGISTRY_DEPLOYER_KEYPAIR, // Payer
-        TEST_SERVICE_REGISTRY_DEPLOYER_KEYPAIR.publicKey, // Mint authority
-        null, // Freeze authority
-        0, // Decimals
-      );
-
-      // Create token accounts
-      feeTokenAccount = await createAccount(
-        connection,
-        TEST_FEE_ACCOUNT, // Payer
-        tokenMint, // Mint
-        TEST_FEE_ACCOUNT.publicKey, // Owner
-      );
-
-      serviceProviderTokenAccount = await createAccount(
-        connection,
-        TEST_SERVICE_DEPLOYERS[0], // Payer
-        tokenMint, // Mint
-        TEST_SERVICE_DEPLOYERS[0].publicKey, // Owner
-      );
-
-      buyerTokenAccount = await createAccount(
-        connection,
-        TEST_SERVICE_USERS[0], // Payer
-        tokenMint, // Mint
-        TEST_SERVICE_USERS[0].publicKey, // Owner
-      );
-
-      // Mint tokens to the buyer's token account
-      await mintTo(
-        connection,
-        TEST_SERVICE_REGISTRY_DEPLOYER_KEYPAIR, // Payer
-        tokenMint, // Mint
-        buyerTokenAccount, // Destination
-        TEST_SERVICE_REGISTRY_DEPLOYER_KEYPAIR, // Authority
-        1000000000, // Amount
-      );
-    } catch (error) {
-      console.error('Error during token minting and account creation:', error);
-      throw error; // Re-throw the error after logging it
-    }
 
     // Calculate the minimum balance required for rent exemption for an account of a given size.
     const rentExemptionAmount =
@@ -178,7 +123,7 @@ describe('Initialize Service Registry and checks for correct fee account and cor
     // Fetch the token balance of the buyerTokenAccount
     const buyerTokenAccountInfo = await getAccount(
       connection,
-      buyerTokenAccount,
+      customerTokenAccount,
     );
 
     // Verify that the buyerTokenAccount has the expected token balance
@@ -193,9 +138,3 @@ describe('Initialize Service Registry and checks for correct fee account and cor
 });
 
 // Export the variables
-export {
-  tokenMint,
-  feeTokenAccount,
-  serviceProviderTokenAccount,
-  buyerTokenAccount,
-};

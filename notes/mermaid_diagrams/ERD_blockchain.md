@@ -50,4 +50,3 @@ erDiagram
         pubkey address PK
     }
 ```
-

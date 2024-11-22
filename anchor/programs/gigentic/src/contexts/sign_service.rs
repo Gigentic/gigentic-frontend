@@ -5,15 +5,15 @@ use anchor_lang::prelude::*;
 #[derive(Accounts)]
 pub struct SignService<'info> {
     #[account(mut)]
-    pub signer: Signer<'info>,
+    pub customer: Signer<'info>,
 
     #[account(mut)]
     pub service: Account<'info, Service>,
 
     #[account(
         mut,
-        close = signer, // Transfer remaining lamports to the customer when the account is closed
-        seeds = [b"escrow", service.key().as_ref(), service.provider.key().as_ref(), signer.key().as_ref()],
+        close = customer, // Transfer remaining lamports to the customer when the account is closed
+        seeds = [b"escrow", service.key().as_ref(), service.provider.key().as_ref(), customer.key().as_ref()],
         bump,
     )]
     pub escrow: Account<'info, Escrow>,

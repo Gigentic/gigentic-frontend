@@ -7,9 +7,9 @@ pub struct ReviewProviderToCustomerService<'info> {
     // The account of the user deploying and paying for the initialization.
     // Marked as `mut` because it will be charged for rent.
     #[account(mut)]
-    pub signer: Signer<'info>,
+    pub provider: Signer<'info>,
 
-    #[account(mut, constraint = review.service_provider == signer.key())]
+    #[account(mut, constraint = review.service_provider == provider.key())]
     pub review: Account<'info, Review>,
 
     pub system_program: Program<'info, System>,

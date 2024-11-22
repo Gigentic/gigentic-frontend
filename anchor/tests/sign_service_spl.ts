@@ -7,17 +7,14 @@ import {
   TEST_SERVICE_DEPLOYERS,
   TEST_SERVICE_USERS,
 } from './constants';
-import {
-  feeTokenAccount,
-  serviceProviderTokenAccount,
-} from './init_service_registry';
+import { feeTokenAccount, serviceProviderTokenAccount } from './init';
 
 import { SendTransactionError } from '@solana/web3.js';
 import { getAccount } from '@solana/spl-token';
-import { tokenMint } from './init_service_registry';
+import { mint } from './init';
 describe('SignService: Transfers SPL to the service provider and sends fees to the fee account', () => {
   it('Transfers money to the service provider and sends fees', async () => {
-    const signer = TEST_SERVICE_USERS[0];
+    const customer = TEST_SERVICE_USERS[1];
 
     // Fetch the service registry account
     const serviceRegistry = await program.account.serviceRegistry.fetch(
@@ -36,7 +33,7 @@ describe('SignService: Transfers SPL to the service provider and sends fees to t
         Buffer.from('escrow'),
         serviceAccountPubKey.toBuffer(),
         serviceAccount.provider.toBuffer(),
-        signer.publicKey.toBuffer(),
+        customer.publicKey.toBuffer(),
       ],
       program.programId,
     );
@@ -73,22 +70,22 @@ describe('SignService: Transfers SPL to the service provider and sends fees to t
       await program.methods
         .signServiceSpl()
         .accounts({
-          signer: signer.publicKey,
+          customer: customer.publicKey,
           service: serviceAccountPubKey,
           serviceProvider: TEST_SERVICE_DEPLOYERS[0].publicKey,
           serviceProviderTokenAccount: serviceProviderTokenAccount,
           feeTokenAccount: feeTokenAccount,
-          mint: tokenMint,
+          mint: mint,
         })
-        .signers([signer])
+        .signers([customer])
         .instruction(),
     );
-    transaction.feePayer = signer.publicKey;
+    transaction.feePayer = customer.publicKey;
     try {
       const txSignature = await anchor.web3.sendAndConfirmTransaction(
         connection,
         transaction,
-        [signer],
+        [customer],
       );
     } catch (err) {
       if (err instanceof SendTransactionError) {
