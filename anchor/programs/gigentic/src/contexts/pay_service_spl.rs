@@ -6,7 +6,7 @@ use anchor_spl::token::{self, Mint, Token, TokenAccount, Transfer};
 
 /// Accounts required for the `PayServiceSPl` instruction.
 #[derive(Accounts)]
-#[instruction(review_no: String)]
+#[instruction(review_id: String)]
 pub struct PayServiceSpl<'info> {
     /// The buyer who will sign the transaction.
     #[account(mut)]
@@ -51,7 +51,7 @@ pub struct PayServiceSpl<'info> {
         init,
         payer = buyer,
         space = 8 + Review::INIT_SPACE,
-        seeds = [b"review_service", review_no.as_bytes(), service.key().as_ref()],
+        seeds = [b"review", review_id.as_bytes(), service.key().as_ref()],
         bump,
     )]
     pub review: Account<'info, Review>, // Moved to heap
@@ -66,7 +66,7 @@ pub struct PayServiceSpl<'info> {
     pub system_program: Program<'info, System>,
 }
 impl<'info> PayServiceSpl<'info> {
-    pub fn handler(&mut self, review_no: String) -> Result<()> {
+    pub fn handler(&mut self, review_id: String) -> Result<()> {
         // Setting up escrow details
         self.escrow.buyer = self.buyer.key();
         self.escrow.service_provider = self.service.provider;
@@ -80,7 +80,7 @@ impl<'info> PayServiceSpl<'info> {
 
         // Sets the review details
         self.review.set_inner(Review {
-            review_no,
+            review_id,
             agent_to_consumer_rating: 0,
             consumer_to_agent_rating: 0,
             consumer: self.buyer.key(),

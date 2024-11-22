@@ -28,7 +28,7 @@ pub struct PayService<'info> {
     init,
     payer = customer,
     space =8+ Review::INIT_SPACE,
-    seeds=[b"review_service",review_no.as_bytes(),service.key().as_ref()],
+    seeds=[b"review",review_id.as_bytes(),service.key().as_ref()],
     bump,
     )]
     pub review: Account<'info, Review>,

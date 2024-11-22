@@ -8,7 +8,7 @@ import {
   TEST_SERVICE_USERS,
 } from './constants';
 import { buyerTokenAccount, tokenMint } from './init_service_registry';
-import { REVIEW_NO_2 } from './constants';
+import { REVIEW_ID_2 } from './constants';
 import { SendTransactionError } from '@solana/web3.js';
 import { getAccount, createAccount, mintTo } from '@solana/spl-token';
 import { fund_account } from './utils';
@@ -38,7 +38,7 @@ describe('Gigentic Service Buying', () => {
     // Create the transaction to pay for the service
     const transaction = new anchor.web3.Transaction().add(
       await program.methods
-        .payServiceSpl(REVIEW_NO_2)
+        .payServiceSpl(REVIEW_ID_2)
         .accounts({
           buyer: buyer.publicKey,
           service: serviceAccountPubKey,
@@ -132,7 +132,7 @@ describe('Gigentic Service Buying', () => {
     const service = await program.account.service.fetch(serviceAccountPubKey);
     const review = await program.account.review.fetch(service.reviews[0]);
 
-    expect(review.reviewNo, 'Review number should match').to.equal(REVIEW_NO_2);
+    expect(review.reviewId, 'Review number should match').to.equal(REVIEW_ID_2);
 
     expect(
       review.agentToConsumerRating,
