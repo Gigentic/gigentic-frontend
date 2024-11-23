@@ -18,7 +18,7 @@ export type Gigentic = {
       discriminator: [188, 220, 123, 11, 148, 57, 198, 128];
       accounts: [
         {
-          name: 'signer';
+          name: 'customer';
           writable: true;
           signer: true;
         },
@@ -71,6 +71,43 @@ export type Gigentic = {
               {
                 kind: 'account';
                 path: 'provider';
+              },
+            ];
+          };
+        },
+        {
+          name: 'serviceProviderTokenAccount';
+        },
+        {
+          name: 'serviceAuthority';
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [
+                  115,
+                  101,
+                  114,
+                  118,
+                  105,
+                  99,
+                  101,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121,
+                ];
+              },
+              {
+                kind: 'account';
+                path: 'service';
               },
             ];
           };
@@ -131,6 +168,10 @@ export type Gigentic = {
       args: [
         {
           name: 'feeAccount';
+          type: 'pubkey';
+        },
+        {
+          name: 'feeTokenAccount';
           type: 'pubkey';
         },
         {
@@ -214,11 +255,150 @@ export type Gigentic = {
       ];
     },
     {
+      name: 'payServiceSpl';
+      discriminator: [170, 1, 4, 226, 23, 248, 125, 227];
+      accounts: [
+        {
+          name: 'customer';
+          docs: ['The customer who will sign the transaction.'];
+          writable: true;
+          signer: true;
+        },
+        {
+          name: 'service';
+          docs: ['The service account.'];
+          writable: true;
+        },
+        {
+          name: 'serviceRegistry';
+          docs: ['The service registry account.'];
+          writable: true;
+        },
+        {
+          name: 'escrow';
+          docs: [
+            'The escrow account, initialized with a specific space and seeds.',
+          ];
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [101, 115, 99, 114, 111, 119];
+              },
+              {
+                kind: 'account';
+                path: 'service';
+              },
+              {
+                kind: 'account';
+                path: 'service.provider';
+                account: 'service';
+              },
+              {
+                kind: 'account';
+                path: 'customer';
+              },
+            ];
+          };
+        },
+        {
+          name: 'customerTokenAccount';
+          writable: true;
+        },
+        {
+          name: 'mint';
+          docs: ['The mint account.'];
+        },
+        {
+          name: 'escrowTokenAccount';
+          docs: [
+            'The token account for the escrow, initialized with the mint and authority.',
+          ];
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  45,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  45,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                ];
+              },
+              {
+                kind: 'account';
+                path: 'escrow';
+              },
+            ];
+          };
+        },
+        {
+          name: 'review';
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [114, 101, 118, 105, 101, 119];
+              },
+              {
+                kind: 'arg';
+                path: 'reviewId';
+              },
+              {
+                kind: 'account';
+                path: 'service';
+              },
+            ];
+          };
+        },
+        {
+          name: 'tokenProgram';
+          docs: ['The token program.'];
+          address: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+        },
+        {
+          name: 'rent';
+          docs: ['The rent sysvar.'];
+          address: 'SysvarRent111111111111111111111111111111111';
+        },
+        {
+          name: 'systemProgram';
+          docs: ['The system program.'];
+          address: '11111111111111111111111111111111';
+        },
+      ];
+      args: [
+        {
+          name: 'reviewId';
+          type: 'string';
+        },
+      ];
+    },
+    {
       name: 'providerToCustomerRating';
       discriminator: [107, 198, 87, 138, 229, 212, 60, 70];
       accounts: [
         {
-          name: 'signer';
+          name: 'provider';
           writable: true;
           signer: true;
         },
@@ -247,7 +427,7 @@ export type Gigentic = {
       discriminator: [170, 73, 190, 114, 213, 177, 176, 218];
       accounts: [
         {
-          name: 'signer';
+          name: 'customer';
           writable: true;
           signer: true;
         },
@@ -275,20 +455,118 @@ export type Gigentic = {
               },
               {
                 kind: 'account';
-                path: 'signer';
+                path: 'customer';
               },
             ];
           };
         },
         {
           name: 'serviceProvider';
-          docs: ['CHECK : This is an account info, not an account'];
           writable: true;
         },
         {
           name: 'feeAccount';
-          docs: ['CHECK : SAFE'];
           writable: true;
+        },
+        {
+          name: 'systemProgram';
+          address: '11111111111111111111111111111111';
+        },
+      ];
+      args: [];
+    },
+    {
+      name: 'signServiceSpl';
+      discriminator: [31, 15, 93, 60, 8, 175, 224, 119];
+      accounts: [
+        {
+          name: 'customer';
+          writable: true;
+          signer: true;
+        },
+        {
+          name: 'service';
+        },
+        {
+          name: 'escrow';
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [101, 115, 99, 114, 111, 119];
+              },
+              {
+                kind: 'account';
+                path: 'service';
+              },
+              {
+                kind: 'account';
+                path: 'service.provider';
+                account: 'service';
+              },
+              {
+                kind: 'account';
+                path: 'customer';
+              },
+            ];
+          };
+        },
+        {
+          name: 'serviceProvider';
+          writable: true;
+        },
+        {
+          name: 'feeTokenAccount';
+          writable: true;
+        },
+        {
+          name: 'serviceProviderTokenAccount';
+          writable: true;
+        },
+        {
+          name: 'mint';
+        },
+        {
+          name: 'escrowTokenAccount';
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  45,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  45,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                ];
+              },
+              {
+                kind: 'account';
+                path: 'escrow';
+              },
+            ];
+          };
+        },
+        {
+          name: 'tokenProgram';
+          address: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
         },
         {
           name: 'systemProgram';
@@ -310,6 +588,10 @@ export type Gigentic = {
     {
       name: 'service';
       discriminator: [144, 62, 76, 129, 167, 36, 151, 250];
+    },
+    {
+      name: 'serviceAuthority';
+      discriminator: [199, 242, 58, 222, 53, 161, 60, 220];
     },
     {
       name: 'serviceRegistry';
@@ -399,6 +681,24 @@ export type Gigentic = {
             name: 'feeAccount';
             type: 'pubkey';
           },
+          {
+            name: 'feeTokenAccount';
+            type: {
+              option: 'pubkey';
+            };
+          },
+          {
+            name: 'serviceProviderTokenAccount';
+            type: {
+              option: 'pubkey';
+            };
+          },
+          {
+            name: 'escrowTokenAccount';
+            type: {
+              option: 'pubkey';
+            };
+          },
         ];
       };
     },
@@ -465,7 +765,18 @@ export type Gigentic = {
               vec: 'pubkey';
             };
           },
+          {
+            name: 'serviceProviderTokenAccount';
+            type: 'pubkey';
+          },
         ];
+      };
+    },
+    {
+      name: 'serviceAuthority';
+      type: {
+        kind: 'struct';
+        fields: [];
       };
     },
     {
@@ -490,6 +801,10 @@ export type Gigentic = {
           {
             name: 'feePercentage';
             type: 'u8';
+          },
+          {
+            name: 'feeTokenAccount';
+            type: 'pubkey';
           },
         ];
       };

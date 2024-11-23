@@ -32,7 +32,6 @@ pub struct PayService<'info> {
     bump,
     )]
     pub review: Account<'info, Review>,
-
     pub system_program: Program<'info, System>,
 }
 
@@ -55,6 +54,12 @@ impl<'info> PayService<'info> {
             ],
         )?;
 
+        self.service.reviews.push(self.review.key());
+        if let Some(last_address) = self.service.reviews.last() {
+            msg!(" Last review address: {}", last_address);
+        } else {
+            return err!(ErrorCode::NoReviews);
+        }
         self.review.set_inner(Review {
             review_id,
             provider_to_customer_rating: 0,
@@ -71,14 +76,10 @@ impl<'info> PayService<'info> {
             customer: self.customer.key(),
             service_provider: self.service.provider,
             expected_amount: service_price,
+            escrow_token_account: None,
+            fee_token_account: None,
+            service_provider_token_account: None,
         });
-
-        self.service.reviews.push(self.review.key());
-        if let Some(last_address) = self.service.reviews.last() {
-            msg!("Review added. Last address: {}", last_address);
-        } else {
-            return err!(ErrorCode::NoReviews);
-        }
 
         Ok(())
     }

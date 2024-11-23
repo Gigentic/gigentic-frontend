@@ -58,3 +58,4 @@ fileScript-add.js
 log*.md
 accounts.csv
 /keys
+Token.json

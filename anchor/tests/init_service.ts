@@ -4,7 +4,8 @@ import {
   TEST_SERVICE_DEPLOYERS,
   TEST_SERVICE_REGISTRY_KEYPAIR,
 } from './constants';
-import { program, mint } from './init';
+import { program } from './init';
+import { mint, serviceProviderTokenAccount } from './init';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
 describe('Gigentic Service Deployment', () => {
@@ -16,25 +17,23 @@ describe('Gigentic Service Deployment', () => {
     // const uniqueId = 'service_' + Math.random().toString(36).substring(2, 15);
 
     const uniqueId = '1';
-    const description = 'Test description h';
+    const description = 'Test description ';
     const price = new anchor.BN(1000);
 
     try {
       // Fetch the public key of the deployer
       const deployerPublicKey = TEST_SERVICE_DEPLOYERS[deployerIndex].publicKey;
-
-      // Deploy a new service to the service registry
-      // - Initialize a new service by calling the smart contract's method
       await program.methods
         .initializeService(uniqueId, description, price)
         .accounts({
-          provider: deployerPublicKey, // Deployer account that provides the service
-          serviceRegistry: TEST_SERVICE_REGISTRY_KEYPAIR.publicKey, // The service registry account where the service will be registered
-          mint: mint, // Mint account for SPL token-based transactions
-          tokenProgram: TOKEN_PROGRAM_ID, // SPL Token Program ID for handling token transactions
+          provider: deployerPublicKey,
+          serviceRegistry: TEST_SERVICE_REGISTRY_KEYPAIR.publicKey,
+          mint: mint,
+          serviceProviderTokenAccount: serviceProviderTokenAccount,
+          tokenProgram: TOKEN_PROGRAM_ID,
         })
-        .signers([TEST_SERVICE_DEPLOYERS[deployerIndex]]) // Sign the transaction with the deployer's keypair
-        .rpc(); // Execute the remote procedure call to interact with the blockchain
+        .signers([TEST_SERVICE_DEPLOYERS[deployerIndex]])
+        .rpc();
     } catch (error) {
       console.error('Failed to initialize service:', error); // Log an error message if service initialization fails
       throw error; // Re-throw the error to fail the test
@@ -77,15 +76,16 @@ describe('Gigentic Service Deployment', () => {
 
       // Initialize a new service by calling the smart contract's method
       await program.methods
-        .initializeService(uniqueId, description, price) // Method to initialize a new service
+        .initializeService(uniqueId, description, price)
         .accounts({
-          provider: deployerPublicKey, // Deployer account that provides the service
-          serviceRegistry: TEST_SERVICE_REGISTRY_KEYPAIR.publicKey, // The service registry account where the service will be registered
-          mint: mint, // Mint account for token-based transactions
-          tokenProgram: TOKEN_PROGRAM_ID, // SPL Token Program ID for handling token transactions
+          provider: deployerPublicKey,
+          serviceRegistry: TEST_SERVICE_REGISTRY_KEYPAIR.publicKey,
+          mint: mint,
+          serviceProviderTokenAccount: serviceProviderTokenAccount,
+          tokenProgram: TOKEN_PROGRAM_ID,
         })
-        .signers([TEST_SERVICE_DEPLOYERS[deployerIndex]]) // Sign the transaction with the deployer's keypair
-        .rpc(); // Execute the remote procedure call to interact with the blockchain
+        .signers([TEST_SERVICE_DEPLOYERS[deployerIndex]])
+        .rpc();
     } catch (error) {
       console.error('Failed to initialize service:', error); // Log an error message if service initialization fails
     }

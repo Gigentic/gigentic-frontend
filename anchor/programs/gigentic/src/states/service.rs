@@ -11,4 +11,5 @@ pub struct Service {
     pub price: u64,
     #[max_len(MAX_REVIEWS)]
     pub reviews: Vec<Pubkey>,
+    pub service_provider_token_account: Pubkey,
 }

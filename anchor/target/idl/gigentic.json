@@ -1,5 +1,5 @@
 {
-  "address": "2xtwCiDhiQ9vuTFpR3wECJaHyvtE7L9pBPbNHdnsk1YS",
+  "address": "FBXJXb1DnGsFzea4iXSFxg2ztTpENCGQ5TXGQbr4WBB",
   "metadata": {
     "name": "gigentic",
     "version": "0.1.0",
@@ -12,7 +12,7 @@
       "discriminator": [188, 220, 123, 11, 148, 57, 198, 128],
       "accounts": [
         {
-          "name": "signer",
+          "name": "customer",
           "writable": true,
           "signer": true
         },
@@ -65,6 +65,28 @@
               {
                 "kind": "account",
                 "path": "provider"
+              }
+            ]
+          }
+        },
+        {
+          "name": "service_provider_token_account"
+        },
+        {
+          "name": "service_authority",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115, 101, 114, 118, 105, 99, 101, 95, 97, 117, 116, 104, 111,
+                  114, 105, 116, 121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "service"
               }
             ]
           }
@@ -125,6 +147,10 @@
       "args": [
         {
           "name": "fee_account",
+          "type": "pubkey"
+        },
+        {
+          "name": "fee_token_account",
           "type": "pubkey"
         },
         {
@@ -208,11 +234,132 @@
       ]
     },
     {
+      "name": "pay_service_spl",
+      "discriminator": [170, 1, 4, 226, 23, 248, 125, 227],
+      "accounts": [
+        {
+          "name": "customer",
+          "docs": ["The customer who will sign the transaction."],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "service",
+          "docs": ["The service account."],
+          "writable": true
+        },
+        {
+          "name": "service_registry",
+          "docs": ["The service registry account."],
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "docs": [
+            "The escrow account, initialized with a specific space and seeds."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [101, 115, 99, 114, 111, 119]
+              },
+              {
+                "kind": "account",
+                "path": "service"
+              },
+              {
+                "kind": "account",
+                "path": "service.provider",
+                "account": "Service"
+              },
+              {
+                "kind": "account",
+                "path": "customer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "customer_token_account",
+          "writable": true
+        },
+        {
+          "name": "mint",
+          "docs": ["The mint account."]
+        },
+        {
+          "name": "escrow_token_account",
+          "docs": [
+            "The token account for the escrow, initialized with the mint and authority."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101, 115, 99, 114, 111, 119, 45, 116, 111, 107, 101, 110, 45,
+                  97, 99, 99, 111, 117, 110, 116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "escrow"
+              }
+            ]
+          }
+        },
+        {
+          "name": "review",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [114, 101, 118, 105, 101, 119]
+              },
+              {
+                "kind": "arg",
+                "path": "review_id"
+              },
+              {
+                "kind": "account",
+                "path": "service"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "docs": ["The token program."],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "rent",
+          "docs": ["The rent sysvar."],
+          "address": "SysvarRent111111111111111111111111111111111"
+        },
+        {
+          "name": "system_program",
+          "docs": ["The system program."],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "review_id",
+          "type": "string"
+        }
+      ]
+    },
+    {
       "name": "provider_to_customer_rating",
       "discriminator": [107, 198, 87, 138, 229, 212, 60, 70],
       "accounts": [
         {
-          "name": "signer",
+          "name": "provider",
           "writable": true,
           "signer": true
         },
@@ -241,7 +388,7 @@
       "discriminator": [170, 73, 190, 114, 213, 177, 176, 218],
       "accounts": [
         {
-          "name": "signer",
+          "name": "customer",
           "writable": true,
           "signer": true
         },
@@ -269,20 +416,100 @@
               },
               {
                 "kind": "account",
-                "path": "signer"
+                "path": "customer"
               }
             ]
           }
         },
         {
           "name": "service_provider",
-          "docs": ["CHECK : This is an account info, not an account"],
           "writable": true
         },
         {
           "name": "fee_account",
-          "docs": ["CHECK : SAFE"],
           "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "sign_service_spl",
+      "discriminator": [31, 15, 93, 60, 8, 175, 224, 119],
+      "accounts": [
+        {
+          "name": "customer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "service"
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [101, 115, 99, 114, 111, 119]
+              },
+              {
+                "kind": "account",
+                "path": "service"
+              },
+              {
+                "kind": "account",
+                "path": "service.provider",
+                "account": "Service"
+              },
+              {
+                "kind": "account",
+                "path": "customer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "service_provider",
+          "writable": true
+        },
+        {
+          "name": "fee_token_account",
+          "writable": true
+        },
+        {
+          "name": "service_provider_token_account",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "escrow_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101, 115, 99, 114, 111, 119, 45, 116, 111, 107, 101, 110, 45,
+                  97, 99, 99, 111, 117, 110, 116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "escrow"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
           "name": "system_program",
@@ -304,6 +531,10 @@
     {
       "name": "Service",
       "discriminator": [144, 62, 76, 129, 167, 36, 151, 250]
+    },
+    {
+      "name": "ServiceAuthority",
+      "discriminator": [199, 242, 58, 222, 53, 161, 60, 220]
     },
     {
       "name": "ServiceRegistry",
@@ -392,6 +623,24 @@
           {
             "name": "fee_account",
             "type": "pubkey"
+          },
+          {
+            "name": "fee_token_account",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "service_provider_token_account",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "escrow_token_account",
+            "type": {
+              "option": "pubkey"
+            }
           }
         ]
       }
@@ -458,8 +707,19 @@
             "type": {
               "vec": "pubkey"
             }
+          },
+          {
+            "name": "service_provider_token_account",
+            "type": "pubkey"
           }
         ]
+      }
+    },
+    {
+      "name": "ServiceAuthority",
+      "type": {
+        "kind": "struct",
+        "fields": []
       }
     },
     {
@@ -484,6 +744,10 @@
           {
             "name": "fee_percentage",
             "type": "u8"
+          },
+          {
+            "name": "fee_token_account",
+            "type": "pubkey"
           }
         ]
       }

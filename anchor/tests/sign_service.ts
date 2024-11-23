@@ -11,10 +11,10 @@ import {
 } from './constants';
 import { SendTransactionError } from '@solana/web3.js';
 
-describe('SignService: Transfers money to the service provider and sends fees to the fee account', () => {
-  it('Transfers money to the service provider and sends fees', async () => {
+describe('SignService: Transfer SPL tokens and fees', () => {
+  it('should transfer SPL tokens to the service provider and send fees to the fee account', async () => {
     // Select the customer from the predefined service users
-    const customer = TEST_SERVICE_USERS[0];
+    const customer = TEST_SERVICE_USERS[0]; // Select the first service user
 
     // Fetch the service registry account
     const serviceRegistry = await program.account.serviceRegistry.fetch(
@@ -39,15 +39,12 @@ describe('SignService: Transfers money to the service provider and sends fees to
       program.programId,
     );
 
-    // Fetch the escrow account details
-    const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
-
     // Construct the transaction to sign the service
     const transaction = new anchor.web3.Transaction().add(
       await program.methods
         .signService()
         .accounts({
-          signer: customer.publicKey,
+          customer: customer.publicKey,
           service: serviceAccountPubKey,
           serviceProvider: TEST_SERVICE_DEPLOYERS[0].publicKey,
           feeAccount: TEST_FEE_ACCOUNT.publicKey,

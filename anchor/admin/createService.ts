@@ -24,6 +24,7 @@ export async function createService(
   price: number,
   serviceDescription: string,
   uniqueId: string,
+  serviceProviderTokenAccount: PublicKey,
 ) {
   await program.methods
     .initializeService(
@@ -35,6 +36,7 @@ export async function createService(
       provider: serviceDeployer.publicKey,
       serviceRegistry: serviceRegistryPubkey,
       mint: _mint,
+      serviceProviderTokenAccount,
       tokenProgram: TOKEN_PROGRAM_ID,
     })
     .signers([serviceDeployer]) // Include both deployer and the new service keypair as signers
