@@ -53,35 +53,22 @@ export default function EscrowManagement() {
   const { connection } = useConnection();
   const transactionToast = useTransactionToast();
   const { accounts, program } = useEscrowAccounts();
+  const { data: freelancer } = useSelectedFreelancer();
 
-  // Form and service state
-  const [contractId, setContractId] = useState('');
-  const [amount, setAmount] = useState('');
+  // Remove unused state
   const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Get cached freelancer data
-  const { data: freelancer } = useSelectedFreelancer();
-
-  const DEFAULT_SERVICE_ACCOUNT = '11111111111111111111111111111111'; // Solana's system program address
-
+  // Get service account from freelancer data if it exists
   const serviceAccountPubKey = useMemo(() => {
-    console.log(
-      'Freelancer payment wallet address:',
-      freelancer?.paymentWalletAddress,
-    );
-
-    // Use default address if none is provided
-    const address = freelancer?.paymentWalletAddress || DEFAULT_SERVICE_ACCOUNT;
-
+    if (!freelancer?.paymentWalletAddress) {
+      return null;
+    }
     try {
-      return new PublicKey(address);
+      return new PublicKey(freelancer.paymentWalletAddress);
     } catch (error) {
-      console.warn(
-        'Invalid service account address, using default:',
-        DEFAULT_SERVICE_ACCOUNT,
-      );
-      return new PublicKey(DEFAULT_SERVICE_ACCOUNT);
+      console.error('Invalid service account address');
+      return null;
     }
   }, [freelancer]);
 
@@ -93,20 +80,9 @@ export default function EscrowManagement() {
     );
   }, [accounts.data, publicKey]);
 
-  // Initialize form with freelancer data if available
-  useMemo(() => {
-    if (freelancer) {
-      console.log('✅ Found cached freelancer data:', freelancer);
-      setContractId(freelancer.paymentWalletAddress);
-    } else {
-      console.log('❌ No cached freelancer data found');
-    }
-  }, [freelancer]);
-
-  const handleSubmitPay = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!publicKey) {
-      console.error('Wallet not connected');
+  const handlePayIntoEscrow = async () => {
+    if (!publicKey || !serviceAccountPubKey) {
+      console.error('Wallet not connected or no service selected');
       return;
     }
 
@@ -139,7 +115,7 @@ export default function EscrowManagement() {
       const transaction = new VersionedTransaction(messageV0);
       console.log('Transaction:', transaction);
       const signature = await sendTransaction(transaction, connection);
-      console.log('Signature:', signature);
+
       const confirmation = await connection.confirmTransaction(
         {
           signature,
@@ -257,81 +233,47 @@ export default function EscrowManagement() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-4xl bg-background">
-        <CardContent className="p-6 space-y-8">
-          {/* Payment Form Section - Show when freelancer data exists */}
-          {
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold">Pay into Escrow</h2>
-              <form onSubmit={handleSubmitPay} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="contractId" className="text-sm font-medium">
-                    Service Contract ID
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="contractId"
-                      type="text"
-                      placeholder="Enter contract ID"
-                      value={contractId}
-                      onChange={(e) => setContractId(e.target.value)}
-                      className="w-full pr-10 border-neutral-200"
-                      required
-                    />
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <InfoIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Unique identifier for your service agreement</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
+    <div className="min-h-screen p-4 space-y-6">
+      {/* Selected Provider Payment Card - Only show when freelancer is selected */}
+      {freelancer && serviceAccountPubKey && (
+        <Card className="w-full max-w-4xl mx-auto bg-background">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-semibold">
+                    {freelancer.title}
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    Service ID: {freelancer.paymentWalletAddress.slice(0, 8)}...
+                  </span>
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="amount" className="text-sm font-medium">
-                    Payment Amount (SOL)
-                  </Label>
-                  <Input
-                    id="amount"
-                    type="number"
-                    step="0.01"
-                    placeholder="Enter amount in SOL"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    className="w-full border-neutral-200"
-                    required
-                  />
+                <div className="flex items-center gap-2">
+                  <span>⭐ {freelancer.rating}</span>
+                  <span className="text-green-500">
+                    {freelancer.matchScore}% match
+                  </span>
                 </div>
-
-                <div className="flex items-center">
-                  <Checkbox
-                    id="terms"
-                    checked={agreed}
-                    onCheckedChange={(checked) => setAgreed(checked as boolean)}
-                  />
-                  <Label htmlFor="terms" className="ml-2 text-sm">
-                    I agree to release the funds once the service is completed
-                    to my satisfaction.
-                  </Label>
+              </div>
+              <div className="text-right">
+                <div className="text-lg font-semibold">
+                  Service Price to pay into Escrow: {freelancer.pricePerHour}{' '}
+                  SOL
                 </div>
-
-                <Button type="submit" className="w-full" disabled={!agreed}>
+                <Button onClick={handlePayIntoEscrow} className="mt-2">
                   Pay into Escrow
                 </Button>
-              </form>
+              </div>
             </div>
-          }
+          </CardContent>
+        </Card>
+      )}
 
-          {/* Active Escrows Section - Always show */}
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold">Active Escrows</h2>
-            <div className="space-y-4">{renderEscrowContent()}</div>
-          </div>
+      {/* Active Escrows Card - Always show */}
+      <Card className="w-full max-w-4xl mx-auto bg-background">
+        <CardContent className="p-6">
+          <h2 className="text-2xl font-bold mb-6">Active Escrows</h2>
+          <div className="space-y-4">{renderEscrowContent()}</div>
         </CardContent>
       </Card>
     </div>
