@@ -1,7 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import {
+  PublicKey,
+  TransactionMessage,
+  VersionedTransaction,
+  LAMPORTS_PER_SOL,
+} from '@solana/web3.js';
+import { useQuery } from '@tanstack/react-query';
 import { InfoIcon } from 'lucide-react';
+import { useCluster } from '@/cluster/cluster-data-access';
+import { useAnchorProvider } from '@/providers/solana-provider';
+import { getGigenticProgram } from '@gigentic-frontend/anchor';
+import { useSelectedFreelancer } from '@/hooks/services/use-freelancer-query';
+import { useTransactionToast } from '@/components/ui/ui-layout';
 import {
   Card,
   CardContent,
@@ -13,51 +26,78 @@ import {
   TooltipProvider,
   TooltipTrigger,
   Checkbox,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
 } from '@gigentic-frontend/ui-kit/ui';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import {
-  PublicKey,
-  TransactionMessage,
-  VersionedTransaction,
-} from '@solana/web3.js';
-import { useTransactionToast } from '../ui/ui-layout';
-
-import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
 import EscrowCard from './EscrowCard';
-import { useSelectedFreelancer } from '@/hooks/services/use-freelancer-query';
+
+function useEscrowAccounts() {
+  const { connection } = useConnection();
+  const { cluster } = useCluster();
+  const provider = useAnchorProvider();
+  const program = getGigenticProgram(provider);
+
+  // Query for all escrow accounts
+  const accounts = useQuery({
+    queryKey: ['escrow', 'all', { cluster }],
+    queryFn: () => program.account.escrow.all(),
+    staleTime: 60 * 1000, // Cache for 1 minute
+  });
+
+  return {
+    program,
+    accounts,
+  };
+}
 
 export default function EscrowManagement() {
-  const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
+  const { connection } = useConnection();
   const transactionToast = useTransactionToast();
+  const { accounts, program } = useEscrowAccounts();
 
-  const { program } = useGigenticProgram();
-  const { data: freelancer } = useSelectedFreelancer();
-
-  const [userEscrows, setUserEscrows] = useState([]);
+  // Form and service state
   const [contractId, setContractId] = useState('');
   const [amount, setAmount] = useState('');
-  const [finalAmount, setFinalAmount] = useState('');
   const [agreed, setAgreed] = useState(false);
-  const [title, setTitle] = useState('');
-  const [avgRating, setAvgRating] = useState('');
-  const [matchPercentage, setMatchPercentage] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
-  // TODO: this should be in the global state that identifies which service account to use for creating the escrow
-  const serviceAccountIndex = 0;
+  // Get cached freelancer data
+  const { data: freelancer } = useSelectedFreelancer();
 
-  useEffect(() => {
+  const DEFAULT_SERVICE_ACCOUNT = '11111111111111111111111111111111'; // Solana's system program address
+
+  const serviceAccountPubKey = useMemo(() => {
+    console.log(
+      'Freelancer payment wallet address:',
+      freelancer?.paymentWalletAddress,
+    );
+
+    // Use default address if none is provided
+    const address = freelancer?.paymentWalletAddress || DEFAULT_SERVICE_ACCOUNT;
+
+    try {
+      return new PublicKey(address);
+    } catch (error) {
+      console.warn(
+        'Invalid service account address, using default:',
+        DEFAULT_SERVICE_ACCOUNT,
+      );
+      return new PublicKey(DEFAULT_SERVICE_ACCOUNT);
+    }
+  }, [freelancer]);
+
+  // Filter escrows for the current user
+  const userEscrows = useMemo(() => {
+    if (!accounts.data || !publicKey) return [];
+    return accounts.data.filter(
+      (account) => account.account.customer.toString() === publicKey.toString(),
+    );
+  }, [accounts.data, publicKey]);
+
+  // Initialize form with freelancer data if available
+  useMemo(() => {
     if (freelancer) {
       console.log('✅ Found cached freelancer data:', freelancer);
-      // this should be aligned with the service account index
       setContractId(freelancer.paymentWalletAddress);
-      setTitle(freelancer.title);
-      setAvgRating(freelancer.rating.toString());
-      setMatchPercentage(freelancer.matchScore.toString());
     } else {
       console.log('❌ No cached freelancer data found');
     }
@@ -71,27 +111,16 @@ export default function EscrowManagement() {
     }
 
     try {
-      // TODO: get this from environment variables
       const serviceRegistryPubKey = new PublicKey(
         process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
       );
 
-      const serviceRegistry = await program.account.serviceRegistry.fetch(
-        serviceRegistryPubKey,
-      );
-
-      const serviceAccountPubKey =
-        serviceRegistry.serviceAccountAddresses[serviceAccountIndex];
       console.log('Service Account:', serviceAccountPubKey.toString());
 
-      // Generate a unique review_id that is max 10 digits (e.g., using timestamp or UUID)
       const review_id = new Date().getTime().toString().slice(0, 10);
-      console.log('Review ID:', review_id);
-
-      // Inside handleSubmitPay function
       const latestBlockhash = await connection.getLatestBlockhash('confirmed');
-
-      // Create a new TransactionMessage
+      console.log('Latest Blockhash:', latestBlockhash.blockhash);
+      console.log(review_id);
       const messageV0 = new TransactionMessage({
         payerKey: publicKey,
         recentBlockhash: latestBlockhash.blockhash,
@@ -107,14 +136,10 @@ export default function EscrowManagement() {
         ],
       }).compileToV0Message();
 
-      // Create a new VersionedTransaction
       const transaction = new VersionedTransaction(messageV0);
-
-      // Send transaction
+      console.log('Transaction:', transaction);
       const signature = await sendTransaction(transaction, connection);
-      console.log('Transaction sent:', signature);
-
-      // Confirm using the new pattern
+      console.log('Signature:', signature);
       const confirmation = await connection.confirmTransaction(
         {
           signature,
@@ -129,50 +154,10 @@ export default function EscrowManagement() {
       }
 
       transactionToast(signature);
-
-      const serviceAccount =
-        await program.account.service.fetch(serviceAccountPubKey);
-
-      // Derive Escrow PDA
-      const [escrowPubKey] = PublicKey.findProgramAddressSync(
-        [
-          Buffer.from('escrow'),
-          serviceAccountPubKey.toBuffer(),
-          serviceAccount.provider.toBuffer(),
-          publicKey.toBuffer(),
-        ],
-        program.programId,
-      );
-
-      // Fetch the escrow account details
-      console.log('Escrow pubkey:', escrowPubKey.toString());
-      const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
-      console.log('Escrow customer:', escrowAccount.customer.toString());
-      console.log(
-        'Escrow service provider:',
-        escrowAccount.serviceProvider.toString(),
-      );
-      console.log('Escrow fee percentage:', escrowAccount.feePercentage);
-      console.log(
-        'Escrow expected amount:',
-        escrowAccount.expectedAmount.toString(),
-      );
-      console.log('Escrow fee account:', escrowAccount.feeAccount.toString());
-
-      // // Derive Review PDA
-      // const [reviewPubKey] = PublicKey.findProgramAddressSync(
-      //   [
-      //     Buffer.from('review'),
-      //     Buffer.from(review_id),
-      //     serviceAccountPubKey.toBuffer(),
-      //   ],
-      //   program.programId,
-      // );
-      // console.log('Review pubkey:', reviewPubKey.toString());
-      // const reviewAccount = await program.account.review.fetch(reviewPubKey);
-      // console.log('Review account:', reviewAccount);
+      accounts.refetch();
     } catch (error) {
       console.error('Error sending transaction:', error);
+      setError('Failed to process payment. Please try again.');
     }
   };
 
@@ -182,71 +167,21 @@ export default function EscrowManagement() {
       return;
     }
 
-    console.log('Releasing escrow:', escrowId);
-    // TODO: update / fix UI
-
     try {
-      // Retrieve the service registry public key from environment variables
-      const serviceRegistryPubKeyString =
-        process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY;
+      const serviceRegistryPubKey = new PublicKey(
+        process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
+      );
 
-      if (!serviceRegistryPubKeyString) {
-        throw new Error(
-          'NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY is not defined in environment variables',
-        );
-      }
-
-      const serviceRegistryPubKey = new PublicKey(serviceRegistryPubKeyString);
-      // Fetch the service registry account to get the fee account
       const serviceRegistry = await program.account.serviceRegistry.fetch(
         serviceRegistryPubKey,
       );
 
-      const serviceAccountPubKey =
-        serviceRegistry.serviceAccountAddresses[serviceAccountIndex];
-
-      console.log('Service Account:', serviceAccountPubKey.toString());
-
+      const serviceAccountPubKey = serviceRegistry.serviceAccountAddresses[0];
       const serviceAccount =
         await program.account.service.fetch(serviceAccountPubKey);
 
-      // Derive Escrow PDA with the correct seeds
-      const [escrowPubKey] = PublicKey.findProgramAddressSync(
-        [
-          Buffer.from('escrow'),
-          serviceAccountPubKey.toBuffer(),
-          serviceAccount.provider.toBuffer(),
-          publicKey.toBuffer(),
-        ],
-        program.programId,
-      );
-      console.log('Escrow pubkey:', escrowPubKey.toString());
-
-      try {
-        const escrowAccount = await program.account.escrow.fetch(escrowPubKey);
-        console.log('Escrow account data:', escrowAccount);
-        console.log('customer:', escrowAccount.customer.toString());
-        console.log(
-          'Service Provider:',
-          escrowAccount.serviceProvider.toString(),
-        );
-        console.log('Fee Percentage:', escrowAccount.feePercentage);
-        console.log(
-          'Expected Amount:',
-          escrowAccount.expectedAmount.toString(),
-        );
-        console.log('Fee Account:', escrowAccount.feeAccount.toString());
-      } catch (error) {
-        console.error(
-          `Error fetching escrow account for service ${serviceAccountPubKey.toString()}:`,
-          error,
-        );
-      }
-
-      // Inside handleSubmitPay function
       const latestBlockhash = await connection.getLatestBlockhash('confirmed');
 
-      // Create a new TransactionMessage
       const messageV0 = new TransactionMessage({
         payerKey: publicKey,
         recentBlockhash: latestBlockhash.blockhash,
@@ -263,13 +198,9 @@ export default function EscrowManagement() {
         ],
       }).compileToV0Message();
 
-      // Create a new VersionedTransaction
       const transaction = new VersionedTransaction(messageV0);
-
-      // Send transaction
       const signature = await sendTransaction(transaction, connection);
 
-      // Confirm using the new pattern
       const confirmation = await connection.confirmTransaction(
         {
           signature,
@@ -284,40 +215,56 @@ export default function EscrowManagement() {
       }
 
       transactionToast(signature);
-      console.log('Escrow released successfully:', signature);
+      accounts.refetch();
     } catch (error) {
       console.error('Error releasing escrow:', error);
-      if (error instanceof Error) {
-        console.error('Error message:', error.message);
-        console.error('Error stack:', error.stack);
-      }
+      setError('Failed to release escrow. Please try again.');
     }
   };
 
-  const handleCheckCache = () => {
-    console.log('🔍 Checking cache in Payment page');
-    console.log('💾 Cached freelancer data:', freelancer);
+  const renderEscrowContent = () => {
+    if (accounts.isLoading) {
+      return (
+        <div className="flex justify-center items-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      );
+    }
+
+    if (error) {
+      return <div className="text-center text-red-500 py-4">{error}</div>;
+    }
+
+    if (userEscrows.length === 0) {
+      return (
+        <div className="text-center text-muted-foreground">
+          No active escrows found
+        </div>
+      );
+    }
+
+    return userEscrows.map((escrow) => (
+      <EscrowCard
+        key={escrow.publicKey.toString()}
+        providerName={`Provider ${escrow.account.serviceProvider.toString().slice(0, 8)}...`}
+        serviceId={escrow.publicKey.toString().slice(0, 8)}
+        amountInEscrow={
+          Number(escrow.account.expectedAmount) / LAMPORTS_PER_SOL
+        }
+        onReleaseEscrow={() => handleReleaseEscrow(escrow.publicKey.toString())}
+      />
+    ));
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-4xl bg-background">
-        <CardContent className="p-6">
-          <Tabs defaultValue="pay" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="pay">Pay</TabsTrigger>
-              <TabsTrigger value="release">Release</TabsTrigger>
-            </TabsList>
-            <TabsContent value="pay">
+        <CardContent className="p-6 space-y-8">
+          {/* Payment Form Section - Show when freelancer data exists */}
+          {
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold">Pay into Escrow</h2>
               <form onSubmit={handleSubmitPay} className="space-y-6">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  className="w-full mb-4"
-                  onClick={handleCheckCache}
-                >
-                  Check Cache
-                </Button>
                 <div className="space-y-2">
                   <Label htmlFor="contractId" className="text-sm font-medium">
                     Service Contract ID
@@ -344,6 +291,7 @@ export default function EscrowManagement() {
                     </TooltipProvider>
                   </div>
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="amount" className="text-sm font-medium">
                     Payment Amount (SOL)
@@ -359,6 +307,7 @@ export default function EscrowManagement() {
                     required
                   />
                 </div>
+
                 <div className="flex items-center">
                   <Checkbox
                     id="terms"
@@ -370,42 +319,19 @@ export default function EscrowManagement() {
                     to my satisfaction.
                   </Label>
                 </div>
+
                 <Button type="submit" className="w-full" disabled={!agreed}>
                   Pay into Escrow
                 </Button>
               </form>
-            </TabsContent>
-            <TabsContent value="release">
-              <div className="space-y-4">
-                {userEscrows.length === 0 ? ( // in case there is no data; default as currently reading from blockchain is not working
-                  <div>
-                    <EscrowCard
-                      providerName={title}
-                      providerLink="https://www.solchat.app/"
-                      serviceId={contractId.slice(0, 8) + '...'}
-                      rating={Number(avgRating)}
-                      matchPercentage={Number(matchPercentage)}
-                      amountInEscrow={Number(amount)}
-                      totalAmount={Number(finalAmount)}
-                      onReleaseEscrow={() => handleReleaseEscrow(contractId)}
-                    />
-                  </div>
-                ) : (
-                  userEscrows.map((escrow: any) => (
-                    <EscrowCard
-                      key={escrow.pubkey.toString()}
-                      providerName={`Provider ${escrow.serviceProvider.slice(0, 8)}...`}
-                      serviceId={escrow.pubkey.toString().slice(0, 8)}
-                      amountInEscrow={escrow.amount}
-                      onReleaseEscrow={() =>
-                        handleReleaseEscrow(escrow.pubkey.toString())
-                      }
-                    />
-                  ))
-                )}
-              </div>
-            </TabsContent>
-          </Tabs>
+            </div>
+          }
+
+          {/* Active Escrows Section - Always show */}
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold">Active Escrows</h2>
+            <div className="space-y-4">{renderEscrowContent()}</div>
+          </div>
         </CardContent>
       </Card>
     </div>
