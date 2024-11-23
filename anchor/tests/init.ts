@@ -11,12 +11,7 @@ import {
 
 import { fund_account } from './utils';
 import * as anchor from '@coral-xyz/anchor';
-import {
-  createMint,
-  mintTo,
-  getAccount,
-  createAccount,
-} from '@solana/spl-token';
+import { createMint, mintTo, createAccount } from '@solana/spl-token';
 import { Program, web3 } from '@coral-xyz/anchor';
 import { PublicKey } from '@solana/web3.js';
 import { Gigentic } from '../target/types/gigentic';

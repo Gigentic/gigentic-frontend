@@ -6,10 +6,10 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-gigentic = "2xtwCiDhiQ9vuTFpR3wECJaHyvtE7L9pBPbNHdnsk1YS"
+gigentic = "FBXJXb1DnGsFzea4iXSFxg2ztTpENCGQ5TXGQbr4WBB"
 
 [programs.localnet]
-gigentic = "2xtwCiDhiQ9vuTFpR3wECJaHyvtE7L9pBPbNHdnsk1YS"
+gigentic = "FBXJXb1DnGsFzea4iXSFxg2ztTpENCGQ5TXGQbr4WBB"
 
 [registry]
 url = "https://api.apr.dev"

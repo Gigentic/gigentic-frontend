@@ -8,10 +8,13 @@ import {
   Transaction,
   sendAndConfirmTransaction,
 } from '@solana/web3.js';
-
+import { PublicKey } from '@solana/web3.js';
 import { Gigentic } from '../target/types/gigentic';
 import { PROVIDER } from '../tests/constants';
 import { loadKeypairBs58FromEnv } from '../tests/utils';
+import { airdrop } from '../tests/utils';
+import { createMintToken, createTokenAccount } from './init';
+import * as fs from 'fs'; // Import the fs module
 
 dotenv.config();
 
@@ -39,6 +42,31 @@ console.log('serviceRegistry', serviceRegistryKeypair.publicKey.toString());
 
 async function initServiceRegistry() {
   try {
+    const mint: PublicKey =
+      (await createMintToken(connection, serviceRegistryDeployer)) ||
+      new PublicKey(0); // Provide a default value or handle the error appropriately
+
+    console.log('Mint Public Key:', mint.toString());
+
+    const feeTokenAccount: PublicKey = await createTokenAccount(
+      connection,
+      serviceRegistryDeployer,
+      mint,
+    );
+
+    // Create a JSON object to write to a file
+    const output = {
+      mintPublicKey: mint,
+      feeTokenAccountPublicKey: feeTokenAccount,
+    };
+
+    fs.writeFileSync('Token.json', JSON.stringify(output, null, 2)); // Write to Token.json
+
+    // Add the fee token account to the output
+    output.feeTokenAccountPublicKey = feeTokenAccount; // Ensure this is included
+    fs.writeFileSync('Token.json', JSON.stringify(output, null, 2)); // Write to Token.json again
+
+    console.log('Fee Token Account Public Key:', feeTokenAccount.toString());
     const feeAccount = serviceRegistryDeployer.publicKey;
     console.log('Fee Account Public Key:', feeAccount.toString());
 
@@ -46,13 +74,17 @@ async function initServiceRegistry() {
     console.log('Fee Percentage:', feePercentage);
 
     // Create the service registry account
-    const serviceRegistryAccountSize = 20000; // Adjust the size based on the ServiceRegistry struct
+    const serviceRegistryAccountSize = 2000; // Adjust the size based on the ServiceRegistry struct
+
     console.log('Service Registry Account Size: ', serviceRegistryAccountSize);
+
     const rentExemptionAmount =
       await connection.getMinimumBalanceForRentExemption(
         serviceRegistryAccountSize,
       );
+
     console.log('Rent Exemption Amount: ', rentExemptionAmount);
+
     const createAccountParams = {
       fromPubkey: serviceRegistryDeployer.publicKey, // Account paying for the creation of the new account
       newAccountPubkey: serviceRegistryKeypair.publicKey, // Public key of the new account to be created
@@ -69,7 +101,7 @@ async function initServiceRegistry() {
     ]);
 
     const transactionSignature = await program.methods
-      .initializeServiceRegistry(feeAccount, feePercentage)
+      .initializeServiceRegistry(feeAccount, feeTokenAccount, feePercentage)
       .accounts({
         initializer: serviceRegistryDeployer.publicKey,
         serviceRegistry: serviceRegistryKeypair.publicKey,
@@ -91,28 +123,13 @@ async function initServiceRegistry() {
 async function main() {
   try {
     console.log('========== Airdrop serviceRegistry deployer');
-    // await airdrop(connection, serviceRegistryDeployer.publicKey);
+    await airdrop(connection, serviceRegistryDeployer.publicKey);
     console.log('skip airdrop serviceRegistryDeployer');
     console.log('\n');
 
     console.log('========== Initialize service registry');
     await initServiceRegistry();
     console.log('\n');
-
-    console.log('========== Read service registry');
-    const serviceRegistry = await program.account.serviceRegistry.fetch(
-      serviceRegistryKeypair.publicKey,
-    );
-
-    for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
-      console.log('Service Account Address:', serviceAddress.toString());
-
-      const serviceAccount =
-        await program.account.service.fetch(serviceAddress);
-      // console.log('Service Account Unique ID:', serviceAccount.uniqueId);
-      console.log('Service Account Description:', serviceAccount.description);
-      console.log('Service Account Price:', serviceAccount.price.toString());
-    }
   } catch (error) {
     console.error('Error in main execution:', error);
   }

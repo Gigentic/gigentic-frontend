@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/gigentic.json`.
  */
 export type Gigentic = {
-  address: '2xtwCiDhiQ9vuTFpR3wECJaHyvtE7L9pBPbNHdnsk1YS';
+  address: 'FBXJXb1DnGsFzea4iXSFxg2ztTpENCGQ5TXGQbr4WBB';
   metadata: {
     name: 'gigentic';
     version: '0.1.0';
