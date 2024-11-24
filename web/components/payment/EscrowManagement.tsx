@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -7,31 +8,17 @@ import {
   TransactionMessage,
   VersionedTransaction,
   LAMPORTS_PER_SOL,
-  SystemProgram,
 } from '@solana/web3.js';
 import { useQuery } from '@tanstack/react-query';
-import { InfoIcon } from 'lucide-react';
 import { useCluster } from '@/cluster/cluster-data-access';
 import { useAnchorProvider } from '@/providers/solana-provider';
 import { getGigenticProgram } from '@gigentic-frontend/anchor';
 import { useSelectedFreelancer } from '@/hooks/services/use-freelancer-query';
 import { useTransactionToast } from '@/components/ui/ui-layout';
-import {
-  Card,
-  CardContent,
-  Button,
-  Input,
-  Label,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-  Checkbox,
-} from '@gigentic-frontend/ui-kit/ui';
+import { Card, CardContent, Button } from '@gigentic-frontend/ui-kit/ui';
 import EscrowCard from './EscrowCard';
 
 function useEscrowAccounts() {
-  const { connection } = useConnection();
   const { cluster } = useCluster();
   const provider = useAnchorProvider();
   const program = getGigenticProgram(provider);
@@ -66,7 +53,6 @@ export default function EscrowManagement() {
   const { data: freelancer } = useSelectedFreelancer();
 
   // Remove unused state
-  const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Get service account from freelancer data if it exists
