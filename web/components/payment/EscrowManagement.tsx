@@ -245,10 +245,8 @@ export default function EscrowManagement() {
             .accounts({
               signer: publicKey,
               service: serviceAccountPubKey,
-              escrow: escrowPubKey,
               serviceProvider: serviceProvider,
               feeAccount: serviceRegistry.feeAccount,
-              systemProgram: SystemProgram.programId,
             })
             .instruction(),
         ],
