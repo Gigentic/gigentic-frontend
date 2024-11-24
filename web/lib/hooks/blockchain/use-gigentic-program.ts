@@ -26,11 +26,13 @@ export function useGigenticProgram() {
   );
   const program = getGigenticProgram(provider);
 
+  // can be removed/refactored when cleaning up gigentic-frontend-feature
   const accounts = useQuery({
     queryKey: ['gigentic', 'all', { cluster }],
     queryFn: () => program.account.service.all(),
   });
 
+  // can be removed/refactored when cleaning up gigentic-frontend-feature
   const getProgramAccount = useQuery({
     queryKey: ['get-program-account', { cluster }],
     queryFn: () => connection.getParsedAccountInfo(programId),
