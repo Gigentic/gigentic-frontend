@@ -9,7 +9,7 @@ import { GigenticFrontendList } from './gigentic-frontend-ui';
 
 export default function GigenticFrontendFeature() {
   const { publicKey } = useWallet();
-  const { program, programId } = useGigenticProgram();
+  const { programId } = useGigenticProgram();
 
   // Direct access to environment variable
   const serviceRegistryPubkey = process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY;

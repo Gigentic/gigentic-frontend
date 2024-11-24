@@ -1,4 +1,5 @@
-import { Connection, PublicKey } from '@solana/web3.js';
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Connection } from '@solana/web3.js';
 import { useConnection } from '@solana/wallet-adapter-react';
 import { AnchorProvider } from '@coral-xyz/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';

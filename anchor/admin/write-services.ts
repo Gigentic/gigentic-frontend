@@ -64,7 +64,8 @@ async function main() {
     console.log('\n');
 
     console.log('========== Airdrop service deployer');
-    await airdrop(connection, serviceDeployer.publicKey);
+    // await airdrop(connection, serviceDeployer.publicKey);
+    console.log('skip airdrop serviceDeployer');
     console.log('\n');
 
     console.log('========== Prepare data and Create services');

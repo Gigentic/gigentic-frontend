@@ -1,8 +1,7 @@
 import { Star } from 'lucide-react';
-import { Button } from '@gigentic-frontend/ui-kit/ui';
 import { Card, CardContent } from '@gigentic-frontend/ui-kit/ui';
 import Link from 'next/link';
-import ReviewPopup, { ReviewFormProps } from '@/components/review/ReviewPopup';
+import ReviewPopup from '@/components/review/ReviewPopup';
 import { SetStateAction } from 'react';
 
 interface EscrowCardProps {
