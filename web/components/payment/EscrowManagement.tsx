@@ -13,10 +13,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useCluster } from '@/cluster/cluster-data-access';
 import { useAnchorProvider } from '@/providers/solana-provider';
 import { getGigenticProgram } from '@gigentic-frontend/anchor';
-import { useSelectedFreelancer } from '@/hooks/services/use-freelancer-query';
+import {
+  useSelectedFreelancer,
+  useSelectFreelancer,
+} from '@/hooks/services/use-freelancer-query';
 import { useTransactionToast } from '@/components/ui/ui-layout';
 import { Card, CardContent, Button } from '@gigentic-frontend/ui-kit/ui';
 import EscrowCard from './EscrowCard';
+import { Freelancer } from '@/lib/types/freelancer';
 
 function useEscrowAccounts() {
   const { cluster } = useCluster();
@@ -51,6 +55,7 @@ export default function EscrowManagement() {
   const transactionToast = useTransactionToast();
   const { accounts, program } = useEscrowAccounts();
   const { data: freelancer } = useSelectedFreelancer();
+  const { mutate: selectFreelancer } = useSelectFreelancer();
 
   // Remove unused state
   const [error, setError] = useState<string | null>(null);
@@ -160,6 +165,15 @@ export default function EscrowManagement() {
 
       transactionToast(signature);
       accounts.refetch();
+
+      selectFreelancer(null as unknown as Freelancer, {
+        onSuccess: () => {
+          console.log('✅ Freelancer cache cleared successfully');
+        },
+        onError: (error: any) => {
+          console.error('❌ Failed to clear freelancer cache:', error);
+        },
+      });
     } catch (error) {
       console.error('Error sending transaction:', error);
       setError('Failed to process payment. Please try again.');
@@ -368,22 +382,10 @@ export default function EscrowManagement() {
     ));
   };
 
-  // Add this check in the userEscrows useMemo
-  const hasActiveEscrow = useMemo(() => {
-    if (!accounts.data || !publicKey || !serviceAccountPubKey) return false;
-
-    return accounts.data.some(
-      (account) =>
-        account.account.customer.toString() === publicKey.toString() &&
-        account.account.serviceProvider.toString() ===
-          serviceAccountPubKey.toString(),
-    );
-  }, [accounts.data, publicKey, serviceAccountPubKey]);
-
   return (
     <div className="min-h-screen p-4 space-y-6">
       {/* Selected Provider Payment Card */}
-      {freelancer && serviceAccountPubKey && !hasActiveEscrow && (
+      {freelancer && serviceAccountPubKey && (
         <Card className="w-full max-w-4xl mx-auto bg-background">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -405,7 +407,7 @@ export default function EscrowManagement() {
               </div>
               <div className="text-right">
                 <div className="text-lg font-semibold">
-                  Service Price to pay into Escrow: {freelancer.pricePerHour}{' '}
+                  Service Price to pay into escrow: {freelancer.pricePerHour}{' '}
                   SOL
                 </div>
                 <Button onClick={handlePayIntoEscrow} className="mt-2">

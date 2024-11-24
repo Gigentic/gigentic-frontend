@@ -39,6 +39,7 @@ export async function fetchServiceRegistryPubkey() {
 }
 
 // read the service registry from the blockchain
+// TODO: refactor to use useServiceRegistry hook and getAllServicesForAI function
 async function fetchServiceRegistry(endpoint: string) {
   const connection = new Connection(endpoint);
   const provider = new AnchorProvider(connection, {} as AnchorWallet, {
