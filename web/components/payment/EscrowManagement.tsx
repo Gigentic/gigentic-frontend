@@ -7,6 +7,7 @@ import {
   TransactionMessage,
   VersionedTransaction,
   LAMPORTS_PER_SOL,
+  SystemProgram,
 } from '@solana/web3.js';
 import { useQuery } from '@tanstack/react-query';
 import { InfoIcon } from 'lucide-react';
@@ -38,14 +39,23 @@ function useEscrowAccounts() {
   // Query for all escrow accounts
   const accounts = useQuery({
     queryKey: ['escrow', 'all', { cluster }],
-    queryFn: () => program.account.escrow.all(),
-    staleTime: 60 * 1000, // Cache for 1 minute
+    queryFn: async () => {
+      const allEscrows = await program.account.escrow.all();
+      console.log(
+        'All fetched escrows:',
+        allEscrows.map((escrow) => ({
+          publicKey: escrow.publicKey.toString(),
+          serviceProvider: escrow.account.serviceProvider.toString(),
+          customer: escrow.account.customer.toString(),
+          amount: escrow.account.expectedAmount.toString(),
+        })),
+      );
+      return allEscrows;
+    },
+    staleTime: 60 * 1000,
   });
 
-  return {
-    program,
-    accounts,
-  };
+  return { program, accounts };
 }
 
 export default function EscrowManagement() {
@@ -62,12 +72,18 @@ export default function EscrowManagement() {
   // Get service account from freelancer data if it exists
   const serviceAccountPubKey = useMemo(() => {
     if (!freelancer?.paymentWalletAddress) {
+      console.log('No payment wallet address found');
       return null;
     }
     try {
-      return new PublicKey(freelancer.paymentWalletAddress);
+      const pubkey = new PublicKey(freelancer.paymentWalletAddress);
+      console.log('Created service account pubkey:', pubkey.toString());
+      return pubkey;
     } catch (error) {
-      console.error('Invalid service account address');
+      console.error(
+        'Invalid service account address:',
+        freelancer.paymentWalletAddress,
+      );
       return null;
     }
   }, [freelancer]);
@@ -75,28 +91,56 @@ export default function EscrowManagement() {
   // Filter escrows for the current user
   const userEscrows = useMemo(() => {
     if (!accounts.data || !publicKey) return [];
-    return accounts.data.filter(
-      (account) => account.account.customer.toString() === publicKey.toString(),
+
+    console.log('Filtering escrows for user:', publicKey.toString());
+
+    const filtered = accounts.data.filter((account) => {
+      const isMatch =
+        account.account.customer.toString() === publicKey.toString();
+      console.log('Checking escrow:', {
+        escrowId: account.publicKey.toString(),
+        customer: account.account.customer.toString(),
+        serviceProvider: account.account.serviceProvider.toString(),
+        isMatch,
+      });
+      return isMatch;
+    });
+
+    console.log(
+      'Filtered user escrows:',
+      filtered.map((escrow) => ({
+        publicKey: escrow.publicKey.toString(),
+        serviceProvider: escrow.account.serviceProvider.toString(),
+      })),
     );
+
+    return filtered;
   }, [accounts.data, publicKey]);
 
   const handlePayIntoEscrow = async () => {
-    if (!publicKey || !serviceAccountPubKey) {
-      console.error('Wallet not connected or no service selected');
-      return;
-    }
+    if (!publicKey || !serviceAccountPubKey) return;
 
     try {
       const serviceRegistryPubKey = new PublicKey(
         process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
       );
 
-      console.log('Service Account:', serviceAccountPubKey.toString());
+      const serviceAccount =
+        await program.account.service.fetch(serviceAccountPubKey);
+      console.log('Found service account:', {
+        address: serviceAccountPubKey.toString(),
+        provider: serviceAccount.provider.toString(),
+      });
 
       const review_id = new Date().getTime().toString().slice(0, 10);
       const latestBlockhash = await connection.getLatestBlockhash('confirmed');
-      console.log('Latest Blockhash:', latestBlockhash.blockhash);
-      console.log(review_id);
+
+      console.log('Transaction accounts:', {
+        customer: publicKey.toString(),
+        service: serviceAccountPubKey.toString(),
+        serviceRegistry: serviceRegistryPubKey.toString(),
+      });
+
       const messageV0 = new TransactionMessage({
         payerKey: publicKey,
         recentBlockhash: latestBlockhash.blockhash,
@@ -113,7 +157,6 @@ export default function EscrowManagement() {
       }).compileToV0Message();
 
       const transaction = new VersionedTransaction(messageV0);
-      console.log('Transaction:', transaction);
       const signature = await sendTransaction(transaction, connection);
 
       const confirmation = await connection.confirmTransaction(
@@ -137,27 +180,62 @@ export default function EscrowManagement() {
     }
   };
 
-  const handleReleaseEscrow = async (escrowId: string) => {
+  // Modify handleReleaseEscrow to use the index
+  const handleReleaseEscrow = async (
+    escrowId: string,
+    serviceProvider: PublicKey,
+  ) => {
     if (!publicKey) {
       console.error('Wallet not connected');
       return;
     }
 
     try {
+      console.log('Releasing escrow:', {
+        escrowId,
+        serviceProvider: serviceProvider.toString(),
+      });
+
+      // Pass both serviceProvider and escrowId
+      const serviceIndex = await findServiceAccountIndex(
+        serviceProvider,
+        escrowId,
+      );
+      console.log('Found matching service index:', serviceIndex);
+
       const serviceRegistryPubKey = new PublicKey(
         process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
       );
+
+      // Find the escrow account in our list
+      const escrow = accounts.data?.find(
+        (e) => e.publicKey.toString() === escrowId,
+      );
+
+      if (!escrow) {
+        throw new Error('Escrow not found');
+      }
+
+      // Use the actual escrow public key instead of deriving a new one
+      const escrowPubKey = escrow.publicKey;
+      console.log('Using escrow:', escrowPubKey.toString());
 
       const serviceRegistry = await program.account.serviceRegistry.fetch(
         serviceRegistryPubKey,
       );
 
-      const serviceAccountPubKey = serviceRegistry.serviceAccountAddresses[0];
-      const serviceAccount =
-        await program.account.service.fetch(serviceAccountPubKey);
+      // Find the correct service account for this escrow
+      const serviceAccountPubKey =
+        serviceRegistry.serviceAccountAddresses[serviceIndex];
+
+      console.log('Release transaction accounts:', {
+        escrow: escrowPubKey.toString(),
+        service: serviceAccountPubKey.toString(),
+        serviceProvider: serviceProvider.toString(),
+        signer: publicKey.toString(),
+      });
 
       const latestBlockhash = await connection.getLatestBlockhash('confirmed');
-
       const messageV0 = new TransactionMessage({
         payerKey: publicKey,
         recentBlockhash: latestBlockhash.blockhash,
@@ -167,8 +245,10 @@ export default function EscrowManagement() {
             .accounts({
               signer: publicKey,
               service: serviceAccountPubKey,
-              serviceProvider: serviceAccount.provider,
+              escrow: escrowPubKey,
+              serviceProvider: serviceProvider,
               feeAccount: serviceRegistry.feeAccount,
+              systemProgram: SystemProgram.programId,
             })
             .instruction(),
         ],
@@ -196,6 +276,73 @@ export default function EscrowManagement() {
       console.error('Error releasing escrow:', error);
       setError('Failed to release escrow. Please try again.');
     }
+  };
+
+  // Move findServiceAccountIndex inside the component
+  const findServiceAccountIndex = async (
+    serviceProvider: PublicKey,
+    escrowId: string,
+  ) => {
+    const serviceRegistryPubKey = new PublicKey(
+      process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
+    );
+
+    // First find the escrow
+    const escrow = accounts.data?.find(
+      (e) => e.publicKey.toString() === escrowId,
+    );
+
+    if (!escrow) {
+      throw new Error('Escrow not found');
+    }
+
+    console.log('Found escrow:', {
+      escrowId: escrow.publicKey.toString(),
+      serviceProvider: escrow.account.serviceProvider.toString(),
+      expectedAmount: escrow.account.expectedAmount.toString(),
+    });
+
+    const serviceRegistry = await program.account.serviceRegistry.fetch(
+      serviceRegistryPubKey,
+    );
+
+    // Find the service account that matches the provider
+    for (let i = 0; i < serviceRegistry.serviceAccountAddresses.length; i++) {
+      const serviceAddress = serviceRegistry.serviceAccountAddresses[i];
+      const serviceAccount =
+        await program.account.service.fetch(serviceAddress);
+
+      console.log('Checking service:', {
+        index: i,
+        address: serviceAddress.toString(),
+        provider: serviceAccount.provider.toString(),
+        escrowProvider: escrow.account.serviceProvider.toString(),
+      });
+
+      // Match by service provider
+      if (
+        serviceAccount.provider.toString() ===
+        escrow.account.serviceProvider.toString()
+      ) {
+        // Derive the escrow PDA to verify it matches
+        const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
+          [
+            Buffer.from('escrow'),
+            serviceAddress.toBuffer(),
+            serviceAccount.provider.toBuffer(),
+            escrow.account.customer.toBuffer(),
+          ],
+          program.programId,
+        );
+
+        if (derivedEscrowPDA.toString() === escrowId) {
+          console.log(`Found exact service match at index ${i}`);
+          return i;
+        }
+      }
+    }
+
+    throw new Error('No matching service account found');
   };
 
   const renderEscrowContent = () => {
@@ -227,14 +374,19 @@ export default function EscrowManagement() {
         amountInEscrow={
           Number(escrow.account.expectedAmount) / LAMPORTS_PER_SOL
         }
-        onReleaseEscrow={() => handleReleaseEscrow(escrow.publicKey.toString())}
+        onReleaseEscrow={() =>
+          handleReleaseEscrow(
+            escrow.publicKey.toString(),
+            escrow.account.serviceProvider,
+          )
+        }
       />
     ));
   };
 
   return (
     <div className="min-h-screen p-4 space-y-6">
-      {/* Selected Provider Payment Card - Only show when freelancer is selected */}
+      {/* Selected Provider Payment Card */}
       {freelancer && serviceAccountPubKey && (
         <Card className="w-full max-w-4xl mx-auto bg-background">
           <CardContent className="p-6">
@@ -269,7 +421,7 @@ export default function EscrowManagement() {
         </Card>
       )}
 
-      {/* Active Escrows Card - Always show */}
+      {/* Active Escrows Card */}
       <Card className="w-full max-w-4xl mx-auto bg-background">
         <CardContent className="p-6">
           <h2 className="text-2xl font-bold mb-6">Active Escrows</h2>
