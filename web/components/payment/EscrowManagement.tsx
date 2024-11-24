@@ -368,10 +368,22 @@ export default function EscrowManagement() {
     ));
   };
 
+  // Add this check in the userEscrows useMemo
+  const hasActiveEscrow = useMemo(() => {
+    if (!accounts.data || !publicKey || !serviceAccountPubKey) return false;
+
+    return accounts.data.some(
+      (account) =>
+        account.account.customer.toString() === publicKey.toString() &&
+        account.account.serviceProvider.toString() ===
+          serviceAccountPubKey.toString(),
+    );
+  }, [accounts.data, publicKey, serviceAccountPubKey]);
+
   return (
     <div className="min-h-screen p-4 space-y-6">
       {/* Selected Provider Payment Card */}
-      {freelancer && serviceAccountPubKey && (
+      {freelancer && serviceAccountPubKey && !hasActiveEscrow && (
         <Card className="w-full max-w-4xl mx-auto bg-background">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
