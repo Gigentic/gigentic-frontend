@@ -1,28 +1,22 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 'use client';
 
-import { useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import {
-  Button,
-  Card,
-  CardContent,
-  Textarea,
-  Input,
-} from '@gigentic-frontend/ui-kit/ui';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { Plus, X } from 'lucide-react';
-import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { toast } from 'sonner';
-import { PublicKey, LAMPORTS_PER_SOL, SystemProgram } from '@solana/web3.js';
-import { getGigenticProgram } from '@gigentic-frontend/anchor';
-import { AnchorProvider } from '@coral-xyz/anchor';
+import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
+import { AnchorProvider, BN } from '@coral-xyz/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import * as anchor from '@coral-xyz/anchor';
 
+import { Button, Card, Textarea, Input } from '@gigentic-frontend/ui-kit/ui';
+import { getGigenticProgram } from '@gigentic-frontend/anchor';
 import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
-import { ServiceCard } from '../gigentic-frontend/service-card';
 import { useTransactionToast } from '@/components/ui/ui-layout';
+import { ServiceCard } from '../gigentic-frontend/service-card';
 
 // Form validation schema
 const serviceSchema = z.object({
@@ -105,9 +99,7 @@ export function AddService() {
       const fullDescription = `title: ${data.title} | description: ${data.serviceDescription}`;
 
       // Convert price to lamports and create BN
-      const priceInLamports = new anchor.BN(
-        Number(data.price) * LAMPORTS_PER_SOL,
-      );
+      const priceInLamports = new BN(Number(data.price) * LAMPORTS_PER_SOL);
 
       console.log('Transaction parameters:', {
         uniqueId,
@@ -249,10 +241,9 @@ export function AddService() {
                   </span>
                   <Input
                     {...form.register('price')}
-                    type="number"
-                    step="0.001"
+                    type="text"
                     min="0"
-                    placeholder="0.000"
+                    placeholder="0.01"
                     className="pl-12"
                   />
                 </div>
@@ -294,7 +285,7 @@ export function AddService() {
             <div className="text-center py-12 bg-muted rounded-lg">
               <h3 className="text-lg font-semibold mb-2">No Services Yet</h3>
               <p className="text-muted-foreground mb-4">
-                You haven't created any services yet.
+                You haven&apos;t created any services yet.
               </p>
               {!showForm && (
                 <Button onClick={() => setShowForm(true)}>
