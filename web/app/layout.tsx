@@ -19,7 +19,7 @@ const links: { label: string; path: string }[] = [
   { label: 'Payment', path: '/payment' },
   { label: 'Services', path: '/service-register' },
   { label: 'Account', path: '/account' },
-  { label: 'Program', path: '/gigentic-frontend' },
+  // { label: 'Program', path: '/gigentic-frontend' },
 ];
 
 export default function RootLayout({
