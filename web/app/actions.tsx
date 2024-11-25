@@ -89,7 +89,7 @@ export async function sendMessage(
 
     // call the LLM
     const reply = await streamUI({
-      model: openai('gpt-4o-mini'),
+      model: openai('gpt-4o'),
       messages: [
         {
           role: 'system',
