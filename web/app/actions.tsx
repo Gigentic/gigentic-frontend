@@ -19,7 +19,6 @@ import {
   BotMessage,
 } from '@/components/service-discovery/llm/message';
 import FreelancerProfileCard from '@/components/service-discovery/freelancer-profile-card';
-import FreelancerProfile3Cards from '@/components/service-discovery/freelancer-profile-3-cards';
 
 let service_registry = '';
 let content = ``;
@@ -203,182 +202,6 @@ export async function sendMessage(
             );
           },
         },
-        // tool to show the summary profiles of three freelancers next to each other
-        show_three_freelancer_profiles: {
-          description:
-            'Show the summary profiles of exactly three freelancers or the profile of three AI agent',
-          parameters: z.object({
-            freelancer1_title: z
-              .string()
-              .describe('The title of the first freelancer'),
-            freelancer1_pricePerHour: z
-              .number()
-              .describe('The price per hour of first freelancer'),
-            freelancer1_experience: z
-              .string()
-              .describe('The experience of the first freelancer'),
-            freelancer1_matchScore: z
-              .number()
-              .describe(
-                "Give a match score of the first freelancer to the user's task",
-              ),
-            freelancer1_rating: z
-              .number()
-              .describe('The rating of the first freelancer'),
-            freelancer1_paymentWalletAddress: z
-              .string()
-              .describe(
-                'The paymentWalletAddress of the first freelancer, not the chatWalletAddress.',
-              ),
-
-            freelancer2_title: z
-              .string()
-              .describe('The title of the second freelancer'),
-            freelancer2_pricePerHour: z
-              .number()
-              .describe('The price per hour of second freelancer'),
-            freelancer2_experience: z
-              .string()
-              .describe('The experience of the second freelancer'),
-            freelancer2_matchScore: z
-              .number()
-              .describe(
-                "Give a match score of the second freelancer to the user's task",
-              ),
-            freelancer2_rating: z
-              .number()
-              .describe('The rating of the second freelancer'),
-            freelancer2_paymentWalletAddress: z
-              .string()
-              .describe(
-                'The paymentWalletAddress of the second freelancer, not the chatWalletAddress.',
-              ),
-
-            freelancer3_title: z
-              .string()
-              .describe('The title of the third freelancer'),
-            freelancer3_pricePerHour: z
-              .number()
-              .describe('The price per hour of third freelancer'),
-            freelancer3_experience: z
-              .string()
-              .describe('The experience of the third freelancer'),
-            freelancer3_matchScore: z
-              .number()
-              .describe(
-                "Give a match score of the third freelancer to the user's task",
-              ),
-            freelancer3_rating: z
-              .number()
-              .describe('The rating of the third freelancer'),
-            freelancer3_paymentWalletAddress: z
-              .string()
-              .describe(
-                'The paymentWalletAddress of the third freelancer, not the chatWalletAddress.',
-              ),
-          }),
-          generate: async function* ({
-            freelancer1_title,
-            freelancer1_pricePerHour,
-            freelancer1_experience,
-            freelancer1_matchScore,
-            freelancer1_rating,
-            freelancer1_paymentWalletAddress,
-            freelancer2_title,
-            freelancer2_pricePerHour,
-            freelancer2_experience,
-            freelancer2_matchScore,
-            freelancer2_rating,
-            freelancer2_paymentWalletAddress,
-            freelancer3_title,
-            freelancer3_pricePerHour,
-            freelancer3_experience,
-            freelancer3_matchScore,
-            freelancer3_rating,
-            freelancer3_paymentWalletAddress,
-          }: {
-            freelancer1_title: string;
-            freelancer1_pricePerHour: number;
-            freelancer1_experience: string;
-            freelancer1_matchScore: number;
-            freelancer1_rating: number;
-            freelancer1_paymentWalletAddress: string;
-            freelancer2_title: string;
-            freelancer2_pricePerHour: number;
-            freelancer2_experience: string;
-            freelancer2_matchScore: number;
-            freelancer2_rating: number;
-            freelancer2_paymentWalletAddress: string;
-            freelancer3_title: string;
-            freelancer3_pricePerHour: number;
-            freelancer3_experience: string;
-            freelancer3_matchScore: number;
-            freelancer3_rating: number;
-            freelancer3_paymentWalletAddress: string;
-          }) {
-            console.log({
-              freelancer1_title,
-              freelancer1_pricePerHour,
-              freelancer1_experience,
-              freelancer1_matchScore,
-              freelancer1_rating,
-              freelancer1_paymentWalletAddress,
-              freelancer2_title,
-              freelancer2_pricePerHour,
-              freelancer2_experience,
-              freelancer2_matchScore,
-              freelancer2_rating,
-              freelancer2_paymentWalletAddress,
-              freelancer3_title,
-              freelancer3_pricePerHour,
-              freelancer3_experience,
-              freelancer3_matchScore,
-              freelancer3_rating,
-              freelancer3_paymentWalletAddress,
-            });
-            yield <BotCard> Loading... </BotCard>;
-
-            history.done([
-              ...history.get(),
-              {
-                role: 'assistant',
-                name: 'show_freelancer_profile',
-                content: '',
-              },
-            ]);
-
-            return (
-              <BotCard>
-                <FreelancerProfile3Cards
-                  freelancer1_title={freelancer1_title}
-                  freelancer1_pricePerHour={freelancer1_pricePerHour}
-                  freelancer1_experience={freelancer1_experience}
-                  freelancer1_matchScore={freelancer1_matchScore}
-                  freelancer1_rating={freelancer1_rating}
-                  freelancer1_paymentWalletAddress={
-                    freelancer1_paymentWalletAddress
-                  }
-                  freelancer2_title={freelancer2_title}
-                  freelancer2_pricePerHour={freelancer2_pricePerHour}
-                  freelancer2_experience={freelancer2_experience}
-                  freelancer2_matchScore={freelancer2_matchScore}
-                  freelancer2_rating={freelancer2_rating}
-                  freelancer2_paymentWalletAddress={
-                    freelancer2_paymentWalletAddress
-                  }
-                  freelancer3_title={freelancer3_title}
-                  freelancer3_pricePerHour={freelancer3_pricePerHour}
-                  freelancer3_experience={freelancer3_experience}
-                  freelancer3_matchScore={freelancer3_matchScore}
-                  freelancer3_rating={freelancer3_rating}
-                  freelancer3_paymentWalletAddress={
-                    freelancer3_paymentWalletAddress
-                  }
-                />
-              </BotCard>
-            );
-          },
-        },
       },
     });
 
@@ -395,7 +218,7 @@ export async function sendMessage(
 
 export type AIState = Array<{
   id?: number;
-  name?: 'get_crypto_price' | 'get_crypto_stats' | 'show_freelancer_profile';
+  name?: 'show_freelancer_profile';
   role?: 'user' | 'assistant' | 'system';
   content?: string;
 }>;
