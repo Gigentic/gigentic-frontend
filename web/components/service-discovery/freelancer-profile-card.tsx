@@ -75,10 +75,6 @@ export default function FreelancerProfileCard(
     return 'text-red-500';
   };
 
-  const handleCheckCache = () => {
-    console.log('🔍 Current cache content:', cachedFreelancer);
-  };
-
   return (
     <div className="bg-gray-100 p-4">
       <Card className="w-full max-w-md bg-white shadow-lg">
@@ -168,13 +164,6 @@ export default function FreelancerProfileCard(
           >
             <Lock className="w-4 h-4 mr-2" />
             Pay into Escrow
-          </Button>
-          <Button
-            className="w-full"
-            variant="secondary"
-            onClick={handleCheckCache}
-          >
-            Check Cache
           </Button>
         </CardFooter>
       </Card>
