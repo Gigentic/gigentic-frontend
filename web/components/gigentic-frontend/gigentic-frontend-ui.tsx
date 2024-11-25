@@ -2,7 +2,7 @@
 
 import { PublicKey } from '@solana/web3.js';
 import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
-import { ServiceCard } from './service-card';
+import { ServiceCard } from '../service-register/service-card';
 
 export function GigenticFrontendList() {
   const { accounts, getProgramAccount } = useGigenticProgram();

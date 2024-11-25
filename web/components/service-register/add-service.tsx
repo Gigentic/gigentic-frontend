@@ -26,7 +26,7 @@ import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { getGigenticProgram } from '@gigentic-frontend/anchor';
 import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
 import { useTransactionToast } from '@/components/ui/ui-layout';
-import { ServiceCard } from '../gigentic-frontend/service-card';
+import { ServiceCard } from './service-card';
 
 // Form validation schema
 const serviceSchema = z.object({
