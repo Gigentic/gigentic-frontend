@@ -73,7 +73,7 @@ async function main() {
     let index = 0;
 
     for (const service of services) {
-      const description = `title: ${service.title} | experience: ${service.experience}`;
+      const description = `title: ${service.title} | description: ${service.description}`;
       console.log(description);
 
       // Update to use services array
