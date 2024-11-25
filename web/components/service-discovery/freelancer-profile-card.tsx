@@ -11,10 +11,7 @@ import {
 import { Badge } from '@gigentic-frontend/ui-kit/ui';
 import { Button } from '@gigentic-frontend/ui-kit/ui';
 import { Star, MessageSquare, Zap, Lock } from 'lucide-react';
-import {
-  useSelectFreelancer,
-  useSelectedFreelancer,
-} from '@/hooks/services/use-freelancer-query';
+import { useSelectFreelancer } from '@/hooks/services/use-freelancer-query';
 import { useRouter } from 'next/navigation';
 import type { Freelancer } from '@/types/freelancer';
 
@@ -44,7 +41,6 @@ export default function FreelancerProfileCard(
   };
 
   const { mutate: selectFreelancer } = useSelectFreelancer();
-  const { data: cachedFreelancer } = useSelectedFreelancer();
 
   const handlePayEscrow = () => {
     const freelancerData = {
