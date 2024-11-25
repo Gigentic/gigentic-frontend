@@ -153,8 +153,13 @@ export function AddService() {
       );
 
       transactionToast(tx);
+
+      // Refetch after confirmation
+      await accounts.refetch();
+
+      // Reset form and hide it
       form.reset();
-      setShowForm(false); // Hide form after successful creation
+      setShowForm(false);
     } catch (error) {
       console.error('Error creating service:', error);
       toast.error('Failed to create service. Please try again.');
