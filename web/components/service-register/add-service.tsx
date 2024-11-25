@@ -5,7 +5,6 @@ import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 import {
   Button,
   Card,
@@ -24,7 +23,6 @@ import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { AnchorProvider, BN } from '@coral-xyz/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
-import { Button, Card, Textarea, Input } from '@gigentic-frontend/ui-kit/ui';
 import { getGigenticProgram } from '@gigentic-frontend/anchor';
 import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
 import { useTransactionToast } from '@/components/ui/ui-layout';
