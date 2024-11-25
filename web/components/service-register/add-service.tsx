@@ -19,15 +19,17 @@ import { getGigenticProgram } from '@gigentic-frontend/anchor';
 import { AnchorProvider } from '@coral-xyz/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import * as anchor from '@coral-xyz/anchor';
+import { useTransactionToast } from '@/components/ui/ui-layout';
+
 // Form validation schema
 const serviceSchema = z.object({
   title: z
     .string()
-    .min(10, 'Title must be at least 10 characters')
+    .min(1, 'Title must be at least 1 character')
     .max(100, 'Title must not exceed 100 characters'),
   serviceDescription: z
     .string()
-    .min(50, 'Description must be at least 50 characters')
+    .min(1, 'Description must be at least 1 characters')
     .max(1000, 'Description must not exceed 1000 characters'),
   price: z
     .string()
@@ -51,6 +53,7 @@ export function AddService() {
   const walletContext = useWallet();
   const { connected, publicKey } = walletContext;
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const transactionToast = useTransactionToast();
 
   const form = useForm<ServiceFormData>({
     resolver: zodResolver(serviceSchema),
@@ -118,7 +121,28 @@ export function AddService() {
 
       console.log('Transaction signature:', tx);
       console.log('Service offering created successfully.');
-      toast.success('Service created successfully!');
+      toast.success(
+        <div className="flex flex-col gap-2">
+          <div className="font-semibold">Service created successfully!</div>
+          <div className="text-sm text-muted-foreground">
+            <div>Title: {data.title}</div>
+            <div>Price: {data.price} SOL</div>
+          </div>
+          <a
+            href={`https://explorer.solana.com/tx/${tx}?cluster=${process.env.NEXT_PUBLIC_SOLANA_NETWORK}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-primary hover:underline"
+          >
+            View transaction
+          </a>
+        </div>,
+        {
+          duration: 5000,
+        },
+      );
+
+      transactionToast(tx);
       form.reset();
     } catch (error) {
       console.error('Error creating service:', error);
