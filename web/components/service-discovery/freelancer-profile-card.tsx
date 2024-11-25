@@ -16,17 +16,9 @@ import {
   useSelectedFreelancer,
 } from '@/hooks/services/use-freelancer-query';
 import { useRouter } from 'next/navigation';
+import type { Freelancer } from '@/types/freelancer';
 
-interface FreelancerProfileProps {
-  title: string;
-  pricePerHour: number;
-  experience: string;
-  rating: number;
-  matchScore: number;
-  paymentWalletAddress: string;
-}
-
-const DefaultFreelancerProfileProps: FreelancerProfileProps = {
+const DefaultFreelancerProfileProps: Freelancer = {
   title: 'Test',
   pricePerHour: 50,
   experience: 'Test',
@@ -37,20 +29,10 @@ const DefaultFreelancerProfileProps: FreelancerProfileProps = {
 
 // render the profile card for one freelancer
 export default function FreelancerProfileCard(
-  props: FreelancerProfileProps = DefaultFreelancerProfileProps,
+  props: Freelancer = DefaultFreelancerProfileProps,
 ) {
   const router = useRouter();
 
-  const freelancerProfileProps: FreelancerProfileProps = {
-    title: props.title,
-    pricePerHour: props.pricePerHour,
-    experience: props.experience,
-    rating: props.rating,
-    matchScore: props.matchScore,
-    paymentWalletAddress: props.paymentWalletAddress,
-  };
-
-  const [contractAddress, setContractAddress] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
   const fullStars = Math.floor(props.rating);
   const hasHalfStar = props.rating % 1 !== 0;
