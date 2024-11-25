@@ -1,17 +1,20 @@
 'use client';
 
 import { PublicKey } from '@solana/web3.js';
-import { ellipsify } from '../ui/ui-layout';
-import { ExplorerLink } from '../cluster/cluster-ui';
 import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
-import { useServiceAccount } from '@/hooks/blockchain/use-service-account';
+import { ServiceCard } from './service-card';
 
 export function GigenticFrontendList() {
   const { accounts, getProgramAccount } = useGigenticProgram();
 
   if (getProgramAccount.isLoading) {
-    return <span className="loading loading-spinner loading-lg"></span>;
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    );
   }
+
   if (!getProgramAccount.data?.value) {
     return (
       <div className="alert alert-info flex justify-center">
@@ -22,71 +25,33 @@ export function GigenticFrontendList() {
       </div>
     );
   }
+
   return (
-    <div className={'space-y-6'}>
+    <div className="space-y-6">
       {accounts.isLoading ? (
-        <span className="loading loading-spinner loading-lg"></span>
+        <div className="flex justify-center items-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
       ) : accounts.data?.length ? (
         <div>
-          <p> Service Contract IDs:</p>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            {accounts.data?.map((account, idx) => (
-              // <ServiceAccountCard
-              //   key={account.publicKey.toString()}
-              //   account={account.publicKey}
-              // />
-              <p key={idx}>
-                {idx} {account.publicKey.toString()}
-              </p>
-
-              // <GigenticFrontendCard
-              //     key={account.publicKey.toString()}
-              //     account={account.publicKey}
-              //   />
+          <h2 className="text-2xl font-bold mb-6">Available Services</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {accounts.data?.map((account) => (
+              <ServiceCard
+                key={account.publicKey.toString()}
+                account={account.publicKey}
+              />
             ))}
           </div>
         </div>
       ) : (
-        <div className="text-center">
-          <h2 className={'text-2xl'}>No accounts</h2>
-          No accounts found. Create one above to get started.
+        <div className="text-center py-8">
+          <h2 className="text-2xl font-bold mb-2">No Services Found</h2>
+          <p className="text-muted-foreground">
+            No service accounts found. Create one to get started.
+          </p>
         </div>
       )}
-    </div>
-  );
-}
-
-function ServiceAccountCard({ account }: { account: PublicKey }) {
-  const { data: serviceAccount, isLoading } = useServiceAccount(account);
-
-  if (isLoading) {
-    return <span className="loading loading-spinner loading-lg"></span>;
-  }
-
-  if (!serviceAccount) {
-    return <div>No service account found</div>;
-  }
-
-  return (
-    <div className="card card-bordered border-base-300 border-4 text-neutral-content">
-      <div className="card-body items-center text-center">
-        <div className="space-y-6">
-          <h2 className="card-title justify-center text-3xl">
-            {serviceAccount.description}
-          </h2>
-          <div className="text-center space-y-4">
-            <p>Provider: {serviceAccount.provider.toString()}</p>
-            <p>Price: {serviceAccount.price.toString()} lamports</p>
-            <p>
-              <ExplorerLink
-                path={`account/${account}`}
-                label={ellipsify(account.toString())}
-              />
-            </p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
