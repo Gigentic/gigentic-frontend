@@ -10,6 +10,10 @@ import {
   CardContent,
   Textarea,
   Input,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
 } from '@gigentic-frontend/ui-kit/ui';
 import { Plus, X } from 'lucide-react';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
@@ -60,7 +64,10 @@ export function AddService() {
   const { accounts } = useGigenticProgram();
   const [showForm, setShowForm] = useState(false);
 
-  // Filter services for current user
+  // Filter for all services (already available from accounts)
+  const allServices = accounts.data || [];
+
+  // Filter for user services (already have this)
   const userServices = accounts.data?.filter(
     (account) => account.account.provider.toString() === publicKey?.toString(),
   );
@@ -168,33 +175,75 @@ export function AddService() {
     }
   };
 
+  const renderServicesList = (services: typeof accounts.data) => {
+    if (accounts.isLoading) {
+      return (
+        <div className="flex justify-center items-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      );
+    }
+
+    if (!services?.length) {
+      return (
+        <div className="text-center py-12 bg-muted rounded-lg">
+          <h3 className="text-lg font-semibold mb-2">No Services Found</h3>
+          <p className="text-muted-foreground mb-4">
+            {publicKey
+              ? 'No services available yet.'
+              : 'Connect your wallet to view services.'}
+          </p>
+          {!showForm && publicKey && (
+            <Button onClick={() => setShowForm(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Your First Service
+            </Button>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {services.map((account) => (
+          <ServiceCard
+            key={account.publicKey.toString()}
+            account={account.publicKey}
+          />
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="container mx-auto py-6 px-4 md:py-12">
       <div className="max-w-3xl mx-auto space-y-8">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Your Services</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Services</h1>
             <p className="text-muted-foreground text-lg">
-              Manage your service offerings
+              Browse and manage service offerings
             </p>
           </div>
-          <Button
-            onClick={() => setShowForm(!showForm)}
-            size="lg"
-            className="shrink-0"
-          >
-            {showForm ? (
-              <>
-                <X className="mr-2 h-4 w-4" />
-                Cancel
-              </>
-            ) : (
-              <>
-                <Plus className="mr-2 h-4 w-4" />
-                Add New Service
-              </>
-            )}
-          </Button>
+          {publicKey && (
+            <Button
+              onClick={() => setShowForm(!showForm)}
+              size="lg"
+              className="shrink-0"
+            >
+              {showForm ? (
+                <>
+                  <X className="mr-2 h-4 w-4" />
+                  Cancel
+                </>
+              ) : (
+                <>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add New Service
+                </>
+              )}
+            </Button>
+          )}
         </div>
 
         {showForm && (
@@ -281,35 +330,18 @@ export function AddService() {
           </Card>
         )}
 
-        <div className="space-y-6">
-          {accounts.isLoading ? (
-            <div className="flex justify-center items-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-            </div>
-          ) : userServices?.length ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {userServices.map((account) => (
-                <ServiceCard
-                  key={account.publicKey.toString()}
-                  account={account.publicKey}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 bg-muted rounded-lg">
-              <h3 className="text-lg font-semibold mb-2">No Services Yet</h3>
-              <p className="text-muted-foreground mb-4">
-                You haven't created any services yet.
-              </p>
-              {!showForm && (
-                <Button onClick={() => setShowForm(true)}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Your First Service
-                </Button>
-              )}
-            </div>
-          )}
-        </div>
+        <Tabs defaultValue="your-services" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="your-services">Your Services</TabsTrigger>
+            <TabsTrigger value="all-services">All Services</TabsTrigger>
+          </TabsList>
+          <TabsContent value="your-services" className="mt-6">
+            {renderServicesList(userServices)}
+          </TabsContent>
+          <TabsContent value="all-services" className="mt-6">
+            {renderServicesList(allServices)}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
