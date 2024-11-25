@@ -1,17 +1,11 @@
-import * as bs58 from 'bs58';
 import * as dotenv from 'dotenv';
-import { Program } from '@coral-xyz/anchor';
-import { Keypair, PublicKey } from '@solana/web3.js';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { Gigentic } from '../target/types/gigentic';
-// import { SERVICE_REGISTRY_KEYPAIR } from '../tests/constants';
-import * as anchor from '@coral-xyz/anchor';
 
-export function loadKeypairBs58FromEnv(envVarName: string): Keypair {
-  const encodedKey = process.env[envVarName];
-  if (!encodedKey) throw new Error(`${envVarName} is not set`);
-  return Keypair.fromSecretKey(bs58.decode(encodedKey));
-}
+import { Program, BN } from '@coral-xyz/anchor';
+import { PublicKey } from '@solana/web3.js';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+
+import { Gigentic } from '../target/types/gigentic';
+import { loadKeypairBs58FromEnv } from '../tests/utils';
 
 dotenv.config();
 
@@ -26,11 +20,7 @@ export async function createService(
   uniqueId: string,
 ) {
   await program.methods
-    .initializeService(
-      uniqueId as string,
-      serviceDescription,
-      new anchor.BN(price),
-    )
+    .initializeService(uniqueId as string, serviceDescription, new BN(price))
     .accounts({
       provider: serviceDeployer.publicKey,
       serviceRegistry: serviceRegistryPubkey,

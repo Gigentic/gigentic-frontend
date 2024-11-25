@@ -2,15 +2,14 @@ import * as dotenv from 'dotenv';
 
 import { Program, workspace, setProvider } from '@coral-xyz/anchor';
 import { createMint } from '@solana/spl-token';
-
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
-import { services } from './Services'; // Import services from Services.ts
 import { Gigentic } from '../target/types/gigentic';
 import { PROVIDER } from '../tests/constants';
 import { airdrop, loadKeypairBs58FromEnv } from '../tests/utils';
 
 import { createService } from './createService';
+import { services } from './Services'; // Import services from Services.ts
 dotenv.config();
 
 // Configure the client to use the local cluster
@@ -74,7 +73,7 @@ async function main() {
     let index = 0;
 
     for (const service of services) {
-      const description = `chatWalletAddress: ${service.chatWalletAddress} | title: ${service.title} | experience: ${service.experience} | price: ${service.price} ${service.currency} | avgRating: ${service.avgRating}`;
+      const description = `title: ${service.title} | experience: ${service.experience}`;
       console.log(description);
 
       // Update to use services array
@@ -86,9 +85,8 @@ async function main() {
         serviceRegistryKeypair.publicKey,
         mint,
         program,
-        LAMPORTS_PER_SOL * service.price, // Use price from services
-        description, // Use description from services
-        // index.toString(), // unique id
+        LAMPORTS_PER_SOL * service.price,
+        description,
         uniqueId,
       );
       index++;

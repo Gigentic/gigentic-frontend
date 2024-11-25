@@ -8,6 +8,9 @@ skip-lint = false
 [programs.devnet]
 gigentic = "2xtwCiDhiQ9vuTFpR3wECJaHyvtE7L9pBPbNHdnsk1YS"
 
+[programs.testnet]
+gigentic = "2xtwCiDhiQ9vuTFpR3wECJaHyvtE7L9pBPbNHdnsk1YS"
+
 [programs.localnet]
 gigentic = "2xtwCiDhiQ9vuTFpR3wECJaHyvtE7L9pBPbNHdnsk1YS"
 
@@ -15,7 +18,8 @@ gigentic = "2xtwCiDhiQ9vuTFpR3wECJaHyvtE7L9pBPbNHdnsk1YS"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+# cluster = "Localnet"
+cluster = "https://rpc.testnet.soo.network/rpc"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
