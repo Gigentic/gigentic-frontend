@@ -1,20 +1,19 @@
 import * as dotenv from 'dotenv';
+import * as fs from 'fs'; // Import the fs module
 
 import { Program, workspace, setProvider } from '@coral-xyz/anchor';
-
 import {
   Connection,
   SystemProgram,
   Transaction,
   sendAndConfirmTransaction,
+  PublicKey,
 } from '@solana/web3.js';
-import { PublicKey } from '@solana/web3.js';
+
 import { Gigentic } from '../target/types/gigentic';
 import { PROVIDER } from '../tests/constants';
-import { loadKeypairBs58FromEnv } from '../tests/utils';
-import { airdrop } from '../tests/utils';
+import { airdrop, loadKeypairBs58FromEnv } from '../tests/utils';
 import { createMintToken, createTokenAccount } from './init';
-import * as fs from 'fs'; // Import the fs module
 
 dotenv.config();
 
@@ -45,7 +44,6 @@ async function initServiceRegistry() {
     const mint: PublicKey =
       (await createMintToken(connection, serviceRegistryDeployer)) ||
       new PublicKey(0); // Provide a default value or handle the error appropriately
-
     console.log('Mint Public Key:', mint.toString());
 
     const feeTokenAccount: PublicKey = await createTokenAccount(
@@ -59,14 +57,13 @@ async function initServiceRegistry() {
       mintPublicKey: mint,
       feeTokenAccountPublicKey: feeTokenAccount,
     };
-
     fs.writeFileSync('Token.json', JSON.stringify(output, null, 2)); // Write to Token.json
 
     // Add the fee token account to the output
     output.feeTokenAccountPublicKey = feeTokenAccount; // Ensure this is included
     fs.writeFileSync('Token.json', JSON.stringify(output, null, 2)); // Write to Token.json again
-
     console.log('Fee Token Account Public Key:', feeTokenAccount.toString());
+
     const feeAccount = serviceRegistryDeployer.publicKey;
     console.log('Fee Account Public Key:', feeAccount.toString());
 
@@ -75,14 +72,12 @@ async function initServiceRegistry() {
 
     // Create the service registry account
     const serviceRegistryAccountSize = 2000; // Adjust the size based on the ServiceRegistry struct
-
     console.log('Service Registry Account Size: ', serviceRegistryAccountSize);
 
     const rentExemptionAmount =
       await connection.getMinimumBalanceForRentExemption(
         serviceRegistryAccountSize,
       );
-
     console.log('Rent Exemption Amount: ', rentExemptionAmount);
 
     const createAccountParams = {
@@ -122,10 +117,10 @@ async function initServiceRegistry() {
 
 async function main() {
   try {
-    console.log('========== Airdrop serviceRegistry deployer');
-    await airdrop(connection, serviceRegistryDeployer.publicKey);
-    console.log('skip airdrop serviceRegistryDeployer');
-    console.log('\n');
+    // console.log('========== Airdrop serviceRegistry deployer');
+    // await airdrop(connection, serviceRegistryDeployer.publicKey);
+    // console.log('skip airdrop serviceRegistryDeployer');
+    // console.log('\n');
 
     console.log('========== Initialize service registry');
     await initServiceRegistry();

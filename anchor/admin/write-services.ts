@@ -1,19 +1,22 @@
 import * as dotenv from 'dotenv';
-import { Program, workspace, setProvider } from '@coral-xyz/anchor';
-import { createMint } from '@solana/spl-token';
-import { Keypair, PublicKey } from '@solana/web3.js';
-import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import * as fs from 'fs';
-import { services } from './Services';
+
+import { Program, workspace, setProvider } from '@coral-xyz/anchor';
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+
 import { Gigentic } from '../target/types/gigentic';
 import { PROVIDER } from '../tests/constants';
 import { airdrop, loadKeypairBs58FromEnv } from '../tests/utils';
-import { createService } from './createService';
 import { createTokenAccount } from './init';
+import { createService } from './createService';
+import { services } from './Services';
 
 dotenv.config();
+
+// Use cluster configured in local CLI environment
 setProvider(PROVIDER);
 
+// Initialize connection and program
 const connection: Connection = PROVIDER.connection;
 const program: Program<Gigentic> = workspace.Gigentic as Program<Gigentic>;
 
@@ -21,13 +24,13 @@ const program: Program<Gigentic> = workspace.Gigentic as Program<Gigentic>;
 const serviceRegistryDeployer = loadKeypairBs58FromEnv(
   'SERVICE_REGISTRY_DEPLOYER_KEYPAIR',
 );
-const serviceRegistryKeypair = loadKeypairBs58FromEnv(
-  'SERVICE_REGISTRY_KEYPAIR',
-);
-
 console.log(
   'Service Registry Deployer Public Key:',
   serviceRegistryDeployer.publicKey.toString(),
+);
+
+const serviceRegistryKeypair = loadKeypairBs58FromEnv(
+  'SERVICE_REGISTRY_KEYPAIR',
 );
 console.log(
   'Service Registry Keypair Public Key:',
@@ -43,9 +46,10 @@ console.log(
 
 async function main() {
   try {
-    console.log('========== Airdrop for Service Deployer ==========');
-    await airdrop(connection, serviceDeployer.publicKey);
-    console.log('Airdrop completed successfully.\n');
+    // console.log('========== Airdrop for Service Deployer ==========');
+    // await airdrop(connection, serviceDeployer.publicKey);
+    // console.log('Airdrop completed successfully.\n');
+    // console.log('skip airdrop serviceDeployer');
 
     const data = fs.readFileSync('Token.json', 'utf-8');
     const parsedData = JSON.parse(data);
