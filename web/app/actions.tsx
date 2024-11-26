@@ -10,7 +10,7 @@ import { openai } from '@ai-sdk/openai';
 
 import { AnchorProvider } from '@coral-xyz/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { Connection } from '@solana/web3.js';
+import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 import { getGigenticProgram } from '@gigentic-frontend/anchor';
 
@@ -43,11 +43,16 @@ async function fetchServicesFromRegistry(endpoint: string) {
     serviceRegistry.serviceAccountAddresses,
   );
 
-  // Build the service registry string
+  // Add helper function to convert Lamports to SOL
+  function lamportsToSol(lamports: number): string {
+    return (lamports / LAMPORTS_PER_SOL).toFixed(2);
+  }
+
+  // Modify the service registry string building
   return services.reduce(
     (acc, service, i) =>
       acc +
-      `\n${service?.description} | paymentWalletAddress: ${serviceRegistry.serviceAccountAddresses[i]}`,
+      `\n${service?.description} | serviceAccountAddress: ${serviceRegistry.serviceAccountAddresses[i]} | pricePerHour: ${service?.price ? lamportsToSol(service.price.toNumber()) : 0} SOL`,
     '',
   );
 }
@@ -134,11 +139,9 @@ export async function sendMessage(
                 "Give a match score of the freelancer to the user's task",
               ),
             rating: z.number().describe('The rating of the freelancer'),
-            paymentWalletAddress: z
+            serviceAccountAddress: z
               .string()
-              .describe(
-                'The paymentWalletAddress of the freelancer, not the chatWalletAddress.',
-              ),
+              .describe('The serviceAccountAddress of the freelancer.'),
           }),
           generate: async function* ({
             title,
@@ -146,14 +149,14 @@ export async function sendMessage(
             experience,
             rating,
             matchScore,
-            paymentWalletAddress,
+            serviceAccountAddress,
           }: {
             title: string;
             pricePerHour: number;
             experience: string;
             rating: number;
             matchScore: number;
-            paymentWalletAddress: string;
+            serviceAccountAddress: string;
           }) {
             console.log({
               title,
@@ -161,7 +164,7 @@ export async function sendMessage(
               experience,
               rating,
               matchScore,
-              paymentWalletAddress,
+              serviceAccountAddress,
             });
             yield <BotCard> Loading... </BotCard>;
 
@@ -182,7 +185,7 @@ export async function sendMessage(
                   experience={experience}
                   rating={rating}
                   matchScore={matchScore}
-                  paymentWalletAddress={paymentWalletAddress}
+                  serviceAccountAddress={serviceAccountAddress}
                 />
               </BotCard>
             );

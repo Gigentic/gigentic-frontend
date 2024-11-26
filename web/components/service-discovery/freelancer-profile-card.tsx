@@ -21,7 +21,7 @@ const DefaultFreelancerProfileProps: Freelancer = {
   experience: 'Test',
   rating: 4.5,
   matchScore: 80,
-  paymentWalletAddress: '0x1234567890123456789012345678901234567890',
+  serviceAccountAddress: '0x1234567890123456789012345678901234567890',
 };
 
 // render the profile card for one freelancer
@@ -49,7 +49,7 @@ export default function FreelancerProfileCard(
       experience: props.experience,
       rating: props.rating,
       matchScore: props.matchScore,
-      paymentWalletAddress: props.paymentWalletAddress,
+      serviceAccountAddress: props.serviceAccountAddress,
     };
 
     // Cache the freelancer data and navigate on success

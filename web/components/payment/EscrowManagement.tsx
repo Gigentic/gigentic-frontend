@@ -62,18 +62,18 @@ export default function EscrowManagement() {
 
   // Get service account from freelancer data if it exists
   const serviceAccountPubKey = useMemo(() => {
-    if (!freelancer?.paymentWalletAddress) {
+    if (!freelancer?.serviceAccountAddress) {
       console.log('No payment wallet address found');
       return null;
     }
     try {
-      const pubkey = new PublicKey(freelancer.paymentWalletAddress);
+      const pubkey = new PublicKey(freelancer.serviceAccountAddress);
       console.log('Created service account pubkey:', pubkey.toString());
       return pubkey;
     } catch (error) {
       console.error(
         'Invalid service account address:',
-        freelancer.paymentWalletAddress,
+        freelancer.serviceAccountAddress,
       );
       return null;
     }
@@ -395,7 +395,8 @@ export default function EscrowManagement() {
                     {freelancer.title}
                   </span>
                   <span className="text-sm text-muted-foreground">
-                    Service ID: {freelancer.paymentWalletAddress.slice(0, 8)}...
+                    Service ID: {freelancer.serviceAccountAddress.slice(0, 8)}
+                    ...
                   </span>
                 </div>
                 <div className="flex items-center gap-2">

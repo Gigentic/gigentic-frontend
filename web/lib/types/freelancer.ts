@@ -4,5 +4,5 @@ export interface Freelancer {
   experience: string;
   rating: number;
   matchScore: number;
-  paymentWalletAddress: string;
+  serviceAccountAddress: string;
 }
