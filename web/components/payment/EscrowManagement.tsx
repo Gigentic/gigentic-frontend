@@ -114,10 +114,6 @@ export default function EscrowManagement() {
     if (!publicKey || !selectedServiceAccountAddress) return;
 
     try {
-      const serviceRegistryPubKey = new PublicKey(
-        process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
-      );
-
       const serviceAccount = await program.account.service.fetch(
         selectedServiceAccountAddress,
       );
@@ -173,7 +169,7 @@ export default function EscrowManagement() {
         onSuccess: () => {
           console.log('✅ Freelancer cache cleared successfully');
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
           console.error('❌ Failed to clear freelancer cache:', error);
         },
       });
