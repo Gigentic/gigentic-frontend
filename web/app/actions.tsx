@@ -24,7 +24,6 @@ import FreelancerProfileCard from '@/components/service-discovery/freelancer-pro
 let content = ``;
 
 // read the service registry from the blockchain
-// TODO: refactor to use useServiceRegistry hook and getAllServicesForAI function
 async function fetchServicesFromRegistry(endpoint: string) {
   const connection = new Connection(endpoint);
   const provider = new AnchorProvider(connection, {} as AnchorWallet, {
