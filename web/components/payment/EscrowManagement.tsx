@@ -30,25 +30,96 @@ function extractServiceTitle(description: string): string {
 
 function useEscrowAccounts() {
   const { cluster } = useCluster();
+  const { publicKey } = useWallet();
   const provider = useAnchorProvider();
   const program = getGigenticProgram(provider);
 
   // Query for all escrow accounts
   const accounts = useQuery({
-    queryKey: ['escrow', 'all', { cluster }],
+    queryKey: ['escrow', 'all', { cluster, publicKey: publicKey?.toString() }],
     queryFn: async () => {
-      const allEscrows = await program.account.escrow.all();
+      if (!publicKey) return [];
+
+      // 1. First get all service addresses from registry
+      const serviceRegistry = await program.account.serviceRegistry.fetch(
+        serviceRegistryPubKey,
+      );
+
       console.log(
-        'All fetched escrows:',
-        allEscrows.map((escrow) => ({
+        'Fetched service registry with addresses:',
+        serviceRegistry.serviceAccountAddresses.map((addr) => addr.toString()),
+      );
+
+      // 2. Fetch all services in parallel
+      const services = await Promise.all(
+        serviceRegistry.serviceAccountAddresses.map(async (address) => {
+          const account = await program.account.service.fetch(address);
+          return {
+            address,
+            account,
+          };
+        }),
+      );
+
+      console.log(
+        'Fetched all services:',
+        services.map((s) => ({
+          address: s.address.toString(),
+          provider: s.account.provider.toString(),
+        })),
+      );
+
+      // 3. Derive all possible escrow PDAs for the current user
+      const possibleEscrows = services.map((service) => {
+        const [escrowPDA] = PublicKey.findProgramAddressSync(
+          [
+            Buffer.from('escrow'),
+            service.address.toBuffer(),
+            service.account.provider.toBuffer(),
+            publicKey.toBuffer(),
+          ],
+          program.programId,
+        );
+
+        return {
+          pda: escrowPDA,
+          serviceAddress: service.address,
+          serviceProvider: service.account.provider,
+        };
+      });
+
+      console.log(
+        'Derived possible escrow PDAs:',
+        possibleEscrows.map((e) => ({
+          pda: e.pda.toString(),
+          serviceAddress: e.serviceAddress.toString(),
+          provider: e.serviceProvider.toString(),
+        })),
+      );
+
+      // 4. Fetch all existing escrow accounts
+      const allEscrows = await program.account.escrow.all();
+
+      // 5. Filter to only get escrows that match our derived PDAs
+      const userEscrows = allEscrows.filter((escrow) =>
+        possibleEscrows.some(
+          (possible) => possible.pda.toString() === escrow.publicKey.toString(),
+        ),
+      );
+
+      console.log(
+        'Filtered user escrows:',
+        userEscrows.map((escrow) => ({
           publicKey: escrow.publicKey.toString(),
           serviceProvider: escrow.account.serviceProvider.toString(),
           customer: escrow.account.customer.toString(),
           amount: escrow.account.expectedAmount.toString(),
         })),
       );
-      return allEscrows;
+
+      return userEscrows;
     },
+    enabled: !!publicKey,
     staleTime: 60 * 1000,
   });
 
@@ -98,22 +169,22 @@ export default function EscrowManagement() {
     const filtered = accounts.data.filter((account) => {
       const isMatch =
         account.account.customer.toString() === publicKey.toString();
-      console.log('Checking escrow:', {
-        escrowId: account.publicKey.toString(),
-        customer: account.account.customer.toString(),
-        serviceProvider: account.account.serviceProvider.toString(),
-        isMatch,
-      });
+      // console.log('Checking escrow:', {
+      //   escrowId: account.publicKey.toString(),
+      //   customer: account.account.customer.toString(),
+      //   serviceProvider: account.account.serviceProvider.toString(),
+      //   isMatch,
+      // });
       return isMatch;
     });
 
-    console.log(
-      'Filtered user escrows:',
-      filtered.map((escrow) => ({
-        publicKey: escrow.publicKey.toString(),
-        serviceProvider: escrow.account.serviceProvider.toString(),
-      })),
-    );
+    // console.log(
+    //   'Filtered user escrows:',
+    //   filtered.map((escrow) => ({
+    //     publicKey: escrow.publicKey.toString(),
+    //     serviceProvider: escrow.account.serviceProvider.toString(),
+    //   })),
+    // );
 
     return filtered;
   }, [accounts.data, publicKey]);
@@ -355,15 +426,15 @@ export default function EscrowManagement() {
           selectedServiceAccountAddress,
         );
 
-        // Now check all escrows
-        console.log(
-          'Checking escrows:',
-          accounts.data.map((escrow) => ({
-            escrowPubkey: escrow.publicKey.toString(),
-            serviceProvider: escrow.account.serviceProvider.toString(),
-            customer: escrow.account.customer.toString(),
-          })),
-        );
+        // // Now check all escrows
+        // console.log(
+        //   'Checking escrows:',
+        //   accounts.data.map((escrow) => ({
+        //     escrowPubkey: escrow.publicKey.toString(),
+        //     serviceProvider: escrow.account.serviceProvider.toString(),
+        //     customer: escrow.account.customer.toString(),
+        //   })),
+        // );
 
         // Derive the escrow PDA with the same seeds used in creation
         const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
@@ -382,13 +453,13 @@ export default function EscrowManagement() {
             escrow.publicKey.toString() === derivedEscrowPDA.toString(),
         );
 
-        console.log('Checking escrow status:', {
-          serviceAccountAddress: selectedServiceAccountAddress.toString(),
-          serviceProvider: serviceAccount.provider.toString(),
-          customer: publicKey.toString(),
-          derivedEscrowPDA: derivedEscrowPDA.toString(),
-          hasExistingEscrow: !!existingEscrow,
-        });
+        // console.log('Checking escrow status:', {
+        //   serviceAccountAddress: selectedServiceAccountAddress.toString(),
+        //   serviceProvider: serviceAccount.provider.toString(),
+        //   customer: publicKey.toString(),
+        //   derivedEscrowPDA: derivedEscrowPDA.toString(),
+        //   hasExistingEscrow: !!existingEscrow,
+        // });
 
         setIsServiceInEscrow(!!existingEscrow);
       } catch (error) {
@@ -405,9 +476,6 @@ export default function EscrowManagement() {
 
     const fetchServiceTitles = async () => {
       try {
-        const serviceRegistryPubKey = new PublicKey(
-          process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
-        );
         const serviceRegistry = await program.account.serviceRegistry.fetch(
           serviceRegistryPubKey,
         );
