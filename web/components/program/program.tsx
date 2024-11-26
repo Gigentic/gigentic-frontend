@@ -5,7 +5,7 @@ import { WalletButton } from '@/providers/solana-provider';
 import { AppHero, ellipsify } from '@/ui/ui-layout';
 import { ExplorerLink } from '@/cluster/cluster-ui';
 import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
-import { serviceRegistryPubkey } from '@/hooks/blockchain/use-gigentic-program';
+import { serviceRegistryPubKey } from '@/hooks/blockchain/use-gigentic-program';
 
 export default function GigenticProgramFeature() {
   const { publicKey } = useWallet();
@@ -20,9 +20,9 @@ export default function GigenticProgramFeature() {
             label={ellipsify(programId.toString())}
           />
         </p>
-        {serviceRegistryPubkey && (
+        {serviceRegistryPubKey && (
           <p className="mb-6">
-            Service Registry: {ellipsify(serviceRegistryPubkey)}
+            Service Registry: {ellipsify(serviceRegistryPubKey.toString())}
           </p>
         )}
       </AppHero>

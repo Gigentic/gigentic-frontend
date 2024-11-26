@@ -14,14 +14,17 @@ import { useCluster } from '@/cluster/cluster-data-access';
 import { Program } from '@coral-xyz/anchor';
 
 // Direct access to environment variable
-export const serviceRegistryPubkey =
-  process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!;
+export const serviceRegistryPubKey = new PublicKey(
+  process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
+);
+
+export const mintPubKey = new PublicKey(process.env.NEXT_PUBLIC_MINT_PUBKEY!);
 
 export async function fetchServiceRegistry(
   program: Program<Gigentic>,
-  serviceRegistryPubkey: PublicKey,
+  serviceRegistryPubKey: PublicKey,
 ) {
-  return program.account.serviceRegistry.fetch(serviceRegistryPubkey);
+  return program.account.serviceRegistry.fetch(serviceRegistryPubKey);
 }
 
 export function useGigenticProgram() {
@@ -45,8 +48,7 @@ export function useServiceRegistry() {
 
   const serviceRegistry = useQuery({
     queryKey: ['service-registry', { cluster }],
-    queryFn: () =>
-      fetchServiceRegistry(program, new PublicKey(serviceRegistryPubkey)),
+    queryFn: () => fetchServiceRegistry(program, serviceRegistryPubKey),
   });
 
   const serviceAccounts = useQuery({

@@ -19,7 +19,7 @@ import { useTransactionToast } from '@/components/ui/ui-layout';
 import { Plus, X } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { BN } from '@coral-xyz/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
@@ -27,7 +27,8 @@ import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import {
   useGigenticProgram,
   useServiceRegistry,
-  serviceRegistryPubkey,
+  serviceRegistryPubKey,
+  mintPubKey,
 } from '@/hooks/blockchain/use-gigentic-program';
 import { ServiceCard } from './service-card';
 
@@ -50,11 +51,6 @@ const serviceSchema = z.object({
 });
 
 type ServiceFormData = z.infer<typeof serviceSchema>;
-
-// Update these constants at the top of the file
-const MINT_ADDRESS = new PublicKey(
-  'So11111111111111111111111111111111111111112',
-);
 
 export function AddService() {
   const { program } = useGigenticProgram();
@@ -106,8 +102,8 @@ export function AddService() {
         description: fullDescription,
         price: priceInLamports.toString(),
         provider: publicKey.toString(),
-        serviceRegistry: serviceRegistryPubkey,
-        mint: MINT_ADDRESS.toString(),
+        serviceRegistry: serviceRegistryPubKey.toString(),
+        mint: mintPubKey.toString(),
       });
 
       // Call program matching test pattern
@@ -115,8 +111,8 @@ export function AddService() {
         .initializeService(uniqueId, fullDescription, priceInLamports)
         .accounts({
           provider: publicKey,
-          serviceRegistry: serviceRegistryPubkey,
-          mint: MINT_ADDRESS,
+          serviceRegistry: serviceRegistryPubKey,
+          mint: mintPubKey,
           tokenProgram: TOKEN_PROGRAM_ID,
         })
         .rpc();
