@@ -538,12 +538,14 @@ export default function EscrowManagement() {
         providerName={escrow.account.serviceProvider.toString().slice(0, 8)}
         providerLink={`https://www.solchat.app/`}
         escrowId={escrow.publicKey.toString().slice(0, 8)}
-        amountInEscrow={Number(escrow.account.expectedAmount) / LAMPORTS_PER_SOL}
+        amountInEscrow={
+          Number(escrow.account.expectedAmount) / LAMPORTS_PER_SOL
+        }
         onReleaseEscrow={async (escrowId, rating, review) => {
           try {
             await handleReleaseEscrow(
               escrow.publicKey.toString(),
-              escrow.account.serviceProvider
+              escrow.account.serviceProvider,
             );
             console.log('Review submitted:', { escrowId, rating, review });
           } catch (error) {
@@ -556,7 +558,7 @@ export default function EscrowManagement() {
   };
 
   return (
-    <div className="min-h-screen p-4 space-y-6">
+    <div className=" p-4 space-y-6">
       {/* Selected Provider Payment Card */}
       {freelancer && selectedServiceAccountAddress && (
         <Card className="w-full max-w-4xl mx-auto bg-background">
