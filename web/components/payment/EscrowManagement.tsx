@@ -22,6 +22,7 @@ import { Card, CardContent, Button } from '@gigentic-frontend/ui-kit/ui';
 import EscrowCard from './EscrowCard';
 import { Freelancer } from '@/lib/types/freelancer';
 import { serviceRegistryPubKey } from '@/lib/hooks/blockchain/use-gigentic-program';
+import Link from 'next/link';
 
 function extractServiceTitle(description: string): string {
   const titleMatch = description.match(/title: (.*?) \|/);
@@ -561,14 +562,19 @@ export default function EscrowManagement() {
     <div className=" p-4 space-y-6">
       {/* Selected Provider Payment Card */}
       {freelancer && selectedServiceAccountAddress && (
-        <Card className="w-full max-w-4xl mx-auto bg-background">
+        <Card className="w-full max-w-4xl mx-auto bg-white shadow-lg">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl font-semibold">
+                  <Link
+                    href={`https://explorer.testnet.soo.network/address/${freelancer.serviceAccountAddress}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-lg hover:underline hover:text-primary"
+                  >
                     {freelancer.title}
-                  </span>
+                  </Link>
                 </div>
                 <div className="flex items-center gap-2">
                   <span>⭐ {freelancer.rating}</span>

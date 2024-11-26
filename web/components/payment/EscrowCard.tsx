@@ -22,7 +22,7 @@ export default function EscrowCard({
   onReleaseEscrow,
 }: EscrowCardProps) {
   return (
-    <Card className="w-full max-w-4xl bg-background">
+    <Card className="w-full max-w-4xl bg-gray-50 shadow-md">
       <CardContent className="flex items-center justify-between p-4">
         {serviceTitle ? (
           <>
