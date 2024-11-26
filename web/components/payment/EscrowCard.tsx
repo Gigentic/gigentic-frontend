@@ -86,13 +86,10 @@ export default function EscrowCard({
           <p className="text-sm">
             Amount in Escrow: {amountInEscrow?.toFixed(3) ?? '0.000'} Sol
           </p>
-          <p className="text-sm">
-            Final Amount Paid: {totalAmount?.toFixed(3) ?? '0.000'} Sol
-          </p>
         </div>
         <ReviewPopup
           setIsOpen={setIsOpen}
-          contractId={escrowId}
+          contractId={escrowId} // TODO: change to serviceAccountAddress
           serviceName={providerName}
           amount={amountInEscrow?.toFixed(2) ?? '0.00'}
           provider={providerName}
