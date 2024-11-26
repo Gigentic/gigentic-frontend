@@ -405,34 +405,85 @@ export default function EscrowManagement() {
 
     const fetchServiceTitles = async () => {
       try {
-        const serviceRegistryPubKey = new PublicKey(
-          process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
+        console.log(
+          'Starting fetchServiceTitles for',
+          userEscrows.length,
+          'escrows',
         );
+        const startTime = performance.now();
+
+        // 1. Fetch all services in one batch
         const serviceRegistry = await program.account.serviceRegistry.fetch(
           serviceRegistryPubKey,
         );
+        console.log(
+          'Service registry fetched with',
+          serviceRegistry.serviceAccountAddresses.length,
+          'services',
+        );
 
+        // 2. Batch fetch all service accounts in parallel
+        const serviceAccounts = await Promise.all(
+          serviceRegistry.serviceAccountAddresses.map((address) =>
+            program.account.service
+              .fetch(address)
+              .then((account) => ({ address, account })),
+          ),
+        );
+        console.log(
+          'All service accounts fetched in',
+          (performance.now() - startTime).toFixed(2),
+          'ms',
+        );
+
+        // 3. Create a lookup map for faster access
+        const serviceMap = new Map(
+          serviceAccounts.map(({ address, account }) => [
+            address.toString(),
+            account,
+          ]),
+        );
+
+        // 4. Process escrows with the cached data
         const titles: Record<string, string> = {};
-
         for (const escrow of userEscrows) {
           const escrowId = escrow.publicKey.toString();
-          // Find matching service account
-          for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
-            const serviceAccount =
-              await program.account.service.fetch(serviceAddress);
-            if (
-              serviceAccount.provider.toString() ===
-              escrow.account.serviceProvider.toString()
-            ) {
-              titles[escrowId] = extractServiceTitle(
-                serviceAccount.description,
+          const serviceProvider = escrow.account.serviceProvider;
+
+          // Find matching service using cached data
+          const matchingService = serviceAccounts.find(
+            ({ address, account }) => {
+              const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
+                [
+                  Buffer.from('escrow'),
+                  address.toBuffer(),
+                  serviceProvider.toBuffer(),
+                  publicKey!.toBuffer(),
+                ],
+                program.programId,
               );
-              break;
-            }
+              return derivedEscrowPDA.toString() === escrowId;
+            },
+          );
+
+          if (matchingService) {
+            titles[escrowId] = extractServiceTitle(
+              matchingService.account.description,
+            );
+            console.log('Found matching service:', {
+              escrowId,
+              serviceAddress: matchingService.address.toString(),
+              title: titles[escrowId],
+            });
           }
         }
 
         setServiceTitles(titles);
+        console.log(
+          'Total execution time:',
+          (performance.now() - startTime).toFixed(2),
+          'ms',
+        );
       } catch (error) {
         console.error('Error fetching service titles:', error);
         setError('Failed to load escrow details');
@@ -440,7 +491,7 @@ export default function EscrowManagement() {
     };
 
     fetchServiceTitles();
-  }, [userEscrows, program]);
+  }, [userEscrows, program, publicKey]);
 
   const renderEscrowContent = () => {
     if (accounts.isLoading) {
