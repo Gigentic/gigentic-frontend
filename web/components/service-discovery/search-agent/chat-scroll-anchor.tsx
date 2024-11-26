@@ -1,26 +1,31 @@
 'use client';
 
-import { useAtBottom } from '@/hooks/ui/use-at-bottom';
+import { useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useEffect } from 'react';
+import { useAtBottom } from '@/hooks/ui/use-at-bottom';
 
 export default function ChatScrollAnchor() {
-  const trackVisibility = true;
-
-  const isAtBottom = useAtBottom();
-  const { ref, inView, entry } = useInView({
-    trackVisibility,
-    delay: 100,
-    rootMargin: '0px 0px -200px 0px',
+  const { ref, inView } = useInView({
+    threshold: 0,
+    rootMargin: '0px 0px -150px 0px',
   });
 
-  useEffect(() => {
-    if (isAtBottom && trackVisibility && !inView) {
-      entry?.target.scrollIntoView({
-        block: 'start',
-      });
-    }
-  }, [inView, entry, isAtBottom, trackVisibility]);
+  const { isAtBottom, isManuallyScrolling } = useAtBottom();
+  const prevInViewRef = useRef(inView);
 
-  return <div ref={ref} className="h-px w-full" />;
+  useEffect(() => {
+    const chatContainer = document.getElementById('chat-messages');
+    if (!chatContainer) return;
+
+    const shouldScroll =
+      !inView && (isAtBottom || prevInViewRef.current) && !isManuallyScrolling;
+
+    prevInViewRef.current = inView;
+
+    if (shouldScroll) {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+  }, [inView, isAtBottom, isManuallyScrolling]);
+
+  return <div ref={ref} className="h-1 w-full" />;
 }
