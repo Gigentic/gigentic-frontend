@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 'use server';
 
 import { z } from 'zod';
@@ -20,6 +21,8 @@ import {
 } from '@/components/service-discovery/llm/message';
 import FreelancerProfileCard from '@/components/service-discovery/freelancer-profile-card';
 
+let content = ``;
+
 // read the service registry from the blockchain
 async function fetchServicesFromRegistry(endpoint: string) {
   const connection = new Connection(endpoint);
@@ -29,7 +32,8 @@ async function fetchServicesFromRegistry(endpoint: string) {
   const program = getGigenticProgram(provider);
 
   // Get registry address from environment directly
-  const serviceRegistryPubkey = process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY;
+  const serviceRegistryPubkey =
+    process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!;
   if (!serviceRegistryPubkey) {
     throw new Error('Service registry address not configured');
   }
@@ -70,7 +74,7 @@ export async function sendMessage(
 
   try {
     // provide the service registry as context to the LLM
-    const servicesContent = await fetchServicesFromRegistry(endpoint);
+    content = await fetchServicesFromRegistry(endpoint);
 
     history.update([
       ...history.get(),
@@ -86,7 +90,7 @@ export async function sendMessage(
       messages: [
         {
           role: 'system',
-          content: servicesContent,
+          content,
           toolInvocations: [],
         },
         ...history.get(),
@@ -98,7 +102,10 @@ export async function sendMessage(
       ),
       text: ({ content, done }) => {
         if (done) {
-          history.done([...history.get(), { role: 'assistant', content }]);
+          history.done([
+            ...history.get(),
+            { role: 'assistant', content: content },
+          ]);
         }
 
         // Format the content for display
@@ -141,7 +148,7 @@ export async function sendMessage(
             rating: z.number().describe('The rating of the freelancer'),
             serviceAccountAddress: z
               .string()
-              .describe('The serviceAccountAddress of the freelancer.'),
+              .describe('The serviceAccountAddress of the freelancer'),
           }),
           generate: async function* ({
             title,
