@@ -49,15 +49,13 @@ export default function EscrowCard({
             </Link>
             <p className="text-sm text-gray-500">Escrow ID: {escrowId}</p>
             <div className="flex items-center mt-1">
-              {[...Array(5)].map((_, i) => (
+              {/* {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
                   className={`w-4 h-4 ${i < fullStars ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
                 />
-              ))}
-              <span className="ml-1 text-sm font-medium">
-                {rating.toFixed(1)}
-              </span>
+              ))} */}
+              <span className="ml-1 text-sm font-medium">⭐ 4.6</span>
               {matchPercentage !== undefined && (
                 <span className="ml-2 text-sm font-medium text-green-500">
                   {matchPercentage}% match
