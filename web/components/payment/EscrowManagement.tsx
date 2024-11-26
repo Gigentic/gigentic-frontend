@@ -62,7 +62,7 @@ export default function EscrowManagement() {
   const [isServiceInEscrow, setIsServiceInEscrow] = useState(false);
 
   // Get service account from freelancer data if it exists
-  const serviceAccountPubKey = useMemo(() => {
+  const selectedServiceAccountAddress = useMemo(() => {
     if (!freelancer?.serviceAccountAddress) {
       console.log('No payment wallet address found');
       return null;
@@ -110,17 +110,18 @@ export default function EscrowManagement() {
   }, [accounts.data, publicKey]);
 
   const handlePayIntoEscrow = async () => {
-    if (!publicKey || !serviceAccountPubKey) return;
+    if (!publicKey || !selectedServiceAccountAddress) return;
 
     try {
       const serviceRegistryPubKey = new PublicKey(
         process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
       );
 
-      const serviceAccount =
-        await program.account.service.fetch(serviceAccountPubKey);
+      const serviceAccount = await program.account.service.fetch(
+        selectedServiceAccountAddress,
+      );
       console.log('Found service account:', {
-        address: serviceAccountPubKey.toString(),
+        address: selectedServiceAccountAddress.toString(),
         provider: serviceAccount.provider.toString(),
       });
 
@@ -129,7 +130,7 @@ export default function EscrowManagement() {
 
       console.log('Transaction accounts:', {
         customer: publicKey.toString(),
-        service: serviceAccountPubKey.toString(),
+        service: selectedServiceAccountAddress.toString(),
         serviceRegistry: serviceRegistryPubKey.toString(),
       });
 
@@ -141,7 +142,7 @@ export default function EscrowManagement() {
             .payService(review_id)
             .accounts({
               customer: publicKey,
-              service: serviceAccountPubKey,
+              service: selectedServiceAccountAddress,
               serviceRegistry: serviceRegistryPubKey,
             })
             .instruction(),
@@ -345,7 +346,7 @@ export default function EscrowManagement() {
   };
 
   useEffect(() => {
-    if (!accounts.data || !serviceAccountPubKey || !publicKey) {
+    if (!accounts.data || !selectedServiceAccountAddress || !publicKey) {
       setIsServiceInEscrow(false);
       return;
     }
@@ -353,8 +354,9 @@ export default function EscrowManagement() {
     const checkServiceEscrow = async () => {
       try {
         // First get the service account to get its provider
-        const serviceAccount =
-          await program.account.service.fetch(serviceAccountPubKey);
+        const serviceAccount = await program.account.service.fetch(
+          selectedServiceAccountAddress,
+        );
 
         // Now check all escrows
         console.log(
@@ -370,7 +372,7 @@ export default function EscrowManagement() {
         const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
           [
             Buffer.from('escrow'),
-            serviceAccountPubKey.toBuffer(),
+            selectedServiceAccountAddress.toBuffer(),
             serviceAccount.provider.toBuffer(),
             publicKey.toBuffer(),
           ],
@@ -384,7 +386,7 @@ export default function EscrowManagement() {
         );
 
         console.log('Checking escrow status:', {
-          serviceAccountAddress: serviceAccountPubKey.toString(),
+          serviceAccountAddress: selectedServiceAccountAddress.toString(),
           serviceProvider: serviceAccount.provider.toString(),
           customer: publicKey.toString(),
           derivedEscrowPDA: derivedEscrowPDA.toString(),
@@ -399,7 +401,7 @@ export default function EscrowManagement() {
     };
 
     checkServiceEscrow();
-  }, [accounts.data, serviceAccountPubKey, publicKey, program]);
+  }, [accounts.data, selectedServiceAccountAddress, publicKey, program]);
 
   const renderEscrowContent = () => {
     if (accounts.isLoading) {
@@ -443,7 +445,7 @@ export default function EscrowManagement() {
   return (
     <div className="min-h-screen p-4 space-y-6">
       {/* Selected Provider Payment Card */}
-      {freelancer && serviceAccountPubKey && (
+      {freelancer && selectedServiceAccountAddress && (
         <Card className="w-full max-w-4xl mx-auto bg-background">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
