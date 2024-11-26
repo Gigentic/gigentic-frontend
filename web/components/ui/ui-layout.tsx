@@ -5,13 +5,12 @@ import { ReactNode, Suspense, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Mail, Twitter } from 'lucide-react';
-
-// import { AccountChecker } from '../account/account-ui';
+import { Mail, Twitter, User } from 'lucide-react';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { Avatar, AvatarFallback } from '@gigentic-frontend/ui-kit/ui';
 import { ClusterUiSelect, ExplorerLink } from '@/cluster/cluster-ui';
 import toast, { Toaster } from 'react-hot-toast';
 
-// import { ThemeProvider } from '@/components/theme-provider';
 export function UiLayout({
   children,
   links,
@@ -20,6 +19,11 @@ export function UiLayout({
   links: { label: string; path: string }[];
 }) {
   const pathname = usePathname();
+  const { publicKey } = useWallet();
+
+  const filteredLinks = links.filter(
+    (link) => !link.path.startsWith('/account'),
+  );
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -39,7 +43,7 @@ export function UiLayout({
             </div>
             <nav className="flex items-center">
               <ul className="flex space-x-4">
-                {links.map(({ label, path }) => (
+                {filteredLinks.map(({ label, path }) => (
                   <li key={path}>
                     <Link
                       className={`px-3 py-2 rounded-md text-sm font-medium transition-colors
@@ -54,7 +58,16 @@ export function UiLayout({
               </ul>
             </nav>
           </div>
-          <div className="">
+          <div className="flex items-center space-x-4">
+            {publicKey && (
+              <Link href={`/account/${publicKey.toString()}`}>
+                <Avatar className="cursor-pointer hover:opacity-80">
+                  <AvatarFallback>
+                    <User className="h-5 w-5" />
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
+            )}
             <div className="hidden sm:block">
               <WalletButton />
             </div>
