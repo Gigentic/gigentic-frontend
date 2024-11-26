@@ -154,7 +154,7 @@ export function AddService() {
 
     // TODO: Hacky way to Introduce a 3s delay before refetching
     await new Promise((resolve) => setTimeout(resolve, 3000));
-    await serviceAccounts.refetch();
+    serviceAccounts.refetch();
   };
 
   const renderServicesList = (services: typeof serviceAccounts.data) => {
@@ -202,7 +202,7 @@ export function AddService() {
       <div className="max-w-3xl mx-auto space-y-8">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Services</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Talent Hub</h1>
             <p className="text-muted-foreground text-lg">
               Browse and manage service offerings
             </p>
@@ -221,7 +221,7 @@ export function AddService() {
               ) : (
                 <>
                   <Plus className="mr-2 h-4 w-4" />
-                  Add New Service
+                  Offer Your Talent
                 </>
               )}
             </Button>
@@ -232,7 +232,7 @@ export function AddService() {
           <Card className="p-6">
             <div className="space-y-2 mb-6">
               <h2 className="text-2xl font-bold tracking-tight">
-                Create New Service
+                Create New Talent Offering
               </h2>
               <p className="text-muted-foreground">
                 Describe your service and set your rate
@@ -245,7 +245,7 @@ export function AddService() {
             >
               <div className="space-y-2">
                 <label htmlFor="title" className="text-lg font-semibold">
-                  Service Title
+                  Your Talent
                 </label>
                 <Input
                   {...form.register('title')}
@@ -266,7 +266,7 @@ export function AddService() {
                 <Textarea
                   {...form.register('serviceDescription')}
                   className="min-h-[200px] resize-y"
-                  placeholder="Describe your services, expertise, and what you can offer to clients..."
+                  placeholder="Describe your talent, expertise, and what you can offer to clients..."
                 />
                 {form.formState.errors.serviceDescription && (
                   <p className="text-sm text-red-500">
@@ -277,7 +277,7 @@ export function AddService() {
 
               <div className="space-y-2">
                 <label htmlFor="price" className="text-lg font-semibold">
-                  Service Rate (SOL)
+                  Service Hourly Rate (SOL)
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
@@ -305,7 +305,7 @@ export function AddService() {
                 disabled={isSubmitting || !connected}
               >
                 <Plus className="mr-2 h-4 w-4" />
-                {isSubmitting ? 'Creating...' : 'Create Service Offering'}
+                {isSubmitting ? 'Creating...' : 'Create Talent Offering'}
               </Button>
             </form>
           </Card>
@@ -313,8 +313,8 @@ export function AddService() {
 
         <Tabs defaultValue="your-services" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="your-services">Your Services</TabsTrigger>
-            <TabsTrigger value="all-services">All Services</TabsTrigger>
+            <TabsTrigger value="your-services">My Talents</TabsTrigger>
+            <TabsTrigger value="all-services">All Talents</TabsTrigger>
           </TabsList>
           <TabsContent value="your-services" className="mt-6">
             {renderServicesList(userServices)}
