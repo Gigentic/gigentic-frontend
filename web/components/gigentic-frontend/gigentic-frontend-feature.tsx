@@ -5,7 +5,7 @@ import { WalletButton } from '@/providers/solana-provider';
 import { AppHero, ellipsify } from '@/ui/ui-layout';
 import { ExplorerLink } from '@/cluster/cluster-ui';
 import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
-import { GigenticFrontendList } from './gigentic-frontend-ui';
+// import { GigenticFrontendList } from './gigentic-frontend-ui';
 
 export default function GigenticFrontendFeature() {
   const { publicKey } = useWallet();
@@ -29,7 +29,7 @@ export default function GigenticFrontendFeature() {
           </p>
         )}
       </AppHero>
-      <GigenticFrontendList />
+      {/* <GigenticFrontendList /> */}
     </div>
   ) : (
     <div className="max-w-4xl mx-auto">

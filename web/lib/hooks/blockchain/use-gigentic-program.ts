@@ -4,16 +4,27 @@
 import {
   getGigenticProgram,
   getGigenticProgramId,
+  Gigentic,
 } from '@gigentic-frontend/anchor';
-import { Cluster } from '@solana/web3.js';
-import { useConnection } from '@solana/wallet-adapter-react';
+import { Cluster, PublicKey } from '@solana/web3.js';
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAnchorProvider } from '@/providers/solana-provider';
 import { useCluster } from '@/cluster/cluster-data-access';
+import { Program } from '@coral-xyz/anchor';
+
+// Direct access to environment variable
+export const serviceRegistryPubkey =
+  process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!;
+
+export async function fetchServiceRegistry(
+  program: Program<Gigentic>,
+  serviceRegistryPubkey: PublicKey,
+) {
+  return program.account.serviceRegistry.fetch(serviceRegistryPubkey);
+}
 
 export function useGigenticProgram() {
-  const { connection } = useConnection();
   const { cluster } = useCluster();
   const provider = useAnchorProvider();
   const programId = useMemo(
@@ -22,17 +33,23 @@ export function useGigenticProgram() {
   );
   const program = getGigenticProgram(provider);
 
+  return {
+    program,
+    programId,
+  };
+}
+
+export function useServiceRegistry() {
+  const { cluster } = useCluster();
+  const { program } = useGigenticProgram();
+
   const serviceRegistry = useQuery({
     queryKey: ['service-registry', { cluster }],
-    queryFn: async () => {
-      const registry = await program.account.serviceRegistry.fetch(
-        process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
-      );
-      return registry;
-    },
+    queryFn: () =>
+      fetchServiceRegistry(program, new PublicKey(serviceRegistryPubkey)),
   });
 
-  const accounts = useQuery({
+  const serviceAccounts = useQuery({
     queryKey: ['services', { cluster }],
     queryFn: async () => {
       if (!serviceRegistry.data) return [];
@@ -53,15 +70,7 @@ export function useGigenticProgram() {
     enabled: !!serviceRegistry.data,
   });
 
-  const getProgramAccount = useQuery({
-    queryKey: ['get-program-account', { cluster }],
-    queryFn: () => connection.getParsedAccountInfo(programId),
-  });
-
   return {
-    program,
-    programId,
-    accounts,
-    getProgramAccount,
+    serviceAccounts,
   };
 }

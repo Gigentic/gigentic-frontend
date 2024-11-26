@@ -8,7 +8,6 @@ import { useForm } from 'react-hook-form';
 import {
   Button,
   Card,
-  CardContent,
   Textarea,
   Input,
   Tabs,
@@ -16,16 +15,20 @@ import {
   TabsList,
   TabsTrigger,
 } from '@gigentic-frontend/ui-kit/ui';
+import { useTransactionToast } from '@/components/ui/ui-layout';
 import { Plus, X } from 'lucide-react';
 import { toast } from 'sonner';
+
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { useWallet, useConnection } from '@solana/wallet-adapter-react';
-import { AnchorProvider, BN } from '@coral-xyz/anchor';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { BN } from '@coral-xyz/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
-import { getGigenticProgram } from '@gigentic-frontend/anchor';
-import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
-import { useTransactionToast } from '@/components/ui/ui-layout';
+import {
+  useGigenticProgram,
+  useServiceRegistry,
+  serviceRegistryPubkey,
+} from '@/hooks/blockchain/use-gigentic-program';
 import { ServiceCard } from './service-card';
 
 // Form validation schema
@@ -49,26 +52,23 @@ const serviceSchema = z.object({
 type ServiceFormData = z.infer<typeof serviceSchema>;
 
 // Update these constants at the top of the file
-const SERVICE_REGISTRY_PUBKEY =
-  process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!;
 const MINT_ADDRESS = new PublicKey(
   'So11111111111111111111111111111111111111112',
 );
 
 export function AddService() {
-  const { connection } = useConnection();
-  const walletContext = useWallet();
-  const { connected, publicKey } = walletContext;
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { program } = useGigenticProgram();
+  const { connected, publicKey, signTransaction } = useWallet();
   const transactionToast = useTransactionToast();
-  const { accounts } = useGigenticProgram();
+  const { serviceAccounts } = useServiceRegistry();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
 
   // Filter for all services (already available from accounts)
-  const allServices = accounts.data || [];
+  const allServices = serviceAccounts.data || [];
 
   // Filter for user services (already have this)
-  const userServices = accounts.data?.filter(
+  const userServices = serviceAccounts.data?.filter(
     (account) => account.account.provider.toString() === publicKey?.toString(),
   );
 
@@ -82,7 +82,7 @@ export function AddService() {
   });
 
   const handleCreateService = async (data: ServiceFormData) => {
-    if (!connected || !publicKey || !walletContext.signTransaction) {
+    if (!connected || !publicKey || !signTransaction) {
       toast.error('Please connect your wallet first');
       return;
     }
@@ -91,19 +91,6 @@ export function AddService() {
 
     try {
       setIsSubmitting(true);
-
-      // Create anchor wallet adapter
-      const anchorWallet = {
-        publicKey: walletContext.publicKey!,
-        signTransaction: walletContext.signTransaction,
-        signAllTransactions: walletContext.signAllTransactions!,
-      };
-
-      // Get program instance
-      const provider = new AnchorProvider(connection, anchorWallet, {
-        commitment: 'confirmed',
-      });
-      const program = getGigenticProgram(provider);
 
       // Generate unique ID (matching test pattern)
       const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
@@ -119,7 +106,7 @@ export function AddService() {
         description: fullDescription,
         price: priceInLamports.toString(),
         provider: publicKey.toString(),
-        serviceRegistry: SERVICE_REGISTRY_PUBKEY.toString(),
+        serviceRegistry: serviceRegistryPubkey,
         mint: MINT_ADDRESS.toString(),
       });
 
@@ -128,7 +115,7 @@ export function AddService() {
         .initializeService(uniqueId, fullDescription, priceInLamports)
         .accounts({
           provider: publicKey,
-          serviceRegistry: SERVICE_REGISTRY_PUBKEY,
+          serviceRegistry: serviceRegistryPubkey,
           mint: MINT_ADDRESS,
           tokenProgram: TOKEN_PROGRAM_ID,
         })
@@ -160,7 +147,7 @@ export function AddService() {
       transactionToast(tx);
 
       // Refetch after confirmation
-      await accounts.refetch();
+      await serviceAccounts.refetch();
 
       // Reset form and hide it
       form.reset();
@@ -173,8 +160,8 @@ export function AddService() {
     }
   };
 
-  const renderServicesList = (services: typeof accounts.data) => {
-    if (accounts.isLoading) {
+  const renderServicesList = (services: typeof serviceAccounts.data) => {
+    if (serviceAccounts.isLoading) {
       return (
         <div className="flex justify-center items-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />

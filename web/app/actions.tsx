@@ -20,47 +20,36 @@ import {
 } from '@/components/service-discovery/llm/message';
 import FreelancerProfileCard from '@/components/service-discovery/freelancer-profile-card';
 
-let service_registry = '';
-let content = ``;
-
-export async function fetchServiceRegistryPubkey() {
-  // Load service registry public key from environment variable
-  const serviceRegistryPubkey = process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY;
-  if (!serviceRegistryPubkey) {
-    throw new Error(
-      'NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY is not set in environment variables',
-    );
-  }
-
-  console.log('serviceRegistryPubkey', serviceRegistryPubkey.toString());
-
-  return serviceRegistryPubkey.toString();
-}
-
 // read the service registry from the blockchain
-// TODO: refactor to use useServiceRegistry hook and getAllServicesForAI function
-async function fetchServiceRegistry(endpoint: string) {
+async function fetchServicesFromRegistry(endpoint: string) {
   const connection = new Connection(endpoint);
   const provider = new AnchorProvider(connection, {} as AnchorWallet, {
     commitment: 'confirmed',
   });
   const program = getGigenticProgram(provider);
 
-  console.log('========== Fetch service registry');
-  const serviceRegistry = await program.account.serviceRegistry.fetch(
-    await fetchServiceRegistryPubkey(),
-  );
-
-  for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
-    const paymentAddress = serviceAddress.toString();
-    console.log('Service Account Address:', paymentAddress);
-
-    const serviceAccount = await program.account.service.fetch(serviceAddress);
-
-    service_registry += `\n${serviceAccount.description} | paymentWalletAddress: ${paymentAddress}`;
+  // Get registry address from environment directly
+  const serviceRegistryPubkey = process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY;
+  if (!serviceRegistryPubkey) {
+    throw new Error('Service registry address not configured');
   }
 
-  return service_registry;
+  const serviceRegistry = await program.account.serviceRegistry.fetch(
+    serviceRegistryPubkey,
+  );
+
+  // Fetch all services in one RPC call using getMultiple
+  const services = await program.account.service.fetchMultiple(
+    serviceRegistry.serviceAccountAddresses,
+  );
+
+  // Build the service registry string
+  return services.reduce(
+    (acc, service, i) =>
+      acc +
+      `\n${service?.description} | paymentWalletAddress: ${serviceRegistry.serviceAccountAddresses[i]}`,
+    '',
+  );
 }
 
 //export const sendMessage = async () => {};
@@ -76,7 +65,7 @@ export async function sendMessage(
 
   try {
     // provide the service registry as context to the LLM
-    content = await fetchServiceRegistry(endpoint);
+    const servicesContent = await fetchServicesFromRegistry(endpoint);
 
     history.update([
       ...history.get(),
@@ -92,7 +81,7 @@ export async function sendMessage(
       messages: [
         {
           role: 'system',
-          content,
+          content: servicesContent,
           toolInvocations: [],
         },
         ...history.get(),
@@ -104,10 +93,7 @@ export async function sendMessage(
       ),
       text: ({ content, done }) => {
         if (done) {
-          history.done([
-            ...history.get(),
-            { role: 'assistant', content: content },
-          ]);
+          history.done([...history.get(), { role: 'assistant', content }]);
         }
 
         // Format the content for display

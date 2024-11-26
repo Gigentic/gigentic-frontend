@@ -1,6 +1,6 @@
 'use client';
 
-import { PublicKey } from '@solana/web3.js';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { useServiceAccount } from '@/hooks/blockchain/use-service-account';
 import {
   Card,
@@ -10,7 +10,7 @@ import {
   Badge,
   Button,
 } from '@gigentic-frontend/ui-kit/ui';
-import { Star, Wallet } from 'lucide-react';
+import { Wallet } from 'lucide-react';
 import { ellipsify } from '../ui/ui-layout';
 import { ExplorerLink } from '../cluster/cluster-ui';
 import { useState } from 'react';
@@ -42,7 +42,7 @@ export function ServiceCard({ account }: ServiceCardProps) {
   const descriptionParts = serviceAccount.description.split(' | ');
   const title = descriptionParts[0].replace('title: ', '');
   const description = descriptionParts[1]?.replace('description: ', '') || '';
-  const priceInSol = serviceAccount.price.toNumber() / 1000000000;
+  const priceInSol = serviceAccount.price.toNumber() / LAMPORTS_PER_SOL;
 
   return (
     <Card className="w-full max-w-md bg-white shadow-lg">
