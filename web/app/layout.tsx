@@ -6,7 +6,7 @@ import { ReactQueryProvider } from '@/providers/react-query-provider';
 import { Analytics } from '@vercel/analytics/react';
 
 import { AI } from '@/app/actions';
-import { ThemeProvider } from 'next-themes';
+// import { ThemeProvider } from 'next-themes';
 
 export const metadata = {
   title: 'Gigentic',
@@ -19,7 +19,7 @@ const links: { label: string; path: string }[] = [
   { label: 'Payment', path: '/payment' },
   { label: 'Services', path: '/service-register' },
   { label: 'Account', path: '/account' },
-  { label: 'Program', path: '/gigentic-frontend' },
+  // { label: 'Program', path: '/program' },
 ];
 
 export default function RootLayout({

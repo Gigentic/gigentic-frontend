@@ -1,23 +1,30 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 'use client';
 
 import {
   getGigenticProgram,
   getGigenticProgramId,
+  Gigentic,
 } from '@gigentic-frontend/anchor';
-import { Connection, Cluster, PublicKey } from '@solana/web3.js';
-import { useConnection } from '@solana/wallet-adapter-react';
+import { Cluster, PublicKey } from '@solana/web3.js';
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAnchorProvider } from '@/providers/solana-provider';
 import { useCluster } from '@/cluster/cluster-data-access';
+import { Program } from '@coral-xyz/anchor';
 
-export async function getBlockhash(connection: Connection, pubkey: PublicKey) {
-  const latestBlockhash = await connection.getLatestBlockhash();
-  console.log('latestBlockhash', latestBlockhash);
+// Direct access to environment variable
+export const serviceRegistryPubkey =
+  process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!;
+
+export async function fetchServiceRegistry(
+  program: Program<Gigentic>,
+  serviceRegistryPubkey: PublicKey,
+) {
+  return program.account.serviceRegistry.fetch(serviceRegistryPubkey);
 }
 
 export function useGigenticProgram() {
-  const { connection } = useConnection();
   const { cluster } = useCluster();
   const provider = useAnchorProvider();
   const programId = useMemo(
@@ -26,22 +33,44 @@ export function useGigenticProgram() {
   );
   const program = getGigenticProgram(provider);
 
-  // can be removed/refactored when cleaning up gigentic-frontend-feature
-  const accounts = useQuery({
-    queryKey: ['gigentic', 'all', { cluster }],
-    queryFn: () => program.account.service.all(),
-  });
-
-  // can be removed/refactored when cleaning up gigentic-frontend-feature
-  const getProgramAccount = useQuery({
-    queryKey: ['get-program-account', { cluster }],
-    queryFn: () => connection.getParsedAccountInfo(programId),
-  });
-
   return {
     program,
     programId,
-    accounts,
-    getProgramAccount,
+  };
+}
+
+export function useServiceRegistry() {
+  const { cluster } = useCluster();
+  const { program } = useGigenticProgram();
+
+  const serviceRegistry = useQuery({
+    queryKey: ['service-registry', { cluster }],
+    queryFn: () =>
+      fetchServiceRegistry(program, new PublicKey(serviceRegistryPubkey)),
+  });
+
+  const serviceAccounts = useQuery({
+    queryKey: ['services', { cluster }],
+    queryFn: async () => {
+      if (!serviceRegistry.data) return [];
+
+      // Fetch all services from addresses in registry
+      const services = await Promise.all(
+        serviceRegistry.data.serviceAccountAddresses.map(async (address) => {
+          const account = await program.account.service.fetch(address);
+          return {
+            publicKey: address,
+            account,
+          };
+        }),
+      );
+
+      return services;
+    },
+    enabled: !!serviceRegistry.data,
+  });
+
+  return {
+    serviceAccounts,
   };
 }

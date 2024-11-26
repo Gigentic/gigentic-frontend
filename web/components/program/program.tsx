@@ -5,14 +5,11 @@ import { WalletButton } from '@/providers/solana-provider';
 import { AppHero, ellipsify } from '@/ui/ui-layout';
 import { ExplorerLink } from '@/cluster/cluster-ui';
 import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
-import { GigenticFrontendList } from './gigentic-frontend-ui';
+import { serviceRegistryPubkey } from '@/hooks/blockchain/use-gigentic-program';
 
-export default function GigenticFrontendFeature() {
+export default function GigenticProgramFeature() {
   const { publicKey } = useWallet();
   const { programId } = useGigenticProgram();
-
-  // Direct access to environment variable
-  const serviceRegistryPubkey = process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY;
 
   return publicKey ? (
     <div>
@@ -29,7 +26,6 @@ export default function GigenticFrontendFeature() {
           </p>
         )}
       </AppHero>
-      <GigenticFrontendList />
     </div>
   ) : (
     <div className="max-w-4xl mx-auto">

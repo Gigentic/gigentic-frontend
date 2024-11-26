@@ -11,46 +11,25 @@ import {
 import { Badge } from '@gigentic-frontend/ui-kit/ui';
 import { Button } from '@gigentic-frontend/ui-kit/ui';
 import { Star, MessageSquare, Zap, Lock } from 'lucide-react';
-import {
-  useSelectFreelancer,
-  useSelectedFreelancer,
-} from '@/hooks/services/use-freelancer-query';
+import { useSelectFreelancer } from '@/hooks/services/use-freelancer-query';
 import { useRouter } from 'next/navigation';
+import type { Freelancer } from '@/types/freelancer';
 
-interface FreelancerProfileProps {
-  title: string;
-  pricePerHour: number;
-  experience: string;
-  rating: number;
-  matchScore: number;
-  paymentWalletAddress: string;
-}
-
-const DefaultFreelancerProfileProps: FreelancerProfileProps = {
+const DefaultFreelancerProfileProps: Freelancer = {
   title: 'Test',
   pricePerHour: 50,
   experience: 'Test',
   rating: 4.5,
   matchScore: 80,
-  paymentWalletAddress: '0x1234567890123456789012345678901234567890',
+  serviceAccountAddress: '0x1234567890123456789012345678901234567890',
 };
 
 // render the profile card for one freelancer
 export default function FreelancerProfileCard(
-  props: FreelancerProfileProps = DefaultFreelancerProfileProps,
+  props: Freelancer = DefaultFreelancerProfileProps,
 ) {
   const router = useRouter();
 
-  const freelancerProfileProps: FreelancerProfileProps = {
-    title: props.title,
-    pricePerHour: props.pricePerHour,
-    experience: props.experience,
-    rating: props.rating,
-    matchScore: props.matchScore,
-    paymentWalletAddress: props.paymentWalletAddress,
-  };
-
-  const [contractAddress, setContractAddress] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
   const fullStars = Math.floor(props.rating);
   const hasHalfStar = props.rating % 1 !== 0;
@@ -62,7 +41,6 @@ export default function FreelancerProfileCard(
   };
 
   const { mutate: selectFreelancer } = useSelectFreelancer();
-  const { data: cachedFreelancer } = useSelectedFreelancer();
 
   const handlePayEscrow = () => {
     const freelancerData = {
@@ -71,7 +49,7 @@ export default function FreelancerProfileCard(
       experience: props.experience,
       rating: props.rating,
       matchScore: props.matchScore,
-      paymentWalletAddress: props.paymentWalletAddress,
+      serviceAccountAddress: props.serviceAccountAddress,
     };
 
     // Cache the freelancer data and navigate on success
@@ -91,10 +69,6 @@ export default function FreelancerProfileCard(
     if (score >= 80) return 'text-green-500';
     if (score >= 60) return 'text-yellow-500';
     return 'text-red-500';
-  };
-
-  const handleCheckCache = () => {
-    console.log('🔍 Current cache content:', cachedFreelancer);
   };
 
   return (
@@ -186,13 +160,6 @@ export default function FreelancerProfileCard(
           >
             <Lock className="w-4 h-4 mr-2" />
             Pay into Escrow
-          </Button>
-          <Button
-            className="w-full"
-            variant="secondary"
-            onClick={handleCheckCache}
-          >
-            Check Cache
           </Button>
         </CardFooter>
       </Card>

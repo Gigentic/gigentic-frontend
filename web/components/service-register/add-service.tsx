@@ -1,28 +1,35 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 'use client';
 
-import { useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import {
   Button,
   Card,
-  CardContent,
   Textarea,
   Input,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
 } from '@gigentic-frontend/ui-kit/ui';
-import { Plus, X } from 'lucide-react';
-import { useWallet, useConnection } from '@solana/wallet-adapter-react';
-import { toast } from 'sonner';
-import { PublicKey, LAMPORTS_PER_SOL, SystemProgram } from '@solana/web3.js';
-import { getGigenticProgram } from '@gigentic-frontend/anchor';
-import { AnchorProvider } from '@coral-xyz/anchor';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import * as anchor from '@coral-xyz/anchor';
-
-import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
-import { ServiceCard } from '../gigentic-frontend/service-card';
 import { useTransactionToast } from '@/components/ui/ui-layout';
+import { Plus, X } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { BN } from '@coral-xyz/anchor';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+
+import {
+  useGigenticProgram,
+  useServiceRegistry,
+  serviceRegistryPubkey,
+} from '@/hooks/blockchain/use-gigentic-program';
+import { ServiceCard } from './service-card';
 
 // Form validation schema
 const serviceSchema = z.object({
@@ -45,23 +52,23 @@ const serviceSchema = z.object({
 type ServiceFormData = z.infer<typeof serviceSchema>;
 
 // Update these constants at the top of the file
-const SERVICE_REGISTRY_PUBKEY =
-  process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!;
 const MINT_ADDRESS = new PublicKey(
   'So11111111111111111111111111111111111111112',
 );
 
 export function AddService() {
-  const { connection } = useConnection();
-  const walletContext = useWallet();
-  const { connected, publicKey } = walletContext;
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { program } = useGigenticProgram();
+  const { connected, publicKey, signTransaction } = useWallet();
   const transactionToast = useTransactionToast();
-  const { accounts } = useGigenticProgram();
+  const { serviceAccounts } = useServiceRegistry();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
 
-  // Filter services for current user
-  const userServices = accounts.data?.filter(
+  // Filter for all services (already available from accounts)
+  const allServices = serviceAccounts.data || [];
+
+  // Filter for user services (already have this)
+  const userServices = serviceAccounts.data?.filter(
     (account) => account.account.provider.toString() === publicKey?.toString(),
   );
 
@@ -75,7 +82,7 @@ export function AddService() {
   });
 
   const handleCreateService = async (data: ServiceFormData) => {
-    if (!connected || !publicKey || !walletContext.signTransaction) {
+    if (!connected || !publicKey || !signTransaction) {
       toast.error('Please connect your wallet first');
       return;
     }
@@ -85,19 +92,6 @@ export function AddService() {
     try {
       setIsSubmitting(true);
 
-      // Create anchor wallet adapter
-      const anchorWallet = {
-        publicKey: walletContext.publicKey!,
-        signTransaction: walletContext.signTransaction,
-        signAllTransactions: walletContext.signAllTransactions!,
-      };
-
-      // Get program instance
-      const provider = new AnchorProvider(connection, anchorWallet, {
-        commitment: 'confirmed',
-      });
-      const program = getGigenticProgram(provider);
-
       // Generate unique ID (matching test pattern)
       const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
 
@@ -105,16 +99,14 @@ export function AddService() {
       const fullDescription = `title: ${data.title} | description: ${data.serviceDescription}`;
 
       // Convert price to lamports and create BN
-      const priceInLamports = new anchor.BN(
-        Number(data.price) * LAMPORTS_PER_SOL,
-      );
+      const priceInLamports = new BN(Number(data.price) * LAMPORTS_PER_SOL);
 
       console.log('Transaction parameters:', {
         uniqueId,
         description: fullDescription,
         price: priceInLamports.toString(),
         provider: publicKey.toString(),
-        serviceRegistry: SERVICE_REGISTRY_PUBKEY.toString(),
+        serviceRegistry: serviceRegistryPubkey,
         mint: MINT_ADDRESS.toString(),
       });
 
@@ -123,7 +115,7 @@ export function AddService() {
         .initializeService(uniqueId, fullDescription, priceInLamports)
         .accounts({
           provider: publicKey,
-          serviceRegistry: SERVICE_REGISTRY_PUBKEY,
+          serviceRegistry: serviceRegistryPubkey,
           mint: MINT_ADDRESS,
           tokenProgram: TOKEN_PROGRAM_ID,
         })
@@ -153,8 +145,13 @@ export function AddService() {
       );
 
       transactionToast(tx);
+
+      // Refetch after confirmation
+      await serviceAccounts.refetch();
+
+      // Reset form and hide it
       form.reset();
-      setShowForm(false); // Hide form after successful creation
+      setShowForm(false);
     } catch (error) {
       console.error('Error creating service:', error);
       toast.error('Failed to create service. Please try again.');
@@ -163,33 +160,75 @@ export function AddService() {
     }
   };
 
+  const renderServicesList = (services: typeof serviceAccounts.data) => {
+    if (serviceAccounts.isLoading) {
+      return (
+        <div className="flex justify-center items-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      );
+    }
+
+    if (!services?.length) {
+      return (
+        <div className="text-center py-12 bg-muted rounded-lg">
+          <h3 className="text-lg font-semibold mb-2">No Services Found</h3>
+          <p className="text-muted-foreground mb-4">
+            {publicKey
+              ? 'No services available yet.'
+              : 'Connect your wallet to view services.'}
+          </p>
+          {!showForm && publicKey && (
+            <Button onClick={() => setShowForm(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Your First Service
+            </Button>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {services.map((account) => (
+          <ServiceCard
+            key={account.publicKey.toString()}
+            account={account.publicKey}
+          />
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="container mx-auto py-6 px-4 md:py-12">
       <div className="max-w-3xl mx-auto space-y-8">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Your Services</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Services</h1>
             <p className="text-muted-foreground text-lg">
-              Manage your service offerings
+              Browse and manage service offerings
             </p>
           </div>
-          <Button
-            onClick={() => setShowForm(!showForm)}
-            size="lg"
-            className="shrink-0"
-          >
-            {showForm ? (
-              <>
-                <X className="mr-2 h-4 w-4" />
-                Cancel
-              </>
-            ) : (
-              <>
-                <Plus className="mr-2 h-4 w-4" />
-                Add New Service
-              </>
-            )}
-          </Button>
+          {publicKey && (
+            <Button
+              onClick={() => setShowForm(!showForm)}
+              size="lg"
+              className="shrink-0"
+            >
+              {showForm ? (
+                <>
+                  <X className="mr-2 h-4 w-4" />
+                  Cancel
+                </>
+              ) : (
+                <>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add New Service
+                </>
+              )}
+            </Button>
+          )}
         </div>
 
         {showForm && (
@@ -249,10 +288,9 @@ export function AddService() {
                   </span>
                   <Input
                     {...form.register('price')}
-                    type="number"
-                    step="0.001"
+                    type="text"
                     min="0"
-                    placeholder="0.000"
+                    placeholder="0.01"
                     className="pl-12"
                   />
                 </div>
@@ -276,35 +314,18 @@ export function AddService() {
           </Card>
         )}
 
-        <div className="space-y-6">
-          {accounts.isLoading ? (
-            <div className="flex justify-center items-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-            </div>
-          ) : userServices?.length ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {userServices.map((account) => (
-                <ServiceCard
-                  key={account.publicKey.toString()}
-                  account={account.publicKey}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 bg-muted rounded-lg">
-              <h3 className="text-lg font-semibold mb-2">No Services Yet</h3>
-              <p className="text-muted-foreground mb-4">
-                You haven't created any services yet.
-              </p>
-              {!showForm && (
-                <Button onClick={() => setShowForm(true)}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Your First Service
-                </Button>
-              )}
-            </div>
-          )}
-        </div>
+        <Tabs defaultValue="your-services" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="your-services">Your Services</TabsTrigger>
+            <TabsTrigger value="all-services">All Services</TabsTrigger>
+          </TabsList>
+          <TabsContent value="your-services" className="mt-6">
+            {renderServicesList(userServices)}
+          </TabsContent>
+          <TabsContent value="all-services" className="mt-6">
+            {renderServicesList(allServices)}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
