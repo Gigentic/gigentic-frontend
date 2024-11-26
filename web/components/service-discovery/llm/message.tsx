@@ -1,12 +1,10 @@
-import { ReactNode } from 'react';
-import { BotIcon, UserIcon, SparkleIcon } from 'lucide-react';
-import { cn } from '@gigentic-frontend/ui-kit/util';
+import { UserIcon, SparkleIcon } from 'lucide-react';
 
 export function UserMessage({ children }: { children: React.ReactNode }) {
   return (
     <div className="group relative flex items-start">
       <div
-        className="flex h-8 w-8 shrink-0 select-none items-center justify-center 
+        className="flex h-8 w-8 shrink-0 select-none items-center justify-center
             rounded-md border shadow-sm bg-background"
       >
         <UserIcon />
@@ -28,7 +26,7 @@ export function BotMessage({
   return (
     <div className="group relative flex items-start">
       <div
-        className="flex h-8 w-8 shrink-0 select-none items-center justify-center 
+        className="flex h-8 w-8 shrink-0 select-none items-center justify-center
             rounded-md border shadow-sm bg-background"
       >
         <SparkleIcon />
@@ -51,9 +49,9 @@ export function BotCard({
     <div className="group relative flex items-start">
       <div
         className="flex h-8 w-8 select-none items-center justify-center
-            rounded-md border shadow-sm bg-primary text-primary-background"
+            rounded-md border shadow-sm bg-primary text-primary-foreground"
       >
-        <SparkleIcon />
+        <SparkleIcon className="text-primary-foreground" />
       </div>
       <div className="ml-4 flex-1 px-1">{children}</div>
     </div>
@@ -63,7 +61,7 @@ export function BotCard({
 export function AssistantMessage({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="mt-2 flex items-center justify-center 
+      className="mt-2 flex items-center justify-center
             gap-2 text-xs text-gray-500"
     >
       <div className="max-w-[600px] flex-initial p-2">{children}</div>
