@@ -166,14 +166,6 @@ export async function sendMessage(
             matchScore: number;
             serviceAccountAddress: string;
           }) {
-            console.log({
-              title,
-              pricePerHour,
-              experience,
-              rating,
-              matchScore,
-              serviceAccountAddress,
-            });
             yield <BotCard> Loading... </BotCard>;
 
             history.done([
@@ -191,7 +183,8 @@ export async function sendMessage(
                   title={title}
                   pricePerHour={pricePerHour}
                   experience={experience}
-                  rating={rating}
+                  // rating={rating}
+                  rating={4.6}
                   matchScore={matchScore}
                   serviceAccountAddress={serviceAccountAddress}
                 />

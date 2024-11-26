@@ -104,7 +104,7 @@ export default function FreelancerProfileCard(
               </div>
             </div>
             <div className="flex items-center mt-1">
-              {[...Array(5)].map((_, i) => (
+              {/* {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
                   className={`w-4 h-4 ${
@@ -116,9 +116,9 @@ export default function FreelancerProfileCard(
                   }`}
                   strokeWidth={1.5}
                 />
-              ))}
-              <span className="ml-2 text-sm text-muted-foreground">
-                {props.rating.toFixed(1)}
+              ))} */}
+              <span className="text-sm text-muted-foreground">
+                ⭐ {props.rating.toFixed(1)}
               </span>
             </div>
           </div>
