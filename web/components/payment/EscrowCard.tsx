@@ -2,43 +2,26 @@ import { Star } from 'lucide-react';
 import { Card, CardContent } from '@gigentic-frontend/ui-kit/ui';
 import Link from 'next/link';
 import ReviewPopup from '@/components/review/ReviewPopup';
-import { SetStateAction } from 'react';
 
 interface EscrowCardProps {
   serviceTitle?: string;
-  providerName?: string;
-  providerLink?: string;
-  escrowId?: string;
-  rating?: number;
+  providerName: string;
+  providerLink: string;
+  escrowId: string;
   matchPercentage?: number;
-  amountInEscrow?: number;
-  totalAmount?: number;
-  onReleaseEscrow?: () => void;
+  amountInEscrow: number;
+  onReleaseEscrow: (escrowId: string, rating: number, review: string) => void;
 }
 
 export default function EscrowCard({
   serviceTitle,
-  providerName = 'Provider',
-  providerLink = 'https://www.solchat.app/',
-  escrowId = '',
-  rating = 0,
+  providerName,
+  providerLink,
+  escrowId,
   matchPercentage,
   amountInEscrow,
-  totalAmount,
   onReleaseEscrow,
 }: EscrowCardProps) {
-  const handleRelease = (contractId: string) => {
-    if (onReleaseEscrow) {
-      onReleaseEscrow();
-    } else {
-      console.log('onReleaseEscrow not provided');
-    }
-  };
-
-  function setIsOpen(value: SetStateAction<boolean>): void {
-    throw new Error('Function not implemented.');
-  }
-
   return (
     <Card className="w-full max-w-4xl bg-background">
       <CardContent className="flex items-center justify-between p-4">
@@ -55,7 +38,6 @@ export default function EscrowCard({
                 </Link>
                 <p className="text-sm text-gray-500">Escrow ID: {escrowId}</p>
                 <div className="flex items-center mt-1">
-                  <span className="ml-1 text-sm font-medium">⭐ 4.6</span>
                   {matchPercentage !== undefined && (
                     <span className="ml-2 text-sm font-medium text-green-500">
                       {matchPercentage}% match
@@ -66,16 +48,15 @@ export default function EscrowCard({
             </div>
             <div className="text-left">
               <p className="text-sm">
-                Amount in Escrow: {amountInEscrow?.toFixed(3) ?? '0.000'} Sol
+                Amount in Escrow: {amountInEscrow.toFixed(3)} Sol
               </p>
             </div>
             <ReviewPopup
-              setIsOpen={setIsOpen}
-              contractId={escrowId}
-              serviceName={providerName}
-              amount={amountInEscrow?.toFixed(2) ?? '0.00'}
-              provider={providerName}
-              onReleaseEscrow={handleRelease}
+              escrowId={escrowId}
+              serviceTitle={serviceTitle}
+              providerName={providerName}
+              amount={amountInEscrow.toFixed(2)}
+              onSubmitReview={onReleaseEscrow}
             />
           </>
         ) : (

@@ -20,20 +20,19 @@ import {
 } from '@gigentic-frontend/ui-kit/ui';
 
 export interface ReviewFormProps {
-  contractId: string;
-  serviceName: string;
+  escrowId: string;
+  serviceTitle: string;
+  providerName: string;
   amount: string;
-  provider: string;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onReleaseEscrow: (contractId: string) => void;
+  onSubmitReview: (escrowId: string, rating: number, review: string) => void;
 }
 
 export default function ReviewPopup({
-  contractId = 'xxasdf',
-  serviceName = 'Unnamed Service',
-  amount = '0',
-  provider = 'Unknown Provider',
-  onReleaseEscrow,
+  escrowId,
+  serviceTitle,
+  providerName,
+  amount,
+  onSubmitReview,
 }: ReviewFormProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -46,17 +45,19 @@ export default function ReviewPopup({
         <DialogHeader>
           <DialogTitle>Contract Escrow Released!</DialogTitle>
           <DialogDescription>
-            Now you can rate and share your experience with the service provider
-            attached to this contract!
+            Now you can rate and share your experience with the service
+            provider!
           </DialogDescription>
         </DialogHeader>
         <ReviewForm
-          contractId={contractId}
-          serviceName={serviceName}
+          escrowId={escrowId}
+          serviceTitle={serviceTitle}
+          providerName={providerName}
           amount={amount}
-          provider={provider}
-          setIsOpen={setIsOpen}
-          onReleaseEscrow={onReleaseEscrow}
+          onSubmit={(rating, review) => {
+            onSubmitReview(escrowId, rating, review);
+            setIsOpen(false);
+          }}
         />
       </DialogContent>
     </Dialog>
@@ -64,26 +65,22 @@ export default function ReviewPopup({
 }
 
 function ReviewForm({
-  contractId,
-  serviceName,
+  escrowId,
+  serviceTitle,
+  providerName,
   amount,
-  provider,
-  setIsOpen,
-  onReleaseEscrow,
-}: ReviewFormProps) {
+  onSubmit,
+}: Omit<ReviewFormProps, 'onSubmitReview'> & {
+  onSubmit: (rating: number, review: string) => void;
+}) {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Submitted review:', { rating, review });
+    onSubmit(rating, review);
     setRating(0);
     setReview('');
-    setIsOpen(false);
-    // Call the onReleaseEscrow function passed from the parent component
-    onReleaseEscrow(contractId);
-
-    // TODO: send the review data to your backend
   };
 
   return (
@@ -96,10 +93,8 @@ function ReviewForm({
           {/* Deploy your new project in one-click. */}
         </CardDescription>
         <div className="flex flex-col">
-          <p>Contract ID: {contractId}</p>
-          <p>Service: {serviceName}</p>
-          <p>Amount: {amount}</p>
-          <p>Provider: {provider}</p>
+          <p>Service: {serviceTitle}</p>
+          <p>Amount: {amount} SOL</p>
         </div>
       </CardHeader>
       <CardContent>
