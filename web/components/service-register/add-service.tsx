@@ -142,9 +142,6 @@ export function AddService() {
 
       transactionToast(tx);
 
-      // Refetch after confirmation
-      await serviceAccounts.refetch();
-
       // Reset form and hide it
       form.reset();
       setShowForm(false);
@@ -154,6 +151,10 @@ export function AddService() {
     } finally {
       setIsSubmitting(false);
     }
+
+    // TODO: Hacky way to Introduce a 3s delay before refetching
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await serviceAccounts.refetch();
   };
 
   const renderServicesList = (services: typeof serviceAccounts.data) => {
