@@ -5,7 +5,7 @@ import ChatScrollAnchor from './chat-scroll-anchor';
 import { useEnterSubmit } from '@/hooks/ui/use-enter-submit';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import TextareaAutosize from 'react-textarea-autosize';
-import { ArrowDownIcon, PlusIcon } from 'lucide-react';
+import { ArrowDownIcon } from 'lucide-react';
 import { useUIState, useActions } from 'ai/rsc';
 import type { AI } from '@/app/actions';
 import { UserMessage } from '@/components/service-discovery/llm/message';
@@ -91,19 +91,6 @@ export default function ChatAgent() {
               </div>
             </div>
           </form>
-
-          <Button
-            variant="outline"
-            size="lg"
-            className="w-full mt-4 rounded-lg bg-white"
-            onClick={(e) => {
-              e.preventDefault();
-              window.location.reload();
-            }}
-          >
-            <PlusIcon className="w-5 h-5 mr-2" />
-            <span>New Chat</span>
-          </Button>
         </div>
       </div>
     </div>
