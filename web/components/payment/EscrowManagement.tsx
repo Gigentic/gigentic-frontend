@@ -23,6 +23,11 @@ import EscrowCard from './EscrowCard';
 import { Freelancer } from '@/lib/types/freelancer';
 import { serviceRegistryPubKey } from '@/lib/hooks/blockchain/use-gigentic-program';
 
+function extractServiceTitle(description: string): string {
+  const titleMatch = description.match(/title: (.*?) \|/);
+  return titleMatch ? titleMatch[1] : 'Unnamed Service';
+}
+
 function useEscrowAccounts() {
   const { cluster } = useCluster();
   const provider = useAnchorProvider();
@@ -61,6 +66,9 @@ export default function EscrowManagement() {
   // Remove unused state
   const [error, setError] = useState<string | null>(null);
   const [isServiceInEscrow, setIsServiceInEscrow] = useState(false);
+  const [serviceTitles, setServiceTitles] = useState<Record<string, string>>(
+    {},
+  );
 
   // Get service account from freelancer data if it exists
   const selectedServiceAccountAddress = useMemo(() => {
@@ -392,6 +400,48 @@ export default function EscrowManagement() {
     checkServiceEscrow();
   }, [accounts.data, selectedServiceAccountAddress, publicKey, program]);
 
+  useEffect(() => {
+    if (!userEscrows.length) return;
+
+    const fetchServiceTitles = async () => {
+      try {
+        const serviceRegistryPubKey = new PublicKey(
+          process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
+        );
+        const serviceRegistry = await program.account.serviceRegistry.fetch(
+          serviceRegistryPubKey,
+        );
+
+        const titles: Record<string, string> = {};
+
+        for (const escrow of userEscrows) {
+          const escrowId = escrow.publicKey.toString();
+          // Find matching service account
+          for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
+            const serviceAccount =
+              await program.account.service.fetch(serviceAddress);
+            if (
+              serviceAccount.provider.toString() ===
+              escrow.account.serviceProvider.toString()
+            ) {
+              titles[escrowId] = extractServiceTitle(
+                serviceAccount.description,
+              );
+              break;
+            }
+          }
+        }
+
+        setServiceTitles(titles);
+      } catch (error) {
+        console.error('Error fetching service titles:', error);
+        setError('Failed to load escrow details');
+      }
+    };
+
+    fetchServiceTitles();
+  }, [userEscrows, program]);
+
   const renderEscrowContent = () => {
     if (accounts.isLoading) {
       return (
@@ -416,7 +466,8 @@ export default function EscrowManagement() {
     return userEscrows.map((escrow) => (
       <EscrowCard
         key={escrow.publicKey.toString()}
-        providerName={`Provider ${escrow.account.serviceProvider.toString().slice(0, 8)}...`}
+        serviceTitle={serviceTitles[escrow.publicKey.toString()]}
+        providerName={escrow.account.serviceProvider.toString().slice(0, 8)}
         escrowId={escrow.publicKey.toString().slice(0, 8)}
         amountInEscrow={
           Number(escrow.account.expectedAmount) / LAMPORTS_PER_SOL
