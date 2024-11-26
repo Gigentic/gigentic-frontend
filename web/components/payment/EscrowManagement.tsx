@@ -454,11 +454,6 @@ export default function EscrowManagement() {
                   <span className="text-xl font-semibold">
                     {freelancer.title}
                   </span>
-                  <span className="text-sm text-muted-foreground">
-                    Service Account Address:{' '}
-                    {freelancer.serviceAccountAddress.slice(0, 8)}
-                    ...
-                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span>⭐ {freelancer.rating}</span>
