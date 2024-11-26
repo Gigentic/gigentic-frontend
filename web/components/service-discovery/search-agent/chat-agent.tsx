@@ -31,7 +31,8 @@ export default function ChatAgent() {
     const value = data.message.trim();
     formRef.current?.reset();
     if (!value) return;
-    // add the user message to the chat history
+
+    // Add user message
     setMessages((currentMessages) => [
       ...currentMessages,
       {
@@ -40,7 +41,8 @@ export default function ChatAgent() {
         display: <UserMessage>{value}</UserMessage>,
       },
     ]);
-    // send the message to the LLM
+
+    // Send message to LLM
     try {
       const responseMessage = await sendMessage(value, cluster.endpoint);
       setMessages((currentMessages) => [...currentMessages, responseMessage]);
@@ -51,67 +53,57 @@ export default function ChatAgent() {
 
   // render the chat UI
   return (
-    <div>
-      <div className="pb-[200px] pt-4 md:pt-10">
-        <ChatList messages={messages} />
-        <ChatScrollAnchor />
-      </div>
-      <div
-        className="fixed inset-x-0 bottom-20 w-full
-                    peer-[[data-state=open]]:group-[]:lg:pl-[250px]
-                    peer-[[data-state=open]]:group-[]:xl:pr-[300px]"
-      >
-        <div className="mx-auto sm:max-w-2xl sm:px-4">
-          <div
-            className="px-3 flex justify-center flex-col py-2 space-y-4 border-t
-              shadow-lg bg-background sm:rounded-t-xl sm:border md:py-4 bg-white"
-          >
-            <form
-              ref={formRef}
-              onSubmit={form.handleSubmit(onSubmit)}
-              action=""
-            >
-              <div className="relative flex flex-col w-full overflow-hidden max-h-60 grow bg-white sm:rounded-md sm:border">
-                <TextareaAutosize
-                  tabIndex={0}
-                  onKeyDown={onKeyDown}
-                  placeholder="Find backend developer..."
-                  className="min-h-[60px] w-full resize-none bg-transparent pl-4 pr-16 py-[1.375rem] focus-within:outline-none sm:text-sm"
-                  autoFocus
-                  spellCheck={false}
-                  autoComplete="off"
-                  autoCorrect="off"
-                  rows={1}
-                  {...form.register('message')}
-                />
-                {/* render the button to send the message */}
-                <div className="absolute right-0 top-4 sm:right-4">
-                  <Button
-                    type="submit"
-                    size="icon"
-                    disabled={form.watch('message') === ''}
-                  >
-                    <span className="sr-only">Send</span>
-                    <ArrowDownIcon className="w-5 h-5" />
-                  </Button>
-                </div>
-              </div>
-            </form>
-
-            {/* render the button to start a new chat */}
-            <Button
-              variant="outline"
-              size="lg"
-              className="p-4 mt-4 rounded-full bg-white"
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.reload();
-              }}
-            >
-              <PlusIcon className="w-5 h-5" />
-              <span>New Chat</span>
-            </Button>
+    <div className="container max-w-3xl mx-auto px-4 h-[calc(100vh-8rem)]">
+      <div className="flex flex-col h-full">
+        {/* Chat messages container with proper overflow handling */}
+        <div className="flex-1 overflow-y-auto" id="chat-messages">
+          <div className="py-4 space-y-6">
+            <ChatList messages={messages} />
+            <ChatScrollAnchor />
           </div>
+        </div>
+
+        {/* Input section */}
+        <div className="py-4 border-t bg-background">
+          <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="relative flex flex-col w-full overflow-hidden bg-white rounded-lg border shadow-sm">
+              <TextareaAutosize
+                tabIndex={0}
+                onKeyDown={onKeyDown}
+                placeholder="Find backend developer..."
+                className="min-h-[60px] w-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
+                autoFocus
+                spellCheck={false}
+                autoComplete="off"
+                autoCorrect="off"
+                rows={1}
+                {...form.register('message')}
+              />
+              <div className="absolute right-0 top-4 sm:right-4">
+                <Button
+                  type="submit"
+                  size="icon"
+                  disabled={form.watch('message') === ''}
+                >
+                  <span className="sr-only">Send</span>
+                  <ArrowDownIcon className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+          </form>
+
+          <Button
+            variant="outline"
+            size="lg"
+            className="w-full mt-4 rounded-lg bg-white"
+            onClick={(e) => {
+              e.preventDefault();
+              window.location.reload();
+            }}
+          >
+            <PlusIcon className="w-5 h-5 mr-2" />
+            <span>New Chat</span>
+          </Button>
         </div>
       </div>
     </div>

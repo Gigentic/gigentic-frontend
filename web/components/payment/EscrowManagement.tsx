@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import {
   PublicKey,
@@ -22,6 +22,11 @@ import { Card, CardContent, Button } from '@gigentic-frontend/ui-kit/ui';
 import EscrowCard from './EscrowCard';
 import { Freelancer } from '@/lib/types/freelancer';
 import { serviceRegistryPubKey } from '@/lib/hooks/blockchain/use-gigentic-program';
+
+function extractServiceTitle(description: string): string {
+  const titleMatch = description.match(/title: (.*?) \|/);
+  return titleMatch ? titleMatch[1] : 'Unnamed Service';
+}
 
 function useEscrowAccounts() {
   const { cluster } = useCluster();
@@ -60,9 +65,13 @@ export default function EscrowManagement() {
 
   // Remove unused state
   const [error, setError] = useState<string | null>(null);
+  const [isServiceInEscrow, setIsServiceInEscrow] = useState(false);
+  const [serviceTitles, setServiceTitles] = useState<Record<string, string>>(
+    {},
+  );
 
   // Get service account from freelancer data if it exists
-  const serviceAccountPubKey = useMemo(() => {
+  const selectedServiceAccountAddress = useMemo(() => {
     if (!freelancer?.serviceAccountAddress) {
       console.log('No payment wallet address found');
       return null;
@@ -110,13 +119,14 @@ export default function EscrowManagement() {
   }, [accounts.data, publicKey]);
 
   const handlePayIntoEscrow = async () => {
-    if (!publicKey || !serviceAccountPubKey) return;
+    if (!publicKey || !selectedServiceAccountAddress) return;
 
     try {
-      const serviceAccount =
-        await program.account.service.fetch(serviceAccountPubKey);
+      const serviceAccount = await program.account.service.fetch(
+        selectedServiceAccountAddress,
+      );
       console.log('Found service account:', {
-        address: serviceAccountPubKey.toString(),
+        address: selectedServiceAccountAddress.toString(),
         provider: serviceAccount.provider.toString(),
       });
 
@@ -125,7 +135,7 @@ export default function EscrowManagement() {
 
       console.log('Transaction accounts:', {
         customer: publicKey.toString(),
-        service: serviceAccountPubKey.toString(),
+        service: selectedServiceAccountAddress.toString(),
         serviceRegistry: serviceRegistryPubKey.toString(),
       });
 
@@ -137,7 +147,7 @@ export default function EscrowManagement() {
             .payService(review_id)
             .accounts({
               customer: publicKey,
-              service: serviceAccountPubKey,
+              service: selectedServiceAccountAddress,
               serviceRegistry: serviceRegistryPubKey,
             })
             .instruction(),
@@ -167,7 +177,7 @@ export default function EscrowManagement() {
         onSuccess: () => {
           console.log('✅ Freelancer cache cleared successfully');
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
           console.error('❌ Failed to clear freelancer cache:', error);
         },
       });
@@ -332,6 +342,106 @@ export default function EscrowManagement() {
     throw new Error('No matching service account found');
   };
 
+  useEffect(() => {
+    if (!accounts.data || !selectedServiceAccountAddress || !publicKey) {
+      setIsServiceInEscrow(false);
+      return;
+    }
+
+    const checkServiceEscrow = async () => {
+      try {
+        // First get the service account to get its provider
+        const serviceAccount = await program.account.service.fetch(
+          selectedServiceAccountAddress,
+        );
+
+        // Now check all escrows
+        console.log(
+          'Checking escrows:',
+          accounts.data.map((escrow) => ({
+            escrowPubkey: escrow.publicKey.toString(),
+            serviceProvider: escrow.account.serviceProvider.toString(),
+            customer: escrow.account.customer.toString(),
+          })),
+        );
+
+        // Derive the escrow PDA with the same seeds used in creation
+        const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
+          [
+            Buffer.from('escrow'),
+            selectedServiceAccountAddress.toBuffer(),
+            serviceAccount.provider.toBuffer(),
+            publicKey.toBuffer(),
+          ],
+          program.programId,
+        );
+
+        // Check if this derived PDA exists in our escrows
+        const existingEscrow = accounts.data.find(
+          (escrow) =>
+            escrow.publicKey.toString() === derivedEscrowPDA.toString(),
+        );
+
+        console.log('Checking escrow status:', {
+          serviceAccountAddress: selectedServiceAccountAddress.toString(),
+          serviceProvider: serviceAccount.provider.toString(),
+          customer: publicKey.toString(),
+          derivedEscrowPDA: derivedEscrowPDA.toString(),
+          hasExistingEscrow: !!existingEscrow,
+        });
+
+        setIsServiceInEscrow(!!existingEscrow);
+      } catch (error) {
+        console.error('Error checking service escrow status:', error);
+        setIsServiceInEscrow(false);
+      }
+    };
+
+    checkServiceEscrow();
+  }, [accounts.data, selectedServiceAccountAddress, publicKey, program]);
+
+  useEffect(() => {
+    if (!userEscrows.length) return;
+
+    const fetchServiceTitles = async () => {
+      try {
+        const serviceRegistryPubKey = new PublicKey(
+          process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
+        );
+        const serviceRegistry = await program.account.serviceRegistry.fetch(
+          serviceRegistryPubKey,
+        );
+
+        const titles: Record<string, string> = {};
+
+        for (const escrow of userEscrows) {
+          const escrowId = escrow.publicKey.toString();
+          // Find matching service account
+          for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
+            const serviceAccount =
+              await program.account.service.fetch(serviceAddress);
+            if (
+              serviceAccount.provider.toString() ===
+              escrow.account.serviceProvider.toString()
+            ) {
+              titles[escrowId] = extractServiceTitle(
+                serviceAccount.description,
+              );
+              break;
+            }
+          }
+        }
+
+        setServiceTitles(titles);
+      } catch (error) {
+        console.error('Error fetching service titles:', error);
+        setError('Failed to load escrow details');
+      }
+    };
+
+    fetchServiceTitles();
+  }, [userEscrows, program]);
+
   const renderEscrowContent = () => {
     if (accounts.isLoading) {
       return (
@@ -356,8 +466,9 @@ export default function EscrowManagement() {
     return userEscrows.map((escrow) => (
       <EscrowCard
         key={escrow.publicKey.toString()}
-        providerName={`Provider ${escrow.account.serviceProvider.toString().slice(0, 8)}...`}
-        serviceId={escrow.publicKey.toString().slice(0, 8)}
+        serviceTitle={serviceTitles[escrow.publicKey.toString()]}
+        providerName={escrow.account.serviceProvider.toString().slice(0, 8)}
+        escrowId={escrow.publicKey.toString().slice(0, 8)}
         amountInEscrow={
           Number(escrow.account.expectedAmount) / LAMPORTS_PER_SOL
         }
@@ -374,7 +485,7 @@ export default function EscrowManagement() {
   return (
     <div className="min-h-screen p-4 space-y-6">
       {/* Selected Provider Payment Card */}
-      {freelancer && serviceAccountPubKey && (
+      {freelancer && selectedServiceAccountAddress && (
         <Card className="w-full max-w-4xl mx-auto bg-background">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -382,10 +493,6 @@ export default function EscrowManagement() {
                 <div className="flex items-center gap-2">
                   <span className="text-xl font-semibold">
                     {freelancer.title}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    Service ID: {freelancer.serviceAccountAddress.slice(0, 8)}
-                    ...
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -400,9 +507,20 @@ export default function EscrowManagement() {
                   Service Price to pay into escrow: {freelancer.pricePerHour}{' '}
                   SOL
                 </div>
-                <Button onClick={handlePayIntoEscrow} className="mt-2">
-                  Pay into Escrow
-                </Button>
+                {isServiceInEscrow ? (
+                  <div className="space-y-2">
+                    <p className="text-sm text-red-500">
+                      This service is already in an active escrow
+                    </p>
+                    <Button disabled className="mt-2 opacity-50">
+                      Pay into Escrow
+                    </Button>
+                  </div>
+                ) : (
+                  <Button onClick={handlePayIntoEscrow} className="mt-2">
+                    Pay into Escrow
+                  </Button>
+                )}
               </div>
             </div>
           </CardContent>
