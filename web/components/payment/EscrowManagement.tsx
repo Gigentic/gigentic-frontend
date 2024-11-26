@@ -426,7 +426,7 @@ export default function EscrowManagement() {
       <EscrowCard
         key={escrow.publicKey.toString()}
         providerName={`Provider ${escrow.account.serviceProvider.toString().slice(0, 8)}...`}
-        serviceId={escrow.publicKey.toString().slice(0, 8)}
+        escrowId={escrow.publicKey.toString().slice(0, 8)}
         amountInEscrow={
           Number(escrow.account.expectedAmount) / LAMPORTS_PER_SOL
         }

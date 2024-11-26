@@ -7,7 +7,7 @@ import { SetStateAction } from 'react';
 interface EscrowCardProps {
   providerName?: string;
   providerLink?: string;
-  serviceId?: string;
+  escrowId?: string;
   rating?: number;
   matchPercentage?: number;
   amountInEscrow?: number;
@@ -18,7 +18,7 @@ interface EscrowCardProps {
 export default function EscrowCard({
   providerName = 'Provider',
   providerLink = 'https://www.solchat.app/',
-  serviceId = '',
+  escrowId = '',
   rating = 0,
   matchPercentage,
   amountInEscrow,
@@ -63,7 +63,7 @@ export default function EscrowCard({
             <Link href={providerLink} className="font-medium hover:underline">
               {providerName}
             </Link>
-            <p className="text-sm text-gray-500">Escrow ID: {serviceId}</p>
+            <p className="text-sm text-gray-500">Escrow ID: {escrowId}</p>
             <div className="flex items-center mt-1">
               {[...Array(5)].map((_, i) => (
                 <Star
@@ -92,7 +92,7 @@ export default function EscrowCard({
         </div>
         <ReviewPopup
           setIsOpen={setIsOpen}
-          contractId={serviceId}
+          contractId={escrowId}
           serviceName={providerName}
           amount={amountInEscrow?.toFixed(2) ?? '0.00'}
           provider={providerName}
