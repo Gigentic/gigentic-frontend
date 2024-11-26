@@ -21,6 +21,7 @@ import { useTransactionToast } from '@/components/ui/ui-layout';
 import { Card, CardContent, Button } from '@gigentic-frontend/ui-kit/ui';
 import EscrowCard from './EscrowCard';
 import { Freelancer } from '@/lib/types/freelancer';
+import { serviceRegistryPubKey } from '@/lib/hooks/blockchain/use-gigentic-program';
 
 function useEscrowAccounts() {
   const { cluster } = useCluster();
@@ -112,10 +113,6 @@ export default function EscrowManagement() {
     if (!publicKey || !serviceAccountPubKey) return;
 
     try {
-      const serviceRegistryPubKey = new PublicKey(
-        process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
-      );
-
       const serviceAccount =
         await program.account.service.fetch(serviceAccountPubKey);
       console.log('Found service account:', {
@@ -203,10 +200,6 @@ export default function EscrowManagement() {
       );
       console.log('Found matching service index:', serviceIndex);
 
-      const serviceRegistryPubKey = new PublicKey(
-        process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
-      );
-
       // Find the escrow account in our list
       const escrow = accounts.data?.find(
         (e) => e.publicKey.toString() === escrowId,
@@ -281,10 +274,6 @@ export default function EscrowManagement() {
     serviceProvider: PublicKey,
     escrowId: string,
   ) => {
-    const serviceRegistryPubKey = new PublicKey(
-      process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
-    );
-
     // First find the escrow
     const escrow = accounts.data?.find(
       (e) => e.publicKey.toString() === escrowId,

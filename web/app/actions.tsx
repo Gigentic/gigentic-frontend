@@ -11,7 +11,7 @@ import { openai } from '@ai-sdk/openai';
 
 import { AnchorProvider } from '@coral-xyz/anchor';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
-import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
 import { getGigenticProgram } from '@gigentic-frontend/anchor';
 
@@ -32,14 +32,15 @@ async function fetchServicesFromRegistry(endpoint: string) {
   const program = getGigenticProgram(provider);
 
   // Get registry address from environment directly
-  const serviceRegistryPubkey =
-    process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!;
-  if (!serviceRegistryPubkey) {
+  const serviceRegistryPubKey = new PublicKey(
+    process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
+  );
+  if (!serviceRegistryPubKey) {
     throw new Error('Service registry address not configured');
   }
 
   const serviceRegistry = await program.account.serviceRegistry.fetch(
-    serviceRegistryPubkey,
+    serviceRegistryPubKey,
   );
 
   // Fetch all services in one RPC call using getMultiple
