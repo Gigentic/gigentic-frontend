@@ -53,7 +53,7 @@ export default function ChatAgent() {
 
   // render the chat UI
   return (
-    <div className="container max-w-3xl mx-auto px-4 h-[calc(100vh-8rem)]">
+    <div className="container max-w-3xl mx-auto px-4 h-[calc(100dvh-theme(spacing.32)-theme(spacing.16))]">
       <div className="flex flex-col h-full">
         {/* Chat messages container with proper overflow handling */}
         <div className="flex-1 overflow-y-auto" id="chat-messages">

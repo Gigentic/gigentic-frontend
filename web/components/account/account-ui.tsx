@@ -15,16 +15,14 @@ import {
   useRequestAirdrop,
   useTransferSol,
 } from './account-data-access';
+import { Button } from '@gigentic-frontend/ui-kit/ui';
 
 export function AccountBalance({ address }: { address: PublicKey }) {
   const query = useGetBalance({ address });
 
   return (
-    <div>
-      <h1
-        className="text-5xl font-bold cursor-pointer"
-        onClick={() => query.refetch()}
-      >
+    <div className="text-center">
+      <h1 className="text-5xl font-bold">
         {query.data ? <BalanceSol balance={query.data} /> : '...'} SOL
       </h1>
     </div>
@@ -90,27 +88,30 @@ export function AccountButtons({ address }: { address: PublicKey }) {
         show={showSendModal}
         hide={() => setShowSendModal(false)}
       />
-      <div className="space-x-2">
-        <button
+      <div className="flex flex-wrap gap-3">
+        <Button
+          variant="default"
+          className="bg-primary text-primary-foreground hover:bg-primary"
           disabled={cluster.network?.includes('mainnet')}
-          className="btn btn-xs lg:btn-md btn-outline"
           onClick={() => setShowAirdropModal(true)}
         >
           Airdrop
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="default"
+          className="bg-primary text-primary-foreground hover:bg-primary"
           disabled={wallet.publicKey?.toString() !== address.toString()}
-          className="btn btn-xs lg:btn-md btn-outline"
           onClick={() => setShowSendModal(true)}
         >
           Send
-        </button>
-        <button
-          className="btn btn-xs lg:btn-md btn-outline"
+        </Button>
+        <Button
+          variant="default"
+          className="bg-primary text-primary-foreground hover:bg-primary"
           onClick={() => setShowReceiveModal(true)}
         >
           Receive
-        </button>
+        </Button>
       </div>
     </div>
   );

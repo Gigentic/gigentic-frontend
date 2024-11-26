@@ -558,7 +558,7 @@ export default function EscrowManagement() {
   };
 
   return (
-    <div className="min-h-screen p-4 space-y-6">
+    <div className=" p-4 space-y-6">
       {/* Selected Provider Payment Card */}
       {freelancer && selectedServiceAccountAddress && (
         <Card className="w-full max-w-4xl mx-auto bg-background">
