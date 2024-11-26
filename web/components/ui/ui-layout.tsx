@@ -22,18 +22,9 @@ export function UiLayout({
   const pathname = usePathname();
 
   return (
-    <div>
-      {/* <ThemeProvider
-        attribute="class"
-        defaultTheme="light"
-        enableSystem
-        disableTransitionOnChange
-      > */}
-
-      {/* <Search /> */}
-
-      <div className="flex flex-col min-h-screen">
-        <header className="flex items-center justify-between p-4 border-b shadow-sm">
+    <div className="min-h-screen flex flex-col">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex items-center justify-between p-4 border-b shadow-sm">
           <div className="flex items-center space-x-4">
             <div className="relative w-10 h-10">
               <Link href="/">
@@ -68,42 +59,27 @@ export function UiLayout({
               <WalletButton />
             </div>
           </div>
-        </header>
-        <main className="flex-1 overflow-hidden">
-          <div className="h-full overflow-y-auto p-4 pb-20">
-            <div className="flex items-center justify-center w-full rounded-lg">
-              <div className="flex-grow mx-4 lg:mx-auto">
-                <Suspense
-                  fallback={
-                    <div className="text-center my-32">
-                      <span className="loading loading-spinner loading-lg"></span>
-                    </div>
-                  }
-                >
-                  {children}
-                </Suspense>
-                <Toaster position="bottom-right" />
-              </div>
-            </div>
-          </div>
-        </main>
-        <footer className="fixed bottom-0 left-0 right-0 flex items-center justify-between p-4 border-t bg-background">
+        </div>
+      </header>
+
+      <main className="flex-1">{children}</main>
+
+      <footer className="border-t bg-background">
+        <div className="container max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex space-x-4">
-            <Link href="https://x.com/GigenticAI" className="">
+            <Link href="https://x.com/GigenticAI">
               <Twitter className="w-6 h-6" />
               <span className="sr-only">Twitter</span>
             </Link>
-            <Link href="mailto:info@gigentic.com" className="">
+            <Link href="mailto:info@gigentic.com">
               <Mail className="w-6 h-6" />
               <span className="sr-only">Email</span>
             </Link>
           </div>
-          <p className="text-sm ">© 2024 Gigentic</p>
-
+          <p className="text-sm">© 2024 Gigentic</p>
           <ClusterUiSelect />
-        </footer>
-      </div>
-      {/* </ThemeProvider> */}
+        </div>
+      </footer>
     </div>
   );
 }
