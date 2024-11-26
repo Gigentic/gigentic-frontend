@@ -1,11 +1,10 @@
-import { Star } from 'lucide-react';
 import { Card, CardContent } from '@gigentic-frontend/ui-kit/ui';
 import Link from 'next/link';
 import ReviewPopup from '@/components/review/ReviewPopup';
 
 interface EscrowCardProps {
   serviceTitle?: string;
-  providerName: string;
+  providerAddress: string;
   providerLink: string;
   escrowId: string;
   matchPercentage?: number;
@@ -15,7 +14,7 @@ interface EscrowCardProps {
 
 export default function EscrowCard({
   serviceTitle,
-  providerName,
+  providerAddress,
   providerLink,
   escrowId,
   matchPercentage,
@@ -30,7 +29,7 @@ export default function EscrowCard({
             <div className="flex-1">
               <div>
                 <Link
-                  href={`https://explorer.testnet.soo.network/address/${providerName}`}
+                  href={`https://explorer.testnet.soo.network/address/${providerAddress}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-semibold text-lg hover:underline hover:text-primary"
@@ -52,8 +51,8 @@ export default function EscrowCard({
               <ReviewPopup
                 escrowId={escrowId}
                 serviceTitle={serviceTitle}
-                providerName={providerName}
-                amount={amountInEscrow.toFixed(2)}
+                providerName={providerAddress}
+                amount={amountInEscrow.toFixed(3)}
                 onSubmitReview={onReleaseEscrow}
               />
             </div>

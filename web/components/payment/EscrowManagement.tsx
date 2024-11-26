@@ -535,15 +535,17 @@ export default function EscrowManagement() {
       <EscrowCard
         key={escrow.publicKey.toString()}
         serviceTitle={serviceTitles[escrow.publicKey.toString()]}
-        providerName={escrow.account.serviceProvider.toString().slice(0, 8)}
+        providerAddress={escrow.account.serviceProvider.toString()}
         providerLink={`https://www.solchat.app/`}
-        escrowId={escrow.publicKey.toString().slice(0, 8)}
-        amountInEscrow={Number(escrow.account.expectedAmount) / LAMPORTS_PER_SOL}
+        escrowId={escrow.publicKey.toString()}
+        amountInEscrow={
+          Number(escrow.account.expectedAmount) / LAMPORTS_PER_SOL
+        }
         onReleaseEscrow={async (escrowId, rating, review) => {
           try {
             await handleReleaseEscrow(
               escrow.publicKey.toString(),
-              escrow.account.serviceProvider
+              escrow.account.serviceProvider,
             );
             console.log('Review submitted:', { escrowId, rating, review });
           } catch (error) {

@@ -43,10 +43,9 @@ export default function ReviewPopup({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Contract Escrow Released!</DialogTitle>
+          <DialogTitle>You are releasing the escrow!</DialogTitle>
           <DialogDescription>
-            Now you can rate and share your experience with the service
-            provider!
+            Now you can rate and share your experience with the service provider
           </DialogDescription>
         </DialogHeader>
         <ReviewForm
@@ -86,21 +85,18 @@ function ReviewForm({
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader className="space-y-1.5">
-        <CardTitle className="text-l font-bold">
-          Released Contract Infos:
+        <CardTitle className="text-xl">
+          <p>Service: {serviceTitle}</p>
         </CardTitle>
         <CardDescription className="space-y-0.5">
-          {/* Deploy your new project in one-click. */}
-        </CardDescription>
-        <div className="flex flex-col">
-          <p>Service: {serviceTitle}</p>
           <p>Amount: {amount} SOL</p>
-        </div>
+        </CardDescription>
+        <div className="flex flex-col"></div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="space-y-1">
-            <CardTitle className="text-xl">Leave a Review</CardTitle>
+            <CardTitle className="text-xl font-bold">Leave a Review!</CardTitle>
             <CardDescription>
               Share your experience with the service provider
             </CardDescription>
