@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import {
   PublicKey,
@@ -59,6 +59,7 @@ export default function EscrowManagement() {
 
   // Remove unused state
   const [error, setError] = useState<string | null>(null);
+  const [isServiceInEscrow, setIsServiceInEscrow] = useState(false);
 
   // Get service account from freelancer data if it exists
   const serviceAccountPubKey = useMemo(() => {
@@ -343,6 +344,63 @@ export default function EscrowManagement() {
     throw new Error('No matching service account found');
   };
 
+  useEffect(() => {
+    if (!accounts.data || !serviceAccountPubKey || !publicKey) {
+      setIsServiceInEscrow(false);
+      return;
+    }
+
+    const checkServiceEscrow = async () => {
+      try {
+        // First get the service account to get its provider
+        const serviceAccount =
+          await program.account.service.fetch(serviceAccountPubKey);
+
+        // Now check all escrows
+        console.log(
+          'Checking escrows:',
+          accounts.data.map((escrow) => ({
+            escrowPubkey: escrow.publicKey.toString(),
+            serviceProvider: escrow.account.serviceProvider.toString(),
+            customer: escrow.account.customer.toString(),
+          })),
+        );
+
+        // Derive the escrow PDA with the same seeds used in creation
+        const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
+          [
+            Buffer.from('escrow'),
+            serviceAccountPubKey.toBuffer(),
+            serviceAccount.provider.toBuffer(),
+            publicKey.toBuffer(),
+          ],
+          program.programId,
+        );
+
+        // Check if this derived PDA exists in our escrows
+        const existingEscrow = accounts.data.find(
+          (escrow) =>
+            escrow.publicKey.toString() === derivedEscrowPDA.toString(),
+        );
+
+        console.log('Checking escrow status:', {
+          serviceAccountAddress: serviceAccountPubKey.toString(),
+          serviceProvider: serviceAccount.provider.toString(),
+          customer: publicKey.toString(),
+          derivedEscrowPDA: derivedEscrowPDA.toString(),
+          hasExistingEscrow: !!existingEscrow,
+        });
+
+        setIsServiceInEscrow(!!existingEscrow);
+      } catch (error) {
+        console.error('Error checking service escrow status:', error);
+        setIsServiceInEscrow(false);
+      }
+    };
+
+    checkServiceEscrow();
+  }, [accounts.data, serviceAccountPubKey, publicKey, program]);
+
   const renderEscrowContent = () => {
     if (accounts.isLoading) {
       return (
@@ -395,7 +453,8 @@ export default function EscrowManagement() {
                     {freelancer.title}
                   </span>
                   <span className="text-sm text-muted-foreground">
-                    Service ID: {freelancer.serviceAccountAddress.slice(0, 8)}
+                    Service Account Address:{' '}
+                    {freelancer.serviceAccountAddress.slice(0, 8)}
                     ...
                   </span>
                 </div>
@@ -411,9 +470,20 @@ export default function EscrowManagement() {
                   Service Price to pay into escrow: {freelancer.pricePerHour}{' '}
                   SOL
                 </div>
-                <Button onClick={handlePayIntoEscrow} className="mt-2">
-                  Pay into Escrow
-                </Button>
+                {isServiceInEscrow ? (
+                  <div className="space-y-2">
+                    <p className="text-sm text-red-500">
+                      This service is already in an active escrow
+                    </p>
+                    <Button disabled className="mt-2 opacity-50">
+                      Pay into Escrow
+                    </Button>
+                  </div>
+                ) : (
+                  <Button onClick={handlePayIntoEscrow} className="mt-2">
+                    Pay into Escrow
+                  </Button>
+                )}
               </div>
             </div>
           </CardContent>

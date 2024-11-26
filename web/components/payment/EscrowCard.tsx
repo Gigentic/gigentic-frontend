@@ -63,7 +63,7 @@ export default function EscrowCard({
             <Link href={providerLink} className="font-medium hover:underline">
               {providerName}
             </Link>
-            <p className="text-sm text-gray-500">Service ID: {serviceId}</p>
+            <p className="text-sm text-gray-500">Escrow ID: {serviceId}</p>
             <div className="flex items-center mt-1">
               {[...Array(5)].map((_, i) => (
                 <Star
