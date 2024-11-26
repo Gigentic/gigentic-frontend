@@ -149,15 +149,15 @@ export default function FreelancerProfileCard(
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-2">
-          <Button className="w-full" onClick={handleContactNow}>
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={handleContactNow}
+          >
             <MessageSquare className="w-4 h-4 mr-2" />
             Contact Now
           </Button>
-          <Button
-            className="w-full"
-            variant="outline"
-            onClick={handlePayEscrow}
-          >
+          <Button className="w-full" onClick={handlePayEscrow}>
             <Lock className="w-4 h-4 mr-2" />
             Pay into Escrow
           </Button>

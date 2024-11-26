@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import {
   PublicKey,
@@ -118,6 +118,114 @@ export default function EscrowManagement() {
     return filtered;
   }, [accounts.data, publicKey]);
 
+  // 1. First, memoize the fetchServiceTitles function
+  const fetchServiceTitles = useCallback(async () => {
+    if (!userEscrows.length) return;
+    try {
+      console.log(
+        'Starting fetchServiceTitles for',
+        userEscrows.length,
+        'escrows',
+      );
+      const startTime = performance.now();
+
+      // 1. Fetch all services in one batch
+      const serviceRegistry = await program.account.serviceRegistry.fetch(
+        serviceRegistryPubKey,
+      );
+      console.log(
+        'Service registry fetched with',
+        serviceRegistry.serviceAccountAddresses.length,
+        'services',
+      );
+
+      // 2. Batch fetch all service accounts in parallel
+      const serviceAccounts = await Promise.all(
+        serviceRegistry.serviceAccountAddresses.map((address) =>
+          program.account.service
+            .fetch(address)
+            .then((account) => ({ address, account })),
+        ),
+      );
+      console.log(
+        'All service accounts fetched in',
+        (performance.now() - startTime).toFixed(2),
+        'ms',
+      );
+
+      // 3. Create a lookup map for faster access
+      const serviceMap = new Map(
+        serviceAccounts.map(({ address, account }) => [
+          address.toString(),
+          account,
+        ]),
+      );
+
+      // 4. Process escrows with the cached data
+      const titles: Record<string, string> = {};
+      for (const escrow of userEscrows) {
+        const escrowId = escrow.publicKey.toString();
+        const serviceProvider = escrow.account.serviceProvider;
+
+        // Find matching service using cached data
+        const matchingService = serviceAccounts.find(({ address, account }) => {
+          const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
+            [
+              Buffer.from('escrow'),
+              address.toBuffer(),
+              serviceProvider.toBuffer(),
+              publicKey!.toBuffer(),
+            ],
+            program.programId,
+          );
+          return derivedEscrowPDA.toString() === escrowId;
+        });
+
+        if (matchingService) {
+          titles[escrowId] = extractServiceTitle(
+            matchingService.account.description,
+          );
+          console.log('Found matching service:', {
+            escrowId,
+            serviceAddress: matchingService.address.toString(),
+            title: titles[escrowId],
+          });
+        }
+      }
+
+      setServiceTitles(titles);
+      console.log(
+        'Total execution time:',
+        (performance.now() - startTime).toFixed(2),
+        'ms',
+      );
+    } catch (error) {
+      console.error('Error fetching service titles:', error);
+      setError('Failed to load escrow details');
+    }
+  }, [userEscrows, program, publicKey]);
+
+  // 2. Create a stable reference for escrow data
+  const escrowData = useMemo(
+    () => ({
+      escrows: userEscrows,
+      count: userEscrows.length,
+    }),
+    [userEscrows],
+  );
+
+  // 3. Modify the useEffect to only trigger on meaningful changes
+  useEffect(() => {
+    if (!escrowData.count) return;
+
+    // Add a debounce to prevent rapid re-fetches
+    const timeoutId = setTimeout(() => {
+      fetchServiceTitles();
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [escrowData.count]); // Only depend on the count of escrows
+
   const handlePayIntoEscrow = async () => {
     if (!publicKey || !selectedServiceAccountAddress) return;
 
@@ -181,6 +289,7 @@ export default function EscrowManagement() {
           console.error('❌ Failed to clear freelancer cache:', error);
         },
       });
+      await fetchServiceTitles(); // Manual fetch after state change
     } catch (error) {
       console.error('Error sending transaction:', error);
       setError('Failed to process payment. Please try again.');
@@ -273,6 +382,7 @@ export default function EscrowManagement() {
 
       transactionToast(signature);
       accounts.refetch();
+      await fetchServiceTitles(); // Manual fetch after state change
     } catch (error) {
       console.error('Error releasing escrow:', error);
       setError('Failed to release escrow. Please try again.');
@@ -400,48 +510,6 @@ export default function EscrowManagement() {
     checkServiceEscrow();
   }, [accounts.data, selectedServiceAccountAddress, publicKey, program]);
 
-  useEffect(() => {
-    if (!userEscrows.length) return;
-
-    const fetchServiceTitles = async () => {
-      try {
-        const serviceRegistryPubKey = new PublicKey(
-          process.env.NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY!,
-        );
-        const serviceRegistry = await program.account.serviceRegistry.fetch(
-          serviceRegistryPubKey,
-        );
-
-        const titles: Record<string, string> = {};
-
-        for (const escrow of userEscrows) {
-          const escrowId = escrow.publicKey.toString();
-          // Find matching service account
-          for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
-            const serviceAccount =
-              await program.account.service.fetch(serviceAddress);
-            if (
-              serviceAccount.provider.toString() ===
-              escrow.account.serviceProvider.toString()
-            ) {
-              titles[escrowId] = extractServiceTitle(
-                serviceAccount.description,
-              );
-              break;
-            }
-          }
-        }
-
-        setServiceTitles(titles);
-      } catch (error) {
-        console.error('Error fetching service titles:', error);
-        setError('Failed to load escrow details');
-      }
-    };
-
-    fetchServiceTitles();
-  }, [userEscrows, program]);
-
   const renderEscrowContent = () => {
     if (accounts.isLoading) {
       return (
@@ -468,16 +536,21 @@ export default function EscrowManagement() {
         key={escrow.publicKey.toString()}
         serviceTitle={serviceTitles[escrow.publicKey.toString()]}
         providerName={escrow.account.serviceProvider.toString().slice(0, 8)}
+        providerLink={`https://www.solchat.app/`}
         escrowId={escrow.publicKey.toString().slice(0, 8)}
-        amountInEscrow={
-          Number(escrow.account.expectedAmount) / LAMPORTS_PER_SOL
-        }
-        onReleaseEscrow={() =>
-          handleReleaseEscrow(
-            escrow.publicKey.toString(),
-            escrow.account.serviceProvider,
-          )
-        }
+        amountInEscrow={Number(escrow.account.expectedAmount) / LAMPORTS_PER_SOL}
+        onReleaseEscrow={async (escrowId, rating, review) => {
+          try {
+            await handleReleaseEscrow(
+              escrow.publicKey.toString(),
+              escrow.account.serviceProvider
+            );
+            console.log('Review submitted:', { escrowId, rating, review });
+          } catch (error) {
+            console.error('Error handling release and review:', error);
+            setError('Failed to process release and review. Please try again.');
+          }
+        }}
       />
     ));
   };

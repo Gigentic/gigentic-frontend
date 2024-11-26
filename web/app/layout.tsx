@@ -17,7 +17,7 @@ export const metadata = {
 const links: { label: string; path: string }[] = [
   { label: 'Search', path: '/service-discovery' },
   { label: 'Payment', path: '/payment' },
-  { label: 'Services', path: '/service-register' },
+  { label: 'TalentHub', path: '/service-register' },
   { label: 'Account', path: '/account' },
   // { label: 'Program', path: '/program' },
 ];
