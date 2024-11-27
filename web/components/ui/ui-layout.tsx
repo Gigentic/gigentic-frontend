@@ -15,6 +15,12 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  Button,
 } from '@gigentic-frontend/ui-kit/ui';
 import { ThemeToggle } from '@/components/theme-toggle';
 
@@ -133,40 +139,42 @@ export function AppModal({
   submitDisabled?: boolean;
   submitLabel?: string;
 }) {
-  const dialogRef = useRef<HTMLDialogElement | null>(null);
+  // const dialogRef = useRef<HTMLDialogElement | null>(null);
 
-  useEffect(() => {
-    if (!dialogRef.current) return;
-    if (show) {
-      dialogRef.current.showModal();
-    } else {
-      dialogRef.current.close();
-    }
-  }, [show, dialogRef]);
+  // useEffect(() => {
+  //   if (!dialogRef.current) return;
+  //   if (show) {
+  //     dialogRef.current.showModal();
+  //   } else {
+  //     dialogRef.current.close();
+  //   }
+  // }, [show, dialogRef]);
 
   return (
-    <dialog className="modal" ref={dialogRef}>
-      <div className="modal-box space-y-5">
-        <h3 className="font-bold text-lg">{title}</h3>
-        {children}
-        <div className="modal-action">
-          <div className="join space-x-2">
-            {submit ? (
-              <button
-                className="btn btn-xs lg:btn-md btn-primary"
+    <Dialog open={show} onOpenChange={(open) => !open && hide()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        <div className="py-4">{children}</div>
+        <DialogFooter>
+          <div className="flex space-x-2">
+            {submit && (
+              <Button
+                variant="default"
                 onClick={submit}
                 disabled={submitDisabled}
               >
                 {submitLabel || 'Save'}
-              </button>
-            ) : null}
-            <button onClick={hide} className="btn">
+              </Button>
+            )}
+            <Button variant="outline" onClick={hide}>
               Close
-            </button>
+            </Button>
           </div>
-        </div>
-      </div>
-    </dialog>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
