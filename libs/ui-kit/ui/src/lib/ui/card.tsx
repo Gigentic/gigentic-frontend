@@ -2,26 +2,29 @@ import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@gigentic-frontend/ui-kit/util';
 
-const cardVariants = cva('border bg-card text-card-foreground shadow', {
-  variants: {
-    variant: {
-      default: '',
-      payment: 'bg-primary-foreground shadow-lg', // For payment into escrow card
-      escrow: 'bg-primary-foreground shadow-md', // For active escrow cards
-      service: 'bg-primary-foreground shadow-lg', // For service cards
+const cardVariants = cva(
+  'rounded-lg border bg-card text-card-foreground shadow',
+  {
+    variants: {
+      variant: {
+        default: '',
+        payment: 'shadow-lg', // For payment into escrow card
+        escrow: 'shadow-md', // For active escrow cards
+        service: 'shadow-lg', // For service cards
+      },
+      size: {
+        default: 'w-full',
+        md: 'w-full max-w-3xl mx-auto',
+        lg: 'w-full max-w-4xl mx-auto',
+        service: 'w-full max-w-md', // For service cards
+      },
     },
-    size: {
-      default: 'w-full',
-      md: 'w-full max-w-3xl mx-auto',
-      lg: 'w-full max-w-4xl mx-auto',
-      service: 'w-full max-w-md', // For service cards
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
     },
   },
-  defaultVariants: {
-    variant: 'default',
-    size: 'default',
-  },
-});
+);
 
 export interface CardProps
   extends React.HTMLAttributes<HTMLDivElement>,

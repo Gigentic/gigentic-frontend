@@ -626,7 +626,9 @@ export default function EscrowManagement() {
       {/* Active Escrows Card */}
       <Card variant="default" size="lg">
         <CardContent className="p-6">
-          <h2 className="text-2xl font-bold tracking-tight">Active Escrows</h2>
+          <h2 className="text-2xl font-bold tracking-tight mb-4">
+            Active Escrows
+          </h2>
           <div className="space-y-4">{renderEscrowContent()}</div>
         </CardContent>
       </Card>
