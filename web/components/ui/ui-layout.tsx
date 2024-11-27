@@ -78,7 +78,7 @@ export function UiLayout({
       <main className="flex-1">{children}</main>
 
       <footer className="border-t bg-background">
-        <div className="container max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex space-x-4">
             <Link href="https://x.com/GigenticAI">
               <Twitter className="w-6 h-6" />
