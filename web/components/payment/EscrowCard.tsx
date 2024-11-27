@@ -1,4 +1,11 @@
-import { Card, CardContent } from '@gigentic-frontend/ui-kit/ui';
+import {
+  Card,
+  CardContent,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@gigentic-frontend/ui-kit/ui';
 import Link from 'next/link';
 import ReviewPopup from '@/components/review/ReviewPopup';
 
@@ -28,26 +35,44 @@ export default function EscrowCard({
           <>
             <div className="flex-1">
               <div>
-                <Link
-                  href={`https://explorer.testnet.soo.network/address/${providerAddress}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-semibold text-lg hover:underline hover:text-primary"
-                >
-                  {serviceTitle}
-                </Link>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Link
+                        href={`https://explorer.testnet.soo.network/address/${providerAddress}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold text-lg hover:underline hover:text-primary"
+                      >
+                        {serviceTitle}
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Click to view on Explorer</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
 
             <div className="flex items-center gap-10">
-              <Link
-                href={`https://explorer.testnet.soo.network/address/${escrowId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm hover:underline hover:text-primary whitespace-nowrap"
-              >
-                Amount in Escrow: {amountInEscrow.toFixed(3)} Sol
-              </Link>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link
+                      href={`https://explorer.testnet.soo.network/address/${escrowId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm hover:underline hover:text-primary whitespace-nowrap"
+                    >
+                      Amount in Escrow: {amountInEscrow.toFixed(3)} Sol
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Click to view on Explorer</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <ReviewPopup
                 escrowId={escrowId}
                 serviceTitle={serviceTitle}

@@ -10,6 +10,12 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { Avatar, AvatarFallback } from '@gigentic-frontend/ui-kit/ui';
 import { ClusterUiSelect, ExplorerLink } from '@/cluster/cluster-ui';
 import toast, { Toaster } from 'react-hot-toast';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@gigentic-frontend/ui-kit/ui';
 
 export function UiLayout({
   children,
@@ -60,13 +66,22 @@ export function UiLayout({
           </div>
           <div className="flex items-center space-x-4">
             {publicKey && (
-              <Link href={`/account/${publicKey.toString()}`}>
-                <Avatar className="cursor-pointer hover:opacity-80">
-                  <AvatarFallback>
-                    <User className="h-5 w-5" />
-                  </AvatarFallback>
-                </Avatar>
-              </Link>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href={`/account/${publicKey.toString()}`}>
+                      <Avatar className="cursor-pointer hover:opacity-80">
+                        <AvatarFallback>
+                          <User className="h-5 w-5" />
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>View Account Details</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             )}
             <div className="hidden sm:block">
               <WalletButton />

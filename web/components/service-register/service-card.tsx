@@ -9,10 +9,15 @@ import {
   CardTitle,
   Badge,
   Button,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from '@gigentic-frontend/ui-kit/ui';
 import { Wallet } from 'lucide-react';
+import Link from 'next/link';
 import { ellipsify } from '../ui/ui-layout';
-import { ExplorerLink } from '../cluster/cluster-ui';
+// import { ExplorerLink } from '../cluster/cluster-ui';
 import { useState } from 'react';
 
 interface ServiceCardProps {
@@ -56,11 +61,23 @@ export function ServiceCard({ account }: ServiceCardProps) {
               {priceInSol} SOL
             </Badge>
           </div>
-          <ExplorerLink
-            path={`account/${account}`}
-            label={ellipsify(account.toString())}
-            className="text-sm text-muted-foreground hover:text-primary"
-          />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href={`https://explorer.testnet.soo.network/account/${account}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline hover:text-primary"
+                >
+                  {ellipsify(account.toString())}
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>View Service Account on Explorer</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </CardHeader>
 
@@ -87,10 +104,7 @@ export function ServiceCard({ account }: ServiceCardProps) {
 
         <div className="flex items-center gap-2">
           <Wallet className="w-4 h-4 text-muted-foreground shrink-0" />
-          <span
-            className="text-sm text-muted-foreground truncate"
-            title={serviceAccount.provider.toString()}
-          >
+          <span className="text-sm text-muted-foreground truncate">
             {ellipsify(serviceAccount.provider.toString())}
           </span>
         </div>
