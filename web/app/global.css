@@ -6,13 +6,41 @@ body {
   color: hsl(var(--foreground));
 }
 
-.wallet-adapter-button-trigger {
-  background: hsl(var(--primary)) !important;
-  border-radius: 6px !important;
-  padding-left: 16px !important;
-  padding-right: 16px !important;
-}
-.wallet-adapter-dropdown-list,
 .wallet-adapter-button {
   font-family: inherit !important;
+}
+
+.wallet-adapter-button-trigger {
+  background-color: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  border-radius: var(--radius) !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  height: 2.25rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  transition-property: color, background-color, border-color,
+    text-decoration-color, fill, stroke !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition-duration: 150ms !important;
+}
+
+.wallet-adapter-button-trigger:hover {
+  background-color: hsl(var(--primary) / 0.9) !important;
+}
+
+.wallet-adapter-dropdown-list {
+  background-color: hsl(var(--background)) !important;
+  color: hsl(var(--foreground)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+}
+
+.wallet-adapter-dropdown-list-item {
+  transition-property: color, background-color !important;
+  transition-duration: 150ms !important;
+}
+
+.wallet-adapter-dropdown-list-item:hover {
+  background-color: hsl(var(--accent)) !important;
+  color: hsl(var(--accent-foreground)) !important;
 }
