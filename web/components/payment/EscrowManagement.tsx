@@ -565,10 +565,10 @@ export default function EscrowManagement() {
   };
 
   return (
-    <div className=" p-4 space-y-6">
+    <div className="p-4 space-y-6">
       {/* Selected Provider Payment Card */}
       {freelancer && selectedServiceAccountAddress && (
-        <Card className="w-full max-w-4xl mx-auto bg-white shadow-lg">
+        <Card variant="payment" size="lg">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
@@ -624,9 +624,11 @@ export default function EscrowManagement() {
       )}
 
       {/* Active Escrows Card */}
-      <Card className="w-full max-w-4xl mx-auto bg-background">
+      <Card variant="default" size="lg">
         <CardContent className="p-6">
-          <h2 className="text-2xl font-bold mb-6">Active Escrows</h2>
+          <h2 className="text-2xl font-bold tracking-tight mb-4">
+            Active Escrows
+          </h2>
           <div className="space-y-4">{renderEscrowContent()}</div>
         </CardContent>
       </Card>

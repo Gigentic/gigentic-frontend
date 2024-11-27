@@ -12,10 +12,6 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brand: '#0595C3',
-        'brand-foreground': '#ffffff',
-        'button-face': '#E16426',
-        'button-face-foreground': '#ffffff',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',

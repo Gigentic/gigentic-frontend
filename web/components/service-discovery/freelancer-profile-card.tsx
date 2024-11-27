@@ -72,10 +72,10 @@ export default function FreelancerProfileCard(
   };
 
   return (
-    <div className="bg-gray-100 p-4">
-      <Card className="w-full max-w-md bg-white shadow-lg">
+    <div>
+      <Card>
         <CardHeader className="flex flex-row items-center gap-4">
-          <div className="w-16 h-16 bg-gray-200 rounded-full overflow-hidden flex items-center justify-center">
+          <div className="w-16 h-16">
             <svg
               className="w-12 h-12 text-gray-400"
               fill="currentColor"
@@ -91,61 +91,25 @@ export default function FreelancerProfileCard(
           </div>
           <div className="flex flex-col flex-grow">
             <div className="flex justify-between items-center">
-              <CardTitle className="text-xl">{props.title}</CardTitle>
+              <CardTitle>{props.title}</CardTitle>
               <div className="flex items-center">
-                <Zap
-                  className={`w-4 h-4 mr-1 ${getMatchScoreColor(props.matchScore)}`}
-                />
-                <span
-                  className={`font-semibold ${getMatchScoreColor(props.matchScore)}`}
-                >
-                  {props.matchScore}% match
-                </span>
+                <Zap className="w-4 h-4 mr-1" />
+                <span>{props.matchScore}% match</span>
               </div>
             </div>
             <div className="flex items-center mt-1">
-              {/* {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`w-4 h-4 ${
-                    i < fullStars
-                      ? 'text-yellow-400 fill-yellow-400'
-                      : i === fullStars && hasHalfStar
-                        ? 'text-yellow-400 fill-yellow-400'
-                        : 'text-gray-300 fill-gray-300'
-                  }`}
-                  strokeWidth={1.5}
-                />
-              ))} */}
-              <span className="text-sm text-muted-foreground">
-                ⭐ {props.rating.toFixed(1)}
-              </span>
+              <span>⭐ {props.rating.toFixed(1)}</span>
             </div>
           </div>
         </CardHeader>
         <CardContent className="grid gap-4">
           <div className="flex justify-between items-center">
-            <span className="font-semibold">Price per hour</span>
-            <Badge variant="secondary" className="text-lg">
-              {props.pricePerHour} SOL
-            </Badge>
+            <span>Price per hour</span>
+            <Badge variant="secondary">{props.pricePerHour} SOL</Badge>
           </div>
           <div>
-            <span className="font-semibold">Experience</span>
-            <p
-              className={`mt-1 text-sm text-muted-foreground ${!isExpanded && 'line-clamp-3'}`}
-            >
-              {props.experience}
-            </p>
-            {props.experience.length > 150 && (
-              <Button
-                variant="link"
-                className="p-0 h-auto text-sm"
-                onClick={() => setIsExpanded(!isExpanded)}
-              >
-                {isExpanded ? 'Read less' : 'Read more'}
-              </Button>
-            )}
+            <span>Experience</span>
+            <p>{props.experience}</p>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-2">

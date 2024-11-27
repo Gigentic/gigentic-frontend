@@ -50,7 +50,7 @@ export function ServiceCard({ account }: ServiceCardProps) {
   const priceInSol = serviceAccount.price.toNumber() / LAMPORTS_PER_SOL;
 
   return (
-    <Card className="w-full max-w-md bg-white shadow-lg">
+    <Card variant="service">
       <CardHeader>
         <div className="flex flex-col space-y-2">
           <div className="flex justify-between items-start">

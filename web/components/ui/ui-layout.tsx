@@ -16,6 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@gigentic-frontend/ui-kit/ui';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export function UiLayout({
   children,
@@ -39,7 +40,7 @@ export function UiLayout({
             <div className="relative w-10 h-10">
               <Link href="/">
                 <Image
-                  src="/logo-g.png"
+                  src="/gigentic-logo.png"
                   alt="Gigentic Logo"
                   width={332}
                   height={341}
@@ -83,6 +84,7 @@ export function UiLayout({
                 </Tooltip>
               </TooltipProvider>
             )}
+            <ThemeToggle />
             <div className="hidden sm:block">
               <WalletButton />
             </div>
