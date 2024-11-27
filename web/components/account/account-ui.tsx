@@ -15,7 +15,17 @@ import {
   useRequestAirdrop,
   useTransferSol,
 } from './account-data-access';
-import { Button } from '@gigentic-frontend/ui-kit/ui';
+import {
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Input,
+} from '@gigentic-frontend/ui-kit/ui';
+import { Loader2 } from 'lucide-react';
 
 export function AccountBalance({ address }: { address: PublicKey }) {
   const query = useGetBalance({ address });
@@ -127,92 +137,90 @@ export function AccountTokens({ address }: { address: PublicKey }) {
   }, [query.data, showAll]);
 
   return (
-    <div className="space-y-2">
-      <div className="justify-between">
-        <div className="flex justify-between">
-          <h2 className="text-2xl font-bold">Token Accounts</h2>
-          <div className="space-x-2">
-            {query.isLoading ? (
-              <span className="loading loading-spinner"></span>
-            ) : (
-              <button
-                className="btn btn-sm btn-outline"
-                onClick={async () => {
-                  await query.refetch();
-                  await client.invalidateQueries({
-                    queryKey: ['getTokenAccountBalance'],
-                  });
-                }}
-              >
-                <IconRefresh size={16} />
-              </button>
-            )}
-          </div>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">Token Accounts</h2>
+        <div>
+          {query.isLoading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                await query.refetch();
+                await client.invalidateQueries({
+                  queryKey: ['getTokenAccountBalance'],
+                });
+              }}
+            >
+              <IconRefresh className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </div>
+
       {query.isError && (
-        <pre className="alert alert-error">
+        <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
           Error: {query.error?.message.toString()}
-        </pre>
+        </div>
       )}
+
       {query.isSuccess && (
         <div>
           {query.data.length === 0 ? (
-            <div>No token accounts found.</div>
+            <div className="text-muted-foreground">
+              No token accounts found.
+            </div>
           ) : (
-            <table className="table border-4 rounded-lg border-separate border-base-300">
-              <thead>
-                <tr>
-                  <th>Public Key</th>
-                  <th>Mint</th>
-                  <th className="text-right">Balance</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Public Key</TableHead>
+                  <TableHead>Mint</TableHead>
+                  <TableHead className="text-right">Balance</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {items?.map(({ account, pubkey }) => (
-                  <tr key={pubkey.toString()}>
-                    <td>
-                      <div className="flex space-x-2">
-                        <span className="font-mono">
-                          <ExplorerLink
-                            label={ellipsify(pubkey.toString())}
-                            path={`account/${pubkey.toString()}`}
-                          />
-                        </span>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="flex space-x-2">
-                        <span className="font-mono">
-                          <ExplorerLink
-                            label={ellipsify(account.data.parsed.info.mint)}
-                            path={`account/${account.data.parsed.info.mint.toString()}`}
-                          />
-                        </span>
-                      </div>
-                    </td>
-                    <td className="text-right">
+                  <TableRow key={pubkey.toString()}>
+                    <TableCell>
                       <span className="font-mono">
-                        {account.data.parsed.info.tokenAmount.uiAmount}
+                        <ExplorerLink
+                          label={ellipsify(pubkey.toString())}
+                          path={`account/${pubkey.toString()}`}
+                        />
                       </span>
-                    </td>
-                  </tr>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-mono">
+                        <ExplorerLink
+                          label={ellipsify(account.data.parsed.info.mint)}
+                          path={`account/${account.data.parsed.info.mint.toString()}`}
+                        />
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right font-mono">
+                      {account.data.parsed.info.tokenAmount.uiAmount}
+                    </TableCell>
+                  </TableRow>
                 ))}
 
                 {(query.data?.length ?? 0) > 5 && (
-                  <tr>
-                    <td colSpan={4} className="text-center">
-                      <button
-                        className="btn btn-xs btn-outline"
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center">
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => setShowAll(!showAll)}
                       >
                         {showAll ? 'Show Less' : 'Show All'}
-                      </button>
-                    </td>
-                  </tr>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           )}
         </div>
       )}
@@ -230,87 +238,88 @@ export function AccountTransactions({ address }: { address: PublicKey }) {
   }, [query.data, showAll]);
 
   return (
-    <div className="space-y-2">
-      <div className="flex justify-between">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Transaction History</h2>
-        <div className="space-x-2">
+        <div>
           {query.isLoading ? (
-            <span className="loading loading-spinner"></span>
+            <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            <button
-              className="btn btn-sm btn-outline"
-              onClick={() => query.refetch()}
-            >
-              <IconRefresh size={16} />
-            </button>
+            <Button variant="outline" size="sm" onClick={() => query.refetch()}>
+              <IconRefresh className="h-4 w-4" />
+            </Button>
           )}
         </div>
       </div>
+
       {query.isError && (
-        <pre className="alert alert-error">
+        <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
           Error: {query.error?.message.toString()}
-        </pre>
+        </div>
       )}
+
       {query.isSuccess && (
         <div>
           {query.data.length === 0 ? (
-            <div>No transactions found.</div>
+            <div className="text-muted-foreground">No transactions found.</div>
           ) : (
-            <table className="table border-4 rounded-lg border-separate border-base-300">
-              <thead>
-                <tr>
-                  <th>Signature</th>
-                  <th className="text-right">Slot</th>
-                  <th>Block Time</th>
-                  <th className="text-right">Status</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Signature</TableHead>
+                  <TableHead className="text-right">Slot</TableHead>
+                  <TableHead>Block Time</TableHead>
+                  <TableHead className="text-right">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {items?.map((item) => (
-                  <tr key={item.signature}>
-                    <th className="font-mono">
+                  <TableRow key={item.signature}>
+                    <TableCell className="font-mono">
                       <ExplorerLink
                         path={`tx/${item.signature}`}
                         label={ellipsify(item.signature, 8)}
                       />
-                    </th>
-                    <td className="font-mono text-right">
+                    </TableCell>
+                    <TableCell className="font-mono text-right">
                       <ExplorerLink
                         path={`block/${item.slot}`}
                         label={item.slot.toString()}
                       />
-                    </td>
-                    <td>
+                    </TableCell>
+                    <TableCell>
                       {new Date((item.blockTime ?? 0) * 1000).toISOString()}
-                    </td>
-                    <td className="text-right">
-                      {item.err ? (
-                        <div
-                          className="badge badge-error"
-                          title={JSON.stringify(item.err)}
-                        >
-                          Failed
-                        </div>
-                      ) : (
-                        <div className="badge badge-success">Success</div>
-                      )}
-                    </td>
-                  </tr>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div
+                        className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${
+                          item.err
+                            ? 'bg-destructive/15 text-destructive'
+                            : 'bg-success/15 text-success'
+                        }`}
+                        title={item.err ? JSON.stringify(item.err) : undefined}
+                      >
+                        {item.err ? 'Failed' : 'Success'}
+                      </div>
+                    </TableCell>
+                  </TableRow>
                 ))}
+
                 {(query.data?.length ?? 0) > 5 && (
-                  <tr>
-                    <td colSpan={4} className="text-center">
-                      <button
-                        className="btn btn-xs btn-outline"
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center">
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => setShowAll(!showAll)}
                       >
                         {showAll ? 'Show Less' : 'Show All'}
-                      </button>
-                    </td>
-                  </tr>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           )}
         </div>
       )}
@@ -335,8 +344,10 @@ function ModalReceive({
 }) {
   return (
     <AppModal title="Receive" hide={hide} show={show}>
-      <p>Receive assets by sending them to your public key:</p>
-      <code>{address.toString()}</code>
+      <p className="mb-2">Receive assets by sending them to your public key:</p>
+      <code className="block w-full rounded-md bg-muted p-3 font-mono text-sm">
+        {address.toString()}
+      </code>
     </AppModal>
   );
 }
@@ -362,13 +373,12 @@ function ModalAirdrop({
       submitLabel="Request Airdrop"
       submit={() => mutation.mutateAsync(parseFloat(amount)).then(() => hide())}
     >
-      <input
+      <Input
         disabled={mutation.isPending}
         type="number"
         step="any"
         min="1"
         placeholder="Amount"
-        className="input input-bordered w-full"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
       />
@@ -410,24 +420,24 @@ function ModalSend({
           .then(() => hide());
       }}
     >
-      <input
-        disabled={mutation.isPending}
-        type="text"
-        placeholder="Destination"
-        className="input input-bordered w-full"
-        value={destination}
-        onChange={(e) => setDestination(e.target.value)}
-      />
-      <input
-        disabled={mutation.isPending}
-        type="number"
-        step="any"
-        min="1"
-        placeholder="Amount"
-        className="input input-bordered w-full"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-      />
+      <div className="space-y-4">
+        <Input
+          disabled={mutation.isPending}
+          type="text"
+          placeholder="Destination"
+          value={destination}
+          onChange={(e) => setDestination(e.target.value)}
+        />
+        <Input
+          disabled={mutation.isPending}
+          type="number"
+          step="any"
+          min="1"
+          placeholder="Amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
+      </div>
     </AppModal>
   );
 }
