@@ -5,7 +5,7 @@ import { ReactNode, Suspense, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Mail, Twitter, User } from 'lucide-react';
+import { Mail, Twitter, User, Github } from 'lucide-react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Avatar, AvatarFallback } from '@gigentic-frontend/ui-kit/ui';
 import { ClusterUiSelect, ExplorerLink } from '@/cluster/cluster-ui';
@@ -105,7 +105,19 @@ export function UiLayout({
       <footer className="border-t bg-background">
         <div className="mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex space-x-4">
-            <Link href="https://x.com/GigenticAI">
+            <Link
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://github.com/Gigentic/gigentic-frontend"
+            >
+              <Github className="w-6 h-6" />
+              <span className="sr-only">GitHub</span>
+            </Link>
+            <Link
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://x.com/GigenticAI"
+            >
               <Twitter className="w-6 h-6" />
               <span className="sr-only">Twitter</span>
             </Link>
@@ -139,17 +151,6 @@ export function AppModal({
   submitDisabled?: boolean;
   submitLabel?: string;
 }) {
-  // const dialogRef = useRef<HTMLDialogElement | null>(null);
-
-  // useEffect(() => {
-  //   if (!dialogRef.current) return;
-  //   if (show) {
-  //     dialogRef.current.showModal();
-  //   } else {
-  //     dialogRef.current.close();
-  //   }
-  // }, [show, dialogRef]);
-
   return (
     <Dialog open={show} onOpenChange={(open) => !open && hide()}>
       <DialogContent>
