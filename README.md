@@ -45,6 +45,10 @@ Gigentic's architecture consists of a frontend built with modern web technologie
 
 - **Blockchain Layer:** Utilizes Solana's high-performance blockchain to manage escrow payments, service registries, and immutable data storage.
 
+## System Overview
+
+This diagram illustrates the core components of our decentralized service marketplace:
+
 ```mermaid
 %%{init: {
   "theme": "default",
@@ -130,19 +134,36 @@ erDiagram
     }
 ```
 
+### Key Entities
+
+- **Customers & Providers**: Users who can interact with services, handle payments through escrow, and exchange reviews
+- **Services**: Offerings listed by providers with descriptions and pricing
+- **Escrow**: Secure payment handling between customers and providers
+- **Reviews**: Two-way review system allowing both parties to rate each other
+- **Service Registry**: Central registry managed by admin for tracking all services
+
+### Main Interactions
+
+- Customers can discover services, make payments through escrow, and leave reviews
+- Providers can list services, receive payments, and review customers
+- All payments are handled securely through escrow accounts
+- Reviews are stored on-chain for transparency and trust building
+
 ## Core Files Overview
 
-// TODO regenrate / update
-
 ### Web Folder
+
+- #### `actions.tsx`
+
+  Server-side code that defines the actions and state management for the AI assistant, including handling messages, invoking tools, and integrating AI models.
 
 - #### `chat-agent.tsx`
 
   Handles the AI-powered chat interface where users can interact with an intelligent assistant to find the right freelancers or AI agents for their projects.
 
-- #### `actions.tsx`
+- #### `add_service.tsx`
 
-  Defines the actions and state management for the AI assistant, including handling messages, invoking tools, and integrating AI models.
+  Provides the interface for service providers to register and manage their offerings on the platform.
 
 - #### `EscrowManagement.tsx`
 
@@ -156,6 +177,38 @@ erDiagram
 
   Implements a popup dialog that appears after releasing escrow, allowing users to leave reviews and ratings for service providers.
 
+```mermaid
+graph TD
+    Root(("/")) --> SD["/service-discovery"]
+    Root --> SR["/service-register"]
+    Root --> PM["/payment"]
+    Root --> RV["/review"]
+
+    subgraph "Client Components"
+        SD --> ChatAgent["chat-agent.tsx"]
+        SR --> Add["add_service.tsx"]
+        PM --> EM["EscrowManagement.tsx"]
+        PM --> EC["EscrowCard.tsx"]
+        RV --> RP["ReviewPopup.tsx"]
+    end
+
+    subgraph "Server Components"
+        Actions["actions.tsx"]
+        Actions --> OpenAI["OpenAI Integration"]
+        Actions -->|Fetch Services| BC["Blockchain Queries"]
+    end
+
+    ChatAgent -->|Server Action| Actions
+    Actions -->|Stream UI| ChatAgent
+
+    classDef route fill:#f9f,stroke:#333
+    classDef client fill:#e6e6fa,stroke:#333
+    classDef server fill:#90EE90,stroke:#333
+    class Root,SD,SR,PM,RV route
+    class ChatAgent,Add,EM,EC,RP client
+    class Actions,OpenAI,BC server
+```
+
 ### Anchor Folder
 
 - #### `deploy-registry.ts`
@@ -168,7 +221,35 @@ erDiagram
 
 - #### `write-services.ts`
 
-  Automates the process of writing multiple services to the blockchain by reading from predefined service data and invoking the `createService` functions.
+  Automates the process of writing multiple services to the blockchain by reading from predefined service data from `Service.ts` and invoking the `createService` functions.
+
+```mermaid
+graph LR
+    subgraph "Deployment Scripts"
+        DR["deploy-registry.ts"] -->|Initialize| SR["Service Registry"]
+        WS["write-services.ts"] -->|Batch Write| CS["createService.ts"]
+        CS -->|Create| SA["Service Accounts"]
+    end
+
+    subgraph "Blockchain State"
+        SR -->|Tracks| SA
+        SA -->|Contains| SD["Service Details"]
+    end
+
+    subgraph "Program Interactions"
+        DR -->|Deploy| BC["Blockchain"]
+        CS -->|Write| BC
+        BC -->|Store| SR
+        BC -->|Store| SA
+    end
+
+    classDef script fill:#f9f,stroke:#333
+    classDef state fill:#e6e6fa,stroke:#333
+    classDef blockchain fill:#90EE90,stroke:#333
+    class DR,CS,WS script
+    class SR,SA,SD state
+    class BC blockchain
+```
 
 ## Installation
 
@@ -188,22 +269,17 @@ To set up the project locally, follow these steps:
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/yourusername/gigentic.git
-   cd gigentic
+   git clone https://github.com/gigentic/gigentic-frontend.git
+   cd gigentic-frontend
    ```
 
 2. **Install Dependencies**
 
    ```bash
-   # For the frontend
-   cd web
+   # Using npm
    npm install
    # Or using yarn
    yarn install
-
-   # For the Anchor (Solana) programs
-   cd ../anchor
-   anchor build
    ```
 
 3. **Set Up Environment Variables**
@@ -211,9 +287,9 @@ To set up the project locally, follow these steps:
    Create a `.env` file in the root directory and add the necessary environment variables:
 
    ```env
-   SERVICE_REGISTRY_DEPLOYER_KEYPAIR=your_service_registry_deployer_key
-   SERVICE_REGISTRY_KEYPAIR=your_service_registry_keypair
-   SERVICE_DEPLOYER_KEYPAIR=your_service_deployer_key
+   OPENAI_API_KEY=api-key
+   NEXT_PUBLIC_SERVICE_REGISTRY_PUBKEY=pubkey
+   NEXT_PUBLIC_MINT_PUBKEY=pubkey
    ```
 
 4. **Starting the Frontend**
@@ -221,6 +297,9 @@ To set up the project locally, follow these steps:
    Navigate to the root directory and start the development server:
 
    ```bash
+   # Using npm
+   npm run dev
+   # Or using yarn
    yarn dev
    ```
 
