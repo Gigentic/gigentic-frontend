@@ -4,8 +4,8 @@ import { ChatList } from './chat-list';
 import ChatScrollAnchor from './chat-scroll-anchor';
 import { useEnterSubmit } from '@/hooks/ui/use-enter-submit';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import TextareaAutosize from 'react-textarea-autosize';
-import { ArrowDownIcon } from 'lucide-react';
+import { Textarea } from '@gigentic-frontend/ui-kit/ui';
+import { ArrowUpIcon } from 'lucide-react';
 import { useUIState, useActions } from 'ai/rsc';
 import type { AI } from '@/app/actions';
 import { UserMessage } from '@/components/service-discovery/llm/message';
@@ -66,27 +66,27 @@ export default function ChatAgent() {
         {/* Input section */}
         <div className="py-4">
           <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="relative flex flex-col w-full overflow-hidden">
-              <TextareaAutosize
-                tabIndex={0}
+            <div className="relative flex flex-col w-full">
+              <Textarea
+                {...form.register('message')}
                 onKeyDown={onKeyDown}
                 placeholder="Find backend developer..."
-                className="min-h-[60px] w-full resize-none px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
+                className="min-h-[60px] resize-none px-4 py-[1.3rem] sm:text-sm"
                 autoFocus
                 spellCheck={false}
                 autoComplete="off"
                 autoCorrect="off"
                 rows={1}
-                {...form.register('message')}
               />
               <div className="absolute right-4 top-4">
                 <Button
                   type="submit"
                   size="icon"
+                  variant="ghost"
                   disabled={form.watch('message') === ''}
                 >
+                  <ArrowUpIcon className="h-4 w-4" />
                   <span className="sr-only">Send</span>
-                  <ArrowDownIcon className="w-5 h-5" />
                 </Button>
               </div>
             </div>
