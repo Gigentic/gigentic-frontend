@@ -6,9 +6,9 @@ Deployed at [https://app.gigentic.com/](https://app.gigentic.com/)
 
 Notes for using the dapp:
 
+- If you don't see the wallet icon on the top right corner of the [Gigentic dapp page](https://app.gigentic.com/), or you can't connect your wallet, hit refresh, and please try again.
 - Choose the right network in the bottom right corner of the dapp page.
 - [Instructions](https://valiant-license-ca4.notion.site/SOON-Testnet-Guide-138e49a418fb80b8bc60ca23667dfb67) for installing Backpack wallet and configuring to use it with the SOON Testnet.
-- If you don't see the wallet icon on the top right corner of the [Gigentic dapp page](https://app.gigentic.com/), or you can't connect your wallet, hit refresh, and please try again.
 - Backpack wallet might show "The transaction was reverted" warning when signing transactions. It's safe to ignore it.
 
 [Link to 4-minute pitch of the project](https://youtu.be/szCOWCZELSQ)
