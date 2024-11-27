@@ -1,20 +1,42 @@
 import * as React from 'react';
-
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@gigentic-frontend/ui-kit/util';
 
-const Card = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      'rounded-xl border bg-card text-card-foreground shadow',
-      className,
-    )}
-    {...props}
-  />
-));
+const cardVariants = cva(
+  'rounded-xl border bg-card text-card-foreground shadow',
+  {
+    variants: {
+      variant: {
+        default: '',
+        payment: 'bg-primary-foreground shadow-lg', // For payment into escrow card
+        escrow: 'bg-gray-50 shadow-md', // For active escrow cards
+      },
+      size: {
+        default: 'w-full',
+        md: 'w-full max-w-3xl mx-auto',
+        lg: 'w-full max-w-4xl mx-auto',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
+  },
+);
+
+export interface CardProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof cardVariants> {}
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, variant, size, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(cardVariants({ variant, size }), className)}
+      {...props}
+    />
+  ),
+);
 Card.displayName = 'Card';
 
 const CardHeader = React.forwardRef<
