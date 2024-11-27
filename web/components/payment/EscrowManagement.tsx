@@ -23,6 +23,12 @@ import EscrowCard from './EscrowCard';
 import { Freelancer } from '@/lib/types/freelancer';
 import { serviceRegistryPubKey } from '@/lib/hooks/blockchain/use-gigentic-program';
 import Link from 'next/link';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@gigentic-frontend/ui-kit/ui';
 
 function extractServiceTitle(description: string): string {
   const titleMatch = description.match(/title: (.*?) \|/);
@@ -567,14 +573,23 @@ export default function EscrowManagement() {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <Link
-                    href={`https://explorer.testnet.soo.network/address/${freelancer.serviceAccountAddress}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-semibold text-lg hover:underline hover:text-primary"
-                  >
-                    {freelancer.title}
-                  </Link>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Link
+                          href={`https://explorer.testnet.soo.network/address/${freelancer.serviceAccountAddress}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-semibold text-lg hover:underline hover:text-primary"
+                        >
+                          {freelancer.title}
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Click to view on Explorer</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
                 <div className="flex items-center gap-2">
                   <span>⭐ {freelancer.rating}</span>
