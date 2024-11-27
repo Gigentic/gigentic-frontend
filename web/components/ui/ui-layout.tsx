@@ -94,6 +94,8 @@ export function UiLayout({
 
       <main className="flex-1">{children}</main>
 
+      <Toaster position="bottom-right" />
+
       <footer className="border-t bg-background">
         <div className="mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex space-x-4">
