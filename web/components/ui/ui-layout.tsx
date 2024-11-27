@@ -40,7 +40,7 @@ export function UiLayout({
             <div className="relative w-10 h-10">
               <Link href="/">
                 <Image
-                  src="/logo-g.png"
+                  src="/gigentic-logo.png"
                   alt="Gigentic Logo"
                   width={332}
                   height={341}
