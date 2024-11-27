@@ -2,15 +2,13 @@
 
 _A decentralized "Upwork" to help humans and AI agents work together._
 
-[https://gigentic-frontend.vercel.app](https://gigentic-frontend.vercel.app)
+Deployed at [https://app.gigentic.com/](https://app.gigentic.com/)
 
-[Link to 3-minute pitch of the project](https://www.youtube.com/watch?v=_CxF3BPZblo)
+//TODO UPDATE[Link to 3-minute pitch of the project](https://www.youtube.com/watch?v=_CxF3BPZblo)
 
-## Table of Contents
+<!-- ## Table of Contents
 
 - [Introduction](#introduction)
-- [Challenges](#challenges)
-- [Our Solution](#our-solution)
 - [Features](#features)
 - [Architecture](#architecture)
 - [Core Files Overview](#core-files-overview)
@@ -18,60 +16,11 @@ _A decentralized "Upwork" to help humans and AI agents work together._
   - [Anchor Folder](#anchor-folder)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
+- [Contributing](#contributing) -->
 
 ## Introduction
 
 Gigentic is a decentralized platform designed to revolutionize the way freelancers, service seekers, and AI agents connect and collaborate. By leveraging blockchain technology and AI-powered job matching, Gigentic offers a secure, transparent, and efficient ecosystem that addresses the common challenges in the freelance industry.
-
-## Challenges
-
-The freelance marketplace faces several significant challenges that hinder effective collaboration and growth:
-
-### Inefficient Job Matching
-
-- **Freelancers spend 23% of their time searching for work\***  
-  _Upwork, “Freelancing in America,” 2019._
-
-- **60% of hiring managers struggle to find the right talent\*\***  
-  _LinkedIn Talent Solutions, “The Future of Recruiting,” 2020._
-
-### Lack of Trust and Transparency
-
-- **49% of businesses are concerned about freelancer trustworthiness\*\*\***  
-  _PwC, “The Future of Work,” 2020._
-
-### Payment Insecurity
-
-- **71% of freelancers have struggled to collect payment at least once\*\*\*\***  
-  _Freelancers Union, “Freelancing in America,” 2019._
-
-### High Platform Fees
-
-- **Platforms charge fees up to 20%, increasing costs for clients and reducing freelancer earnings.**
-
-### Reputation Data Silos
-
-- **Freelancer reputations are locked within platforms, limiting visibility and opportunities.**
-
-## Our Solution
-
-Gigentic addresses these challenges with innovative solutions:
-
-- **AI-Powered Job Matching:**  
-  Precise freelancer-client pairing using advanced AI algorithms to reduce search time and improve match quality.
-
-- **Secure Transactions:**  
-  Implementing an escrow program on Solana ensures payment security for both freelancers and clients.
-
-- **Transparent Rating System:**  
-  Immutable on-chain reviews build trust and provide transparency within the community.
-
-- **Lower Fees:**  
-  By decentralizing the platform, Gigentic reduces costs for all users, eliminating the high fees typically charged by traditional platforms.
-
-- **Reputation Portability:**  
-  Freelancers' reputations are not siloed within the platform but are accessible and verifiable on the blockchain, enhancing visibility and opportunities.
 
 ## Features
 
@@ -96,7 +45,94 @@ Gigentic's architecture consists of a frontend built with modern web technologie
 
 - **Blockchain Layer:** Utilizes Solana's high-performance blockchain to manage escrow payments, service registries, and immutable data storage.
 
+```mermaid
+%%{init: {
+  "theme": "default",
+  "themeCSS": [
+    ".er.relationshipLabel { fill: black; }",
+    ".er.relationshipLabelBox { fill: white; }",
+    ".er.entityBox { fill: lightgray; }",
+    "[id^=entity-Customer] .er.entityBox { fill: lightgreen;} ",
+    "[id^=entity-Provider] .er.entityBox { fill: lightgreen;} ",
+    "[id^=entity-ServiceRegistry] .er.entityBox { fill: powderblue;} ",
+    "[id^=entity-Service] .er.entityBox { fill: powderblue;} ",
+    "[id^=entity-Escrow] .er.entityBox { fill: powderblue;} ",
+    "[id^=entity-Review] .er.entityBox { fill: powderblue;} "
+    ]
+}}%%
+
+erDiagram
+    Customer ||--o{ Escrow : "deposits payment"
+    Customer ||--o{ Service : "consumes"
+    Customer ||--o{ Review : "writes customer review"
+
+    Provider ||--o{ Escrow : "receives payment"
+    Provider ||--o{ Service : "provides"
+    Provider ||--o{ Review : "writes provider review"
+
+    Service ||--o{ Review : "collects"
+    Service ||--o{ Escrow : "handles payment"
+
+    Admin ||--|| ServiceRegistry : "manages"
+
+    ServiceRegistry ||--o{ Service : "registers"
+    Admin {
+        Pubkey service_registry_deployer "Admin account"
+    }
+    ServiceRegistry {
+        Vec[Pubkey] service_account_addresses "List of all services"
+        Pubkey fee_account "Platform fee destination"
+        u8 fee_percentage "Platform fee %"
+        function init_service_registry "Initialize registry"
+    }
+    Service {
+        Service_PDA seed "['service', unique_id, provider]"
+        Pubkey provider "Service provider's account"
+        Pubkey mint "Token mint address"
+        String description "Service description"
+        u64 price "Service price in lamports"
+        Vec[Pubkey] reviews "List of review PDAs"
+        function init_service "Create new service"
+    }
+    Review {
+        Review_PDA seed "['review', review_id, service]"
+        String review_id "Unique review identifier"
+        u8 provider_to_customer_rating "0-5 rating"
+        u8 customer_to_provider_rating "0-5 rating"
+        Pubkey customer "Customer's account"
+        Pubkey service_provider "Provider's account"
+        String provider_to_customer_review "Provider's review text"
+        String customer_to_provider_review "Customer's review text"
+        function provider_to_customer_rating "Provider rates customer"
+        function customer_to_provider_rating "Customer rates provider"
+    }
+    Escrow {
+        Escrow_PDA seed "['escrow', service, provider, customer]"
+        Pubkey customer "Customer's account"
+        Pubkey service_provider "Provider's account"
+        u8 fee_percentage "Platform fee %"
+        u64 expected_amount "Payment amount"
+        Pubkey fee_account "Fee destination"
+        function pay_service "Customer deposits payment"
+        function sign_service "Release payment to provider"
+    }
+    Provider {
+        Pubkey account "Provider account address"
+        Vec[Pubkey] services "Provided services"
+        Vec[Pubkey] reviews_received "Reviews from customers"
+        Vec[Pubkey] reviews_given "Reviews to customers"
+    }
+    Customer {
+        Pubkey account "Customer account address"
+        Vec[Pubkey] services_used "Consumed services"
+        Vec[Pubkey] reviews_given "Reviews to providers"
+        Vec[Pubkey] reviews_received "Reviews from providers"
+    }
+```
+
 ## Core Files Overview
+
+// TODO regenrate / update
 
 ### Web Folder
 
@@ -136,7 +172,7 @@ Gigentic's architecture consists of a frontend built with modern web technologie
 
 ## Installation
 
-If you want to have a quick look at the app, you can directly go and [check it out](https://gigentic-frontend.vercel.app).
+If you want to have a quick look at the app, you can directly go and [check it out](https://app.gigentic.com/).
 
 To set up the project locally, follow these steps:
 
@@ -147,7 +183,7 @@ To set up the project locally, follow these steps:
 - **Solana CLI Tools**
 - **Anchor CLI** (for Solana)
 
-### Steps
+### Installing and Running the Frontend Locally
 
 1. **Clone the Repository**
 
@@ -180,31 +216,17 @@ To set up the project locally, follow these steps:
    SERVICE_DEPLOYER_KEYPAIR=your_service_deployer_key
    ```
 
-4. **Deploy Solana Programs**
+4. **Starting the Frontend**
 
-   Ensure you have a local Solana cluster running or connect to a devnet.
-
-   ```bash
-   # Start local Solana cluster (optional)
-   solana-test-validator
-   ```
-
-   Deploy the programs:
+   Navigate to the root directory and start the development server:
 
    ```bash
-   cd anchor
-   anchor deploy
+   yarn dev
    ```
 
-## Usage
+## Building the Solana Programs
 
-### Starting the Frontend
-
-Navigate to the root directory and start the development server:
-
-```bash
-yarn dev
-```
+....
 
 ## Contributing
 
