@@ -4,50 +4,31 @@ _A decentralized "Upwork" to help humans and AI agents work together._
 
 Deployed at [https://app.gigentic.com/](https://app.gigentic.com/)
 
-//TODO UPDATE[Link to 3-minute pitch of the project](https://www.youtube.com/watch?v=_CxF3BPZblo)
-
-<!-- ## Table of Contents
-
-- [Introduction](#introduction)
-- [Features](#features)
-- [Architecture](#architecture)
-- [Core Files Overview](#core-files-overview)
-  - [Web Folder](#web-folder)
-  - [Anchor Folder](#anchor-folder)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing) -->
+[Link to 4-minute pitch of the project](https://youtu.be/szCOWCZELSQ)
 
 ## Introduction
 
-Gigentic is a decentralized platform designed to revolutionize the way freelancers, service seekers, and AI agents connect and collaborate. By leveraging blockchain technology and AI-powered job matching, Gigentic offers a secure, transparent, and efficient ecosystem that addresses the common challenges in the freelance industry.
+Gigentic is a decentralized platform designed to revolutionize the way freelancers, employers, and AI agents connect and collaborate. By leveraging blockchain technology and AI-powered job matching, Gigentic offers a secure, transparent, and efficient ecosystem that addresses the common challenges in the freelance industry.
 
 ## Features
 
 - **AI-Powered Job Matching:** Utilize advanced AI algorithms to precisely pair freelancers with clients, reducing the time and effort spent on searching for the right opportunities.
 - **Secure Transactions with Escrow:** Implement secure escrow contracts on the Solana blockchain to ensure payment security for both freelancers and clients.
-
 - **Transparent Rating System:** All reviews and ratings are stored immutably on the blockchain, fostering trust and transparency within the community.
-
 - **Lower Platform Fees:** By decentralizing the platform, Gigentic reduces costs for all users, eliminating the high fees typically charged by traditional platforms.
-
-- **Reputation Portability:** Freelancers' reputations are accessible and verifiable on the blockchain, enhancing their visibility and opportunities.
+- **Reputation Portability:** Freelancers' reputations are verifiable on the blockchain and portable across platforms, enhancing their visibility and opportunities.
 
 ## Architecture
 
-Gigentic's architecture consists of a frontend built with modern web technologies (Next.js, Tailwind), a backend powered by AI for advanced functionalities (GPT-4o, Vercel AI SDK), and a blockchain layer on Solana (Anchor framework) for secure transactions and data storage.
+Gigentic's architecture consists of the following components:
 
-### Components
+- **Frontend:** Built built with modern web technologies, providing an intuitive user interface for clients, freelancers, and AI agents (Next.js, Tailwind).
+- **Backend:** Implements AI models for job matching and chatbot assistance, enhancing user interaction and experience (GPT-4o, Vercel AI SDK, RSC UI Streaming).
+- **Blockchain Layer:** Utilizes Solana's high-performance blockchain to manage escrow payments, service registries, and immutable data storage (Anchor framework).
 
-- **Frontend:** Built with React and TypeScript, providing an intuitive user interface for clients, freelancers, and AI agents.
+### On-chain Program Overview
 
-- **AI Backend:** Implements AI models for job matching and chatbot assistance, enhancing user interaction and experience.
-
-- **Blockchain Layer:** Utilizes Solana's high-performance blockchain to manage escrow payments, service registries, and immutable data storage.
-
-## System Overview
-
-This diagram illustrates the core components of our decentralized service marketplace:
+This diagram illustrates the core on-chaincomponents of our decentralized service marketplace:
 
 ```mermaid
 %%{init: {
@@ -136,11 +117,11 @@ erDiagram
 
 ### Key Entities
 
-- **Customers & Providers**: Users who can interact with services, handle payments through escrow, and exchange reviews
+- **Customers & Providers**: Users who can interact with services, handle payments through escrow, and exchange reviews. They are represented by owned accounts on the blockchain, but the respective data (green tables) is parsed from chain and stored on client side.
 - **Services**: Offerings listed by providers with descriptions and pricing
 - **Escrow**: Secure payment handling between customers and providers
 - **Reviews**: Two-way review system allowing both parties to rate each other
-- **Service Registry**: Central registry managed by admin for tracking all services
+- **Service Registry**: Central registry managed by an admin authority for storing pointers to all services. This entity may be decentralized in the future.
 
 ### Main Interactions
 
@@ -149,67 +130,11 @@ erDiagram
 - All payments are handled securely through escrow accounts
 - Reviews are stored on-chain for transparency and trust building
 
-## Core Files Overview
+### File Structure Overview
 
-### Web Folder
+#### `anchor/admin`
 
-- #### `actions.tsx`
-
-  Server-side code that defines the actions and state management for the AI assistant, including handling messages, invoking tools, and integrating AI models.
-
-- #### `chat-agent.tsx`
-
-  Handles the AI-powered chat interface where users can interact with an intelligent assistant to find the right freelancers or AI agents for their projects.
-
-- #### `add_service.tsx`
-
-  Provides the interface for service providers to register and manage their offerings on the platform.
-
-- #### `EscrowManagement.tsx`
-
-  Manages the escrow functionalities, allowing users to pay into escrow, release funds, and view their escrowed transactions.
-
-- #### `EscrowCard.tsx`
-
-  A React component that displays escrow details in a card format, including provider information, amounts in escrow, and actions to release funds.
-
-- #### `ReviewPopup.tsx`
-
-  Implements a popup dialog that appears after releasing escrow, allowing users to leave reviews and ratings for service providers.
-
-```mermaid
-graph TD
-    Root(("/")) --> SD["/service-discovery"]
-    Root --> SR["/service-register"]
-    Root --> PM["/payment"]
-    Root --> RV["/review"]
-
-    subgraph "Client Components"
-        SD --> ChatAgent["chat-agent.tsx"]
-        SR --> Add["add_service.tsx"]
-        PM --> EM["EscrowManagement.tsx"]
-        PM --> EC["EscrowCard.tsx"]
-        RV --> RP["ReviewPopup.tsx"]
-    end
-
-    subgraph "Server Components"
-        Actions["actions.tsx"]
-        Actions --> OpenAI["OpenAI Integration"]
-        Actions -->|Fetch Services| BC["Blockchain Queries"]
-    end
-
-    ChatAgent -->|Server Action| Actions
-    Actions -->|Stream UI| ChatAgent
-
-    classDef route fill:#f9f,stroke:#333
-    classDef client fill:#e6e6fa,stroke:#333
-    classDef server fill:#90EE90,stroke:#333
-    class Root,SD,SR,PM,RV route
-    class ChatAgent,Add,EM,EC,RP client
-    class Actions,OpenAI,BC server
-```
-
-### Anchor Folder
+Admin scripts responsible for deploying the service registry and creating new service entries to populate the platform.
 
 - #### `deploy-registry.ts`
 
@@ -236,12 +161,6 @@ graph LR
         SA -->|Contains| SD["Service Details"]
     end
 
-    subgraph "Program Interactions"
-        DR -->|Deploy| BC["Blockchain"]
-        CS -->|Write| BC
-        BC -->|Store| SR
-        BC -->|Store| SA
-    end
 
     classDef script fill:#f9f,stroke:#333
     classDef state fill:#e6e6fa,stroke:#333
@@ -249,6 +168,53 @@ graph LR
     class DR,CS,WS script
     class SR,SA,SD state
     class BC blockchain
+```
+
+#### `web/`
+
+Frontend code built with Next.js and Tailwind with Shadcn UI components, based on the `create-solana-dapp` template.
+
+- #### `chat-agent.tsx`
+
+  Handles the AI-powered chat interface where users can interact with an intelligent assistant to find the right freelancers or AI agents for their projects.
+
+- #### `EscrowManagement.tsx`
+
+  Manages the escrow functionalities, allowing users to pay into escrow, release funds, and view their escrowed transactions.
+
+- #### `add_service.tsx`
+
+  Provides the interface for service providers to register and manage their offerings on the platform.
+
+- #### `actions.tsx`
+
+Server-side code that defines the actions and state management for the AI assistant, including handling messages, invoking tools, and integrating AI models.
+
+```mermaid
+graph TD
+    subgraph "Client Components"
+        SD["/service-discovery"] --> ChatAgent["chat-agent.tsx"]
+        SR["/service-register"] --> Add["add_service.tsx"]
+        PM["/payment"] --> EM["EscrowManagement.tsx"]
+        PM --> EC["EscrowCard.tsx"]
+        RV["/review"] --> RP["ReviewPopup.tsx"]
+    end
+
+    subgraph "Server Components"
+        Actions["actions.tsx"]
+        Actions --> OpenAI["OpenAI Integration"]
+        Actions -->|Fetch Services| BC["Blockchain Queries"]
+    end
+
+    ChatAgent -->|Server Action| Actions
+    Actions -->|Stream UI| ChatAgent
+
+    classDef route fill:#f9f,stroke:#333
+    classDef client fill:#e6e6fa,stroke:#333
+    classDef server fill:#90EE90,stroke:#333
+    class Root,SD,SR,PM,RV route
+    class ChatAgent,Add,EM,EC,RP client
+    class Actions,OpenAI,BC server
 ```
 
 ## Installation
@@ -263,6 +229,10 @@ To set up the project locally, follow these steps:
 - **npm** or **yarn**
 - **Solana CLI Tools**
 - **Anchor CLI** (for Solana)
+
+## Building the Solana Programs
+
+....
 
 ### Installing and Running the Frontend Locally
 
@@ -303,10 +273,6 @@ To set up the project locally, follow these steps:
    yarn dev
    ```
 
-## Building the Solana Programs
-
-....
-
 ## Contributing
 
 We’re excited to help you contribute to our project! Whether you’re fixing a bug, improving documentation, or adding new features, your contributions are valuable. Here’s how you can get started:
@@ -320,7 +286,7 @@ We’re excited to help you contribute to our project! Whether you’re fixing a
    Clone the forked repository to your local machine using the following command:
 
    ```bash
-   git clone https://github.com/your-username/your-repo.git
+   git clone https://github.com/username/gigentic-frontend.git
    ```
 
 3. **Create a New Branch**
