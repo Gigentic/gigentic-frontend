@@ -4,9 +4,9 @@ import { ClusterProvider } from '@/components/cluster/cluster-data-access';
 import { SolanaProvider } from '@/providers/solana-provider';
 import { ReactQueryProvider } from '@/providers/react-query-provider';
 import { Analytics } from '@vercel/analytics/react';
+import { ThemeProvider } from '@/components/theme-provider';
 
 import { AI } from '@/app/actions';
-// import { ThemeProvider } from 'next-themes';
 
 export const metadata = {
   title: 'Gigentic',
@@ -28,21 +28,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    // <html lang="en" suppressHydrationWarning>
     <html lang="en">
       <body>
-        {/* <ThemeProvider> */}
-        <ReactQueryProvider>
-          <ClusterProvider>
-            <SolanaProvider>
-              <AI>
-                <UiLayout links={links}>{children}</UiLayout>
-              </AI>
-            </SolanaProvider>
-          </ClusterProvider>
-        </ReactQueryProvider>
-        <Analytics />
-        {/* </ThemeProvider> */}
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <ReactQueryProvider>
+            <ClusterProvider>
+              <SolanaProvider>
+                <AI>
+                  <UiLayout links={links}>{children}</UiLayout>
+                </AI>
+              </SolanaProvider>
+            </ClusterProvider>
+          </ReactQueryProvider>
+          <Analytics />
+        </ThemeProvider>
       </body>
     </html>
   );
