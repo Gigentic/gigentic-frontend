@@ -9,12 +9,14 @@ const cardVariants = cva(
       variant: {
         default: '',
         payment: 'bg-primary-foreground shadow-lg', // For payment into escrow card
-        escrow: 'bg-gray-50 shadow-md', // For active escrow cards
+        escrow: 'bg-primary-foreground shadow-md', // For active escrow cards
+        service: 'bg-primary-foreground shadow-lg', // For service cards
       },
       size: {
         default: 'w-full',
         md: 'w-full max-w-3xl mx-auto',
         lg: 'w-full max-w-4xl mx-auto',
+        service: 'w-full max-w-md', // For service cards
       },
     },
     defaultVariants: {

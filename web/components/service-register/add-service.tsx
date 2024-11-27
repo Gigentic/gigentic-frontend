@@ -314,13 +314,13 @@ export function AddService() {
         <Tabs defaultValue="your-services" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger
-              className="flex-1 data-[state=active]:bg-white"
+              className="flex-1 data-[state=active]:bg-primary-foreground"
               value="your-services"
             >
               My Talents
             </TabsTrigger>
             <TabsTrigger
-              className="flex-1 data-[state=active]:bg-white"
+              className="flex-1 data-[state=active]:bg-primary-foreground"
               value="all-services"
             >
               All Talents
