@@ -4,6 +4,13 @@ _A decentralized "Upwork" to help humans and AI agents work together._
 
 Deployed at [https://app.gigentic.com/](https://app.gigentic.com/)
 
+Notes for using the dapp:
+
+- Choose the right network in the bottom right corner of the dapp page.
+- [Instructions](https://valiant-license-ca4.notion.site/SOON-Testnet-Guide-138e49a418fb80b8bc60ca23667dfb67) for installing Backpack wallet and configuring to use it with the SOON Testnet.
+- If you don't see the wallet icon on the top right corner of the [Gigentic dapp page](https://app.gigentic.com/), or you can't connect your wallet, hit refresh, and please try again.
+- Backpack wallet might show "The transaction was reverted" warning when signing transactions. It's safe to ignore it.
+
 [Link to 4-minute pitch of the project](https://youtu.be/szCOWCZELSQ)
 
 ## Introduction
@@ -133,6 +140,10 @@ erDiagram
 
 ### File Structure Overview
 
+#### `anchor/`
+
+Anchor code for the Gigentic program.
+
 #### `anchor/admin`
 
 Admin scripts responsible for deploying the service registry and creating new service entries to populate the platform.
@@ -225,14 +236,276 @@ To set up the project locally, follow these steps:
 
 ### Prerequisites
 
-- **Node.js** (v14 or later)
-- **npm** or **yarn**
-- **Solana CLI Tools**
-- **Anchor CLI** (for Solana)
+Ensure you have the following tools installed and properly configured:
 
-## Building the Solana Programs
+- **Node.js** (v14 or later): [Download Node.js](https://nodejs.org/)
+- **Yarn**: [Install Yarn](https://classic.yarnpkg.com/en/docs/install)
+- **Rust and Cargo**: [Install Rust](https://www.rust-lang.org/tools/install)
+- **Solana CLI Tools**: [Install Solana CLI](https://docs.solana.com/cli/install-solana-cli-tools)
+- **Anchor CLI**: [Install Anchor](https://www.anchor-lang.com/docs/installation)
 
-....
+## Building and Deploying the Solana Program
+
+This section outlines the steps to build and deploy the Gigentic program using the Solana blockchain. Follow the instructions carefully to set up your development environment, build the program, and deploy it to your desired network (Local Validator or Devnet).
+
+### Setup Test Environment
+
+1. **Navigate to the Anchor Directory**
+
+   ```bash
+   cd anchor
+   ```
+
+2. **Clean Previous Installations**
+
+   - **Remove `node_modules`**
+     ```bash
+     rm -rf node_modules
+     ```
+   - **Install Dependencies**
+     ```bash
+     yarn install
+     ```
+   - **Return to Project Root**
+     ```bash
+     cd ..
+     ```
+
+### Configure and Build Program
+
+**Note:**  
+All Anchor commands are executed using `yarn anchor xyz` from the project root directory due to the monorepo setup with Nx.
+
+1. **Clean Previous Build Artifacts**
+
+   Remove old build artifacts to ensure a fresh build:
+
+   ```bash
+   yarn anchor clean
+   ```
+
+   _Important:_ This command retains the `anchor/target/deploy/gigentic-keypair.json` file. To generate a new program ID, you must manually delete this keypair before proceeding.
+
+2. **Sync Program ID with Keypair**
+
+   When cloning a repository, the `declare_id` macro in the cloned repo may not match the keypair in `anchor/target/deploy/gigentic-keypair.json` or the one generated locally. To update the program ID:
+
+   ```bash
+   yarn anchor keys sync
+   ```
+
+   This command updates the `declare_id` macro in your program's code and synchronizes the program ID in the `Anchor.toml` file.
+
+3. **Build the Program**
+
+   Run the build command to generate the necessary IDL and TypeScript bindings with the correct program ID:
+
+   ```bash
+   yarn anchor build
+   ```
+
+   This will update the following files with the correct keys and ensure the program is built correctly:
+
+   - `./anchor/target/idl/gigentic.json`
+   - `./anchor/target/types/gigentic.ts`
+
+4. **Format Rust Code**
+
+   ```bash
+   cd anchor
+   cargo fmt -- --check
+   cd ..
+   ```
+
+5. **Lint TypeScript and JSON Files**
+   ```bash
+   yarn lint --write
+   yarn prettier anchor/target/idl/gigentic.json --write
+   ```
+
+### Deployment Options
+
+Choose the appropriate deployment method based on your environment.
+
+#### 1. Deploy to Local Validator
+
+1. **Configure Solana CLI for Local Validator**
+
+   ```bash
+   solana config set --url localhost
+   ```
+
+2. **Update `Anchor.toml`**
+
+   ```toml
+   [provider]
+   cluster = "Localnet"
+   wallet = "~/.config/solana/id.json"
+   ```
+
+3. **Start the Local Validator**
+
+   ```bash
+   solana-test-validator --reset
+   ```
+
+4. **Generate a New CLI Keypair (Optional)**
+
+   ```bash
+   solana-keygen new --no-bip39-passphrase --force
+   ```
+
+5. **Verify Solana Configuration**
+
+   ```bash
+   solana config get
+   ```
+
+   _Ensure the RPC URL is set to `http://localhost:8899` and the correct keypair path is used._
+
+6. **Deploy the Program**
+
+   ```bash
+   yarn anchor deploy
+   ```
+
+7. **Run Tests**
+
+   ```bash
+   yarn anchor-test
+   ```
+
+8. **Deploy Service Registry**
+
+   Create New Keypairs for Service Registry and Service Deployer:
+
+   ```bash
+   node utils/keygen.js
+   ```
+
+   After successful keypair generation, add the new addresses to the `.env` file:
+
+   ```bash
+   SERVICE_REGISTRY_KEYPAIR=base58-secret-key
+   SERVICE_REGISTRY_DEPLOYER_KEYPAIR=base58-secret-key
+   SERVICE_DEPLOYER_KEYPAIR=base58-secret-key
+   ```
+
+- **Airdrop SOL to new accounts**
+  ```bash
+  solana airdrop 100 <SERVICE_REGISTRY_DEPLOYER_ADDRESS>
+  solana airdrop 100 <SERVICE_DEPLOYER_ADDRESS>
+  solana airdrop 100 <ALICE_ACCOUNT_ADDRESS>
+  ```
+- **Deploy Service Registry and Write Services**
+
+  ```bash
+  yarn anchor run deploy-registry
+  yarn anchor run write-services
+  yarn anchor run create-mint
+  ```
+
+- **Update Environment Variables**
+  - Ensure the team is informed about the new service registry account.
+  - Update `.env` files as necessary.
+
+#### 2. Deploy to Devnet
+
+1. **Configure Solana CLI for Devnet**
+
+   ```bash
+   solana config set --url devnet
+   ```
+
+2. **Update `Anchor.toml`**
+
+   ```toml
+   [provider]
+   cluster = "Devnet"
+   wallet = "~/.config/solana/id.json"
+   ```
+
+3. **Verify Solana Configuration**
+
+   ```bash
+   solana config get
+   ```
+
+4. **Fund Accounts**
+
+   ```bash
+   solana airdrop 5
+   solana airdrop 5 <SERVICE_REGISTRY_DEPLOYER_ADDRESS>
+   ```
+
+5. **Deploy the Program**
+
+   ```bash
+   yarn anchor deploy
+   ```
+
+6. **Deploy Service Registry and Write Services**
+   ```bash
+   yarn anchor run deploy-registry
+   yarn anchor run write-services
+   yarn anchor run create-mint
+   ```
+
+#### 3. Deploy to Soon Testnet
+
+If you plan to deploy to the Soon Testnet, follow these additional steps:
+
+1. **Configure Solana CLI for Soon Testnet**
+
+   ```bash
+   solana config set --url https://rpc.testnet.soo.network/rpc
+   ```
+
+2. **Deploy the Program**
+
+   ```bash
+   solana program deploy ./anchor/target/deploy/gigentic.so
+   ```
+
+3. **Fund Additional Accounts**
+
+Ask for test SOL from the SOON team.
+
+4. **Deploy Registry and Write Services**
+
+   ```bash
+   yarn anchor run deploy-registry
+   yarn anchor run write-services
+   yarn anchor run create-mint
+   ```
+
+_Ensure you update `Anchor.toml` and environment variables accordingly._
+
+### Important Notes
+
+- **Program Ownership**
+
+  - The program ID's keypair located in `anchor/target/deploy/` serves as proof of ownership for the deployed program.
+
+- **SOL Balance**
+
+  - Ensure all deployer accounts have sufficient SOL before proceeding with deployments.
+
+- **Security**
+
+  - Keep all keypairs and environment variables secure. Avoid exposing sensitive information.
+
+- **Configuration Verification**
+
+  - Always verify your configuration using:
+    ```bash
+    solana config get
+    ```
+  - Ensure the RPC URL and keypair paths are correctly set for your target network.
+
+---
+
+By following these instructions, you can build and deploy the Gigentic program to your desired Solana network effectively. Always refer to the official [Solana](https://docs.solana.com/) and [Anchor](https://project-serum.github.io/anchor/getting-started/introduction.html) documentation for the latest updates and best practices.
 
 ### Installing and Running the Frontend Locally
 
