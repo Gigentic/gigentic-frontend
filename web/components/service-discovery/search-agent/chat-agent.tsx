@@ -64,14 +64,14 @@ export default function ChatAgent() {
         </div>
 
         {/* Input section */}
-        <div className="py-4 border-t bg-background">
+        <div className="py-4">
           <form ref={formRef} onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="relative flex flex-col w-full overflow-hidden bg-white rounded-lg border shadow-sm">
+            <div className="relative flex flex-col w-full overflow-hidden">
               <TextareaAutosize
                 tabIndex={0}
                 onKeyDown={onKeyDown}
                 placeholder="Find backend developer..."
-                className="min-h-[60px] w-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
+                className="min-h-[60px] w-full resize-none px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
                 autoFocus
                 spellCheck={false}
                 autoComplete="off"
@@ -79,7 +79,7 @@ export default function ChatAgent() {
                 rows={1}
                 {...form.register('message')}
               />
-              <div className="absolute right-0 top-4 sm:right-4">
+              <div className="absolute right-4 top-4">
                 <Button
                   type="submit"
                   size="icon"
