@@ -32,17 +32,18 @@ This diagram illustrates the core on-chaincomponents of our decentralized servic
 
 ```mermaid
 %%{init: {
-  "theme": "default",
+  "theme": "neutral",
   "themeCSS": [
-    ".er.relationshipLabel { fill: black; }",
-    ".er.relationshipLabelBox { fill: white; }",
-    ".er.entityBox { fill: lightgray; }",
-    "[id^=entity-Customer] .er.entityBox { fill: lightgreen;} ",
-    "[id^=entity-Provider] .er.entityBox { fill: lightgreen;} ",
-    "[id^=entity-ServiceRegistry] .er.entityBox { fill: powderblue;} ",
-    "[id^=entity-Service] .er.entityBox { fill: powderblue;} ",
-    "[id^=entity-Escrow] .er.entityBox { fill: powderblue;} ",
-    "[id^=entity-Review] .er.entityBox { fill: powderblue;} "
+    ".er.relationshipLabel { fill: #2D3748; }",
+    ".er.relationshipLabelBox { fill: #EDF2F7; }",
+    ".er.entityBox { fill: #E2E8F0; stroke: #4A5568; }",
+    "[id^=entity-Customer] .er.entityBox { fill: #9AE6B4; stroke: #2F855A; }",
+    "[id^=entity-Provider] .er.entityBox { fill: #9AE6B4; stroke: #2F855A; }",
+    "[id^=entity-ServiceRegistry] .er.entityBox { fill: #90CDF4; stroke: #2B6CB0; }",
+    "[id^=entity-Service] .er.entityBox { fill: #90CDF4; stroke: #2B6CB0; }",
+    "[id^=entity-Escrow] .er.entityBox { fill: #90CDF4; stroke: #2B6CB0; }",
+    "[id^=entity-Review] .er.entityBox { fill: #90CDF4; stroke: #2B6CB0; }",
+    ".er.entityLabel { fill: #1A202C; }"
     ]
 }}%%
 
@@ -161,10 +162,9 @@ graph LR
         SA -->|Contains| SD["Service Details"]
     end
 
-
-    classDef script fill:#f9f,stroke:#333
-    classDef state fill:#e6e6fa,stroke:#333
-    classDef blockchain fill:#90EE90,stroke:#333
+    classDef script fill:#D6BCFA,stroke:#553C9A,color:#1A202C
+    classDef state fill:#BEE3F8,stroke:#2C5282,color:#1A202C
+    classDef blockchain fill:#9AE6B4,stroke:#2F855A,color:#1A202C
     class DR,CS,WS script
     class SR,SA,SD state
     class BC blockchain
@@ -209,9 +209,9 @@ graph TD
     ChatAgent -->|Server Action| Actions
     Actions -->|Stream UI| ChatAgent
 
-    classDef route fill:#f9f,stroke:#333
-    classDef client fill:#e6e6fa,stroke:#333
-    classDef server fill:#90EE90,stroke:#333
+    classDef route fill:#D6BCFA,stroke:#553C9A,color:#1A202C
+    classDef client fill:#BEE3F8,stroke:#2C5282,color:#1A202C
+    classDef server fill:#9AE6B4,stroke:#2F855A,color:#1A202C
     class Root,SD,SR,PM,RV route
     class ChatAgent,Add,EM,EC,RP client
     class Actions,OpenAI,BC server
