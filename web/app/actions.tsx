@@ -72,8 +72,12 @@ export async function sendMessage(
   display: ReactNode;
 }> {
   const history = getMutableAIState<typeof AI>();
+  const TIMEOUT_MS = 60000; // 1 minute timeout
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
     // provide the service registry as context to the LLM
     content = await fetchServicesFromRegistry(endpoint);
 
@@ -198,13 +202,24 @@ export async function sendMessage(
       },
     });
 
+    clearTimeout(timeoutId);
     return {
       id: Date.now(),
       role: 'assistant' as const,
       display: reply.value,
     };
-  } catch (error) {
-    console.error('Error in sendMessage:', error);
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error(
+        'Request timed out. Please try again with a shorter message.',
+      );
+    }
+    if (
+      error instanceof Error &&
+      error.message?.includes('Connection closed')
+    ) {
+      throw new Error('Connection was interrupted. Please try again.');
+    }
     throw error;
   }
 }
