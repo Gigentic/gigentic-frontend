@@ -1,3 +1,7 @@
+## Q: How does the Vercel AI SDK work?
+
+_How does it call the backend endpoint? What is the flow? Is it built in? I don't see any POST call to any endpoint in the code._
+
 Let me explain how the Vercel AI SDK works in this application. The flow involves several components working together:
 
 1. **Frontend Initialization**:
@@ -151,3 +155,58 @@ The flow works like this:
 This abstraction is one of the main benefits of using the Vercel AI SDK - it handles all the complex streaming and state management logic behind the scenes, allowing you to focus on building your application logic rather than dealing with the implementation details of real-time communication.
 
 The SDK uses the `ai` package's built-in streaming capabilities and React Server Components to handle the communication between the frontend and backend seamlessly.
+
+## AI SDK
+
+Here's a TLDR of how OpenAI API works with Vercel AI SDK's streaming UI protocol:
+
+1. **OpenAI API Core Flow**:
+
+- Client sends a request to OpenAI API
+- OpenAI processes it and returns a streaming response
+- Each chunk contains delta text updates
+- Stream continues until completion or error
+
+2. **Vercel AI SDK Integration**:
+
+- Provides unified interface via `useChat` and `useCompletion` hooks
+- Handles streaming state management automatically
+- Implements backpressure and error handling
+- Supports multiple model providers including OpenAI
+
+Here's a mermaid diagram showing the flow:
+
+```mermaid
+sequenceDiagram
+    participant Client as React Client
+    participant SDK as Vercel AI SDK
+    participant API as OpenAI API
+    participant Model as LLM Model
+
+    Client->>SDK: useChat() / useCompletion()
+    SDK->>API: Stream Request
+    API->>Model: Process Prompt
+
+    loop Streaming Response
+        Model->>API: Generate Token
+        API->>SDK: Stream Chunk
+        SDK->>Client: Update UI State
+    end
+
+    Model->>API: Complete
+    API->>SDK: End Stream
+    SDK->>Client: Finish UI Update
+```
+
+Key features of the Vercel AI SDK Stream Protocol:
+
+1. **Type-safe**: Full TypeScript support
+2. **Framework agnostic**: Works with React, Vue, Svelte etc.
+3. **Standardized format**: Consistent streaming interface
+4. **Built-in state management**: Handles loading, error states
+5. **Backpressure handling**: Prevents memory issues
+6. **Error recovery**: Automatic retries and error handling
+
+[Source: Vercel AI SDK Documentation](https://sdk.vercel.ai/docs)
+
+The protocol is designed to be simple to implement while providing robust streaming capabilities for AI applications. The SDK handles all the complexity of managing streaming state, backpressure, and error handling, letting developers focus on building their UI.
