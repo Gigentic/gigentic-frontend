@@ -38,6 +38,7 @@ body {
 .wallet-adapter-dropdown-list-item {
   transition-property: color, background-color !important;
   transition-duration: 150ms !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 .wallet-adapter-dropdown-list-item:hover {

@@ -95,7 +95,7 @@ export default function ChatAgent() {
                 {...form.register('message')}
                 onKeyDown={onKeyDown}
                 placeholder="Find backend developer..."
-                className="min-h-[60px] resize-none px-4 py-[0.7rem] sm:text-sm pr-12"
+                className="min-h-[60px] w-full resize-y px-4 py-[1.3rem] pr-12 sm:text-sm max-h-[200px] overflow-y-auto"
                 autoFocus
                 spellCheck={false}
                 autoComplete="off"

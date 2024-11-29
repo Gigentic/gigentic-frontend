@@ -377,7 +377,7 @@ Choose the appropriate deployment method based on your environment.
 
 8. **Deploy Service Registry**
 
-   Create New Keypairs for Service Registry and Service Deployer:
+   Create New Keypairs for Service Registry, Service Registry Deployer, and a freelancer (Service Deployer) account to populate the initially empty Service Registry:
 
    ```bash
    node utils/keygen.js
@@ -395,7 +395,6 @@ Choose the appropriate deployment method based on your environment.
   ```bash
   solana airdrop 100 <SERVICE_REGISTRY_DEPLOYER_ADDRESS>
   solana airdrop 100 <SERVICE_DEPLOYER_ADDRESS>
-  solana airdrop 100 <ALICE_ACCOUNT_ADDRESS>
   ```
 - **Deploy Service Registry and Write Services**
 
@@ -404,10 +403,6 @@ Choose the appropriate deployment method based on your environment.
   yarn anchor run write-services
   yarn anchor run create-mint
   ```
-
-- **Update Environment Variables**
-  - Ensure the team is informed about the new service registry account.
-  - Update `.env` files as necessary.
 
 #### 2. Deploy to Devnet
 
@@ -434,8 +429,9 @@ Choose the appropriate deployment method based on your environment.
 4. **Fund Accounts**
 
    ```bash
-   solana airdrop 5
+   solana airdrop 5  // for the CLI account
    solana airdrop 5 <SERVICE_REGISTRY_DEPLOYER_ADDRESS>
+   solana airdrop 5 <SERVICE_DEPLOYER_ADDRESS>
    ```
 
 5. **Deploy the Program**
@@ -469,7 +465,7 @@ If you plan to deploy to the Soon Testnet, follow these additional steps:
 
 3. **Fund Additional Accounts**
 
-Ask for test SOL from the SOON team.
+Ask for test SOL from the SOON team or bridge in assets from Ethereum Sepolia.
 
 4. **Deploy Registry and Write Services**
 

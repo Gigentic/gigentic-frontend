@@ -40,8 +40,8 @@ export function UiLayout({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex items-center justify-between p-4 border-b shadow-sm">
+      <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex items-center justify-between p-4 shadow-lg">
           <div className="flex items-center space-x-4">
             <div className="relative w-10 h-10">
               <Link href="/">
@@ -102,7 +102,7 @@ export function UiLayout({
 
       <Toaster position="bottom-right" />
 
-      <footer className="border-t bg-background">
+      <footer className="bg-background">
         <div className="mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex space-x-4">
             <Link
