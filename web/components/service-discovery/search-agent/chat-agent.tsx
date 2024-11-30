@@ -75,9 +75,6 @@ export default function ChatAgent() {
   // render the chat UI
   return (
     <div className="container max-w-3xl mx-auto px-4 h-[calc(100dvh-theme(spacing.32)-theme(spacing.16))]">
-      {error && (
-        <div className="bg-red-50 text-red-500 p-3 rounded mb-4">{error}</div>
-      )}
       <div className="flex flex-col h-full">
         {/* Chat messages container with proper overflow handling */}
         <div className="flex-1 overflow-y-auto" id="chat-messages">
@@ -95,7 +92,7 @@ export default function ChatAgent() {
                 {...form.register('message')}
                 onKeyDown={onKeyDown}
                 placeholder="Find backend developer..."
-                className="min-h-[60px] resize-none px-4 py-[0.7rem] sm:text-sm pr-12"
+                className="min-h-[60px] w-full resize-y px-4 py-[1.3rem] pr-12 sm:text-sm max-h-[200px] overflow-y-auto"
                 autoFocus
                 spellCheck={false}
                 autoComplete="off"

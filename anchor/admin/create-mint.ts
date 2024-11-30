@@ -22,6 +22,7 @@ const serviceRegistryDeployer = loadKeypairBs58FromEnv(
 const serviceRegistryKeypair = loadKeypairBs58FromEnv(
   'SERVICE_REGISTRY_KEYPAIR',
 );
+const mintKeypair = loadKeypairBs58FromEnv('MINT_KEYPAIR');
 console.log(
   'serviceRegistryDeployer',
   serviceRegistryDeployer.publicKey.toString(),
@@ -30,6 +31,7 @@ console.log(
   'serviceRegistryKeypair',
   serviceRegistryKeypair.publicKey.toString(),
 );
+console.log('mintKeypair', mintKeypair.publicKey.toString());
 
 let mint: PublicKey;
 
@@ -41,6 +43,7 @@ async function createMintToken() {
       serviceRegistryDeployer.publicKey,
       serviceRegistryDeployer.publicKey,
       8,
+      mintKeypair,
     );
     console.log('Mint token created:', mint.toString());
   } catch (error) {
