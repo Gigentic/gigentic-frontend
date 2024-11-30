@@ -377,7 +377,12 @@ Choose the appropriate deployment method based on your environment.
 
 8. **Deploy Service Registry**
 
-   Create New Keypairs for Service Registry, Service Registry Deployer, and a freelancer (Service Deployer) account to populate the initially empty Service Registry:
+   Create New Keypairs for
+
+   - Service Registry
+   - Service Registry Deployer
+   - a freelancer (Service Deployer) account
+   - a mint keypair (for SPL Token support)
 
    ```bash
    node utils/keygen.js
@@ -389,6 +394,7 @@ Choose the appropriate deployment method based on your environment.
    SERVICE_REGISTRY_KEYPAIR=base58-secret-key
    SERVICE_REGISTRY_DEPLOYER_KEYPAIR=base58-secret-key
    SERVICE_DEPLOYER_KEYPAIR=base58-secret-key
+   MINT_KEYPAIR=base58-secret-key
    ```
 
 - **Airdrop SOL to new accounts**

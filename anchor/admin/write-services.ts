@@ -26,6 +26,9 @@ const serviceRegistryDeployer = loadKeypairBs58FromEnv(
 const serviceRegistryKeypair = loadKeypairBs58FromEnv(
   'SERVICE_REGISTRY_KEYPAIR',
 );
+const mintKeypair = loadKeypairBs58FromEnv('MINT_KEYPAIR');
+const mint = mintKeypair.publicKey;
+
 console.log(
   'serviceRegistryDeployer',
   serviceRegistryDeployer.publicKey.toString(),
@@ -34,34 +37,14 @@ console.log(
   'serviceRegistryKeypair',
   serviceRegistryKeypair.publicKey.toString(),
 );
+console.log('mint', mint.toString());
 
 // Load service deployer keypair
 const serviceDeployer = loadKeypairBs58FromEnv('SERVICE_DEPLOYER_KEYPAIR');
 console.log('serviceDeployer', serviceDeployer.publicKey.toString());
 
-let mint: PublicKey;
-
-async function createMintToken() {
-  try {
-    mint = await createMint(
-      connection,
-      serviceRegistryDeployer,
-      serviceRegistryDeployer.publicKey,
-      serviceRegistryDeployer.publicKey,
-      8,
-    );
-    console.log('Mint token created:', mint.toString());
-  } catch (error) {
-    console.error('Error creating mint token:', error);
-  }
-}
-
 async function main() {
   try {
-    console.log('========== Create mint token');
-    await createMintToken();
-    console.log('\n');
-
     console.log('========== Airdrop service deployer');
     // await airdrop(connection, serviceDeployer.publicKey);
     console.log('skip airdrop serviceDeployer');
