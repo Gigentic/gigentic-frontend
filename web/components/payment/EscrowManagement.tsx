@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
@@ -21,7 +20,7 @@ import { useTransactionToast } from '@/components/ui/ui-layout';
 import { Card, CardContent, Button } from '@gigentic-frontend/ui-kit/ui';
 import EscrowCard from './EscrowCard';
 import { Freelancer } from '@/lib/types/freelancer';
-import { serviceRegistryPubKey } from '@/lib/hooks/blockchain/use-gigentic-program';
+import { serviceRegistryPubKey } from '@/lib/hooks/blockchain/use-service-registry';
 import Link from 'next/link';
 import {
   Tooltip,
@@ -307,6 +306,8 @@ export default function EscrowManagement() {
   const handleReleaseEscrow = async (
     escrowId: string,
     serviceProvider: PublicKey,
+    rating?: number,
+    review?: string,
   ) => {
     if (!publicKey) {
       console.error('Wallet not connected');
@@ -346,6 +347,8 @@ export default function EscrowManagement() {
       // Find the correct service account for this escrow
       const serviceAccountPubKey =
         serviceRegistry.serviceAccountAddresses[serviceIndex];
+      const serviceAccount =
+        await program.account.service.fetch(serviceAccountPubKey);
 
       console.log('Release transaction accounts:', {
         escrow: escrowPubKey.toString(),
@@ -354,6 +357,77 @@ export default function EscrowManagement() {
         signer: publicKey.toString(),
       });
 
+      console.log('Starting review PDA search:', {
+        escrowId,
+        serviceAccountPubKey: serviceAccountPubKey.toString(),
+        existingReviews: serviceAccount.reviews?.map((r) => r.toString()) || [],
+      });
+
+      // const reviewPDA = await (async () => {
+      //   console.log('Starting review PDA search:', {
+      //     escrowId,
+      //     serviceAccountPubKey: serviceAccountPubKey.toString(),
+      //     existingReviews:
+      //       serviceAccount.reviews?.map((r) => r.toString()) || [],
+      //   });
+
+      //   // Safety check for reviews array
+      //   if (!serviceAccount.reviews || !serviceAccount.reviews.length) {
+      //     console.error('No reviews found in service account');
+      //     throw new Error('No reviews found for this service');
+      //   }
+
+      //   // Try to find matching review
+      //   for (let i = 0; i < serviceAccount.reviews.length; i++) {
+      //     const reviewAddress = serviceAccount.reviews[i];
+      //     console.log(
+      //       `Checking review address ${i}:`,
+      //       reviewAddress.toString(),
+      //     );
+
+      //     // Log the seeds being used
+      //     console.log('Deriving PDA with seeds:', {
+      //       seed1: 'review',
+      //       seed2: escrowId,
+      //       seed3: serviceAccountPubKey.toString(),
+      //       programId: program.programId.toString(),
+      //     });
+
+      //     const [derivedReviewPDA] = PublicKey.findProgramAddressSync(
+      //       [
+      //         Buffer.from('review'),
+      //         Buffer.from(escrowId),
+      //         serviceAccountPubKey.toBuffer(),
+      //       ],
+      //       program.programId,
+      //     );
+
+      //     console.log('PDA comparison:', {
+      //       derived: derivedReviewPDA.toString(),
+      //       actual: reviewAddress.toString(),
+      //       matches: derivedReviewPDA.equals(reviewAddress),
+      //     });
+
+      //     if (derivedReviewPDA.equals(reviewAddress)) {
+      //       return reviewAddress;
+      //     }
+      //   }
+
+      //   throw new Error('No matching review PDA found');
+      // })();
+
+      // if (!reviewPDA) {
+      //   console.error('No matching review PDA found:', {
+      //     escrowId,
+      //     serviceAccountPubKey: serviceAccountPubKey.toString(),
+      //     allReviews: serviceAccount.reviews?.map((r) => r.toString()) || [],
+      //   });
+      //   throw new Error('Review not found for this escrow');
+      // }
+
+      // console.log('Found matching review PDA:', reviewPDA.toString());
+
+      // Proceed with the transaction
       const latestBlockhash = await connection.getLatestBlockhash('confirmed');
       const messageV0 = new TransactionMessage({
         payerKey: publicKey,
@@ -368,6 +442,18 @@ export default function EscrowManagement() {
               feeAccount: serviceRegistry.feeAccount,
             })
             .instruction(),
+
+          // ...(rating && review
+          //   ? [
+          //       await program.methods
+          //         .customerToProviderRating(rating, review)
+          //         .accounts({
+          //           signer: publicKey,
+          //           review: reviewPDA,
+          //         })
+          //         .instruction(),
+          //     ]
+          //   : []),
         ],
       }).compileToV0Message();
 
@@ -391,8 +477,8 @@ export default function EscrowManagement() {
       accounts.refetch();
       await fetchServiceTitles(); // Manual fetch after state change
     } catch (error) {
-      console.error('Error releasing escrow:', error);
-      setError('Failed to release escrow. Please try again.');
+      console.error('Error releasing escrow and submitting review:', error);
+      setError('Failed to process release and review. Please try again.');
     }
   };
 
@@ -553,6 +639,8 @@ export default function EscrowManagement() {
             await handleReleaseEscrow(
               escrow.publicKey.toString(),
               escrow.account.serviceProvider,
+              rating,
+              review,
             );
             console.log('Review submitted:', { escrowId, rating, review });
           } catch (error) {

@@ -5,7 +5,7 @@ import { WalletButton } from '@/providers/solana-provider';
 import { AppHero, ellipsify } from '@/ui/ui-layout';
 import { ExplorerLink } from '@/cluster/cluster-ui';
 import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
-import { serviceRegistryPubKey } from '@/hooks/blockchain/use-gigentic-program';
+import { serviceRegistryPubKey } from '@/hooks/blockchain/use-service-registry';
 
 export default function GigenticProgramFeature() {
   const { publicKey } = useWallet();

@@ -19,7 +19,7 @@ const links: { label: string; path: string }[] = [
   { label: 'Payment', path: '/payment' },
   { label: 'TalentHub', path: '/service-register' },
   { label: 'Account', path: '/account' },
-  // { label: 'Program', path: '/program' },
+  { label: 'Program', path: '/program' },
 ];
 
 export default function RootLayout({

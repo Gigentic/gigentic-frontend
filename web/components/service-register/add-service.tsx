@@ -24,12 +24,13 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { BN } from '@coral-xyz/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
+import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
 import {
-  useGigenticProgram,
   useServiceRegistry,
   serviceRegistryPubKey,
   mintPubKey,
-} from '@/hooks/blockchain/use-gigentic-program';
+} from '@/hooks/blockchain/use-service-registry';
+
 import { ServiceCard } from './service-card';
 
 // Form validation schema
