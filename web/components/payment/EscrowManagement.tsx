@@ -1,6 +1,9 @@
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import Link from 'next/link';
+
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import {
   PublicKey,
@@ -8,26 +11,32 @@ import {
   VersionedTransaction,
   LAMPORTS_PER_SOL,
 } from '@solana/web3.js';
-import { useQuery } from '@tanstack/react-query';
+
 import { useCluster } from '@/cluster/cluster-data-access';
 import { useAnchorProvider } from '@/providers/solana-provider';
-import { getGigenticProgram } from '@gigentic-frontend/anchor';
+import { useTransactionToast } from '@/components/ui/ui-layout';
+
+import { Freelancer } from '@/lib/types/freelancer';
 import {
   useSelectedFreelancer,
   useSelectFreelancer,
 } from '@/hooks/services/use-freelancer-query';
-import { useTransactionToast } from '@/components/ui/ui-layout';
-import { Card, CardContent, Button } from '@gigentic-frontend/ui-kit/ui';
-import EscrowCard from './EscrowCard';
-import { Freelancer } from '@/lib/types/freelancer';
+
 import { serviceRegistryPubKey } from '@/lib/hooks/blockchain/use-service-registry';
-import Link from 'next/link';
+
 import {
+  Card,
+  CardContent,
+  Button,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@gigentic-frontend/ui-kit/ui';
+
+import EscrowCard from './EscrowCard';
+
+import { getGigenticProgram } from '@gigentic-frontend/anchor';
 
 function extractServiceTitle(description: string): string {
   const titleMatch = description.match(/title: (.*?) \|/);
