@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -12,8 +11,6 @@ import {
   LAMPORTS_PER_SOL,
 } from '@solana/web3.js';
 
-import { useCluster } from '@/cluster/cluster-data-access';
-import { useAnchorProvider } from '@/providers/solana-provider';
 import { useTransactionToast } from '@/components/ui/ui-layout';
 
 import { Freelancer } from '@/lib/types/freelancer';
@@ -36,38 +33,11 @@ import {
 
 import EscrowCard from './EscrowCard';
 
-import { getGigenticProgram } from '@gigentic-frontend/anchor';
+import { useEscrowAccounts } from '@/lib/hooks/blockchain/use-escrow-accounts';
 
 function extractServiceTitle(description: string): string {
   const titleMatch = description.match(/title: (.*?) \|/);
   return titleMatch ? titleMatch[1] : 'Unnamed Service';
-}
-
-function useEscrowAccounts() {
-  const { cluster } = useCluster();
-  const provider = useAnchorProvider();
-  const program = getGigenticProgram(provider);
-
-  // Query for all escrow accounts
-  const accounts = useQuery({
-    queryKey: ['escrow', 'all', { cluster }],
-    queryFn: async () => {
-      const allEscrows = await program.account.escrow.all();
-      console.log(
-        'All fetched escrows:',
-        allEscrows.map((escrow) => ({
-          publicKey: escrow.publicKey.toString(),
-          serviceProvider: escrow.account.serviceProvider.toString(),
-          customer: escrow.account.customer.toString(),
-          amount: escrow.account.expectedAmount.toString(),
-        })),
-      );
-      return allEscrows;
-    },
-    staleTime: 60 * 1000,
-  });
-
-  return { program, accounts };
 }
 
 export default function EscrowManagement() {
