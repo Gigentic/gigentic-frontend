@@ -35,8 +35,8 @@ export const useEscrowStatus = (
           'Checking escrows:',
           accounts.map((escrow) => ({
             escrowPubkey: escrow.publicKey.toString(),
-            serviceProvider: escrow.serviceProvider.toString(),
-            customer: escrow.customer.toString(),
+            serviceProvider: escrow.account.serviceProvider.toString(),
+            customer: escrow.account.customer.toString(),
           })),
         );
 
