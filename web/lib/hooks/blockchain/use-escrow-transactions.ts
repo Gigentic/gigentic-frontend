@@ -14,7 +14,7 @@ import { useSelectFreelancer } from '@/hooks/services/use-freelancer-query';
 
 import { Freelancer } from '@/types/freelancer';
 
-export const useEscrowTransactionHandlers = (
+export const useEscrowTransactions = (
   selectedServiceAccountAddress: PublicKey | null,
 ) => {
   const { publicKey, sendTransaction } = useWallet();

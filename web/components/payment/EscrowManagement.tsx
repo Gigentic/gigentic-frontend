@@ -7,7 +7,7 @@ import { PublicKey } from '@solana/web3.js';
 import { useEscrowAccounts } from '@/hooks/blockchain/use-escrow-accounts';
 import { useSelectedFreelancer } from '@/hooks/services/use-freelancer-query';
 import { useServiceTitles } from '@/hooks/services/use-service-titles';
-import { useEscrowTransactionHandlers } from '@/hooks/blockchain/use-transaction-handlers';
+import { useEscrowTransactions } from '@/hooks/blockchain/use-escrow-transactions';
 import { useEscrowStatus } from '@/hooks/blockchain/use-escrow-status';
 
 import { FreelancerCard } from './FreelancerCard';
@@ -89,7 +89,7 @@ export default function EscrowManagement() {
     handlePayIntoEscrow,
     handleReleaseEscrow,
     error: transactionError,
-  } = useEscrowTransactionHandlers(selectedServiceAccountAddress);
+  } = useEscrowTransactions(selectedServiceAccountAddress);
 
   const isServiceInEscrow = useEscrowStatus(
     selectedServiceAccountAddress,
