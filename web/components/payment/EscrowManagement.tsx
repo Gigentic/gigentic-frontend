@@ -83,6 +83,7 @@ export default function EscrowManagement() {
 
   return (
     <div className="p-4 space-y-6">
+      {/* Selected Provider Payment Card */}
       {freelancer && selectedServiceAccountAddress && (
         <FreelancerCard
           freelancer={freelancer}
@@ -91,6 +92,7 @@ export default function EscrowManagement() {
         />
       )}
 
+      {/* Active Escrows Card */}
       <EscrowList
         escrows={userEscrows as unknown as Escrow[]}
         serviceTitles={serviceTitles}
