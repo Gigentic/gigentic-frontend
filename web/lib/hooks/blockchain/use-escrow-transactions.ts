@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+
 import {
   PublicKey,
   TransactionMessage,
@@ -6,11 +8,12 @@ import {
 } from '@solana/web3.js';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { useTransactionToast } from '@/components/ui/ui-layout';
-import { useQueryClient } from '@tanstack/react-query';
-import { useEscrowData } from '@/lib/hooks/blockchain/use-escrow-data';
+
+import { useEscrowData } from '@/hooks/blockchain/use-escrow-data';
 import { serviceRegistryPubKey } from '@/hooks/blockchain/use-service-registry';
 import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
 import { useSelectFreelancer } from '@/hooks/services/use-freelancer-query';
+
 import { Freelancer } from '@/types/freelancer';
 
 export const useEscrowTransactions = (

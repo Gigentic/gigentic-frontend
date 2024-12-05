@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useGigenticProgram } from './use-gigentic-program';
 import { useCluster } from '@/cluster/cluster-data-access';

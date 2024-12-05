@@ -2,7 +2,6 @@ import React from 'react';
 import { Card, CardContent } from '@gigentic-frontend/ui-kit/ui';
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { EscrowCard } from './EscrowCard';
-import { EscrowAccount } from '@/lib/types/escrow';
 
 interface EscrowListProps {
   escrows: {
