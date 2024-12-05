@@ -12,7 +12,7 @@ import { serviceRegistryPubKey } from '@/hooks/blockchain/use-service-registry';
 import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
 import { useSelectFreelancer } from '@/hooks/services/use-freelancer-query';
 
-import { Freelancer } from '@/lib/types/freelancer';
+import { Freelancer } from '@/types/freelancer';
 
 export const useEscrowTransactionHandlers = (
   selectedServiceAccountAddress: PublicKey | null,

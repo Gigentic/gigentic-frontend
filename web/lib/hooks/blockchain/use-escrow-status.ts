@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { PublicKey } from '@solana/web3.js';
-import { EscrowAccount } from '@/lib/types/escrow';
+import { EscrowAccount } from '@/types/escrow';
 import { useGigenticProgram } from './use-gigentic-program';
 
 export const useEscrowStatus = (

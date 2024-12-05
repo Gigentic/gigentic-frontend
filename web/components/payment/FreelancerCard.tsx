@@ -9,7 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@gigentic-frontend/ui-kit/ui';
-import { Freelancer } from '@/lib/types/freelancer';
+import { Freelancer } from '@/types/freelancer';
 
 interface FreelancerCardProps {
   freelancer: Freelancer;

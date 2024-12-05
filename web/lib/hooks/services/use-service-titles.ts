@@ -1,8 +1,8 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { PublicKey } from '@solana/web3.js';
-import { useEscrowAccounts } from '@/lib/hooks/blockchain/use-escrow-accounts';
-import { serviceRegistryPubKey } from '@/lib/hooks/blockchain/use-service-registry';
-import { Escrow } from '@/lib/types/escrow';
+import { useEscrowAccounts } from '@/hooks/blockchain/use-escrow-accounts';
+import { serviceRegistryPubKey } from '@/hooks/blockchain/use-service-registry';
+import { EscrowAccount } from '@/types/escrow';
 
 function extractServiceTitle(description: string): string {
   const titleMatch = description.match(/title: (.*?) \|/);

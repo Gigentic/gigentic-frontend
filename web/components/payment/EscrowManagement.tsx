@@ -4,15 +4,15 @@ import React, { useMemo, useEffect, useRef } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 
-import { useEscrowAccounts } from '@/lib/hooks/blockchain/use-escrow-accounts';
+import { useEscrowAccounts } from '@/hooks/blockchain/use-escrow-accounts';
 import { useSelectedFreelancer } from '@/hooks/services/use-freelancer-query';
-import { useServiceTitles } from '@/lib/hooks/services/use-service-titles';
-import { useEscrowTransactionHandlers } from '@/lib/hooks/blockchain/use-transaction-handlers';
-import { useEscrowStatus } from '@/lib/hooks/blockchain/use-escrow-status';
+import { useServiceTitles } from '@/hooks/services/use-service-titles';
+import { useEscrowTransactionHandlers } from '@/hooks/blockchain/use-transaction-handlers';
+import { useEscrowStatus } from '@/hooks/blockchain/use-escrow-status';
 
 import { FreelancerCard } from './FreelancerCard';
 import { EscrowList } from './EscrowList';
-import { EscrowAccount } from '@/lib/types/escrow';
+import { EscrowAccount } from '@/types/escrow';
 
 const FETCH_DELAY = 500; // 500ms debounce
 
