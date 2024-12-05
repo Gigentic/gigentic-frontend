@@ -3,6 +3,8 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useGigenticProgram } from './use-gigentic-program';
 import { useCluster } from '@/cluster/cluster-data-access';
 import { EscrowAccount } from '@/lib/types/escrow';
+import { useServiceRegistry } from './use-service-registry';
+import { PublicKey } from '@solana/web3.js';
 
 export interface EscrowData {
   escrows: EscrowAccount[];
@@ -10,49 +12,59 @@ export interface EscrowData {
 }
 
 function extractServiceTitle(description: string): string {
-  const titleMatch = description.match(/title: (.*?) \|/);
-  return titleMatch ? titleMatch[1] : 'Unnamed Service';
+  const titleMatch = description.match(/title:\s*(.*?)(?:\||$)/);
+  return titleMatch ? titleMatch[1].trim() : 'Title not found';
 }
 
 export function useEscrowData() {
   const { publicKey } = useWallet();
   const { program } = useGigenticProgram();
   const { cluster } = useCluster();
+  const { serviceAccounts } = useServiceRegistry();
 
   return useQuery({
     queryKey: ['escrow-data', { cluster, publicKey: publicKey?.toString() }],
     queryFn: async () => {
-      if (!publicKey) {
+      if (!publicKey || !serviceAccounts.data) {
         return { escrows: [], titles: {} };
       }
 
       const allEscrows = await program.account.escrow.all();
-      console.log('Fetched all escrows:', allEscrows);
-
       const userEscrows = allEscrows.filter(
         (escrow) => escrow.account.customer.toString() === publicKey.toString(),
       );
-      console.log('Filtered user escrows:', userEscrows);
 
+      // Create a map of service account addresses to titles
+      const serviceAccountTitles = Object.fromEntries(
+        serviceAccounts.data.map((service) => [
+          service.publicKey.toString(),
+          extractServiceTitle(service.account.description),
+        ]),
+      );
+
+      // Map escrows to their titles using the service account address
       const titles: Record<string, string> = {};
       for (const escrow of userEscrows) {
         try {
-          const serviceAccount = await program.account.service.fetch(
-            escrow.account.serviceProvider,
-          );
-          console.log(
-            `Fetched service account for escrow ${escrow.publicKey.toString()}:`,
-            serviceAccount,
-          );
-          titles[escrow.publicKey.toString()] = extractServiceTitle(
-            serviceAccount.description,
-          );
-        } catch (fetchError) {
-          console.error(
-            `Error fetching service account for escrow ${escrow.publicKey.toString()}:`,
-            fetchError,
-          );
-          titles[escrow.publicKey.toString()] = 'Unnamed Service';
+          // Find the service account that matches this escrow's PDA
+          const matchingService = serviceAccounts.data.find((service) => {
+            const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
+              [
+                Buffer.from('escrow'),
+                service.publicKey.toBuffer(),
+                service.account.provider.toBuffer(),
+                publicKey.toBuffer(),
+              ],
+              program.programId,
+            );
+            return derivedEscrowPDA.toString() === escrow.publicKey.toString();
+          });
+
+          titles[escrow.publicKey.toString()] = matchingService
+            ? serviceAccountTitles[matchingService.publicKey.toString()]
+            : 'Unnamed Service';
+        } catch (error) {
+          console.error('Error mapping escrow to title:', error);
         }
       }
 
@@ -61,7 +73,7 @@ export function useEscrowData() {
         titles,
       };
     },
+    enabled: !!publicKey && !!serviceAccounts.data,
     staleTime: 60 * 1000,
-    enabled: !!publicKey,
   });
 }

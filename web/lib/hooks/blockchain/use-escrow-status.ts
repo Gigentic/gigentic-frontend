@@ -63,7 +63,7 @@ export const useEscrowStatus = (
           derivedEscrowPDA: derivedEscrowPDA.toString(),
           hasExistingEscrow: !!existingEscrow,
         });
-        console.log('Existing Escrow:', existingEscrow);
+        console.log('Existing Escrow:', existingEscrow?.publicKey.toString());
 
         if (isSubscribed) {
           setIsServiceInEscrow(!!existingEscrow);
