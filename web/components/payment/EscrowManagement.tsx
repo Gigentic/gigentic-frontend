@@ -4,7 +4,7 @@ import React, { useMemo, useEffect, useRef } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 
-import { useEscrowAccounts } from '@/hooks/blockchain/use-escrow-accounts';
+// import { useEscrowAccounts } from '@/hooks/blockchain/use-escrow-accounts';
 import { useSelectedFreelancer } from '@/hooks/services/use-freelancer-query';
 import { useServiceTitles } from '@/hooks/blockchain/use-service-titles';
 import { useEscrowTransactions } from '@/hooks/blockchain/use-escrow-transactions';
@@ -19,7 +19,7 @@ import { useEscrowData } from '@/lib/hooks/blockchain/use-escrow-data';
 export default function EscrowManagement() {
   const { data, isLoading, error } = useEscrowData();
   const { publicKey } = useWallet();
-  const { accounts } = useEscrowAccounts();
+  // const { accounts } = useEscrowAccounts();
   const { data: freelancer } = useSelectedFreelancer();
 
   // Get service account from freelancer data if it exists
@@ -57,7 +57,7 @@ export default function EscrowManagement() {
 
     return data.escrows.map((escrow) => ({
       id: escrow.publicKey.toString(),
-      title: data.titles[escrow.publicKey.toString()],
+      title: data.titles[escrow.publicKey.toString()] || 'Unnamed Service',
       amount: escrow.account.expectedAmount.toString(),
       provider: escrow.account.serviceProvider.toString(),
     }));

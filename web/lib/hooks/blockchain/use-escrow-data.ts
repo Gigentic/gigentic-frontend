@@ -28,18 +28,33 @@ export function useEscrowData() {
       }
 
       const allEscrows = await program.account.escrow.all();
+      console.log('Fetched all escrows:', allEscrows);
+
       const userEscrows = allEscrows.filter(
         (escrow) => escrow.account.customer.toString() === publicKey.toString(),
       );
+      console.log('Filtered user escrows:', userEscrows);
 
       const titles: Record<string, string> = {};
       for (const escrow of userEscrows) {
-        const serviceAccount = await program.account.service.fetch(
-          escrow.account.serviceProvider,
-        );
-        titles[escrow.publicKey.toString()] = extractServiceTitle(
-          serviceAccount.description,
-        );
+        try {
+          const serviceAccount = await program.account.service.fetch(
+            escrow.account.serviceProvider,
+          );
+          console.log(
+            `Fetched service account for escrow ${escrow.publicKey.toString()}:`,
+            serviceAccount,
+          );
+          titles[escrow.publicKey.toString()] = extractServiceTitle(
+            serviceAccount.description,
+          );
+        } catch (fetchError) {
+          console.error(
+            `Error fetching service account for escrow ${escrow.publicKey.toString()}:`,
+            fetchError,
+          );
+          titles[escrow.publicKey.toString()] = 'Unnamed Service';
+        }
       }
 
       return {
