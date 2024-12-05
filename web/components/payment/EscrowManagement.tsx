@@ -13,7 +13,7 @@ import { FreelancerCard } from './FreelancerCard';
 import { EscrowList } from './EscrowList';
 
 export default function EscrowManagement() {
-  const { data, isLoading, error } = useEscrowData();
+  const { data, isLoading, error: escrowError } = useEscrowData();
   const { publicKey } = useWallet();
   const { data: freelancer } = useSelectedFreelancer();
 
@@ -76,7 +76,7 @@ export default function EscrowManagement() {
       <EscrowList
         escrows={userEscrows}
         isLoading={isLoading}
-        error={error?.message || ''}
+        error={escrowError?.message || transactionError || ''}
         onReleaseEscrow={handleReleaseEscrow}
       />
     </div>
