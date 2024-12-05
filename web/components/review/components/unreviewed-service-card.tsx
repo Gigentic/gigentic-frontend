@@ -6,9 +6,13 @@ import { Briefcase, User } from 'lucide-react';
 
 interface UnreviewedServiceCardProps {
   service: UnreviewedService;
+  type: 'given' | 'received';
 }
 
-export function UnreviewedServiceCard({ service }: UnreviewedServiceCardProps) {
+export function UnreviewedServiceCard({
+  service,
+  type,
+}: UnreviewedServiceCardProps) {
   const isProvider = service.role === 'provider';
   const Icon = isProvider ? Briefcase : User;
   const colorClass = isProvider ? 'blue' : 'green';
@@ -26,14 +30,18 @@ export function UnreviewedServiceCard({ service }: UnreviewedServiceCardProps) {
                 <Icon className={`w-4 h-4 text-${colorClass}-500`} />
               </div>
               <p className="text-sm text-muted-foreground">
-                {isProvider ? 'Customer' : 'Provider'}: {service.providerName}
+                {type === 'received'
+                  ? `${isProvider ? 'From Provider' : 'From Customer'}: ${service.providerName}`
+                  : `${isProvider ? 'Customer' : 'Provider'}: ${service.providerName}`}
               </p>
               <p className="text-sm text-muted-foreground">
                 Completed on: {service.date}
               </p>
               <p className="text-sm mt-2">
                 <span className={`text-${colorClass}-600`}>
-                  {isProvider ? 'As Service Provider' : 'As Customer'}
+                  {type === 'received'
+                    ? `Review ${isProvider ? 'From Provider' : 'From Customer'}`
+                    : `Review ${isProvider ? 'As Provider' : 'As Customer'}`}
                 </span>
               </p>
             </div>

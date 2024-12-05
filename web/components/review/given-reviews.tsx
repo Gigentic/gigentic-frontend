@@ -17,7 +17,11 @@ export function GivenReviews() {
           <h2 className="text-xl font-semibold mb-4">Pending Reviews</h2>
           <div className="space-y-4">
             {unreviewedServices.map((service) => (
-              <UnreviewedServiceCard key={service.id} service={service} />
+              <UnreviewedServiceCard
+                key={service.id}
+                service={service}
+                type="given"
+              />
             ))}
           </div>
         </div>
