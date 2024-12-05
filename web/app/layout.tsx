@@ -19,6 +19,7 @@ const links: { label: string; path: string }[] = [
   { label: 'Payment', path: '/payment' },
   { label: 'TalentHub', path: '/service-register' },
   { label: 'Account', path: '/account' },
+  { label: 'Reviews', path: '/review' },
   // { label: 'Program', path: '/program' },
 ];
 
