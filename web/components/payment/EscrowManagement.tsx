@@ -59,12 +59,12 @@ export default function EscrowManagement() {
     const filtered = accounts.data.filter((account) => {
       const isMatch =
         account.account.customer.toString() === publicKey.toString();
-      console.log('Checking escrow:', {
-        escrowId: account.publicKey.toString(),
-        customer: account.account.customer.toString(),
-        serviceProvider: account.account.serviceProvider.toString(),
-        isMatch,
-      });
+      // console.log('Checking escrow:', {
+      //   escrowId: account.publicKey.toString(),
+      //   customer: account.account.customer.toString(),
+      //   serviceProvider: account.account.serviceProvider.toString(),
+      //   isMatch,
+      // });
       return isMatch;
     });
 

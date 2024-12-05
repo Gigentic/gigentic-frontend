@@ -1,7 +1,10 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { PublicKey } from '@solana/web3.js';
-import { useEscrowAccounts } from '@/hooks/blockchain/use-escrow-accounts';
+import { useWallet } from '@solana/wallet-adapter-react';
+
+import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
 import { serviceRegistryPubKey } from '@/hooks/blockchain/use-service-registry';
+
 import { EscrowAccount } from '@/types/escrow';
 
 function extractServiceTitle(description: string): string {
@@ -9,121 +12,144 @@ function extractServiceTitle(description: string): string {
   return titleMatch ? titleMatch[1] : 'Unnamed Service';
 }
 
-const RETRY_DELAY = 1000; // 1 second
-const MAX_RETRIES = 3;
-
-export const useServiceTitles = (userEscrows: Escrow[]) => {
+export const useServiceTitles = (userEscrows: EscrowAccount[]) => {
+  const { program } = useGigenticProgram();
+  const { publicKey } = useWallet();
   const [serviceTitles, setServiceTitles] = useState<Record<string, string>>(
     {},
   );
   const [error, setError] = useState<string | null>(null);
-  const { program } = useEscrowAccounts();
-  const titlesCache = useRef<Record<string, string>>({});
-  const fetchTimeoutRef = useRef<NodeJS.Timeout>();
-  const retryCountRef = useRef(0);
 
   const fetchServiceTitles = useCallback(async () => {
-    if (!userEscrows.length) return;
-
-    // Clear any pending fetch
-    if (fetchTimeoutRef.current) {
-      clearTimeout(fetchTimeoutRef.current);
-    }
-
-    // Check cache first
-    const uncachedEscrows = userEscrows.filter(
-      (escrow) => !titlesCache.current[escrow.publicKey.toString()],
-    );
-
-    if (uncachedEscrows.length === 0) {
-      setServiceTitles(titlesCache.current);
-      return;
-    }
+    if (!userEscrows.length || !publicKey) return;
 
     try {
+      console.log(
+        'Starting fetchServiceTitles for',
+        userEscrows.length,
+        'escrows',
+      );
+      const startTime = performance.now();
+
+      // 1. Fetch all services in one batch
       const serviceRegistry = await program.account.serviceRegistry.fetch(
         serviceRegistryPubKey,
       );
+      console.log(
+        'Service registry fetched with',
+        serviceRegistry.serviceAccountAddresses.length,
+        'services',
+      );
 
-      // Batch fetch all service accounts
+      // 2. Batch fetch all service accounts in parallel
+      // const serviceAccounts = await Promise.all(
+      //   serviceRegistry.serviceAccountAddresses.map((address) =>
+      //     program.account.service
+      //       .fetch(address)
+      //       .then((account) => ({ address, account }))
+      //       .catch((err) => {
+      //         console.error(
+      //           `Error fetching service account ${address.toString()}:`,
+      //           err,
+      //         );
+      //         return null;
+      //       }),
+      //   ),
+      // ).then((results) => results.filter(Boolean));
+
       const serviceAccounts = await Promise.all(
         serviceRegistry.serviceAccountAddresses.map((address) =>
           program.account.service
             .fetch(address)
-            .then((account) => ({ address, account }))
-            .catch((err) => {
-              console.error(
-                `Error fetching service account ${address.toString()}:`,
-                err,
-              );
-              return null;
-            }),
+            .then((account) => ({ address, account })),
         ),
-      ).then((results) => results.filter(Boolean));
+      );
+      console.log(
+        'All service accounts fetched in',
+        (performance.now() - startTime).toFixed(2),
+        'ms',
+      );
 
-      const newTitles: Record<string, string> = { ...titlesCache.current };
+      // 3. Create a lookup map for faster access
+      // const serviceMap = new Map(
+      //   serviceAccounts.map(({ address, account }) => [
+      //     address.toString(),
+      //     account,
+      //   ]),
+      // );
 
-      for (const escrow of uncachedEscrows) {
+      // 4. Process escrows with the cached data
+      // const newTitles: Record<string, string> = { ...titlesCache.current };
+      // for (const escrow of uncachedEscrows) {
+      //   const escrowId = escrow.publicKey.toString();
+      //   const matchingService = serviceAccounts.find((serviceAccount) => {
+      //     if (!serviceAccount) return false;
+      //     const { address, account } = serviceAccount;
+      //     try {
+      //       const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
+      //         [
+      //           Buffer.from('escrow'),
+      //           address.toBuffer(),
+      //           escrow.account.serviceProvider.toBuffer(),
+      //           escrow.account.customer.toBuffer(),
+      //         ],
+      //         program.programId,
+      //       );
+      //       return derivedEscrowPDA.toString() === escrowId;
+      //     } catch (err) {
+      //       console.error('Error deriving escrow PDA:', err);
+      //       return false;
+      //     }
+      //   });
+      //   if (matchingService?.account) {
+      //     newTitles[escrowId] = extractServiceTitle(
+      //       matchingService.account.description,
+      //     );
+      //   }
+      // }
+
+      const titles: Record<string, string> = {};
+      for (const escrow of userEscrows) {
         const escrowId = escrow.publicKey.toString();
-        const matchingService = serviceAccounts.find((serviceAccount) => {
-          if (!serviceAccount) return false;
-          const { address, account } = serviceAccount;
-          try {
-            const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
-              [
-                Buffer.from('escrow'),
-                address.toBuffer(),
-                escrow.account.serviceProvider.toBuffer(),
-                escrow.account.customer.toBuffer(),
-              ],
-              program.programId,
-            );
-            return derivedEscrowPDA.toString() === escrowId;
-          } catch (err) {
-            console.error('Error deriving escrow PDA:', err);
-            return false;
-          }
+        const serviceProvider = escrow.serviceProvider;
+
+        // Find matching service using cached data
+        const matchingService = serviceAccounts.find(({ address, account }) => {
+          const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
+            [
+              Buffer.from('escrow'),
+              address.toBuffer(),
+              serviceProvider.toBuffer(),
+              publicKey.toBuffer(),
+            ],
+            program.programId,
+          );
+          return derivedEscrowPDA.toString() === escrowId;
         });
 
-        if (matchingService?.account) {
-          newTitles[escrowId] = extractServiceTitle(
+        if (matchingService) {
+          titles[escrowId] = extractServiceTitle(
             matchingService.account.description,
           );
+          console.log('Found matching service:', {
+            escrowId,
+            serviceAddress: matchingService.address.toString(),
+            title: titles[escrowId],
+          });
         }
       }
 
-      // Update cache and state
-      titlesCache.current = newTitles;
-      setServiceTitles(newTitles);
-      retryCountRef.current = 0; // Reset retry count on success
-      setError(null);
-    } catch (err) {
-      console.error('Error fetching service titles:', err);
-
-      if (retryCountRef.current < MAX_RETRIES) {
-        retryCountRef.current++;
-        const delay = RETRY_DELAY * retryCountRef.current;
-        console.log(
-          `Retrying after ${delay}ms (attempt ${retryCountRef.current}/${MAX_RETRIES})`,
-        );
-
-        fetchTimeoutRef.current = setTimeout(() => {
-          fetchServiceTitles();
-        }, delay);
-      } else {
-        setError('Failed to load escrow details after multiple retries');
-      }
+      setServiceTitles(titles);
+      console.log(
+        'Total execution time:',
+        (performance.now() - startTime).toFixed(2),
+        'ms',
+      );
+    } catch (error) {
+      console.error('Error fetching service titles:', error);
+      setError('Failed to load escrow details');
     }
-  }, [userEscrows, program]);
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (fetchTimeoutRef.current) {
-        clearTimeout(fetchTimeoutRef.current);
-      }
-    };
-  }, []);
+  }, [userEscrows, program, publicKey]);
 
   return { serviceTitles, error, fetchServiceTitles };
 };
