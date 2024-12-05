@@ -78,7 +78,7 @@ export default function EscrowManagement() {
   }, [accounts.data, publicKey]);
 
   // Custom hooks
-  const { serviceTitles, error: titlesError } = useServiceTitles(userEscrows);
+  const { serviceTitles, error: titlesError } = useServiceTitles();
 
   const {
     handlePayIntoEscrow,
