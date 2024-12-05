@@ -212,7 +212,7 @@ export function AddService() {
             <Button
               onClick={() => setShowForm(!showForm)}
               size="lg"
-              className="shrink-0"
+              className="shrink-0 rounded-lg"
             >
               {showForm ? (
                 <>
@@ -300,7 +300,7 @@ export function AddService() {
               </div>
 
               <Button
-                className="w-full"
+                className="w-full rounded-lg"
                 size="lg"
                 type="submit"
                 disabled={isSubmitting || !connected}

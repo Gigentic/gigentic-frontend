@@ -71,8 +71,8 @@ export const useEscrowTransactions = (
       console.log('Transaction successful:', signature);
 
       selectFreelancer(null as unknown as Freelancer, {
-        onSuccess: () =>
-          console.log('✅ Freelancer cache cleared successfully'),
+        onSuccess: () => null,
+        // console.log('✅ Freelancer cache cleared successfully'),
         onError: (err: unknown) =>
           console.error('❌ Failed to clear freelancer cache:', err),
       });

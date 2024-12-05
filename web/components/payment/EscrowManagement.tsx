@@ -13,22 +13,16 @@ import { FreelancerCard } from './FreelancerCard';
 import { EscrowList } from './EscrowList';
 
 export default function EscrowManagement() {
-  const { data, isLoading, error: escrowError } = useEscrowData();
+  const { data: escrowData, isLoading, error: escrowError } = useEscrowData();
   const { publicKey } = useWallet();
   const { data: freelancer } = useSelectedFreelancer();
 
   // Get service account from freelancer data if it exists
   const selectedServiceAccountAddress = useMemo(() => {
-    // if (!freelancer?.serviceAccountAddress) return null;
-    if (!freelancer?.serviceAccountAddress) {
-      console.log('No payment wallet address found');
-      return null;
-    }
+    if (!freelancer?.serviceAccountAddress) return null;
+
     try {
-      // return new PublicKey(freelancer.serviceAccountAddress);
-      const pubkey = new PublicKey(freelancer.serviceAccountAddress);
-      console.log('Created service account pubkey:', pubkey.toString());
-      return pubkey;
+      return new PublicKey(freelancer.serviceAccountAddress);
     } catch (error) {
       console.error(
         'Invalid service account address:',
@@ -40,15 +34,15 @@ export default function EscrowManagement() {
 
   // Memoize transformed data
   const userEscrows = useMemo(() => {
-    if (!data?.escrows) return [];
+    if (!escrowData?.escrows) return [];
 
-    return data.escrows.map((escrow) => ({
+    return escrowData.escrows.map((escrow) => ({
       id: escrow.publicKey.toString(),
-      title: data.titles[escrow.publicKey.toString()] || 'Unnamed Service',
+      title: escrowData.titles[escrow.publicKey.toString()],
       amount: escrow.account.expectedAmount.toString(),
       provider: escrow.account.serviceProvider.toString(),
     }));
-  }, [data]);
+  }, [escrowData]);
 
   const {
     handlePayIntoEscrow,

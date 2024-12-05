@@ -22,20 +22,20 @@ export const useEscrowStatus = (
     const checkServiceEscrow = async () => {
       try {
         // First get the service account to get its provider
-        console.log('Checking escrow status for:', {
-          selectedServiceAccountAddress:
-            selectedServiceAccountAddress.toString(),
-          publicKey: publicKey.toString(),
-        });
+        // console.log('Checking escrow status for:', {
+        //   selectedServiceAccountAddress:
+        //     selectedServiceAccountAddress.toString(),
+        //   publicKey: publicKey.toString(),
+        // });
 
         // Fetch the service account to get its provider
         const serviceAccount = await program.account.service.fetch(
           selectedServiceAccountAddress,
         );
-        console.log(
-          'Fetched service account for escrow status:',
-          serviceAccount,
-        );
+        // console.log(
+        //   'Fetched service account for escrow status:',
+        //   serviceAccount,
+        // );
 
         const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
           [
@@ -46,10 +46,10 @@ export const useEscrowStatus = (
           ],
           program.programId,
         );
-        console.log(
-          'Derived Escrow PDA for status check:',
-          derivedEscrowPDA.toString(),
-        );
+        // console.log(
+        //   'Derived Escrow PDA for status check:',
+        //   derivedEscrowPDA.toString(),
+        // );
 
         const existingEscrow = escrowData.escrows.find(
           (escrow) =>
@@ -63,11 +63,11 @@ export const useEscrowStatus = (
           derivedEscrowPDA: derivedEscrowPDA.toString(),
           hasExistingEscrow: !!existingEscrow,
         });
-        console.log('Existing Escrow:', existingEscrow?.publicKey.toString());
+        // console.log('Existing Escrow:', existingEscrow?.publicKey.toString());
 
         if (isSubscribed) {
           setIsServiceInEscrow(!!existingEscrow);
-          console.log('Service is in escrow:', !!existingEscrow);
+          // console.log('Service is in escrow:', !!existingEscrow);
         }
       } catch (error) {
         console.error('Error checking service escrow status:', error);
