@@ -111,16 +111,17 @@ export const useServiceTitles = (userEscrows: EscrowAccount[]) => {
       const titles: Record<string, string> = {};
       for (const escrow of userEscrows) {
         const escrowId = escrow.publicKey.toString();
-        const serviceProvider = escrow.serviceProvider;
+        const serviceProvider = escrow.account.serviceProvider;
+        const customer = escrow.account.customer;
 
-        // Find matching service using cached data
+        // Find matching service
         const matchingService = serviceAccounts.find(({ address, account }) => {
           const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
             [
               Buffer.from('escrow'),
               address.toBuffer(),
               serviceProvider.toBuffer(),
-              publicKey.toBuffer(),
+              customer.toBuffer(),
             ],
             program.programId,
           );
