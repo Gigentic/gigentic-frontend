@@ -19,7 +19,6 @@ export default function EscrowManagement() {
   const { publicKey } = useWallet();
   const { accounts } = useEscrowAccounts();
   const { data: freelancer } = useSelectedFreelancer();
-  const fetchTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Get service account from freelancer data if it exists
   const selectedServiceAccountAddress = useMemo(() => {
