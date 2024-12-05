@@ -25,5 +25,5 @@ export function useEscrowAccounts() {
     staleTime: 60 * 1000,
   });
 
-  return { program, accounts };
+  return { accounts };
 }

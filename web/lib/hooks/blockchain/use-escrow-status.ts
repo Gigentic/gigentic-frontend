@@ -1,40 +1,40 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { PublicKey } from '@solana/web3.js';
-import { useEscrowAccounts } from '@/lib/hooks/blockchain/use-escrow-accounts';
-
-const RETRY_DELAY = 1000; // 1 second
-const MAX_RETRIES = 3;
+import { EscrowAccount } from '@/lib/types/escrow';
+import { useGigenticProgram } from './use-gigentic-program';
 
 export const useEscrowStatus = (
   selectedServiceAccountAddress: PublicKey | null,
   publicKey: PublicKey | null,
+  accounts: EscrowAccount[],
 ) => {
   const [isServiceInEscrow, setIsServiceInEscrow] = useState(false);
-  const { accounts, program } = useEscrowAccounts();
-  const retryCountRef = useRef(0);
-  const timeoutRef = useRef<NodeJS.Timeout>();
-  const lastCheckedRef = useRef<string | null>(null);
+  const { program } = useGigenticProgram();
 
   useEffect(() => {
-    if (!accounts.data || !selectedServiceAccountAddress || !publicKey) {
+    if (!accounts || !selectedServiceAccountAddress || !publicKey) {
       setIsServiceInEscrow(false);
-      return;
-    }
-
-    // Create a cache key from the current parameters
-    const cacheKey = `${selectedServiceAccountAddress.toString()}-${publicKey.toString()}`;
-
-    // If we've already checked this combination and have accounts data, skip
-    if (lastCheckedRef.current === cacheKey && accounts.data.length > 0) {
       return;
     }
 
     const checkServiceEscrow = async () => {
       try {
+        // First get the service account to get its provider
         const serviceAccount = await program.account.service.fetch(
           selectedServiceAccountAddress,
         );
 
+        // Now check all escrows
+        console.log(
+          'Checking escrows:',
+          accounts.map((escrow) => ({
+            escrowPubkey: escrow.publicKey.toString(),
+            serviceProvider: escrow.serviceProvider.toString(),
+            customer: escrow.customer.toString(),
+          })),
+        );
+
+        // Derive the escrow PDA with the same seeds used in creation
         const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
           [
             Buffer.from('escrow'),
@@ -44,46 +44,29 @@ export const useEscrowStatus = (
           ],
           program.programId,
         );
-
-        const existingEscrow = accounts.data.find(
+        // Check if this derived PDA exists in our escrows
+        const existingEscrow = accounts.find(
           (escrow) =>
             escrow.publicKey.toString() === derivedEscrowPDA.toString(),
         );
 
+        console.log('Checking escrow status:', {
+          serviceAccountAddress: selectedServiceAccountAddress.toString(),
+          serviceProvider: serviceAccount.provider.toString(),
+          customer: publicKey.toString(),
+          derivedEscrowPDA: derivedEscrowPDA.toString(),
+          hasExistingEscrow: !!existingEscrow,
+        });
+
         setIsServiceInEscrow(!!existingEscrow);
-        retryCountRef.current = 0; // Reset retry count on success
-        lastCheckedRef.current = cacheKey;
       } catch (error) {
         console.error('Error checking service escrow status:', error);
-
-        if (retryCountRef.current < MAX_RETRIES) {
-          retryCountRef.current++;
-          const delay = RETRY_DELAY * retryCountRef.current;
-          console.log(
-            `Retrying escrow status check after ${delay}ms (attempt ${retryCountRef.current}/${MAX_RETRIES})`,
-          );
-
-          if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-          }
-
-          timeoutRef.current = setTimeout(checkServiceEscrow, delay);
-        } else {
-          setIsServiceInEscrow(false);
-          console.error('Failed to check escrow status after multiple retries');
-        }
+        setIsServiceInEscrow(false);
       }
     };
 
     checkServiceEscrow();
-
-    // Cleanup function
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, [accounts.data, selectedServiceAccountAddress, publicKey, program]);
+  }, [accounts, selectedServiceAccountAddress, publicKey, program]);
 
   return isServiceInEscrow;
 };

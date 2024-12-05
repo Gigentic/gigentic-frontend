@@ -12,7 +12,7 @@ import { useEscrowStatus } from '@/lib/hooks/blockchain/use-escrow-status';
 
 import { FreelancerCard } from './FreelancerCard';
 import { EscrowList } from './EscrowList';
-import { Escrow } from '@/lib/types/escrow';
+import { EscrowAccount } from '@/lib/types/escrow';
 
 const FETCH_DELAY = 500; // 500ms debounce
 
@@ -49,7 +49,7 @@ export default function EscrowManagement() {
     serviceTitles,
     error: titlesError,
     fetchServiceTitles,
-  } = useServiceTitles(userEscrows as unknown as Escrow[]);
+  } = useServiceTitles(userEscrows as unknown as EscrowAccount[]);
 
   const {
     handlePayIntoEscrow,
@@ -60,6 +60,7 @@ export default function EscrowManagement() {
   const isServiceInEscrow = useEscrowStatus(
     selectedServiceAccountAddress,
     publicKey,
+    accounts.data as unknown as EscrowAccount[],
   );
 
   // Fetch service titles when escrows change with debouncing
@@ -94,7 +95,7 @@ export default function EscrowManagement() {
 
       {/* Active Escrows Card */}
       <EscrowList
-        escrows={userEscrows as unknown as Escrow[]}
+        escrows={userEscrows as unknown as EscrowAccount[]}
         serviceTitles={serviceTitles}
         isLoading={accounts.isLoading}
         error={titlesError || transactionError}

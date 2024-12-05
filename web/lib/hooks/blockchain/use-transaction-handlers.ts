@@ -6,10 +6,13 @@ import {
 } from '@solana/web3.js';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { useTransactionToast } from '@/components/ui/ui-layout';
-import { useEscrowAccounts } from '@/lib/hooks/blockchain/use-escrow-accounts';
-import { serviceRegistryPubKey } from '@/lib/hooks/blockchain/use-service-registry';
-import { Freelancer } from '@/lib/types/freelancer';
+
+import { useEscrowAccounts } from '@/hooks/blockchain/use-escrow-accounts';
+import { serviceRegistryPubKey } from '@/hooks/blockchain/use-service-registry';
+import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
 import { useSelectFreelancer } from '@/hooks/services/use-freelancer-query';
+
+import { Freelancer } from '@/lib/types/freelancer';
 
 export const useTransactionHandlers = (
   selectedServiceAccountAddress: PublicKey | null,
@@ -17,7 +20,9 @@ export const useTransactionHandlers = (
   const { publicKey, sendTransaction } = useWallet();
   const { connection } = useConnection();
   const transactionToast = useTransactionToast();
-  const { accounts, program } = useEscrowAccounts();
+
+  const { program } = useGigenticProgram();
+  const { accounts } = useEscrowAccounts();
   const { mutate: selectFreelancer } = useSelectFreelancer();
   const [error, setError] = useState<string | null>(null);
 
