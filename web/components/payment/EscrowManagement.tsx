@@ -24,9 +24,16 @@ export default function EscrowManagement() {
 
   // Get service account from freelancer data if it exists
   const selectedServiceAccountAddress = useMemo(() => {
-    if (!freelancer?.serviceAccountAddress) return null;
+    // if (!freelancer?.serviceAccountAddress) return null;
+    if (!freelancer?.serviceAccountAddress) {
+      console.log('No payment wallet address found');
+      return null;
+    }
     try {
-      return new PublicKey(freelancer.serviceAccountAddress);
+      // return new PublicKey(freelancer.serviceAccountAddress);
+      const pubkey = new PublicKey(freelancer.serviceAccountAddress);
+      console.log('Created service account pubkey:', pubkey.toString());
+      return pubkey;
     } catch (error) {
       console.error(
         'Invalid service account address:',
@@ -37,11 +44,39 @@ export default function EscrowManagement() {
   }, [freelancer]);
 
   // Filter escrows for the current user
+  // const userEscrows = useMemo(() => {
+  //   if (!accounts.data || !publicKey) return [];
+  //   return accounts.data.filter(
+  //     (account) => account.account.customer.toString() === publicKey.toString(),
+  //   );
+  // }, [accounts.data, publicKey]);
+
   const userEscrows = useMemo(() => {
     if (!accounts.data || !publicKey) return [];
-    return accounts.data.filter(
-      (account) => account.account.customer.toString() === publicKey.toString(),
+
+    console.log('Filtering escrows for user:', publicKey.toString());
+
+    const filtered = accounts.data.filter((account) => {
+      const isMatch =
+        account.account.customer.toString() === publicKey.toString();
+      console.log('Checking escrow:', {
+        escrowId: account.publicKey.toString(),
+        customer: account.account.customer.toString(),
+        serviceProvider: account.account.serviceProvider.toString(),
+        isMatch,
+      });
+      return isMatch;
+    });
+
+    console.log(
+      'Filtered user escrows:',
+      filtered.map((escrow) => ({
+        publicKey: escrow.publicKey.toString(),
+        serviceProvider: escrow.account.serviceProvider.toString(),
+      })),
     );
+
+    return filtered;
   }, [accounts.data, publicKey]);
 
   // Custom hooks

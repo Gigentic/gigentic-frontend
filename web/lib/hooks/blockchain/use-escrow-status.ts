@@ -6,7 +6,7 @@ import { useGigenticProgram } from './use-gigentic-program';
 export const useEscrowStatus = (
   selectedServiceAccountAddress: PublicKey | null,
   publicKey: PublicKey | null,
-  accounts: EscrowAccount[],
+  accounts: EscrowAccount[] | undefined,
 ) => {
   const [isServiceInEscrow, setIsServiceInEscrow] = useState(false);
   const { program } = useGigenticProgram();
@@ -23,6 +23,12 @@ export const useEscrowStatus = (
         const serviceAccount = await program.account.service.fetch(
           selectedServiceAccountAddress,
         );
+
+        if (!accounts) {
+          console.log('No escrows found');
+          setIsServiceInEscrow(false);
+          return;
+        }
 
         // Now check all escrows
         console.log(
