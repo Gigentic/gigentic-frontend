@@ -12,6 +12,8 @@ export const useEscrowStatus = (
   const { program } = useGigenticProgram();
 
   useEffect(() => {
+    let isSubscribed = true;
+
     if (!accounts || !selectedServiceAccountAddress || !publicKey) {
       setIsServiceInEscrow(false);
       return;
@@ -24,7 +26,7 @@ export const useEscrowStatus = (
           selectedServiceAccountAddress,
         );
 
-        if (!accounts) {
+        if (!isSubscribed || !accounts) {
           console.log('No escrows found');
           setIsServiceInEscrow(false);
           return;
@@ -64,15 +66,23 @@ export const useEscrowStatus = (
           hasExistingEscrow: !!existingEscrow,
         });
 
-        setIsServiceInEscrow(!!existingEscrow);
+        if (isSubscribed) {
+          setIsServiceInEscrow(!!existingEscrow);
+        }
       } catch (error) {
         console.error('Error checking service escrow status:', error);
-        setIsServiceInEscrow(false);
+        if (isSubscribed) {
+          setIsServiceInEscrow(false);
+        }
       }
     };
 
     checkServiceEscrow();
-  }, [accounts, selectedServiceAccountAddress, publicKey, program]);
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [selectedServiceAccountAddress, publicKey, accounts, program]);
 
   return isServiceInEscrow;
 };
