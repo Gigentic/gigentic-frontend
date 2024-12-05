@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { PublicKey } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
 
@@ -20,26 +20,33 @@ export const useServiceTitles = (userEscrows: EscrowAccount[]) => {
   );
   const [error, setError] = useState<string | null>(null);
 
-  const fetchServiceTitles = useCallback(async () => {
-    if (!userEscrows.length || !publicKey) return;
+  // Memoize the escrow IDs to prevent unnecessary re-renders
+  const escrowIds = useMemo(
+    () => userEscrows.map((escrow) => escrow.publicKey.toString()),
+    [userEscrows],
+  );
+
+  // Memoize the fetch function
+  const fetchTitles = useCallback(async () => {
+    if (!escrowIds.length || !publicKey) return;
 
     try {
-      console.log(
-        'Starting fetchServiceTitles for',
-        userEscrows.length,
-        'escrows',
-      );
-      const startTime = performance.now();
+      // console.log(
+      //   'Starting fetchServiceTitles for',
+      //   userEscrows.length,
+      //   'escrows',
+      // );
+      // const startTime = performance.now();
 
       // 1. Fetch all services in one batch
       const serviceRegistry = await program.account.serviceRegistry.fetch(
         serviceRegistryPubKey,
       );
-      console.log(
-        'Service registry fetched with',
-        serviceRegistry.serviceAccountAddresses.length,
-        'services',
-      );
+      // console.log(
+      //   'Service registry fetched with',
+      //   serviceRegistry.serviceAccountAddresses.length,
+      //   'services',
+      // );
 
       // 2. Batch fetch all service accounts in parallel
       // const serviceAccounts = await Promise.all(
@@ -64,11 +71,11 @@ export const useServiceTitles = (userEscrows: EscrowAccount[]) => {
             .then((account) => ({ address, account })),
         ),
       );
-      console.log(
-        'All service accounts fetched in',
-        (performance.now() - startTime).toFixed(2),
-        'ms',
-      );
+      // console.log(
+      //   'All service accounts fetched in',
+      //   (performance.now() - startTime).toFixed(2),
+      //   'ms',
+      // );
 
       // 3. Create a lookup map for faster access
       // const serviceMap = new Map(
@@ -109,10 +116,11 @@ export const useServiceTitles = (userEscrows: EscrowAccount[]) => {
       // }
 
       const titles: Record<string, string> = {};
-      for (const escrow of userEscrows) {
-        const escrowId = escrow.publicKey.toString();
-        const serviceProvider = escrow.account.serviceProvider;
-        const customer = escrow.account.customer;
+      for (const escrowId of escrowIds) {
+        const escrow = userEscrows.find(
+          (e) => e.publicKey.toString() === escrowId,
+        );
+        if (!escrow) continue;
 
         // Find matching service
         const matchingService = serviceAccounts.find(({ address, account }) => {
@@ -120,8 +128,8 @@ export const useServiceTitles = (userEscrows: EscrowAccount[]) => {
             [
               Buffer.from('escrow'),
               address.toBuffer(),
-              serviceProvider.toBuffer(),
-              customer.toBuffer(),
+              escrow.account.serviceProvider.toBuffer(),
+              escrow.account.customer.toBuffer(),
             ],
             program.programId,
           );
@@ -132,25 +140,39 @@ export const useServiceTitles = (userEscrows: EscrowAccount[]) => {
           titles[escrowId] = extractServiceTitle(
             matchingService.account.description,
           );
-          console.log('Found matching service:', {
-            escrowId,
-            serviceAddress: matchingService.address.toString(),
-            title: titles[escrowId],
-          });
+          // console.log('Found matching service:', {
+          //   escrowId,
+          //   serviceAddress: matchingService.address.toString(),
+          //   title: titles[escrowId],
+          // });
         }
       }
 
       setServiceTitles(titles);
-      console.log(
-        'Total execution time:',
-        (performance.now() - startTime).toFixed(2),
-        'ms',
-      );
+      // console.log(
+      //   'Total execution time:',
+      //   (performance.now() - startTime).toFixed(2),
+      //   'ms',
+      // );
     } catch (error) {
       console.error('Error fetching service titles:', error);
       setError('Failed to load escrow details');
     }
-  }, [userEscrows, program, publicKey]);
+  }, [escrowIds, publicKey, program]);
 
-  return { serviceTitles, error, fetchServiceTitles };
+  useEffect(() => {
+    let isSubscribed = true;
+    const timeoutId = setTimeout(() => {
+      if (isSubscribed) {
+        fetchTitles();
+      }
+    }, 500);
+
+    return () => {
+      isSubscribed = false;
+      clearTimeout(timeoutId);
+    };
+  }, [fetchTitles]);
+
+  return { serviceTitles, error };
 };

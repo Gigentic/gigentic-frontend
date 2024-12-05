@@ -13,7 +13,7 @@ import { useEscrowStatus } from '@/hooks/blockchain/use-escrow-status';
 import { FreelancerCard } from './FreelancerCard';
 import { EscrowList } from './EscrowList';
 
-const FETCH_DELAY = 500; // 500ms debounce
+// const FETCH_DELAY = 500; // 500ms debounce
 
 export default function EscrowManagement() {
   const { publicKey } = useWallet();
@@ -79,11 +79,7 @@ export default function EscrowManagement() {
   }, [accounts.data, publicKey]);
 
   // Custom hooks
-  const {
-    serviceTitles,
-    error: titlesError,
-    fetchServiceTitles,
-  } = useServiceTitles(userEscrows);
+  const { serviceTitles, error: titlesError } = useServiceTitles(userEscrows);
 
   const {
     handlePayIntoEscrow,
@@ -98,23 +94,23 @@ export default function EscrowManagement() {
   );
 
   // Fetch service titles when escrows change with debouncing
-  useEffect(() => {
-    if (userEscrows.length > 0) {
-      if (fetchTimeoutRef.current) {
-        clearTimeout(fetchTimeoutRef.current);
-      }
+  // useEffect(() => {
+  //   if (userEscrows.length > 0) {
+  //     if (fetchTimeoutRef.current) {
+  //       clearTimeout(fetchTimeoutRef.current);
+  //     }
 
-      fetchTimeoutRef.current = setTimeout(() => {
-        // fetchServiceTitles();
-      }, FETCH_DELAY);
-    }
+  //     fetchTimeoutRef.current = setTimeout(() => {
+  //       // fetchServiceTitles();
+  //     }, FETCH_DELAY);
+  //   }
 
-    return () => {
-      if (fetchTimeoutRef.current) {
-        clearTimeout(fetchTimeoutRef.current);
-      }
-    };
-  }, [userEscrows.length, fetchServiceTitles]);
+  //   return () => {
+  //     if (fetchTimeoutRef.current) {
+  //       clearTimeout(fetchTimeoutRef.current);
+  //     }
+  //   };
+  // }, [userEscrows.length, fetchServiceTitles]);
 
   return (
     <div className="p-4 space-y-6">
