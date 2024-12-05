@@ -6,7 +6,7 @@ import { PublicKey } from '@solana/web3.js';
 
 import { useEscrowAccounts } from '@/hooks/blockchain/use-escrow-accounts';
 import { useSelectedFreelancer } from '@/hooks/services/use-freelancer-query';
-import { useServiceTitles } from '@/hooks/services/use-service-titles';
+import { useServiceTitles } from '@/hooks/blockchain/use-service-titles';
 import { useEscrowTransactions } from '@/hooks/blockchain/use-escrow-transactions';
 import { useEscrowStatus } from '@/hooks/blockchain/use-escrow-status';
 
