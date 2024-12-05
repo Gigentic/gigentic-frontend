@@ -5,10 +5,14 @@ import { EscrowCard } from './EscrowCard';
 import { EscrowAccount } from '@/lib/types/escrow';
 
 interface EscrowListProps {
-  escrows: EscrowAccount[];
-  serviceTitles: Record<string, string>;
+  escrows: {
+    id: string;
+    title: string;
+    amount: string;
+    provider: string;
+  }[];
   isLoading: boolean;
-  error: string | null;
+  error: string;
   onReleaseEscrow: (
     escrowId: string,
     serviceProvider: PublicKey,
@@ -19,7 +23,6 @@ interface EscrowListProps {
 
 export const EscrowList: React.FC<EscrowListProps> = ({
   escrows,
-  serviceTitles,
   isLoading,
   error,
   onReleaseEscrow,
@@ -53,18 +56,16 @@ export const EscrowList: React.FC<EscrowListProps> = ({
         <div className="space-y-4">
           {escrows.map((escrow) => (
             <EscrowCard
-              key={escrow.publicKey.toString()}
-              serviceTitle={serviceTitles[escrow.publicKey.toString()]}
-              providerAddress={escrow.account.serviceProvider.toString()}
+              key={escrow.id}
+              serviceTitle={escrow.title}
+              providerAddress={escrow.provider}
               providerLink={`https://www.solchat.app/`}
-              escrowId={escrow.publicKey.toString()}
-              amountInEscrow={
-                Number(escrow.account.expectedAmount) / LAMPORTS_PER_SOL
-              }
+              escrowId={escrow.id}
+              amountInEscrow={Number(escrow.amount) / LAMPORTS_PER_SOL}
               onReleaseEscrow={(escrowId, rating, review) =>
                 onReleaseEscrow(
                   escrowId,
-                  escrow.account.serviceProvider,
+                  new PublicKey(escrow.provider),
                   rating,
                   review,
                 )

@@ -12,10 +12,12 @@ import { useEscrowStatus } from '@/hooks/blockchain/use-escrow-status';
 
 import { FreelancerCard } from './FreelancerCard';
 import { EscrowList } from './EscrowList';
+import { useEscrowData } from '@/lib/hooks/blockchain/use-escrow-data';
 
 // const FETCH_DELAY = 500; // 500ms debounce
 
 export default function EscrowManagement() {
+  const { data, isLoading, error } = useEscrowData();
   const { publicKey } = useWallet();
   const { accounts } = useEscrowAccounts();
   const { data: freelancer } = useSelectedFreelancer();
@@ -49,36 +51,48 @@ export default function EscrowManagement() {
   //   );
   // }, [accounts.data, publicKey]);
 
+  // Memoize transformed data
   const userEscrows = useMemo(() => {
-    if (!accounts.data || !publicKey) return [];
+    if (!data?.escrows) return [];
 
-    console.log('Filtering escrows for user:', publicKey.toString());
+    return data.escrows.map((escrow) => ({
+      id: escrow.publicKey.toString(),
+      title: data.titles[escrow.publicKey.toString()],
+      amount: escrow.account.expectedAmount.toString(),
+      provider: escrow.account.serviceProvider.toString(),
+    }));
+  }, [data]);
 
-    const filtered = accounts.data.filter((account) => {
-      const isMatch =
-        account.account.customer.toString() === publicKey.toString();
-      // console.log('Checking escrow:', {
-      //   escrowId: account.publicKey.toString(),
-      //   customer: account.account.customer.toString(),
-      //   serviceProvider: account.account.serviceProvider.toString(),
-      //   isMatch,
-      // });
-      return isMatch;
-    });
+  // const userEscrows = useMemo(() => {
+  //   if (!accounts.data || !publicKey) return [];
 
-    console.log(
-      'Filtered user escrows:',
-      filtered.map((escrow) => ({
-        publicKey: escrow.publicKey.toString(),
-        serviceProvider: escrow.account.serviceProvider.toString(),
-      })),
-    );
+  //   console.log('Filtering escrows for user:', publicKey.toString());
 
-    return filtered;
-  }, [accounts.data, publicKey]);
+  //   const filtered = accounts.data.filter((account) => {
+  //     const isMatch =
+  //       account.account.customer.toString() === publicKey.toString();
+  //     // console.log('Checking escrow:', {
+  //     //   escrowId: account.publicKey.toString(),
+  //     //   customer: account.account.customer.toString(),
+  //     //   serviceProvider: account.account.serviceProvider.toString(),
+  //     //   isMatch,
+  //     // });
+  //     return isMatch;
+  //   });
+
+  //   console.log(
+  //     'Filtered user escrows:',
+  //     filtered.map((escrow) => ({
+  //       publicKey: escrow.publicKey.toString(),
+  //       serviceProvider: escrow.account.serviceProvider.toString(),
+  //     })),
+  //   );
+
+  //   return filtered;
+  // }, [accounts.data, publicKey]);
 
   // Custom hooks
-  const { serviceTitles, error: titlesError } = useServiceTitles();
+  // const { serviceTitles, error: titlesError } = useServiceTitles();
 
   const {
     handlePayIntoEscrow,
@@ -89,7 +103,6 @@ export default function EscrowManagement() {
   const isServiceInEscrow = useEscrowStatus(
     selectedServiceAccountAddress,
     publicKey,
-    accounts.data,
   );
 
   // Fetch service titles when escrows change with debouncing
@@ -125,9 +138,8 @@ export default function EscrowManagement() {
       {/* Active Escrows Card */}
       <EscrowList
         escrows={userEscrows}
-        serviceTitles={serviceTitles}
-        isLoading={accounts.isLoading}
-        error={titlesError || transactionError}
+        isLoading={isLoading}
+        error={error?.message || ''}
         onReleaseEscrow={handleReleaseEscrow}
       />
     </div>

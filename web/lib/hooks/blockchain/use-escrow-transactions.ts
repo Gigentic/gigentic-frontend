@@ -6,6 +6,7 @@ import {
 } from '@solana/web3.js';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { useTransactionToast } from '@/components/ui/ui-layout';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { useEscrowAccounts } from '@/hooks/blockchain/use-escrow-accounts';
 import { serviceRegistryPubKey } from '@/hooks/blockchain/use-service-registry';
@@ -20,6 +21,7 @@ export const useEscrowTransactions = (
   const { publicKey, sendTransaction } = useWallet();
   const { connection } = useConnection();
   const transactionToast = useTransactionToast();
+  const queryClient = useQueryClient();
 
   const { program } = useGigenticProgram();
   const { accounts } = useEscrowAccounts();
@@ -72,6 +74,10 @@ export const useEscrowTransactions = (
           console.log('✅ Freelancer cache cleared successfully'),
         onError: (err: unknown) =>
           console.error('❌ Failed to clear freelancer cache:', err),
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: ['escrow-data'],
       });
     } catch (err) {
       console.error('Error sending transaction:', err);

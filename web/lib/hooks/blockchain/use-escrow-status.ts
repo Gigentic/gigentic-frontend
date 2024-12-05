@@ -2,19 +2,19 @@ import { useState, useEffect } from 'react';
 import { PublicKey } from '@solana/web3.js';
 import { EscrowAccount } from '@/types/escrow';
 import { useGigenticProgram } from './use-gigentic-program';
+import { useEscrowData } from './use-escrow-data';
 
 export const useEscrowStatus = (
   selectedServiceAccountAddress: PublicKey | null,
   publicKey: PublicKey | null,
-  accounts: EscrowAccount[] | undefined,
 ) => {
   const [isServiceInEscrow, setIsServiceInEscrow] = useState(false);
   const { program } = useGigenticProgram();
-
+  const { data: escrowData } = useEscrowData();
   useEffect(() => {
     let isSubscribed = true;
 
-    if (!accounts || !selectedServiceAccountAddress || !publicKey) {
+    if (!escrowData?.escrows || !selectedServiceAccountAddress || !publicKey) {
       setIsServiceInEscrow(false);
       return;
     }
@@ -26,21 +26,21 @@ export const useEscrowStatus = (
           selectedServiceAccountAddress,
         );
 
-        if (!isSubscribed || !accounts) {
-          console.log('No escrows found');
-          setIsServiceInEscrow(false);
-          return;
-        }
+        // if (!isSubscribed || !accounts) {
+        //   console.log('No escrows found');
+        //   setIsServiceInEscrow(false);
+        //   return;
+        // }
 
-        // Now check all escrows
-        console.log(
-          'Checking escrows:',
-          accounts.map((escrow) => ({
-            escrowPubkey: escrow.publicKey.toString(),
-            serviceProvider: escrow.account.serviceProvider.toString(),
-            customer: escrow.account.customer.toString(),
-          })),
-        );
+        // // Now check all escrows
+        // console.log(
+        //   'Checking escrows:',
+        //   accounts.map((escrow) => ({
+        //     escrowPubkey: escrow.publicKey.toString(),
+        //     serviceProvider: escrow.account.serviceProvider.toString(),
+        //     customer: escrow.account.customer.toString(),
+        //   })),
+        // );
 
         // Derive the escrow PDA with the same seeds used in creation
         const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
@@ -53,7 +53,7 @@ export const useEscrowStatus = (
           program.programId,
         );
         // Check if this derived PDA exists in our escrows
-        const existingEscrow = accounts.find(
+        const existingEscrow = escrowData.escrows.find(
           (escrow) =>
             escrow.publicKey.toString() === derivedEscrowPDA.toString(),
         );
@@ -82,7 +82,7 @@ export const useEscrowStatus = (
     return () => {
       isSubscribed = false;
     };
-  }, [selectedServiceAccountAddress, publicKey, accounts, program]);
+  }, [selectedServiceAccountAddress, publicKey, escrowData, program]);
 
   return isServiceInEscrow;
 };
