@@ -174,7 +174,7 @@ export default function StuckEscrowReleaseTool() {
       } catch (err) {
         console.warn('Error checking service account:', {
           address: serviceAddress.toString(),
-          error: err.message,
+          error: err instanceof Error ? err.message : String(err),
         });
         continue;
       }
