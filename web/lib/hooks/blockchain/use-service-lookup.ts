@@ -1,3 +1,4 @@
+// Currently not used, leaving here for future reference
 import { useQuery } from '@tanstack/react-query';
 import { PublicKey } from '@solana/web3.js';
 import { useGigenticProgram } from './use-gigentic-program';
@@ -16,54 +17,100 @@ export function useServiceLookup() {
   return useQuery({
     queryKey: ['service-lookup-map'],
     queryFn: async (): Promise<ServiceLookupMap> => {
-      // Fetch all required data in parallel
+      console.log('Starting service lookup...');
+
       const [serviceRegistry, allEscrows] = await Promise.all([
         program.account.serviceRegistry.fetch(serviceRegistryPubKey),
         program.account.escrow.all(),
       ]);
 
-      // Fetch all service accounts in parallel
-      const serviceAccounts = await Promise.all(
-        serviceRegistry.serviceAccountAddresses.map((address, index) =>
-          program.account.service
-            .fetch(address)
-            .then((account) => ({ address, index, account })),
-        ),
+      console.log('Found escrows:', allEscrows.length);
+      console.log(
+        'Service registry addresses:',
+        serviceRegistry.serviceAccountAddresses.length,
       );
 
-      // Build lookup map
+      // First create a map of provider addresses to service accounts with their indices
+      const serviceAccountsByProvider = new Map();
+
+      for (let i = 0; i < serviceRegistry.serviceAccountAddresses.length; i++) {
+        const address = serviceRegistry.serviceAccountAddresses[i];
+        const account = await program.account.service.fetch(address);
+        const providerKey = account.provider.toString();
+
+        if (!serviceAccountsByProvider.has(providerKey)) {
+          serviceAccountsByProvider.set(providerKey, []);
+        }
+        serviceAccountsByProvider.get(providerKey).push({
+          address,
+          account,
+          index: i, // Store the index from the registry
+        });
+      }
+
       const lookupMap: ServiceLookupMap = {};
 
-      // Create lookup entries for each escrow
-      allEscrows.forEach((escrow) => {
-        const matchingService = serviceAccounts.find(
-          ({ account }) =>
-            account.provider.toString() ===
-            escrow.account.serviceProvider.toString(),
-        );
+      // Process each escrow
+      for (const escrow of allEscrows) {
+        const escrowId = escrow.publicKey.toString();
+        const providerKey = escrow.account.serviceProvider.toString();
 
-        if (matchingService) {
+        console.log('\nProcessing escrow:', {
+          escrowId,
+          provider: providerKey,
+        });
+
+        // Get all services for this provider
+        const matchingServices =
+          serviceAccountsByProvider.get(providerKey) || [];
+
+        // Find the exact service by verifying PDA
+        for (const { address, account, index } of matchingServices) {
           const [derivedPDA] = PublicKey.findProgramAddressSync(
             [
               Buffer.from('escrow'),
-              matchingService.address.toBuffer(),
-              matchingService.account.provider.toBuffer(),
+              address.toBuffer(),
+              account.provider.toBuffer(),
               escrow.account.customer.toBuffer(),
             ],
             program.programId,
           );
 
-          if (derivedPDA.toString() === escrow.publicKey.toString()) {
-            lookupMap[escrow.publicKey.toString()] = {
-              serviceIndex: matchingService.index,
-              serviceAccountPubkey: matchingService.address,
+          console.log('Checking service match:', {
+            serviceAddress: address.toString(),
+            derivedPDA: derivedPDA.toString(),
+            actualEscrow: escrowId,
+            serviceIndex: index,
+            matches: derivedPDA.toString() === escrowId,
+          });
+
+          if (derivedPDA.toString() === escrowId) {
+            lookupMap[escrowId] = {
+              serviceAccountPubkey: address,
+              serviceIndex: index, // Use the stored index directly
             };
+            console.log('Added to lookup map:', {
+              escrowId,
+              serviceIndex: index,
+              serviceAddress: address.toString(),
+            });
+            break; // Stop after finding exact match
           }
         }
-      });
+      }
 
+      console.log(
+        '\nFinal lookup map:',
+        Object.entries(lookupMap).map(([escrowId, info]) => ({
+          escrowId,
+          serviceIndex: info.serviceIndex,
+          serviceAddress: info.serviceAccountPubkey.toString(),
+        })),
+      );
       return lookupMap;
     },
-    staleTime: 30 * 1000, // Cache for 30 seconds
+    refetchOnMount: true,
+    retry: 2,
+    retryDelay: 1000,
   });
 }

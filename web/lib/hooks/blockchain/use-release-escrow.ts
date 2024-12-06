@@ -7,9 +7,9 @@ import {
 } from '@solana/web3.js';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { useTransactionToast } from '@/components/ui/ui-layout';
+import { useEscrowData } from '@/hooks/blockchain/use-escrow-data';
+import { serviceRegistryPubKey } from '@/hooks/blockchain/use-service-registry';
 import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
-import { useServiceLookup } from '@/hooks/blockchain/use-service-lookup';
-import { useFeeAccount } from '@/hooks/blockchain/use-service-registry';
 
 export function useReleaseEscrow() {
   const { publicKey, sendTransaction } = useWallet();
@@ -17,9 +17,67 @@ export function useReleaseEscrow() {
   const transactionToast = useTransactionToast();
   const queryClient = useQueryClient();
   const { program } = useGigenticProgram();
-  const feeAccountPubKey = useFeeAccount();
+  const { data: escrowData } = useEscrowData();
   const [error, setError] = useState<string | null>(null);
-  const { data: serviceLookupMap } = useServiceLookup();
+
+  const findServiceAccountIndex = async (
+    serviceProvider: PublicKey,
+    escrowId: string,
+  ) => {
+    // console.log(`Finding service account index for escrowId: ${escrowId}`);
+    const escrow = escrowData?.escrows?.find(
+      (e) => e.publicKey.toString() === escrowId,
+    );
+    if (!escrow) {
+      console.error('Escrow not found:', escrowId);
+      throw new Error('Escrow not found');
+    }
+
+    const serviceRegistry = await program.account.serviceRegistry.fetch(
+      serviceRegistryPubKey,
+    );
+    // console.log('Fetched service registry:', serviceRegistry);
+
+    for (let i = 0; i < serviceRegistry.serviceAccountAddresses.length; i++) {
+      const serviceAddress = serviceRegistry.serviceAccountAddresses[i];
+      try {
+        const serviceAccount =
+          await program.account.service.fetch(serviceAddress);
+        // console.log(`Fetched service account at index ${i}:`, serviceAccount);
+
+        if (
+          serviceAccount.provider.toString() ===
+          escrow.account.serviceProvider.toString()
+        ) {
+          const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
+            [
+              Buffer.from('escrow'),
+              serviceAddress.toBuffer(),
+              serviceAccount.provider.toBuffer(),
+              escrow.account.customer.toBuffer(),
+            ],
+            program.programId,
+          );
+          // console.log('Derived Escrow PDA:', derivedEscrowPDA.toString());
+
+          if (derivedEscrowPDA.toString() === escrowId) {
+            console.log(
+              `Matching service account ${serviceAddress.toString()} found at index ${i}`,
+            );
+            return i;
+          }
+        }
+      } catch (fetchError) {
+        console.error(
+          `Error fetching service account at ${serviceAddress.toString()}:`,
+          fetchError,
+        );
+      }
+    }
+
+    console.error('No matching service account found for escrowId:', escrowId);
+    throw new Error('No matching service account found');
+  };
 
   const handleReleaseEscrow = async (
     escrowId: string,
@@ -27,24 +85,35 @@ export function useReleaseEscrow() {
     rating?: number,
     review?: string,
   ) => {
-    if (!publicKey || !serviceLookupMap) return;
+    if (!publicKey) return;
 
     try {
-      const serviceInfo = serviceLookupMap[escrowId];
-      if (!serviceInfo) {
-        throw new Error('Service not found for escrow');
+      console.log(`Releasing escrow with ID: ${escrowId}`);
+      const serviceIndex = await findServiceAccountIndex(
+        serviceProvider,
+        escrowId,
+      );
+      // console.log(`Service account index: ${serviceIndex}`);
+
+      const escrow = escrowData?.escrows?.find(
+        (e) => e.publicKey.toString() === escrowId,
+      );
+      if (!escrow) {
+        console.error('Escrow not found:', escrowId);
+        throw new Error('Escrow not found');
       }
 
-      const { serviceAccountPubkey } = serviceInfo;
+      const serviceRegistry = await program.account.serviceRegistry.fetch(
+        serviceRegistryPubKey,
+      );
+      // console.log('Fetched service registry for release:', serviceRegistry);
 
-      console.log('serviceAccountPubkey', serviceAccountPubkey.toString());
-      console.log('feeAccountPubKey', feeAccountPubKey?.toString());
+      const serviceAccountPubKey =
+        serviceRegistry.serviceAccountAddresses[serviceIndex];
+      // console.log('Service Account PubKey:', serviceAccountPubKey.toString());
 
       const latestBlockhash = await connection.getLatestBlockhash('confirmed');
-
-      if (!feeAccountPubKey) {
-        throw new Error('Fee account not found');
-      }
+      // console.log('Latest Blockhash:', latestBlockhash.blockhash);
 
       const messageV0 = new TransactionMessage({
         payerKey: publicKey,
@@ -54,9 +123,9 @@ export function useReleaseEscrow() {
             .signService()
             .accounts({
               signer: publicKey,
-              service: serviceAccountPubkey,
+              service: serviceAccountPubKey,
               serviceProvider: serviceProvider,
-              feeAccount: feeAccountPubKey,
+              feeAccount: serviceRegistry.feeAccount,
             })
             .instruction(),
         ],
@@ -87,7 +156,7 @@ export function useReleaseEscrow() {
       });
     } catch (err) {
       console.error('Error releasing escrow and submitting review:', err);
-      setError('Failed to process release. Please try again.');
+      setError('Failed to process release and review. Please try again.');
     }
   };
 
