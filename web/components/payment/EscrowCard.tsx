@@ -1,95 +1,56 @@
-import {
-  Card,
-  CardContent,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@gigentic-frontend/ui-kit/ui';
+import React from 'react';
+import { Card, CardContent, Button } from '@gigentic-frontend/ui-kit/ui';
 import Link from 'next/link';
-import ReviewPopup from '@/components/review/ReviewPopup';
 
 interface EscrowCardProps {
-  serviceTitle?: string;
+  serviceTitle: string;
   providerAddress: string;
   providerLink: string;
   escrowId: string;
-  matchPercentage?: number;
   amountInEscrow: number;
-  onReleaseEscrow: (escrowId: string, rating: number, review: string) => void;
+  onReleaseEscrow: (escrowId: string, rating?: number, review?: string) => void;
 }
 
-export default function EscrowCard({
+export const EscrowCard: React.FC<EscrowCardProps> = ({
   serviceTitle,
   providerAddress,
   providerLink,
   escrowId,
-  matchPercentage,
   amountInEscrow,
   onReleaseEscrow,
-}: EscrowCardProps) {
-  return (
-    <Card variant="escrow" size="lg">
-      <CardContent className="flex items-center justify-between p-4">
-        {serviceTitle ? (
-          <>
-            <div className="flex-1">
-              <div>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Link
-                        href={`https://explorer.testnet.soo.network/address/${providerAddress}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-semibold text-lg hover:underline hover:text-primary"
-                      >
-                        {serviceTitle}
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Click to view on Explorer</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-            </div>
+}) => {
+  const handleRelease = () => {
+    // For now, we'll use default values. In a real implementation,
+    // you might want to show a modal to collect rating and review.
+    const rating = 5;
+    const review = 'Great service!';
+    onReleaseEscrow(escrowId, rating, review);
+  };
 
-            <div className="flex items-center gap-10">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Link
-                      href={`https://explorer.testnet.soo.network/address/${escrowId}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm hover:underline hover:text-primary whitespace-nowrap"
-                    >
-                      Amount in Escrow: {amountInEscrow.toFixed(3)} Sol
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Click to view on Explorer</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <ReviewPopup
-                escrowId={escrowId}
-                serviceTitle={serviceTitle}
-                providerName={providerAddress}
-                amount={amountInEscrow.toFixed(3)}
-                onSubmitReview={onReleaseEscrow}
-              />
-            </div>
-          </>
-        ) : (
-          <div className="w-full flex justify-center">
-            <span className="animate-pulse text-muted-foreground">
-              Loading escrow details...
-            </span>
+  return (
+    <Card className="mb-4">
+      <CardContent className="p-4">
+        <div className="flex justify-between items-start">
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold">{serviceTitle}</h3>
+            <p className="text-sm text-muted-foreground">
+              Provider:{' '}
+              <Link
+                href={providerLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline hover:text-primary"
+              >
+                {providerAddress}
+              </Link>
+            </p>
+            <p className="text-sm">Amount in Escrow: {amountInEscrow} SOL</p>
           </div>
-        )}
+          <Button onClick={handleRelease} variant="default">
+            Release Escrow
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
-}
+};

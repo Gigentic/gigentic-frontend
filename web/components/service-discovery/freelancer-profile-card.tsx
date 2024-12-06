@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+// import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -30,9 +30,9 @@ export default function FreelancerProfileCard(
 ) {
   const router = useRouter();
 
-  const [isExpanded, setIsExpanded] = useState(false);
-  const fullStars = Math.floor(props.rating);
-  const hasHalfStar = props.rating % 1 !== 0;
+  // const [isExpanded, setIsExpanded] = useState(false);
+  // const fullStars = Math.floor(props.rating);
+  // const hasHalfStar = props.rating % 1 !== 0;
 
   const handleContactNow = () => {
     // Replace this URL with the actual Solchat URL when available
@@ -55,7 +55,7 @@ export default function FreelancerProfileCard(
     // Cache the freelancer data and navigate on success
     selectFreelancer(freelancerData, {
       onSuccess: () => {
-        console.log('✅ Freelancer data cached successfully');
+        // console.log('✅ Freelancer data cached successfully');
         router.push('/payment');
       },
       onError: (error) => {
@@ -65,11 +65,11 @@ export default function FreelancerProfileCard(
     });
   };
 
-  const getMatchScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-500';
-    if (score >= 60) return 'text-yellow-500';
-    return 'text-red-500';
-  };
+  // const getMatchScoreColor = (score: number) => {
+  //   if (score >= 80) return 'text-green-500';
+  //   if (score >= 60) return 'text-yellow-500';
+  //   return 'text-red-500';
+  // };
 
   return (
     <div>

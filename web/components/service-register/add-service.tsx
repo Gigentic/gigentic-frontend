@@ -24,12 +24,13 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { BN } from '@coral-xyz/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
+import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
 import {
-  useGigenticProgram,
   useServiceRegistry,
   serviceRegistryPubKey,
   mintPubKey,
-} from '@/hooks/blockchain/use-gigentic-program';
+} from '@/hooks/blockchain/use-service-registry';
+
 import { ServiceCard } from './service-card';
 
 // Form validation schema
@@ -211,7 +212,7 @@ export function AddService() {
             <Button
               onClick={() => setShowForm(!showForm)}
               size="lg"
-              className="shrink-0"
+              className="shrink-0 rounded-lg"
             >
               {showForm ? (
                 <>
@@ -299,7 +300,7 @@ export function AddService() {
               </div>
 
               <Button
-                className="w-full"
+                className="w-full rounded-lg"
                 size="lg"
                 type="submit"
                 disabled={isSubmitting || !connected}

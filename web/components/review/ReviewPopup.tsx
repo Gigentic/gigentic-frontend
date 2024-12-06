@@ -85,13 +85,10 @@ function ReviewForm({
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader className="space-y-1.5">
-        <CardTitle className="text-xl">
-          <p>Service: {serviceTitle}</p>
-        </CardTitle>
+        <CardTitle className="text-xl">Service: {serviceTitle}</CardTitle>
         <CardDescription className="space-y-0.5">
-          <p>Amount: {amount} SOL</p>
+          Amount: {amount} SOL
         </CardDescription>
-        <div className="flex flex-col"></div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-3">
