@@ -17,10 +17,10 @@ export const metadata = {
 const links: { label: string; path: string }[] = [
   { label: 'Search', path: '/service-discovery' },
   { label: 'Payment', path: '/payment' },
-  { label: 'TalentHub', path: '/service-register' },
-  { label: 'Account', path: '/account' },
   { label: 'Reviews', path: '/review' },
+  { label: 'TalentHub', path: '/service-register' },
   { label: 'Program', path: '/program' },
+  { label: 'Account', path: '/account' },
 ];
 
 export default function RootLayout({
