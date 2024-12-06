@@ -10,8 +10,8 @@ import { useEscrowStatus } from '@/hooks/blockchain/use-escrow-status';
 import { usePayIntoEscrow } from '@/hooks/blockchain/use-pay-into-escrow';
 import { useReleaseEscrow } from '@/hooks/blockchain/use-release-escrow';
 
-import { FreelancerCard } from './FreelancerCard';
-import { EscrowList } from './EscrowList';
+import { FreelancerCard } from './freelancer-card';
+import { EscrowList } from './escrow-list';
 
 export default function EscrowManagement() {
   const { data: escrowData, isLoading, error: escrowError } = useEscrowData();
