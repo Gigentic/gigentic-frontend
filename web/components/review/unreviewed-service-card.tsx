@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent, Button } from '@gigentic-frontend/ui-kit/ui';
-import { UnreviewedService } from '../mock-data';
+import { UnreviewedService } from './mock-data';
 import { Briefcase, User } from 'lucide-react';
 
 interface UnreviewedServiceCardProps {

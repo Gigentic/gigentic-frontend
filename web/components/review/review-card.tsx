@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent } from '@gigentic-frontend/ui-kit/ui';
-import { Review } from '../mock-data';
+import { Review } from './mock-data';
 import { Briefcase, User } from 'lucide-react';
 
 interface ReviewCardProps {

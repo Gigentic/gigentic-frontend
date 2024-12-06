@@ -2,8 +2,8 @@
 
 import { Card, CardContent } from '@gigentic-frontend/ui-kit/ui';
 import { mockGivenReviews, mockUnreviewedServicesGiven } from './mock-data';
-import { ReviewCard } from './components/review-card';
-import { UnreviewedServiceCard } from './components/unreviewed-service-card';
+import { ReviewCard } from './review-card';
+import { UnreviewedServiceCard } from './unreviewed-service-card';
 
 export function GivenReviews() {
   const reviews = mockGivenReviews;

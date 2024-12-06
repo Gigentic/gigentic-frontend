@@ -5,8 +5,8 @@ import {
   mockReceivedReviews,
   mockUnreviewedServicesReceived,
 } from './mock-data';
-import { ReviewCard } from './components/review-card';
-import { UnreviewedServiceCard } from './components/unreviewed-service-card';
+import { ReviewCard } from './review-card';
+import { UnreviewedServiceCard } from './unreviewed-service-card';
 
 export function ReceivedReviews() {
   const reviews = mockReceivedReviews;
