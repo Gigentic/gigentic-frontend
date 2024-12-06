@@ -19,6 +19,19 @@ export async function fetchServiceRegistry(
   return program.account.serviceRegistry.fetch(serviceRegistryPubKey);
 }
 
+export function useFeeAccount() {
+  const { program } = useGigenticProgram();
+
+  const serviceRegistry = useQuery({
+    queryKey: ['service-registry'],
+    queryFn: () => fetchServiceRegistry(program, serviceRegistryPubKey),
+  });
+
+  if (!serviceRegistry.data) return null;
+
+  return serviceRegistry.data.feeAccount;
+}
+
 export function useServiceRegistry() {
   const { program } = useGigenticProgram();
 
