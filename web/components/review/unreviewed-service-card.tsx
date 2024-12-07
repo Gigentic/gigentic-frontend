@@ -1,23 +1,15 @@
 'use client';
 
-import { useState } from 'react';
 import { Card, CardContent } from '@gigentic-frontend/ui-kit/ui';
 import { Briefcase, User } from 'lucide-react';
-import { Review, ReviewSubmitData } from '@/types/review';
+import { UnreviewedServiceCardProps } from '@/types/review';
 import ReviewPopup from './review-popup';
-
-interface UnreviewedServiceCardProps {
-  review: Review;
-  type: 'given' | 'received';
-  onReviewSubmit: (reviewData: ReviewSubmitData) => Promise<void>;
-}
 
 export function UnreviewedServiceCard({
   review,
   type,
   onReviewSubmit,
 }: UnreviewedServiceCardProps) {
-  const [showReviewPopup, setShowReviewPopup] = useState(false);
   const isProvider = type === 'received';
   const Icon = isProvider ? Briefcase : User;
 

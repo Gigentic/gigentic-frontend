@@ -18,14 +18,7 @@ import {
   Label,
   Textarea,
 } from '@gigentic-frontend/ui-kit/ui';
-
-export interface ReviewFormProps {
-  escrowId: string;
-  serviceTitle: string;
-  providerName: string;
-  amount: string;
-  onSubmitReview: (escrowId: string, rating: number, review: string) => void;
-}
+import { ReviewFormProps } from '@/types/review';
 
 export default function ReviewPopup({
   escrowId,

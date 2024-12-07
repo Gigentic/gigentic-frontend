@@ -2,12 +2,7 @@
 
 import { Card, CardContent } from '@gigentic-frontend/ui-kit/ui';
 import { Briefcase, User } from 'lucide-react';
-import { Review } from '@/types/review';
-
-interface ReviewCardProps {
-  review: Review;
-  type: 'given' | 'received';
-}
+import { ReviewCardProps } from '@/types/review';
 
 export function ReviewCard({ review, type }: ReviewCardProps) {
   const isProvider = type === 'received';
