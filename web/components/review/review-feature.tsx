@@ -6,7 +6,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@gigentic-frontend/ui-kit/ui';
-import { GivenReviews } from './given-reviews';
+// import { GivenReviews } from './given-reviews';
 import { ReceivedReviews } from './received-reviews';
 
 export default function ReviewFeature() {
@@ -29,7 +29,7 @@ export default function ReviewFeature() {
             <ReceivedReviews />
           </TabsContent>
           <TabsContent value="given" className="mt-6">
-            <GivenReviews />
+            {/* <GivenReviews /> */}
           </TabsContent>
         </Tabs>
       </div>
