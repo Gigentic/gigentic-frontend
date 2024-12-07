@@ -1,97 +1,102 @@
 ```mermaid
-graph TD
-    %% Data Structure Subgraph
-    %% subgraph "Hook Return Type"
+flowchart TD
+    %% Data Layer
+    subgraph "Blockchain Layer"
+      CR[program.account.review.all]:::dataLayer
+    end
 
-    %% end
+    subgraph "Data Processing"
+      TR[useReviews]:::hook
+      RD[ReviewsData]:::dataLayer
+      RDG[completed.given]:::dataLayer
+      RDR[completed.received]:::dataLayer
+      PDG[pending.toGive]:::dataLayer
+      PDR[pending.toReceive]:::dataLayer
+    end
 
-    %% Chain Data
-    %% subgraph "Blockchain Layer"
-        CR[program.account.review.all]:::data
-        TR[transformChainReview]:::component
+      CR --> TR
+      TR --> RDG
+      TR --> RDR
+      TR --> PDG
+      TR --> PDR
 
-        RD[ReviewsData]:::data
-        RDG[completed.given]:::data
-        RDR[completed.received]:::data
-        PDG[pending.toGive]:::data
-        PDR[pending.toReceive]:::data
+      RDG --> RD
+      RDR --> RD
+      PDG --> RD
+      PDR --> RD
 
-        CR --> TR
-        TR --> RDG
-        TR --> RDR
-        TR --> PDG
-        TR --> PDR
-
-        RDG --> RD
-        RDR --> RD
-        PDG --> RD
-        PDR --> RD
-
-    %% end
+    linkStyle 0,1,2,3,4,5,6,7,8 stroke:#66f,stroke-width:2px
 
     %% Main Component
-    %% subgraph "ReviewFeature"
-        RF[ReviewFeature Component]:::component
-        HSR[handleReviewSubmit]:::component
-        %% LD[LoadingState]:::component
-        %% ED[ErrorState]:::component
-    %% end
+    subgraph "Review Tabs"
+      RD --> RF
+      linkStyle 9 stroke:#66f,stroke-width:2px
+      RF[ReviewFeature Component]:::component
 
-    %% Tab Components
-    %% subgraph "Review Tabs"
-        GR[GivenReviews]:::component
-        RR[ReceivedReviews]:::component
-    %% end
+      RF -->|"completed.given + pending.toGive"| RTP1
+      RF -->|"completed.received + pending.toReceive"| RTP2
+      RTP1[ReviewTabProps]:::prop
+      RTP2[ReviewTabProps]:::prop
+      RTP1 --> GR
+      RTP2 --> RR
+      GR[GivenReviews]:::component
+      RR[ReceivedReviews]:::component
+      GR -->|"Review + type"| RCP
+      RR -->|"Review + type"| RCP
+      RCP[ReviewCardProps]:::prop
+      RCP --> RC
+      RC[ReviewCard]:::component
+      GR -->|"Review + type + onSubmit"| USCP
+      RR -->|"Review + type + onSubmit"| USCP
+      USCP[UnreviewedServiceCardProps]:::prop
+      USC[UnreviewedServiceCard]:::component
+      USCP --> USC
+    end
 
-    %% UI Components
-    %% subgraph "UI Components"
-        RC[ReviewCard]:::component
-        USC[UnreviewedServiceCard]:::component
-        RP[ReviewPopup]:::component
-        RF2[ReviewForm]:::component
-    %% end
+    RP[ReviewPopup]:::component
+    RFP[ReviewFormProps]:::prop
+    RFP --> RF2
+    RF2[ReviewForm]:::component
+    RSD[ReviewSubmitData]:::prop
 
-    %% Props Interfaces
-    %% subgraph "Component Props"
-        RCP[ReviewCardProps]:::props
-        USCP[UnreviewedServiceCardProps]:::props
-        RTP[ReviewTabProps]:::props
-        RFP[ReviewFormProps]:::props
-    %% end
+    HSR[handleReviewSubmit]:::component
 
-    %% Data Flow
-    RD --> RF
-    RF -->|"completed.given + pending.toGive"| GR
-    RF -->|"completed.received + pending.toReceive"| RR
-
-    GR -->|"review + type"| RC
-    RR -->|"review + type"| RC
-    GR -->|"review + type + onSubmit"| USC
-    RR -->|"review + type + onSubmit"| USC
     USC -->|"opens"| RP
     RP -->|"renders"| RF2
 
-    %% Props Flow
-    RTP -->|"defines props"| GR
-    RTP -->|"defines props"| RR
-    RCP -->|"defines props"| RC
-    USCP -->|"defines props"| USC
-    RFP -->|"defines props"| RF2
 
     %% Submit Flow
     USC -->|"ReviewSubmitData"| HSR
+    RSD --> HSR
     RF2 -->|"rating + review"| HSR
     HSR -->|"Update"| CR
 
-    %% Class Definitions
-    classDef data fill:#fff,stroke:#333,stroke-width:2px
-    classDef component fill:#bfb,stroke:#333,stroke-width:2px
-    classDef props fill:#eef,stroke:#333,stroke-width:2px
+    L1 ~~~ CR
 
-    %% %% Legend
-    %% subgraph "Legend"
-    %%     L1[Data Structure]:::data
-    %%     L2[Component]:::component
-    %%     L3[Props Interface]:::props
-    %% end
+    %% Style different types of arrows
+
+    %% linkStyle 3,4,5,6 stroke:#2a2,stroke-width:2px
+    %% linkStyle 7,8 stroke:#f66,stroke-width:2px
+
+    %% Class Definitions
+    classDef dataLayer fill:#fbb,stroke-width:0px
+    classDef hook fill:#bbf,stroke-width:0px
+    classDef dataFlow fill:#fff,stroke:#66f,stroke-width:2px
+    classDef component fill:#bfb,stroke-width:0px
+    classDef prop fill:#fff,stroke:#2a2,stroke-width:2px
+    classDef action fill:#fff,stroke:#f66,stroke-width:2px
+
+    %% Legend Top
+    subgraph " "
+        L1[Data Layer]:::dataLayer
+        L2[Hooks]:::hook
+        L3[Component]:::component
+    end
+
+    %% Legend Bottom
+    subgraph " "
+        L4["Data Flow"]:::dataFlow
+        L5["Props"]:::prop
+        L6["User Actions"]:::action
+    end
 ```
