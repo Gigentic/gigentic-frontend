@@ -9,7 +9,7 @@ import { serviceRegistryPubKey } from '@/hooks/blockchain/use-service-registry';
 import {
   useReviewsV1,
   useReviewsFromMock,
-} from '@/hooks/blockchain/use-reviews-mock';
+} from '@/hooks/blockchain/use-reviews';
 import { Card, CardContent } from '@gigentic-frontend/ui-kit/ui';
 
 export default function GigenticProgramFeature() {

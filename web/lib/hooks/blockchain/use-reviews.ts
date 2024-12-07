@@ -2,27 +2,53 @@ import { useQuery } from '@tanstack/react-query';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useGigenticProgram } from './use-gigentic-program';
 import { useCluster } from '@/cluster/cluster-data-access';
-import { PublicKey } from '@solana/web3.js';
+import {
+  mockUnreviewedServicesReceived,
+  mockUnreviewedServicesGiven,
+  mockGivenReviews,
+  mockReceivedReviews,
+} from '@/components/review/mock-data';
+import { Review, ReviewsData } from '@/types/review';
 
-// Basic chain review structure
-export interface ChainReview {
-  publicKey: PublicKey;
-  account: {
-    reviewId: string;
-    providerToCustomerRating: number;
-    customerToProviderRating: number;
-    customer: PublicKey;
-    serviceProvider: PublicKey;
-    providerToCustomerReview: string;
-    customerToProviderReview: string;
-  };
+export function useReviewsV1() {
+  const { publicKey } = useWallet();
+  const { program } = useGigenticProgram();
+  const { cluster } = useCluster();
+
+  return useQuery({
+    queryKey: ['reviews', { cluster, publicKey: publicKey?.toString() }],
+    queryFn: async () => {
+      if (!publicKey) return [];
+
+      // Fetch all reviews from the program
+      const reviews = await program.account.review.all();
+      console.log('Fetched reviews:', reviews);
+
+      return reviews;
+    },
+    enabled: !!publicKey,
+  });
 }
 
-// UI wrapper for chain data
-export interface Review extends ChainReview {
-  serviceTitle: string;
-  status: 'pending' | 'completed';
-  role: 'customer' | 'provider';
+export function useReviewsFromMock() {
+  return useQuery<ReviewsData>({
+    queryKey: ['reviews-mock'],
+    queryFn: async () => {
+      // Simulate network delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return {
+        completed: {
+          given: mockGivenReviews,
+          received: mockReceivedReviews,
+        },
+        pending: {
+          toGive: mockUnreviewedServicesGiven,
+          toReceive: mockUnreviewedServicesReceived,
+        },
+      };
+    },
+  });
 }
 
 export function useReviews() {
