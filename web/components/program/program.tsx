@@ -6,7 +6,7 @@ import { AppHero, ellipsify } from '@/ui/ui-layout';
 import { ExplorerLink } from '@/cluster/cluster-ui';
 import { useGigenticProgram } from '@/hooks/blockchain/use-gigentic-program';
 import { serviceRegistryPubKey } from '@/hooks/blockchain/use-service-registry';
-import { useReviews } from '@/hooks/blockchain/use-reviews';
+import { useReviewsV1 } from '@/hooks/blockchain/use-reviews-v1';
 
 export default function GigenticProgramFeature() {
   const { publicKey } = useWallet();
@@ -37,7 +37,7 @@ export default function GigenticProgramFeature() {
 }
 
 function Reviews() {
-  const { data: reviews, isLoading, error } = useReviews();
+  const { data: reviews, isLoading, error } = useReviewsV1();
 
   if (isLoading) {
     return <div>Loading reviews...</div>;
