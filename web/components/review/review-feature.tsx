@@ -1,7 +1,5 @@
 'use client';
 
-import { useReviewsFromMock, useReviews } from '@/hooks/blockchain/use-reviews';
-import { ReviewSubmitData } from '@/types/review';
 import {
   Tabs,
   TabsContent,
@@ -10,9 +8,12 @@ import {
   Card,
   CardContent,
 } from '@gigentic-frontend/ui-kit/ui';
-import { GivenReviews } from './given-reviews';
-import { ReceivedReviews } from './received-reviews';
 import { Loader2 } from 'lucide-react';
+
+import { useReviewsFromMock, useReviews } from '@/hooks/blockchain/use-reviews';
+import { ReceivedReviews } from './received-reviews';
+import { GivenReviews } from './given-reviews';
+import { ReviewSubmitData } from '@/types/review';
 
 export default function ReviewFeature() {
   // const { data, isLoading, error } = useReviewsFromMock();
