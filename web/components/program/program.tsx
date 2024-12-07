@@ -33,8 +33,8 @@ export default function GigenticProgramFeature() {
         )}
       </AppHero>
 
-      {/* <Reviews /> */}
-      <ReviewsMock />
+      <Reviews />
+      {/* <ReviewsMock /> */}
     </div>
   ) : (
     <WalletButton />
