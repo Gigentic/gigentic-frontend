@@ -23,17 +23,22 @@ graph TD
         style RP fill:#bfb,stroke-width:0px
     end
 
+
         %% Legend
-    subgraph "Legend"
+    subgraph " "
         L1[Data Layer]
         L2[Hooks]
         L4["Data Flow"]
-        L3[Components]
-        L5["Props"]
-        L6["User Actions"]
         style L1 fill:#fbb,stroke-width:0px
         style L2 fill:#bbf,stroke-width:0px
         style L3 fill:#bfb,stroke-width:0px
+    end
+
+        %% Legend
+    subgraph " "
+        L3[Components]
+        L5["Props"]
+        L6["User Actions"]
         style L4 fill:#fff,stroke:#66f,stroke-width:2px
         style L5 fill:#fff,stroke:#2a2,stroke-width:2px
         style L6 fill:#fff,stroke:#f66,stroke-width:2px
@@ -53,6 +58,10 @@ graph TD
     %% User Actions
     USC -->|"Opens"| RP
     RP -->|"Submit Review"| D
+
+    %% Invisible arrow to position legend
+    L1 ~~~ UR
+    RP ~~~ L3
 
     %% Style different types of arrows
     linkStyle 0,1,2 stroke:#66f,stroke-width:2px %% Data Flow in blue
