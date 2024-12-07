@@ -1,81 +1,113 @@
-export interface Review {
-  id: string;
-  rating: number;
-  review: string;
-  date: string;
-  reviewer: string;
-  role: 'customer' | 'provider';
-}
+import { PublicKey } from '@solana/web3.js';
+import { Review } from '@/lib/hooks/blockchain/use-reviews';
 
-export interface UnreviewedService {
-  id: string;
-  serviceTitle: string;
-  providerName: string;
-  date: string;
-  role: 'customer' | 'provider';
-}
+// Create dummy public keys
+const ALICE = new PublicKey('7YUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLA');
+const PROVIDER_BOB = new PublicKey(
+  '6XUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLB',
+);
+const PROVIDER_CAROL = new PublicKey(
+  '5XUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLC',
+);
+const PROVIDER_DAVE = new PublicKey(
+  '4XUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLD',
+);
+const CUSTOMER_EVE = new PublicKey(
+  '3XUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLE',
+);
+const CUSTOMER_FRANK = new PublicKey(
+  '2XUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLF',
+);
 
-export const mockUnreviewedServicesReceived: UnreviewedService[] = [
+// Alice's pending review (as customer)
+export const mockUnreviewedServicesReceived: Review[] = [
   {
-    id: 'unreview-1',
-    serviceTitle: 'Website Development',
-    providerName: 'John Doe',
-    date: '2024-03-20',
-    role: 'customer',
-  },
-  {
-    id: 'unreview-2',
-    serviceTitle: 'Logo Design',
-    providerName: 'Jane Smith',
-    date: '2024-03-19',
-    role: 'customer',
-  },
-];
-
-export const mockUnreviewedServicesGiven: UnreviewedService[] = [
-  {
-    id: 'unreview-3',
+    publicKey: new PublicKey('3YUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLD'),
+    account: {
+      reviewId: 'unreview-1',
+      providerToCustomerRating: 0,
+      customerToProviderRating: 0,
+      customer: ALICE,
+      serviceProvider: PROVIDER_DAVE,
+      providerToCustomerReview: '',
+      customerToProviderReview: '',
+    },
     serviceTitle: 'Mobile App Development',
-    providerName: 'Alice Johnson',
-    date: '2024-03-21',
+    status: 'pending',
     role: 'customer',
   },
 ];
 
-export const mockReceivedReviews: Review[] = [
+// Alice's pending reviews to give (as provider)
+export const mockUnreviewedServicesGiven: Review[] = [
   {
-    id: '1',
-    rating: 5,
-    review: 'Excellent work! Delivered the project ahead of schedule.',
-    date: '2024-03-15',
-    reviewer: 'Alice',
-    role: 'customer',
-  },
-  {
-    id: '2',
-    rating: 4,
-    review: 'Great communication and quality results.',
-    date: '2024-03-10',
-    reviewer: 'Bob',
+    publicKey: new PublicKey('1YUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLG'),
+    account: {
+      reviewId: 'unreview-2',
+      providerToCustomerRating: 0,
+      customerToProviderRating: 0,
+      customer: CUSTOMER_FRANK,
+      serviceProvider: ALICE,
+      providerToCustomerReview: '',
+      customerToProviderReview: '',
+    },
+    serviceTitle: 'AI Chatbot Development',
+    status: 'pending',
     role: 'provider',
   },
 ];
 
+// Alice's completed reviews given as a customer
 export const mockGivenReviews: Review[] = [
   {
-    id: '3',
-    rating: 5,
-    review: 'Perfect service! Clear communication throughout.',
-    date: '2024-03-12',
-    reviewer: 'Charlie',
+    publicKey: new PublicKey('2YUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLC'),
+    account: {
+      reviewId: '1',
+      providerToCustomerRating: 4,
+      customerToProviderRating: 5,
+      customer: ALICE,
+      serviceProvider: PROVIDER_BOB,
+      providerToCustomerReview: 'Great client to work with!',
+      customerToProviderReview:
+        'Excellent web development service, highly recommended!',
+    },
+    serviceTitle: 'Web Development Service',
+    status: 'completed',
     role: 'customer',
   },
   {
-    id: '4',
-    rating: 4,
-    review: 'Great client to work with!',
-    date: '2024-03-08',
-    reviewer: 'David',
+    publicKey: new PublicKey('1YUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLB'),
+    account: {
+      reviewId: '2',
+      providerToCustomerRating: 5,
+      customerToProviderRating: 4,
+      customer: ALICE,
+      serviceProvider: PROVIDER_CAROL,
+      providerToCustomerReview: 'Perfect communication and clear requirements',
+      customerToProviderReview: 'Great design work, delivered on time!',
+    },
+    serviceTitle: 'UI/UX Design Service',
+    status: 'completed',
+    role: 'customer',
+  },
+];
+
+// Reviews Alice has received as a provider
+export const mockReceivedReviews: Review[] = [
+  {
+    publicKey: new PublicKey('0YUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLA'),
+    account: {
+      reviewId: '3',
+      providerToCustomerRating: 5,
+      customerToProviderRating: 5,
+      customer: CUSTOMER_EVE,
+      serviceProvider: ALICE,
+      providerToCustomerReview: 'Excellent customer, clear communication',
+      customerToProviderReview:
+        'Amazing AI development service, exceeded expectations!',
+    },
+    serviceTitle: 'Machine Learning Model Development',
+    status: 'completed',
     role: 'provider',
   },
 ];
