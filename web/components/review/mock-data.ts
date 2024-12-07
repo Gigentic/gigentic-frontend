@@ -1,28 +1,28 @@
-import { PublicKey } from '@solana/web3.js';
+import { Keypair, PublicKey } from '@solana/web3.js';
 import { Review } from '@/lib/hooks/blockchain/use-reviews';
 
 // Create dummy public keys
-const ALICE = new PublicKey('7YUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLA');
+const ALICE = new PublicKey('7f6LTZcMxefrhyJssF7ws3DcQa56r4et6Vkni9BMbB9y');
 const PROVIDER_BOB = new PublicKey(
-  '6XUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLB',
+  'DeqaHUuqjq8NPmJTa4bpUU2K9Y5dZ4zo3dk8SwjLC9FM',
 );
 const PROVIDER_CAROL = new PublicKey(
-  '5XUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLC',
+  'Exf9khM3cZHL3EyURNZwjTKqqMLeA1g52KStoZXBBPdb',
 );
 const PROVIDER_DAVE = new PublicKey(
-  '4XUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLD',
+  'ArkxEHUCMEu8rYoTbSnCTnht89EQvkHQAs1MUBex18r6',
 );
 const CUSTOMER_EVE = new PublicKey(
-  '3XUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLE',
+  '5T7eYscUF45wULNCKjZ9kkkJCNG3nzpAuEP3ZLo6brLk',
 );
 const CUSTOMER_FRANK = new PublicKey(
-  '2XUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLF',
+  'afdyHntf1uGNhfARcxzj9kmsC6xsGXTHo1QfbzahfDr',
 );
 
 // Alice's pending review (as customer)
 export const mockUnreviewedServicesReceived: Review[] = [
   {
-    publicKey: new PublicKey('3YUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLD'),
+    publicKey: new Keypair().publicKey,
     account: {
       reviewId: 'unreview-1',
       providerToCustomerRating: 0,
@@ -41,7 +41,7 @@ export const mockUnreviewedServicesReceived: Review[] = [
 // Alice's pending reviews to give (as provider)
 export const mockUnreviewedServicesGiven: Review[] = [
   {
-    publicKey: new PublicKey('1YUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLG'),
+    publicKey: new Keypair().publicKey,
     account: {
       reviewId: 'unreview-2',
       providerToCustomerRating: 0,
@@ -60,7 +60,7 @@ export const mockUnreviewedServicesGiven: Review[] = [
 // Alice's completed reviews given as a customer
 export const mockGivenReviews: Review[] = [
   {
-    publicKey: new PublicKey('2YUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLC'),
+    publicKey: new Keypair().publicKey,
     account: {
       reviewId: '1',
       providerToCustomerRating: 4,
@@ -76,7 +76,7 @@ export const mockGivenReviews: Review[] = [
     role: 'customer',
   },
   {
-    publicKey: new PublicKey('1YUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLB'),
+    publicKey: new Keypair().publicKey,
     account: {
       reviewId: '2',
       providerToCustomerRating: 5,
@@ -95,7 +95,7 @@ export const mockGivenReviews: Review[] = [
 // Reviews Alice has received as a provider
 export const mockReceivedReviews: Review[] = [
   {
-    publicKey: new PublicKey('0YUYeKJzxrQqmrp3YkwHBVv3pz9YWWVeM5YWjR7Z5iLA'),
+    publicKey: new Keypair().publicKey,
     account: {
       reviewId: '3',
       providerToCustomerRating: 5,

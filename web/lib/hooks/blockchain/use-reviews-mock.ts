@@ -3,19 +3,13 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useGigenticProgram } from './use-gigentic-program';
 import { useCluster } from '@/cluster/cluster-data-access';
 import { PublicKey } from '@solana/web3.js';
-
-export interface ChainReviewV1 {
-  publicKey: PublicKey;
-  account: {
-    reviewId: string;
-    providerToCustomerRating: number;
-    customerToProviderRating: number;
-    customer: PublicKey;
-    serviceProvider: PublicKey;
-    providerToCustomerReview: string;
-    customerToProviderReview: string;
-  };
-}
+import {
+  mockUnreviewedServicesReceived,
+  mockUnreviewedServicesGiven,
+  mockGivenReviews,
+  mockReceivedReviews,
+} from '@/components/review/mock-data';
+import { Review } from '@/lib/hooks/blockchain/use-reviews';
 
 export function useReviewsV1() {
   const { publicKey } = useWallet();
@@ -31,8 +25,25 @@ export function useReviewsV1() {
       const reviews = await program.account.review.all();
       console.log('Fetched reviews:', reviews);
 
-      return reviews as ChainReviewV1[];
+      return reviews;
     },
     enabled: !!publicKey,
+  });
+}
+
+export function useReviewsFromMock() {
+  return useQuery({
+    queryKey: ['reviews'],
+    queryFn: async () => {
+      // Combine and format mock reviews
+      const reviews = [
+        ...mockUnreviewedServicesReceived,
+        ...mockUnreviewedServicesGiven,
+        ...mockGivenReviews,
+        ...mockReceivedReviews,
+      ];
+
+      return reviews;
+    },
   });
 }
