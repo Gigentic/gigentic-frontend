@@ -35,8 +35,12 @@ export function useReviewsFromMock() {
     queryKey: ['reviews-mock'],
     queryFn: async () => {
       // Simulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
+      // Simulate error
+      // throw new Error('Failed to fetch reviews from the blockchain');
+
+      // Normal return data
       return {
         completed: {
           given: mockGivenReviews,

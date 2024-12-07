@@ -1,79 +1,48 @@
 'use client';
 
 import { Card, CardContent } from '@gigentic-frontend/ui-kit/ui';
-import { useReviewsFromMock } from '@/hooks/blockchain/use-reviews-mock';
+import { ReviewTabProps } from '@/types/review';
 import { ReviewCard } from './review-card';
-// import { UnreviewedServiceCard } from './unreviewed-service-card';
+import { UnreviewedServiceCard } from './unreviewed-service-card';
 
-export function ReceivedReviews() {
-  const { data, isLoading, error } = useReviewsFromMock();
-
-  if (isLoading) {
-    return (
-      <Card>
-        <CardContent className="p-6 text-center text-muted-foreground">
-          Loading reviews...
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card>
-        <CardContent className="p-6 text-center text-muted-foreground">
-          Error loading reviews: {error.message}
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // const { reviews, unreviewedServices } = data || {
-  //   reviews: [],
-  //   unreviewedServices: [],
-  // };
-
-  // // Filter for received reviews only
-  // const receivedReviews = reviews.filter(
-  //   (review) => review && review.role === 'provider',
-  // );
-  // const receivedUnreviewed = unreviewedServices.filter(
-  //   (service) => service && service.role === 'provider',
-  // );
-
+export function ReceivedReviews({
+  completedReviews,
+  pendingReviews,
+  onReviewSubmit,
+}: ReviewTabProps) {
   return (
     <div className="space-y-8">
-      {/* Unreviewed Services Section */}
-      {/* {receivedUnreviewed.length > 0 && (
+      {/* Pending Reviews Section */}
+      {pendingReviews.length > 0 && (
         <div>
           <h2 className="text-xl font-semibold mb-4">Pending Reviews</h2>
           <div className="space-y-4">
-            {receivedUnreviewed.map((service) => (
+            {pendingReviews.map((review) => (
               <UnreviewedServiceCard
-                key={service.id}
-                service={service}
+                key={review.publicKey.toString()}
+                review={review}
                 type="received"
-                onReview={(rating, review) => {}}
+                onReviewSubmit={onReviewSubmit}
               />
             ))}
           </div>
         </div>
-      )} */}
+      )}
 
       {/* Review History Section */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Review History</h2>
         <div className="space-y-4">
-          {data?.length === 0 ? (
+          {completedReviews.length === 0 ? (
             <Card>
               <CardContent className="p-6 text-center text-muted-foreground">
                 No reviews received yet
               </CardContent>
             </Card>
           ) : (
-            data?.map((review) => (
+            completedReviews.map((review) => (
               <ReviewCard
-                key={review.account.reviewId}
+                key={review.publicKey.toString()}
                 review={review}
                 type="received"
               />

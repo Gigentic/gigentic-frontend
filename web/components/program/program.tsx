@@ -52,14 +52,22 @@ export function ReviewsMock() {
     return <div>Error loading reviews: {error.message}</div>;
   }
 
+  // concatenate received and given reviews
+  const allReviews = [
+    ...(reviews?.completed.received || []),
+    ...(reviews?.completed.given || []),
+    ...(reviews?.pending.toGive || []),
+    ...(reviews?.pending.toReceive || []),
+  ];
+
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold">Reviews on Chain</h2>
       <div className="space-y-4">
-        {!reviews?.length ? (
+        {!allReviews?.length ? (
           <div>No reviews found on chain</div>
         ) : (
-          reviews.map((review) => (
+          allReviews.map((review) => (
             <Card
               key={review.publicKey.toString()}
               className="p-4 border rounded-lg space-y-2"

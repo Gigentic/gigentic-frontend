@@ -1,5 +1,5 @@
 import { Keypair, PublicKey } from '@solana/web3.js';
-import { Review } from '@/lib/hooks/blockchain/use-reviews';
+import { Review } from '@/types/review';
 
 // Create dummy public keys
 const ALICE = new PublicKey('7f6LTZcMxefrhyJssF7ws3DcQa56r4et6Vkni9BMbB9y');

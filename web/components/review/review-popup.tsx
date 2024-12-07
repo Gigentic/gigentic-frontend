@@ -6,10 +6,10 @@ import {
   Button,
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
   Card,
   CardContent,
   CardHeader,
@@ -39,13 +39,13 @@ export default function ReviewPopup({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Release Escrow and Review</Button>
+        <Button>Submit Review</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>You are releasing the escrow!</DialogTitle>
+          <DialogTitle className="text-xl">Leave a Review!</DialogTitle>
           <DialogDescription>
-            Now you can rate and share your experience with the service provider
+            Rate and review your experience with this service
           </DialogDescription>
         </DialogHeader>
         <ReviewForm
@@ -92,12 +92,6 @@ function ReviewForm({
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-3">
-          <div className="space-y-1">
-            <CardTitle className="text-xl font-bold">Leave a Review!</CardTitle>
-            <CardDescription>
-              Share your experience with the service provider
-            </CardDescription>
-          </div>
           <div>
             <Label htmlFor="rating">Rating</Label>
             <div className="flex space-x-1 mt-1">
@@ -114,7 +108,7 @@ function ReviewForm({
             <Label htmlFor="review">Review</Label>
             <Textarea
               id="review"
-              placeholder="Write your review here"
+              placeholder="Share your experience with the service provider"
               value={review}
               onChange={(e) => setReview(e.target.value)}
               className="mt-1"
