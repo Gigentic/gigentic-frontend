@@ -17,7 +17,6 @@ import {
 } from '@gigentic-frontend/ui-kit/ui';
 import { useTransactionToast } from '@/components/ui/ui-layout';
 import { Plus, X } from 'lucide-react';
-import { toast } from 'sonner';
 
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -80,7 +79,7 @@ export function AddService() {
 
   const handleCreateService = async (data: ServiceFormData) => {
     if (!connected || !publicKey || !signTransaction) {
-      toast.error('Please connect your wallet first');
+      console.warn('Please connect your wallet first');
       return;
     }
 
@@ -120,26 +119,6 @@ export function AddService() {
 
       console.log('Transaction signature:', tx);
       console.log('Service offering created successfully.');
-      toast.success(
-        <div className="flex flex-col gap-2">
-          <div className="font-semibold">Service created successfully!</div>
-          <div className="text-sm text-muted-foreground">
-            <div>Title: {data.title}</div>
-            <div>Price: {data.price} SOL</div>
-          </div>
-          <a
-            href={`https://explorer.solana.com/tx/${tx}?cluster=${process.env.NEXT_PUBLIC_SOLANA_NETWORK}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-primary hover:underline"
-          >
-            View transaction
-          </a>
-        </div>,
-        {
-          duration: 5000,
-        },
-      );
 
       transactionToast(tx);
 
@@ -148,7 +127,6 @@ export function AddService() {
       setShowForm(false);
     } catch (error) {
       console.error('Error creating service:', error);
-      toast.error('Failed to create service. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
