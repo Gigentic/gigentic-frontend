@@ -1,19 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useGigenticProgram } from './use-gigentic-program';
 import { useCluster } from '@/cluster/cluster-data-access';
-import { EscrowAccount } from '@/lib/types/escrow';
-import { useServiceRegistry } from './use-service-registry';
 import { PublicKey } from '@solana/web3.js';
+
+import { useGigenticProgram } from './use-gigentic-program';
+import { extractServiceTitle } from './use-service-account';
+import { useServiceRegistry } from './use-service-registry';
+import { EscrowAccount } from '@/lib/types/escrow';
 
 export interface EscrowData {
   escrows: EscrowAccount[];
   titles: Record<string, string>;
-}
-
-function extractServiceTitle(description: string): string {
-  const titleMatch = description.match(/title:\s*(.*?)(?:\||$)/);
-  return titleMatch ? titleMatch[1].trim() : 'Title not found';
 }
 
 export function useEscrowData() {
