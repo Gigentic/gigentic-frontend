@@ -32,17 +32,10 @@ export interface ReviewsData {
   };
 }
 
-export interface ReviewSubmitData {
-  reviewId: string;
-  rating: number;
-  review: string;
-  role: 'customer' | 'provider';
-}
-
+// UI Components Props
 export interface ReviewTabProps {
   completedReviews: Review[];
   pendingReviews: Review[];
-  onReviewSubmit: (reviewData: ReviewSubmitData) => Promise<void>;
 }
 
 export interface ReviewCardProps {
@@ -50,14 +43,21 @@ export interface ReviewCardProps {
   type: 'given' | 'received';
 }
 
-export interface UnreviewedServiceCardProps extends ReviewCardProps {
-  onReviewSubmit: (reviewData: ReviewSubmitData) => Promise<void>;
+// Form Data Types
+export interface ReviewFormData {
+  rating: number;
+  review: string;
 }
 
 export interface ReviewFormProps {
-  escrowId: string;
   serviceTitle: string;
   providerName: string;
   amount: string;
-  onSubmitReview: (escrowId: string, rating: number, review: string) => void;
+  onSubmit: (data: ReviewFormData) => Promise<void>;
+}
+
+// Blockchain Submission Type
+export interface ReviewSubmitData extends ReviewFormData {
+  reviewId: string;
+  role: 'customer' | 'provider';
 }

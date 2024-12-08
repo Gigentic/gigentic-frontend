@@ -8,7 +8,6 @@ import { UnreviewedServiceCard } from './unreviewed-service-card';
 export function ReceivedReviews({
   completedReviews,
   pendingReviews,
-  onReviewSubmit,
 }: ReviewTabProps) {
   return (
     <div className="space-y-8">
@@ -22,7 +21,6 @@ export function ReceivedReviews({
                 key={review.publicKey.toString()}
                 review={review}
                 type="received"
-                onReviewSubmit={onReviewSubmit}
               />
             ))}
           </div>

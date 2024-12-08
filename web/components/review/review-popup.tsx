@@ -10,110 +10,103 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogDescription,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
   Label,
   Textarea,
+  DialogFooter,
 } from '@gigentic-frontend/ui-kit/ui';
+
 import { ReviewFormProps } from '@/types/review';
 
-export default function ReviewPopup({
-  escrowId,
-  serviceTitle,
-  providerName,
-  amount,
-  onSubmitReview,
-}: ReviewFormProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button>Submit Review</Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle className="text-xl">Leave a Review!</DialogTitle>
-          <DialogDescription>
-            Rate and review your experience with this service
-          </DialogDescription>
-        </DialogHeader>
-        <ReviewForm
-          escrowId={escrowId}
-          serviceTitle={serviceTitle}
-          providerName={providerName}
-          amount={amount}
-          onSubmit={(rating, review) => {
-            onSubmitReview(escrowId, rating, review);
-            setIsOpen(false);
-          }}
-        />
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function ReviewForm({
-  escrowId,
+export function ReviewPopup({
   serviceTitle,
   providerName,
   amount,
   onSubmit,
-}: Omit<ReviewFormProps, 'onSubmitReview'> & {
-  onSubmit: (rating: number, review: string) => void;
-}) {
+}: ReviewFormProps) {
+  const [isOpen, setIsOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(rating, review);
-    setRating(0);
-    setReview('');
+  const handleSubmit = async () => {
+    if (rating === 0) return;
+
+    setIsSubmitting(true);
+    try {
+      await onSubmit({ rating, review });
+      setIsOpen(false);
+      // Reset form
+      setRating(0);
+      setReview('');
+    } catch (error) {
+      console.error('Failed to submit review:', error);
+      // TODO: Show error toast
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader className="space-y-1.5">
-        <CardTitle className="text-xl">Service: {serviceTitle}</CardTitle>
-        <CardDescription className="space-y-0.5">
-          Amount: {amount} SOL
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <div>
-            <Label htmlFor="rating">Rating</Label>
-            <div className="flex space-x-1 mt-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star
-                  key={star}
-                  className={`w-6 h-6 cursor-pointer ${star <= rating ? 'fill-primary text-primary' : 'text-muted-foreground'}`}
-                  onClick={() => setRating(star)}
-                />
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline">Submit Review</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle className="text-xl">Review Service</DialogTitle>
+          <DialogDescription>
+            Rate and review your experience with this service
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="space-y-2">
+            <p className="text-sm font-medium">{serviceTitle}</p>
+            <p className="text-sm text-muted-foreground">
+              Provider: {providerName}
+              <br />
+              Amount: {amount} SOL
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Label>Rating</Label>
+            <div className="flex gap-1">
+              {[1, 2, 3, 4, 5].map((value) => (
+                <Button
+                  key={value}
+                  variant="ghost"
+                  size="sm"
+                  className={
+                    value <= rating
+                      ? 'text-yellow-500'
+                      : 'text-muted-foreground'
+                  }
+                  onClick={() => setRating(value)}
+                >
+                  <Star className="h-5 w-5" />
+                </Button>
               ))}
             </div>
           </div>
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="review">Review</Label>
             <Textarea
               id="review"
-              placeholder="Share your experience with the service provider"
               value={review}
               onChange={(e) => setReview(e.target.value)}
-              className="mt-1"
-              rows={4}
-              required
+              placeholder="Write your review..."
             />
           </div>
-          <div className="flex justify-center">
-            <Button type="submit">Submit Review</Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+        </div>
+        <DialogFooter>
+          <Button
+            type="submit"
+            onClick={handleSubmit}
+            disabled={rating === 0 || isSubmitting}
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit Review'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

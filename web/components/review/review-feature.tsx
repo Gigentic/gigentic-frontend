@@ -13,16 +13,9 @@ import { Loader2 } from 'lucide-react';
 import { useReviewsFromMock, useReviews } from '@/hooks/blockchain/use-reviews';
 import { ReceivedReviews } from './received-reviews';
 import { GivenReviews } from './given-reviews';
-import { ReviewSubmitData } from '@/types/review';
 
 export default function ReviewFeature() {
-  // const { data, isLoading, error } = useReviewsFromMock();
   const { data, isLoading, error } = useReviews();
-
-  const handleReviewSubmit = async (reviewData: ReviewSubmitData) => {
-    // TODO: Implement review submission
-    console.log('Submitting review:', reviewData);
-  };
 
   if (isLoading) {
     return (
@@ -70,14 +63,12 @@ export default function ReviewFeature() {
             <ReceivedReviews
               completedReviews={data.completed.received}
               pendingReviews={data.pending.toReceive}
-              onReviewSubmit={handleReviewSubmit}
             />
           </TabsContent>
           <TabsContent value="given" className="mt-6">
             <GivenReviews
               completedReviews={data.completed.given}
               pendingReviews={data.pending.toGive}
-              onReviewSubmit={handleReviewSubmit}
             />
           </TabsContent>
         </Tabs>

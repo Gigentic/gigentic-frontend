@@ -1,15 +1,22 @@
 'use client';
 
 import { Card, CardContent } from '@gigentic-frontend/ui-kit/ui';
+import { ReviewPopup } from './review-popup';
+import { ReviewCardProps, ReviewFormData } from '@/types/review';
 import { Briefcase, User } from 'lucide-react';
-import { UnreviewedServiceCardProps } from '@/types/review';
-import ReviewPopup from './review-popup';
+import { useReviewSubmission } from '@/hooks/blockchain/use-review-submission';
 
-export function UnreviewedServiceCard({
-  review,
-  type,
-  onReviewSubmit,
-}: UnreviewedServiceCardProps) {
+export function UnreviewedServiceCard({ review, type }: ReviewCardProps) {
+  const { submitReview } = useReviewSubmission();
+
+  const handleFormSubmit = async (formData: ReviewFormData) => {
+    await submitReview({
+      ...formData,
+      reviewId: review.account.reviewId,
+      role: type === 'given' ? 'customer' : 'provider',
+    });
+  };
+
   const isProvider = type === 'received';
   const Icon = isProvider ? Briefcase : User;
 
@@ -22,7 +29,9 @@ export function UnreviewedServiceCard({
             <div>
               <h3 className="font-medium">{review.serviceTitle}</h3>
               <p className="text-sm text-muted-foreground">
-                {type === 'given' ? 'Provider' : 'Customer'}:{' '}
+                {type === 'given' ? 'Service Provider' : 'Customer'}:
+              </p>
+              <p className="font-medium">
                 {type === 'given'
                   ? review.account.serviceProvider.toString()
                   : review.account.customer.toString()}
@@ -30,18 +39,10 @@ export function UnreviewedServiceCard({
             </div>
           </div>
           <ReviewPopup
-            escrowId={review.account.reviewId}
             serviceTitle={review.serviceTitle}
             providerName={review.account.serviceProvider.toString()}
-            amount="0.1"
-            onSubmitReview={(escrowId, rating, reviewText) => {
-              onReviewSubmit({
-                reviewId: escrowId,
-                rating,
-                review: reviewText,
-                role: type === 'given' ? 'customer' : 'provider',
-              });
-            }}
+            amount="0.1" // TODO: Add actual amount from the service
+            onSubmit={handleFormSubmit}
           />
         </div>
       </CardContent>
