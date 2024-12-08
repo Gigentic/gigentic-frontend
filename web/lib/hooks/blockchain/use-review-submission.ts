@@ -17,6 +17,18 @@ export function useReviewSubmission() {
 
       console.log('Review submitted:', data);
 
+      // if (data.role === 'customer') {
+      //   await program.methods.customerToProviderRating(
+      //     data.rating,
+      //     data.review,
+      //   );
+      // } else {
+      //   await program.methods.providerToCustomerRating(
+      //     data.rating,
+      //     data.review,
+      //   );
+      // }
+
       // TODO: Replace with actual program method once contract is ready
       // const tx = await program.methods
       //   .submitReview({

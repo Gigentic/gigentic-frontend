@@ -67,6 +67,7 @@ export function ReviewPopupDialog({
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">{serviceTitle}</CardTitle>
+            <Label>{providerName.slice(0, 4)}...</Label>
             <CardDescription>Amount: {amount} SOL</CardDescription>
           </CardHeader>
           <CardContent>

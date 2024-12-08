@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useGigenticProgram } from './use-gigentic-program';
 import { useCluster } from '@/cluster/cluster-data-access';
-import { ReviewsData, ChainReview, Review } from '@/types/review';
+import { ReviewsData, ChainReview, Review, Role, Status } from '@/types/review';
 import { PublicKey } from '@solana/web3.js';
 
 import {
@@ -12,36 +12,44 @@ import {
   mockReceivedReviews,
 } from '@/components/review/mock-data';
 
+// Helper function to determine role
+function determineRole(review: ChainReview, publicKey: PublicKey): Role {
+  const isCustomer = review.account.customer.equals(publicKey);
+  const isProvider = review.account.serviceProvider.equals(publicKey);
+
+  if (isCustomer && isProvider) {
+    console.warn(
+      'User is both customer and provider for review:',
+      review.account.reviewId,
+    );
+    return 'customer'; // Default to customer in edge case
+  }
+  if (isCustomer) return 'customer';
+  if (isProvider) return 'provider';
+  throw new Error(
+    `Invalid state: User ${publicKey.toString()} is neither customer nor provider`,
+  );
+}
+
+// Helper function to determine review status based on role
+function determineStatus(review: ChainReview, role: Role): Status {
+  return role === 'customer' // User is Customer
+    ? review.account.customerToProviderRating === 0
+      ? 'pending' // Customer hasn't rated yet
+      : 'completed' // Customer has rated
+    : // User is Provider
+      review.account.providerToCustomerRating === 0
+      ? 'pending' // Provider hasn't rated yet
+      : 'completed'; // Provider has rated
+}
+
 // Helper function to transform ChainReview into Review with UI fields
 function transformChainReview(
   review: ChainReview,
   publicKey: PublicKey,
 ): Review {
-  const isCustomer = review.account.customer.equals(publicKey);
-  const isProvider = review.account.serviceProvider.equals(publicKey);
-
-  // Determine role - handle all possible cases
-  let role: 'customer' | 'provider';
-  if (isCustomer && isProvider) {
-    // throw new Error('Invalid state: User cannot be both customer and provider');
-    console.warn('User is both customer and provider');
-    role = 'customer';
-  } else if (isCustomer) {
-    role = 'customer';
-  } else if (isProvider) {
-    role = 'provider';
-  } else {
-    throw new Error('Invalid state: User is neither customer nor provider');
-  }
-
-  // Determine status based on role and ratings
-  const status = isCustomer
-    ? review.account.customerToProviderRating === 0
-      ? 'pending'
-      : 'completed'
-    : review.account.providerToCustomerRating === 0
-      ? 'pending'
-      : 'completed';
+  const role = determineRole(review, publicKey);
+  const status = determineStatus(review, role);
 
   return {
     ...review,

@@ -1,5 +1,8 @@
 import { PublicKey } from '@solana/web3.js';
 
+export type Role = 'customer' | 'provider';
+export type Status = 'pending' | 'completed';
+
 // Basic chain review structure
 export interface ChainReview {
   publicKey: PublicKey;
@@ -17,8 +20,8 @@ export interface ChainReview {
 // UI wrapper for chain data
 export interface Review extends ChainReview {
   serviceTitle: string;
-  status: 'pending' | 'completed';
-  role: 'customer' | 'provider';
+  status: Status;
+  role: Role;
 }
 
 export interface ReviewsData {
@@ -59,5 +62,5 @@ export interface ReviewFormProps {
 // Blockchain Submission Type
 export interface ReviewSubmitData extends ReviewFormData {
   reviewId: string;
-  role: 'customer' | 'provider';
+  role: Role;
 }
