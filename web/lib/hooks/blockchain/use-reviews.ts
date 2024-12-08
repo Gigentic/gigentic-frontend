@@ -38,7 +38,7 @@ export function useReviews() {
 
       // Fetch all reviews from the program
       const reviews = await program.account.review.all();
-      console.log(`Fetched ${reviews.length} raw reviews`);
+      // console.log(`Fetched ${reviews.length} raw reviews`);
 
       // Process all reviews through the categorization helper
       const transformedData = categorizeReviews(
