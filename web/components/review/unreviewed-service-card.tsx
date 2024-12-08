@@ -38,7 +38,7 @@ export function UnreviewedServiceCard({ review, type }: ReviewCardProps) {
             </div>
             <ReviewPopupDialog
               serviceTitle={review.serviceTitle}
-              providerName={review.account.serviceProvider.toString()}
+              providerAddress={review.account.serviceProvider.toString()}
               amount={review.serviceFee.toString()}
               onSubmit={handleFormSubmit}
             />

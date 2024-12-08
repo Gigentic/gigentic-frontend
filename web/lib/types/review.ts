@@ -55,7 +55,7 @@ export interface ReviewFormData {
 
 export interface ReviewFormProps {
   serviceTitle: string;
-  providerName: string;
+  providerAddress: string;
   amount: string;
   onSubmit: (data: ReviewFormData) => Promise<void>;
 }
