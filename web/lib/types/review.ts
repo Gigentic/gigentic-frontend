@@ -18,10 +18,11 @@ export interface ChainReview {
 
 // UI wrapper for chain data
 export interface Review extends ChainReview {
-  serviceTitle: string;
   status: Status;
   role: Role;
   serviceAccount: PublicKey;
+  serviceTitle: string;
+  serviceFee: number;
 }
 
 export interface ReviewsData {

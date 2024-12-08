@@ -2,7 +2,6 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useGigenticProgram } from './use-gigentic-program';
 import { useCluster } from '@/cluster/cluster-data-access';
 import {
   ReviewsData,
@@ -12,8 +11,12 @@ import {
   Role,
   Status,
 } from '@/types/review';
-import { PublicKey } from '@solana/web3.js';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+
+import { useGigenticProgram } from './use-gigentic-program';
 import { useServiceRegistry } from './use-service-registry';
+import { extractServiceTitle } from './use-service-account';
+
 import {
   mockUnreviewedServicesReceived,
   mockUnreviewedServicesGiven,
@@ -82,14 +85,24 @@ function determineStatus(review: ChainReview, role: Role): Status {
       : 'completed'; // Provider has rated
 }
 
-// Helper function to find service account for a review
-function findServiceAccountForReview(
+// Helper function to find service account details for a review
+function findServiceDetailsForReview(
   review: ChainReview,
   services: { publicKey: PublicKey; account: ServiceAccount }[],
-): PublicKey | undefined {
-  return services.find(({ account }) =>
+): { serviceAccount?: PublicKey; serviceFee: number; serviceTitle: string } {
+  const matchingService = services.find(({ account }) =>
     account.reviews.some((r: PublicKey) => r.equals(review.publicKey)),
-  )?.publicKey;
+  );
+
+  return {
+    serviceAccount: matchingService?.publicKey,
+    serviceFee: matchingService?.account.price
+      ? matchingService.account.price / LAMPORTS_PER_SOL
+      : -1,
+    serviceTitle: matchingService
+      ? extractServiceTitle(matchingService.account.description)
+      : 'Unnamed Service',
+  };
 }
 
 // Helper function to transform ChainReview into Review with UI fields
@@ -101,8 +114,8 @@ function transformChainReview(
   const role = determineRole(review, publicKey);
   const status = determineStatus(review, role);
   try {
-    const serviceAccount = findServiceAccountForReview(review, services);
-
+    const { serviceAccount, serviceFee, serviceTitle } =
+      findServiceDetailsForReview(review, services);
     if (!serviceAccount) {
       // console.warn(
       //   `Service account not found for review ${review.account.reviewId}`,
@@ -112,10 +125,11 @@ function transformChainReview(
 
     return {
       ...review,
-      serviceTitle: 'Service Title', // TODO: Implement actual service title
       status,
       role,
+      serviceTitle,
       serviceAccount,
+      serviceFee,
     };
   } catch (error) {
     console.error(
