@@ -53,10 +53,16 @@ function transformChainReview(
 
 // Helper function to check if a user is involved in a review
 function isUserInvolved(review: ChainReview, publicKey: PublicKey): boolean {
-  return (
-    review.account.customer.equals(publicKey) ||
-    review.account.serviceProvider.equals(publicKey)
-  );
+  const isCustomer = review.account.customer.equals(publicKey);
+  const isProvider = review.account.serviceProvider.equals(publicKey);
+
+  // Filter out self-reviews where user is both customer and provider
+  if (isCustomer && isProvider) {
+    console.warn('Filtered out self-review:', review.account.reviewId);
+    return false;
+  }
+
+  return isCustomer || isProvider;
 }
 
 // Helper function to categorize reviews by all edge cases
