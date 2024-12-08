@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent } from '@gigentic-frontend/ui-kit/ui';
-import { ReviewPopup } from './review-popup';
+import { ReviewPopupDialog } from './review-popup-dialog';
 import { ReviewCardProps, ReviewFormData } from '@/types/review';
 import { Briefcase, User } from 'lucide-react';
 import { useReviewSubmission } from '@/hooks/blockchain/use-review-submission';
@@ -38,7 +38,7 @@ export function UnreviewedServiceCard({ review, type }: ReviewCardProps) {
               </p>
             </div>
           </div>
-          <ReviewPopup
+          <ReviewPopupDialog
             serviceTitle={review.serviceTitle}
             providerName={review.account.serviceProvider.toString()}
             amount="0.1" // TODO: Add actual amount from the service
