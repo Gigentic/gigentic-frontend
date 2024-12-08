@@ -1,9 +1,14 @@
+'use client';
+
 import { useQuery } from '@tanstack/react-query';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useGigenticProgram } from './use-gigentic-program';
 import { useCluster } from '@/cluster/cluster-data-access';
 import { ReviewsData, ChainReview, Review, Role, Status } from '@/types/review';
 import { PublicKey } from '@solana/web3.js';
+import { serviceRegistryPubKey } from './use-service-registry';
+import { Program } from '@coral-xyz/anchor';
+import { Gigentic } from '@gigentic-frontend/anchor';
 
 import {
   mockUnreviewedServicesReceived,
@@ -43,20 +48,57 @@ function determineStatus(review: ChainReview, role: Role): Status {
       : 'completed'; // Provider has rated
 }
 
+// Helper function to find service account for a review
+async function findServiceAccountForReview(
+  review: ChainReview,
+  program: Program<Gigentic>,
+): Promise<PublicKey> {
+  const serviceRegistry = await program.account.serviceRegistry.fetch(
+    serviceRegistryPubKey,
+  );
+
+  for (const serviceAddress of serviceRegistry.serviceAccountAddresses) {
+    try {
+      const serviceAccount =
+        await program.account.service.fetch(serviceAddress);
+      if (serviceAccount.reviews.some((r) => r.equals(review.publicKey))) {
+        return serviceAddress;
+      }
+    } catch (error) {
+      console.error(`Error fetching service account ${serviceAddress}:`, error);
+    }
+  }
+
+  throw new Error(
+    `Service account not found for review ${review.account.reviewId}`,
+  );
+}
+
 // Helper function to transform ChainReview into Review with UI fields
-function transformChainReview(
+async function transformChainReview(
   review: ChainReview,
   publicKey: PublicKey,
-): Review {
+  program: Program<Gigentic>,
+): Promise<Review> {
   const role = determineRole(review, publicKey);
   const status = determineStatus(review, role);
 
-  return {
-    ...review,
-    serviceTitle: 'Service Title', // TODO: Implement actual service title
-    status,
-    role,
-  };
+  try {
+    const serviceAccount = await findServiceAccountForReview(review, program);
+    return {
+      ...review,
+      serviceTitle: 'Service Title', // TODO: Implement actual service title
+      status,
+      role,
+      serviceAccount,
+    };
+  } catch (error) {
+    console.error(
+      `Error transforming review ${review.account.reviewId}:`,
+      error,
+    );
+    throw error;
+  }
 }
 
 // Helper function to check if a user is involved in a review
@@ -74,7 +116,11 @@ function isUserInvolved(review: ChainReview, publicKey: PublicKey): boolean {
 }
 
 // Helper function to categorize reviews by all edge cases
-function categorizeReviews(reviews: ChainReview[], publicKey: PublicKey) {
+async function categorizeReviews(
+  reviews: ChainReview[],
+  publicKey: PublicKey,
+  program: Program<Gigentic>,
+) {
   // First filter for only reviews involving the current user
   const relevantReviews = reviews.filter((review) =>
     isUserInvolved(review, publicKey),
@@ -95,12 +141,18 @@ function categorizeReviews(reviews: ChainReview[], publicKey: PublicKey) {
     },
   };
 
-  relevantReviews.forEach((review) => {
-    const transformed = transformChainReview(review, publicKey);
-    const isCustomer = review.account.customer.equals(publicKey);
+  // Transform all reviews in parallel
+  const transformedReviews = await Promise.all(
+    relevantReviews.map((review) =>
+      transformChainReview(review, publicKey, program),
+    ),
+  );
+
+  transformedReviews.forEach((transformed) => {
+    const isCustomer = transformed.account.customer.equals(publicKey);
 
     if (isCustomer) {
-      if (review.account.customerToProviderRating !== 0) {
+      if (transformed.account.customerToProviderRating !== 0) {
         // Customer has given rating
         categorized.completed.given.push(transformed);
       } else {
@@ -108,7 +160,7 @@ function categorizeReviews(reviews: ChainReview[], publicKey: PublicKey) {
         categorized.pending.toGive.push(transformed);
       }
 
-      if (review.account.providerToCustomerRating !== 0) {
+      if (transformed.account.providerToCustomerRating !== 0) {
         // Customer has received rating
         categorized.completed.received.push(transformed);
       } else {
@@ -117,7 +169,7 @@ function categorizeReviews(reviews: ChainReview[], publicKey: PublicKey) {
       }
     } else {
       // Provider cases
-      if (review.account.providerToCustomerRating !== 0) {
+      if (transformed.account.providerToCustomerRating !== 0) {
         // Provider has given rating
         categorized.completed.given.push(transformed);
       } else {
@@ -125,7 +177,7 @@ function categorizeReviews(reviews: ChainReview[], publicKey: PublicKey) {
         categorized.pending.toGive.push(transformed);
       }
 
-      if (review.account.customerToProviderRating !== 0) {
+      if (transformed.account.customerToProviderRating !== 0) {
         // Provider has received rating
         categorized.completed.received.push(transformed);
       } else {
@@ -153,7 +205,11 @@ export function useReviews() {
       console.log(`Fetched ${reviews.length} raw reviews`);
 
       // Process all reviews through the categorization helper
-      const transformedData = categorizeReviews(reviews, publicKey);
+      const transformedData = await categorizeReviews(
+        reviews,
+        publicKey,
+        program,
+      );
 
       console.log('Transformed review data:', transformedData);
       return transformedData;

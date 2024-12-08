@@ -14,6 +14,7 @@ export function UnreviewedServiceCard({ review, type }: ReviewCardProps) {
       ...formData,
       reviewId: review.account.reviewId,
       role: review.role,
+      serviceAccount: review.serviceAccount,
     });
   };
 

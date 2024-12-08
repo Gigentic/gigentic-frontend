@@ -22,6 +22,7 @@ export interface Review extends ChainReview {
   serviceTitle: string;
   status: Status;
   role: Role;
+  serviceAccount: PublicKey;
 }
 
 export interface ReviewsData {
@@ -63,4 +64,5 @@ export interface ReviewFormProps {
 export interface ReviewSubmitData extends ReviewFormData {
   reviewId: string;
   role: Role;
+  serviceAccount: PublicKey;
 }
