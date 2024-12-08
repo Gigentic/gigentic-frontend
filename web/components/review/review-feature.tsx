@@ -42,7 +42,7 @@ export default function ReviewFeature() {
     );
   }
 
-  if (!data) return null;
+  if (!data?.completed || !data?.pending) return null;
 
   return (
     <div className="container mx-auto py-6 px-4 md:py-12">
@@ -50,7 +50,7 @@ export default function ReviewFeature() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Reviews</h1>
           <p className="text-muted-foreground text-lg">
-            Manage and view your service reviews
+            Manage and view your reviews
           </p>
         </div>
 
