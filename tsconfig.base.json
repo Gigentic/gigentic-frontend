@@ -17,6 +17,7 @@
     "paths": {
       "@/*": ["./web/*"],
       "@gigentic-frontend/anchor": ["anchor/src/index.ts"],
+      "@gigentic-frontend/anchor/types": ["anchor/target/types/gigentic.ts"],
       "@gigentic-frontend/ui-kit/ui": ["libs/ui-kit/ui/src/index.ts"],
       "@gigentic-frontend/ui-kit/ui/*": ["libs/ui-kit/ui/src/*"],
       "@gigentic-frontend/ui-kit/util": ["libs/ui-kit/util/src/index.ts"],

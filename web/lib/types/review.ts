@@ -1,20 +1,19 @@
 import { PublicKey } from '@solana/web3.js';
+import { IdlAccounts } from '@coral-xyz/anchor';
+import { Gigentic } from '@gigentic-frontend/anchor/types';
 
+// Define account types using IdlAccounts helper
+export type ServiceAccount = IdlAccounts<Gigentic>['service'];
+export type ReviewAccount = IdlAccounts<Gigentic>['review'];
+
+// Helper types
 export type Role = 'customer' | 'provider';
 export type Status = 'pending' | 'completed';
 
 // Basic chain review structure
 export interface ChainReview {
   publicKey: PublicKey;
-  account: {
-    reviewId: string;
-    providerToCustomerRating: number;
-    customerToProviderRating: number;
-    customer: PublicKey;
-    serviceProvider: PublicKey;
-    providerToCustomerReview: string;
-    customerToProviderReview: string;
-  };
+  account: ReviewAccount;
 }
 
 // UI wrapper for chain data

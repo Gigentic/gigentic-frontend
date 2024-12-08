@@ -4,7 +4,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useGigenticProgram } from './use-gigentic-program';
 import { useCluster } from '@/cluster/cluster-data-access';
-import { ReviewsData, ChainReview, Review, Role, Status } from '@/types/review';
+import {
+  ReviewsData,
+  ChainReview,
+  Review,
+  ServiceAccount,
+  Role,
+  Status,
+} from '@/types/review';
 import { PublicKey } from '@solana/web3.js';
 import { useServiceRegistry } from './use-service-registry';
 import {
@@ -13,6 +20,36 @@ import {
   mockGivenReviews,
   mockReceivedReviews,
 } from '@/components/review/mock-data';
+
+export function useReviews() {
+  const { publicKey } = useWallet();
+  const { program } = useGigenticProgram();
+  const { cluster } = useCluster();
+  const { serviceAccounts } = useServiceRegistry();
+
+  return useQuery<ReviewsData>({
+    queryKey: ['reviews', { cluster, publicKey: publicKey?.toString() }],
+    queryFn: async () => {
+      if (!publicKey) throw new Error('Wallet not connected');
+      if (!serviceAccounts.data) throw new Error('Service accounts not loaded');
+
+      // Fetch all reviews from the program
+      const reviews = await program.account.review.all();
+      console.log(`Fetched ${reviews.length} raw reviews`);
+
+      // Process all reviews through the categorization helper
+      const transformedData = categorizeReviews(
+        reviews,
+        publicKey,
+        serviceAccounts.data,
+      );
+
+      console.log('Transformed review data:', transformedData);
+      return transformedData;
+    },
+    enabled: !!publicKey && !!program && !!serviceAccounts.data,
+  });
+}
 
 // Helper function to determine role
 function determineRole(review: ChainReview, publicKey: PublicKey): Role {
@@ -48,7 +85,7 @@ function determineStatus(review: ChainReview, role: Role): Status {
 // Helper function to find service account for a review
 function findServiceAccountForReview(
   review: ChainReview,
-  services: { publicKey: PublicKey; account: any }[],
+  services: { publicKey: PublicKey; account: ServiceAccount }[],
 ): PublicKey | undefined {
   return services.find(({ account }) =>
     account.reviews.some((r: PublicKey) => r.equals(review.publicKey)),
@@ -59,7 +96,7 @@ function findServiceAccountForReview(
 function transformChainReview(
   review: ChainReview,
   publicKey: PublicKey,
-  services: { publicKey: PublicKey; account: any }[],
+  services: { publicKey: PublicKey; account: ServiceAccount }[],
 ): Review | null {
   const role = determineRole(review, publicKey);
   const status = determineStatus(review, role);
@@ -67,9 +104,9 @@ function transformChainReview(
     const serviceAccount = findServiceAccountForReview(review, services);
 
     if (!serviceAccount) {
-      console.warn(
-        `Service account not found for review ${review.account.reviewId}`,
-      );
+      // console.warn(
+      //   `Service account not found for review ${review.account.reviewId}`,
+      // );
       return null;
     }
 
@@ -107,7 +144,7 @@ function isUserInvolved(review: ChainReview, publicKey: PublicKey): boolean {
 function categorizeReviews(
   reviews: ChainReview[],
   publicKey: PublicKey,
-  services: { publicKey: PublicKey; account: any }[],
+  services: { publicKey: PublicKey; account: ServiceAccount }[],
 ) {
   // First filter for only reviews involving the current user
   const relevantReviews = reviews.filter((review) =>
@@ -172,36 +209,6 @@ function categorizeReviews(
   });
 
   return categorized;
-}
-
-export function useReviews() {
-  const { publicKey } = useWallet();
-  const { program } = useGigenticProgram();
-  const { cluster } = useCluster();
-  const { serviceAccounts } = useServiceRegistry();
-
-  return useQuery<ReviewsData>({
-    queryKey: ['reviews', { cluster, publicKey: publicKey?.toString() }],
-    queryFn: async () => {
-      if (!publicKey) throw new Error('Wallet not connected');
-      if (!serviceAccounts.data) throw new Error('Service accounts not loaded');
-
-      // Fetch all reviews from the program
-      const reviews = await program.account.review.all();
-      console.log(`Fetched ${reviews.length} raw reviews`);
-
-      // Process all reviews through the categorization helper
-      const transformedData = categorizeReviews(
-        reviews,
-        publicKey,
-        serviceAccounts.data,
-      );
-
-      console.log('Transformed review data:', transformedData);
-      return transformedData;
-    },
-    enabled: !!publicKey && !!program && !!serviceAccounts.data,
-  });
 }
 
 // TODO: Used on program page. Remove this when all reviews work
