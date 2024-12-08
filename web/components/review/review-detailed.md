@@ -46,30 +46,46 @@ flowchart TD
       RCP[ReviewCardProps]:::prop
       RCP --> RC
       RC[ReviewCard]:::component
-      GR -->|"Review + type + onSubmit"| USCP
-      RR -->|"Review + type + onSubmit"| USCP
-      USCP[UnreviewedServiceCardProps]:::prop
+      GR -->|"Review + type"| USCP
+      RR -->|"Review + type"| USCP
+      USCP[ReviewCardProps]:::prop
       USC[UnreviewedServiceCard]:::component
       USCP --> USC
     end
 
-    RP[ReviewPopup]:::component
-    RFP[ReviewFormProps]:::prop
-    RFP --> RF2
-    RF2[ReviewForm]:::component
-    RSD[ReviewSubmitData]:::prop
+    %% Components
+    RPD[ReviewPopupDialog]:::component
 
-    HSR[handleReviewSubmit]:::component
+    %% Hooks and Data
+    URS[useReviewSubmission]:::hook
+    RFD[ReviewFormData]:::dataLayer
+    RSD[ReviewSubmitData]:::dataLayer
 
-    USC -->|"opens"| RP
-    RP -->|"renders"| RF2
+    %% Flow
+    USC -->|"opens"| RPD
+    USC -->|"uses"| URS
+    RPD -->|"emits"| RFD
+    RFD -->|"extends to"| RSD
+    RSD -->|"submits via"| URS
+    URS -->|"Update"| CR[On-Chain Reviews]:::dataLayer
 
 
-    %% Submit Flow
-    USC -->|"ReviewSubmitData"| HSR
-    RSD --> HSR
-    RF2 -->|"rating + review"| HSR
-    HSR -->|"Update"| CR
+
+    %% RP[ReviewPopup]:::component
+    %% RFP[ReviewFormProps]:::prop
+    %% RFP --> RF2
+    %% RF2[ReviewForm]:::component
+    %% RSD[ReviewSubmitData]:::prop
+
+    %% HSR[handleReviewSubmit]:::component
+
+
+
+    %% %% Submit Flow
+    %% USC -->|"ReviewSubmitData"| HSR
+    %% RSD --> HSR
+    %% RF2 -->|"rating + review"| HSR
+    %% HSR -->|"Update"| CR
 
     L1 ~~~ CR
 
