@@ -20,12 +20,12 @@ export function useReviewSubmission() {
       // if (data.role === 'customer') {
       //   await program.methods.customerToProviderRating(
       //     data.rating,
-      //     data.review,
+      //     data.reviewText,
       //   );
       // } else {
       //   await program.methods.providerToCustomerRating(
       //     data.rating,
-      //     data.review,
+      //     data.reviewText,
       //   );
       // }
 

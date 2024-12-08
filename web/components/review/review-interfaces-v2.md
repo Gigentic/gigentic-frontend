@@ -16,6 +16,8 @@ classDiagram
     }
 
     class Review {
+        +PublicKey publicKey
+        +ReviewAccount account
         +string serviceTitle
         +string status [pending|completed]
         +string role [customer|provider]
@@ -48,7 +50,7 @@ classDiagram
 
     class ReviewFormData {
         +number rating
-        +string review
+        +string reviewText
     }
 
     class ReviewFormProps {
@@ -59,6 +61,8 @@ classDiagram
     }
 
     class ReviewSubmitData {
+        +number rating
+        +string reviewText
         +string reviewId
         +string role [customer|provider]
     }

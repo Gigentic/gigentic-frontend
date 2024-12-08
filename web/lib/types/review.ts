@@ -49,7 +49,7 @@ export interface ReviewCardProps {
 // Form Data Types
 export interface ReviewFormData {
   rating: number;
-  review: string;
+  reviewText: string;
 }
 
 export interface ReviewFormProps {

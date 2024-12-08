@@ -30,7 +30,7 @@ export function ReviewPopupDialog({
 }: ReviewFormProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [rating, setRating] = useState(0);
-  const [review, setReview] = useState('');
+  const [reviewText, setReviewText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
@@ -38,11 +38,11 @@ export function ReviewPopupDialog({
 
     setIsSubmitting(true);
     try {
-      await onSubmit({ rating, review });
+      await onSubmit({ rating, reviewText });
       setIsOpen(false);
       // Reset form
       setRating(0);
-      setReview('');
+      setReviewText('');
     } catch (error) {
       console.error('Failed to submit review:', error);
       // TODO: Show error toast
@@ -91,8 +91,8 @@ export function ReviewPopupDialog({
                 className="mt-1"
                 id="review"
                 placeholder="Write your review here"
-                value={review}
-                onChange={(e) => setReview(e.target.value)}
+                value={reviewText}
+                onChange={(e) => setReviewText(e.target.value)}
                 rows={4}
                 required
               />
@@ -104,7 +104,7 @@ export function ReviewPopupDialog({
           <Button
             type="submit"
             onClick={handleSubmit}
-            disabled={rating === 0 || review === '' || isSubmitting}
+            disabled={rating === 0 || reviewText === '' || isSubmitting}
           >
             {isSubmitting ? 'Submitting...' : 'Submit Review'}
           </Button>
