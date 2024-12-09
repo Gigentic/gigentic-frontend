@@ -32,9 +32,11 @@ export const mockUnreviewedServicesReceived: Review[] = [
       providerToCustomerReview: '',
       customerToProviderReview: '',
     },
-    serviceTitle: 'Mobile App Development',
     status: 'pending',
     role: 'customer',
+    serviceTitle: 'Mobile App Development',
+    serviceAccount: new Keypair().publicKey,
+    serviceFee: 1000000,
   },
 ];
 
@@ -54,6 +56,8 @@ export const mockUnreviewedServicesGiven: Review[] = [
     serviceTitle: 'AI Chatbot Development',
     status: 'pending',
     role: 'provider',
+    serviceAccount: new Keypair().publicKey,
+    serviceFee: 1000000,
   },
 ];
 
@@ -74,6 +78,8 @@ export const mockGivenReviews: Review[] = [
     serviceTitle: 'Web Development Service',
     status: 'completed',
     role: 'customer',
+    serviceAccount: new Keypair().publicKey,
+    serviceFee: 1000000,
   },
   {
     publicKey: new Keypair().publicKey,
@@ -89,6 +95,8 @@ export const mockGivenReviews: Review[] = [
     serviceTitle: 'UI/UX Design Service',
     status: 'completed',
     role: 'customer',
+    serviceAccount: new Keypair().publicKey,
+    serviceFee: 1000000,
   },
 ];
 
@@ -109,5 +117,7 @@ export const mockReceivedReviews: Review[] = [
     serviceTitle: 'Machine Learning Model Development',
     status: 'completed',
     role: 'provider',
+    serviceAccount: new Keypair().publicKey,
+    serviceFee: 1000000,
   },
 ];
