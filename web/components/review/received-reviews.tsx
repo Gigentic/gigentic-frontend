@@ -28,7 +28,7 @@ export function ReceivedReviews({
       )}
 
       {/* Review History Section */}
-      <div>
+      {/* <div>
         <h2 className="text-xl font-semibold mb-4">Review History</h2>
         <div className="space-y-4">
           {completedReviews.length === 0 ? (
@@ -47,7 +47,7 @@ export function ReceivedReviews({
             ))
           )}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
