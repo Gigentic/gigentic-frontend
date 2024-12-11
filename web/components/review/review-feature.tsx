@@ -10,7 +10,8 @@ import {
 } from '@gigentic-frontend/ui-kit/ui';
 import { Loader2 } from 'lucide-react';
 
-import { useReviewsFromMock, useReviews } from '@/hooks/blockchain/use-reviews';
+// import { useReviewsFromMock, useReviews } from '@/hooks/blockchain/use-reviews';
+import { useReviews } from '@/hooks/blockchain/use-reviews';
 import { ReceivedReviews } from './received-reviews';
 import { GivenReviews } from './given-reviews';
 
@@ -42,7 +43,7 @@ export default function ReviewFeature() {
     );
   }
 
-  if (!data?.completed || !data?.pending) return null;
+  if (!data) return null;
 
   return (
     <div className="container mx-auto py-6 px-4 md:py-12">
@@ -53,10 +54,7 @@ export default function ReviewFeature() {
             <TabsTrigger value="given">As a Provider</TabsTrigger>
           </TabsList>
           <TabsContent value="received" className="mt-6"> */}
-        <ReceivedReviews
-          completedReviews={data.completed.received}
-          pendingReviews={data.pending.toReceive}
-        />
+        <ReceivedReviews completedReviews={[]} pendingReviews={data.all} />
         {/* </TabsContent>
           <TabsContent value="given" className="mt-6">
             <GivenReviews

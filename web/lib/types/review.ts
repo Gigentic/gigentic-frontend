@@ -26,14 +26,7 @@ export interface Review extends ChainReview {
 }
 
 export interface ReviewsData {
-  completed: {
-    given: Review[];
-    received: Review[];
-  };
-  pending: {
-    toGive: Review[];
-    toReceive: Review[];
-  };
+  all: Review[];
 }
 
 // UI Components Props

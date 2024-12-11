@@ -170,86 +170,44 @@ function categorizeReviews(
   );
 
   const categorized = {
-    completed: {
-      given: [] as Review[],
-      received: [] as Review[],
-    },
-    pending: {
-      toGive: [] as Review[],
-      toReceive: [] as Review[],
-    },
+    all: [] as Review[],
   };
 
   relevantReviews.forEach((review) => {
     const transformed = transformChainReview(review, publicKey, services);
     if (!transformed) return; // Skip if service account not found
 
-    const isCustomer = transformed.account.customer.equals(publicKey);
-
-    if (isCustomer) {
-      if (transformed.account.customerToProviderRating !== 0) {
-        // Customer has given rating
-        categorized.completed.given.push(transformed);
-      } else {
-        // Customer needs to give rating
-        categorized.pending.toGive.push(transformed);
-      }
-
-      if (transformed.account.providerToCustomerRating !== 0) {
-        // Customer has received rating
-        categorized.completed.received.push(transformed);
-      } else {
-        // Customer waiting for rating
-        categorized.pending.toReceive.push(transformed);
-      }
-    } else {
-      // Provider cases
-      if (transformed.account.providerToCustomerRating !== 0) {
-        // Provider has given rating
-        categorized.completed.given.push(transformed);
-      } else {
-        // Provider needs to give rating
-        categorized.pending.toGive.push(transformed);
-      }
-
-      if (transformed.account.customerToProviderRating !== 0) {
-        // Provider has received rating
-        categorized.completed.received.push(transformed);
-      } else {
-        // Provider waiting for rating
-        categorized.pending.toReceive.push(transformed);
-      }
-    }
+    categorized.all.push(transformed);
   });
 
   return categorized;
 }
 
 // TODO: Used on program page. Remove this when all reviews work
-export function useReviewsFromMock() {
-  return useQuery<ReviewsData>({
-    queryKey: ['reviews-mock'],
-    queryFn: async () => {
-      // Simulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+// export function useReviewsFromMock() {
+//   return useQuery<ReviewsData>({
+//     queryKey: ['reviews-mock'],
+//     queryFn: async () => {
+//       // Simulate network delay
+//       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Simulate error
-      // throw new Error('Failed to fetch reviews from the blockchain');
+//       // Simulate error
+//       // throw new Error('Failed to fetch reviews from the blockchain');
 
-      // Normal return data
-      return {
-        completed: {
-          given: mockGivenReviews,
-          received: mockReceivedReviews,
-        },
-        pending: {
-          toGive: mockUnreviewedServicesGiven,
-          toReceive: mockUnreviewedServicesReceived,
-        },
-      };
-    },
-  });
-}
+//       // Normal return data
+//       return {
+//         completed: {
+//           given: mockGivenReviews,
+//           received: mockReceivedReviews,
+//         },
+//         pending: {
+//           toGive: mockUnreviewedServicesGiven,
+//           toReceive: mockUnreviewedServicesReceived,
+//         },
+//       };
+//     },
+//   });
+// }
 
 // TODO: Used on program page. Remove this when all reviews work
 export function useReviewsV1() {
