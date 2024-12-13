@@ -33,50 +33,46 @@ export const ProviderEscrowList: React.FC<ProviderEscrowProps> = ({
 
   if (escrows.length === 0) {
     return (
-      <div className="text-center text-muted-foreground">
-        No pending escrows found
+      <div className="text-center py-12 bg-muted rounded-lg">
+        <h3 className="text-lg font-semibold mb-2">No Pending Escrows</h3>
+        <p className="text-muted-foreground">
+          You don't have any pending escrow payments to receive
+        </p>
       </div>
     );
   }
 
   return (
-    <Card variant="default" size="lg">
-      <CardContent className="p-6">
-        <h2 className="text-2xl font-bold tracking-tight mb-4">
-          Pending Escrows
-        </h2>
-        <div className="space-y-4">
-          {escrows.map((escrow) => (
-            <Card key={escrow.id} className="mb-4">
-              <CardContent className="p-4">
-                <div className="flex justify-between items-start">
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-semibold">{escrow.title}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Customer:{' '}
-                      <Link
-                        href={`https://www.solchat.app/`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:underline hover:text-primary"
-                      >
-                        {escrow.customer}
-                      </Link>
-                    </p>
-                    <p className="text-sm">
-                      Amount to Receive:{' '}
-                      {Number(escrow.amount) / LAMPORTS_PER_SOL} SOL
-                    </p>
-                  </div>
-                  <div className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 text-sm">
-                    Pending
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <div className="space-y-4">
+      {escrows.map((escrow) => (
+        <Card key={escrow.id}>
+          <CardContent className="p-4">
+            <div className="flex justify-between items-start">
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold">{escrow.title}</h3>
+                <p className="text-sm text-muted-foreground">
+                  Customer:{' '}
+                  <Link
+                    href={`https://www.solchat.app/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline hover:text-primary"
+                  >
+                    {escrow.customer}
+                  </Link>
+                </p>
+                <p className="text-sm">
+                  Amount to Receive: {Number(escrow.amount) / LAMPORTS_PER_SOL}{' '}
+                  SOL
+                </p>
+              </div>
+              <div className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 text-sm">
+                Pending
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
   );
 };
