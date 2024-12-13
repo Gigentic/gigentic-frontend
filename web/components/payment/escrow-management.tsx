@@ -17,7 +17,7 @@ import { usePayIntoEscrow } from '@/hooks/blockchain/use-pay-into-escrow';
 import { useReleaseEscrow } from '@/hooks/blockchain/use-release-escrow';
 
 import { FreelancerCard } from './freelancer-card';
-import { EscrowList } from './escrow-list';
+import { EscrowList } from './customer-escrow-list';
 import { ProviderEscrowList } from './provider-escrow-list';
 
 export default function EscrowManagement() {
