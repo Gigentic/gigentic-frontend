@@ -27,9 +27,6 @@ export function useEscrowData() {
       }
 
       const allEscrows = await program.account.escrow.all();
-      const userEscrows = allEscrows.filter(
-        (escrow) => escrow.account.customer.toString() === publicKey.toString(),
-      );
 
       // Create a map of service account addresses to titles
       const serviceAccountTitles = Object.fromEntries(
@@ -41,32 +38,33 @@ export function useEscrowData() {
 
       // Map escrows to their titles using the service account address
       const titles: Record<string, string> = {};
-      for (const escrow of userEscrows) {
+      for (const escrow of allEscrows) {
         try {
-          // Find the service account that matches this escrow's PDA
+          // Find the service account that matches this escrow
           const matchingService = serviceAccounts.data.find((service) => {
             const [derivedEscrowPDA] = PublicKey.findProgramAddressSync(
               [
                 Buffer.from('escrow'),
                 service.publicKey.toBuffer(),
                 service.account.provider.toBuffer(),
-                publicKey.toBuffer(),
+                escrow.account.customer.toBuffer(),
               ],
               program.programId,
             );
             return derivedEscrowPDA.toString() === escrow.publicKey.toString();
           });
 
-          titles[escrow.publicKey.toString()] = matchingService
-            ? serviceAccountTitles[matchingService.publicKey.toString()]
-            : 'Unnamed Service';
+          if (matchingService) {
+            titles[escrow.publicKey.toString()] =
+              serviceAccountTitles[matchingService.publicKey.toString()];
+          }
         } catch (error) {
           console.error('Error mapping escrow to title:', error);
         }
       }
 
       return {
-        escrows: userEscrows,
+        escrows: allEscrows,
         titles,
       };
     },
