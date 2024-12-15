@@ -85,40 +85,39 @@ export function useReleaseEscrow() {
     rating?: number,
     review?: string,
   ) => {
-    if (!publicKey) return;
+    if (!publicKey || !program) {
+      throw new Error('Wallet not connected or program not initialized');
+    }
 
     try {
-      console.log(`Releasing escrow with ID: ${escrowId}`);
       const serviceIndex = await findServiceAccountIndex(
         serviceProvider,
         escrowId,
       );
-      // console.log(`Service account index: ${serviceIndex}`);
-
-      const escrow = escrowData?.escrows?.find(
-        (e) => e.publicKey.toString() === escrowId,
-      );
-      if (!escrow) {
-        console.error('Escrow not found:', escrowId);
-        throw new Error('Escrow not found');
-      }
-
       const serviceRegistry = await program.account.serviceRegistry.fetch(
         serviceRegistryPubKey,
       );
-      // console.log('Fetched service registry for release:', serviceRegistry);
-
       const serviceAccountPubKey =
         serviceRegistry.serviceAccountAddresses[serviceIndex];
-      // console.log('Service Account PubKey:', serviceAccountPubKey.toString());
+
+      // Fetch the service to get the review PDA
+      const serviceAccount =
+        await program.account.service.fetch(serviceAccountPubKey);
+      if (!serviceAccount.reviews || serviceAccount.reviews.length === 0) {
+        throw new Error('No review found for this service');
+      }
+
+      // Use the existing review PDA that was created during payService
+      const reviewPubKey =
+        serviceAccount.reviews[serviceAccount.reviews.length - 1];
 
       const latestBlockhash = await connection.getLatestBlockhash('confirmed');
-      // console.log('Latest Blockhash:', latestBlockhash.blockhash);
 
       const messageV0 = new TransactionMessage({
         payerKey: publicKey,
         recentBlockhash: latestBlockhash.blockhash,
         instructions: [
+          // First instruction: Release escrow
           await program.methods
             .signService()
             .accounts({
@@ -126,6 +125,14 @@ export function useReleaseEscrow() {
               service: serviceAccountPubKey,
               serviceProvider: serviceProvider,
               feeAccount: serviceRegistry.feeAccount,
+            })
+            .instruction(),
+          // Second instruction: Submit review
+          await program.methods
+            .customerToProviderRating(rating || 0, review || '')
+            .accounts({
+              signer: publicKey,
+              review: reviewPubKey,
             })
             .instruction(),
         ],
@@ -151,12 +158,17 @@ export function useReleaseEscrow() {
       transactionToast(signature);
       console.log('Release transaction confirmed:', signature);
 
-      await queryClient.invalidateQueries({
-        queryKey: ['escrow-data'],
-      });
+      // Invalidate both queries to refetch updated data
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['escrow-data'] }),
+        queryClient.invalidateQueries({ queryKey: ['reviews'] }),
+      ]);
+
+      return signature;
     } catch (err) {
-      console.error('Error releasing escrow and submitting review:', err);
+      console.error('Error processing release and review:', err);
       setError('Failed to process release and review. Please try again.');
+      throw err;
     }
   };
 
