@@ -37,7 +37,7 @@ export function ReceivedReviews({
         </div>
       )}
 
-      {/* Customer Reviews to Submit Section - THIS SHOULD BE EMPTY */}
+      {/* Customer Reviews to Submit Section - THIS SHOULD BE EMPTY 
       {pendingReviews.filter(
         (review) =>
           review.role === 'customer' &&
@@ -61,7 +61,7 @@ export function ReceivedReviews({
               ))}
           </div>
         </div>
-      )}
+      )}*/}
 
       {/* Completed Reviews Section */}
       {pendingReviews.filter(
