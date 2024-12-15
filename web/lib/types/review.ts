@@ -46,16 +46,19 @@ export interface ReviewFormData {
   reviewText: string;
 }
 
-export interface ReviewFormProps {
+// Props for the ReviewPopupDialog component
+export interface ReviewPopupDialogProps {
   serviceTitle: string;
   providerAddress: string;
   amount: string;
   onSubmit: (data: ReviewFormData) => Promise<void>;
+  buttonText?: string;
+  buttonVariant?: 'default' | 'outline' | 'secondary' | 'ghost';
 }
 
-// Blockchain Submission Type
+// Data for blockchain submission
 export interface ReviewSubmitData extends ReviewFormData {
   reviewId: string;
-  role: Role;
+  role: 'customer' | 'provider';
   serviceAccount: PublicKey;
 }

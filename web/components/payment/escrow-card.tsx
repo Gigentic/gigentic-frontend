@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, CardContent, Button } from '@gigentic-frontend/ui-kit/ui';
+import { Card, CardContent } from '@gigentic-frontend/ui-kit/ui';
 import Link from 'next/link';
+import { ReviewPopupDialog } from '../review/review-popup-dialog';
 
 interface EscrowCardProps {
   serviceTitle: string;
@@ -19,12 +20,14 @@ export const EscrowCard: React.FC<EscrowCardProps> = ({
   amountInEscrow,
   onReleaseEscrow,
 }) => {
-  const handleRelease = () => {
-    // For now, we'll use default values. In a real implementation,
-    // you might want to show a modal to collect rating and review.
-    const rating = 5;
-    const review = 'Great service!';
-    onReleaseEscrow(escrowId, rating, review);
+  const handleReviewSubmit = async ({
+    rating,
+    reviewText,
+  }: {
+    rating: number;
+    reviewText: string;
+  }) => {
+    onReleaseEscrow(escrowId, rating, reviewText);
   };
 
   return (
@@ -46,9 +49,14 @@ export const EscrowCard: React.FC<EscrowCardProps> = ({
             </p>
             <p className="text-sm">Amount in Escrow: {amountInEscrow} SOL</p>
           </div>
-          <Button onClick={handleRelease} variant="default">
-            Release Escrow
-          </Button>
+          <ReviewPopupDialog
+            serviceTitle={serviceTitle}
+            providerAddress={providerAddress}
+            amount={amountInEscrow.toString()}
+            onSubmit={handleReviewSubmit}
+            buttonText="Release Escrow"
+            buttonVariant="default"
+          />
         </div>
       </CardContent>
     </Card>

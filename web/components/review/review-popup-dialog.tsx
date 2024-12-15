@@ -20,14 +20,16 @@ import {
   Textarea,
 } from '@gigentic-frontend/ui-kit/ui';
 
-import { ReviewFormProps } from '@/types/review';
+import { ReviewPopupDialogProps, ReviewFormData } from '@/lib/types/review';
 
 export function ReviewPopupDialog({
   serviceTitle,
   providerAddress,
   amount,
   onSubmit,
-}: ReviewFormProps) {
+  buttonText = 'Submit Review',
+  buttonVariant = 'outline',
+}: ReviewPopupDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState('');
@@ -54,7 +56,7 @@ export function ReviewPopupDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Submit Review</Button>
+        <Button variant={buttonVariant}>{buttonText}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
