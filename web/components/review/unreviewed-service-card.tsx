@@ -20,6 +20,9 @@ export function UnreviewedServiceCard({ review, type }: ReviewCardProps) {
 
   const Icon = review.role === 'provider' ? Briefcase : User;
 
+  const shouldBlurCustomerReview =
+    review.role === 'provider' && !review.account.providerToCustomerRating;
+
   return (
     <Card className="hover:border-primary/50 transition-colors">
       <CardContent className="p-6">
@@ -90,8 +93,19 @@ export function UnreviewedServiceCard({ review, type }: ReviewCardProps) {
             <p className="text-sm text-muted-foreground">
               Customer → Provider Rating:
             </p>
-            <p className="text-sm">
+            <p
+              className={`text-sm ${shouldBlurCustomerReview ? 'blur-sm select-none' : ''}`}
+            >
               {review.account.customerToProviderRating || 'Not rated yet'}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-sm text-muted-foreground">Customer Review:</p>
+            <p
+              className={`text-sm ${shouldBlurCustomerReview ? 'blur-sm select-none' : ''}`}
+            >
+              {review.account.customerToProviderReview || 'No review yet'}
             </p>
           </div>
 
@@ -105,18 +119,17 @@ export function UnreviewedServiceCard({ review, type }: ReviewCardProps) {
           </div>
 
           <div>
-            <p className="text-sm text-muted-foreground">Customer Review:</p>
-            <p className="text-sm">
-              {review.account.customerToProviderReview || 'No review yet'}
-            </p>
-          </div>
-
-          <div>
             <p className="text-sm text-muted-foreground">Provider Review:</p>
             <p className="text-sm">
               {review.account.providerToCustomerReview || 'No review yet'}
             </p>
           </div>
+
+          {shouldBlurCustomerReview && (
+            <p className="text-xs text-muted-foreground mt-2 italic">
+              Submit your review to see the customer's feedback
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>

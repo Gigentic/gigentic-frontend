@@ -15,7 +15,8 @@ export function ReceivedReviews({
       {pendingReviews.filter(
         (review) =>
           review.role === 'provider' &&
-          !review.account.providerToCustomerRating,
+          !review.account.providerToCustomerRating &&
+          review.account.customerToProviderRating > 0,
       ).length > 0 && (
         <div>
           <h2 className="text-xl font-semibold mb-4">Reviews to Submit</h2>
@@ -24,7 +25,8 @@ export function ReceivedReviews({
               .filter(
                 (review) =>
                   review.role === 'provider' &&
-                  !review.account.providerToCustomerRating,
+                  !review.account.providerToCustomerRating &&
+                  review.account.customerToProviderRating > 0,
               )
               .map((review) => (
                 <UnreviewedServiceCard
