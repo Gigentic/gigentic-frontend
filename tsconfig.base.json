@@ -17,18 +17,17 @@
     "paths": {
       "@/*": ["./web/*"],
       "@gigentic-frontend/anchor": ["anchor/src/index.ts"],
+      "@gigentic-frontend/anchor/types": ["anchor/target/types/gigentic.ts"],
       "@gigentic-frontend/ui-kit/ui": ["libs/ui-kit/ui/src/index.ts"],
       "@gigentic-frontend/ui-kit/ui/*": ["libs/ui-kit/ui/src/*"],
       "@gigentic-frontend/ui-kit/util": ["libs/ui-kit/util/src/index.ts"],
       "@gigentic-frontend/ui-kit/util/*": ["libs/ui-kit/util/src/*"],
       "@/components/*": ["web/components/*"],
-      "@/hooks/*": ["web/lib/hooks/*"],
+      "@/cluster/*": ["web/components/cluster/*"],
       "@/providers/*": ["web/components/providers/*"],
-      "@/service/*": ["web/components/service/*"],
       "@/ui/*": ["web/components/ui/*"],
-      "@/lib/*": ["web/lib/*"],
-      "@/types/*": ["web/lib/types/*"],
-      "@/cluster/*": ["web/components/cluster/*"]
+      "@/hooks/*": ["web/lib/hooks/*"],
+      "@/types/*": ["web/lib/types/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

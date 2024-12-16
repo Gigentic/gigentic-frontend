@@ -17,9 +17,10 @@ export const metadata = {
 const links: { label: string; path: string }[] = [
   { label: 'Search', path: '/service-discovery' },
   { label: 'Payment', path: '/payment' },
+  { label: 'Reviews', path: '/review' },
   { label: 'TalentHub', path: '/service-register' },
+  { label: 'Program', path: '/program' },
   { label: 'Account', path: '/account' },
-  // { label: 'Program', path: '/program' },
 ];
 
 export default function RootLayout({
@@ -28,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <ReactQueryProvider>

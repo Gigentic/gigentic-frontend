@@ -189,23 +189,25 @@ export function AppHero({
   subtitle: ReactNode;
 }) {
   return (
-    <div className="hero py-[64px]">
-      <div className="hero-content text-center">
-        <div className="max-w-2xl">
-          {typeof title === 'string' ? (
-            <h1 className="text-5xl font-bold">{title}</h1>
-          ) : (
-            title
-          )}
-          {typeof subtitle === 'string' ? (
-            <p className="py-6">{subtitle}</p>
-          ) : (
-            subtitle
-          )}
-          {children}
-        </div>
+    <section className="mx-auto flex max-w-[980px] flex-col items-center gap-4 py-8 md:py-12 lg:py-16">
+      <div className="flex flex-col items-center gap-4 text-center">
+        {typeof title === 'string' ? (
+          <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-6xl">
+            {title}
+          </h1>
+        ) : (
+          title
+        )}
+        {typeof subtitle === 'string' ? (
+          <p className="max-w-[700px] text-muted-foreground md:text-xl">
+            {subtitle}
+          </p>
+        ) : (
+          subtitle
+        )}
       </div>
-    </div>
+      {children && <div className="flex gap-4">{children}</div>}
+    </section>
   );
 }
 
