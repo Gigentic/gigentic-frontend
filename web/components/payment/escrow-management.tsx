@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Tabs,
   TabsContent,
@@ -21,9 +22,18 @@ import { EscrowList } from './customer-escrow-list';
 import { ProviderEscrowList } from './provider-escrow-list';
 
 export default function EscrowManagement() {
+  const queryClient = useQueryClient();
   const { data: escrowData, isLoading, error: escrowError } = useEscrowData();
   const { publicKey } = useWallet();
   const { data: freelancer } = useSelectedFreelancer();
+
+  useEffect(() => {
+    const refetchData = async () => {
+      await queryClient.invalidateQueries({ queryKey: ['escrow-data'] });
+    };
+
+    refetchData();
+  }, [queryClient]);
 
   // Get service account from freelancer data if it exists
   const selectedServiceAccountAddress = useMemo(() => {
