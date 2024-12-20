@@ -67,12 +67,10 @@ export const EscrowCard: React.FC<EscrowCardProps> = ({
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Click to view on Explorer</p>
+                  <p>Click to view escrow account on the blockchain explorer</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-
-            {/* <p className="text-sm">Amount in Escrow: {amountInEscrow} SOL</p> */}
           </div>
           <ReviewPopupDialog
             serviceTitle={serviceTitle}
@@ -87,32 +85,3 @@ export const EscrowCard: React.FC<EscrowCardProps> = ({
     </Card>
   );
 };
-
-{
-  /* <div className="flex items-center gap-10">
-<TooltipProvider>
-  <Tooltip>
-    <TooltipTrigger asChild>
-      <Link
-        href={`https://explorer.testnet.soo.network/address/${escrowId}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-sm hover:underline hover:text-primary whitespace-nowrap"
-      >
-        Amount in Escrow: {amountInEscrow.toFixed(3)} Sol
-      </Link>
-    </TooltipTrigger>
-    <TooltipContent>
-      <p>Click to view on Explorer</p>
-    </TooltipContent>
-  </Tooltip>
-</TooltipProvider>
-<ReviewPopup
-  escrowId={escrowId}
-  serviceTitle={serviceTitle}
-  providerName={providerAddress}
-  amount={amountInEscrow.toFixed(3)}
-  onSubmitReview={onReleaseEscrow}
-/>
-</div> */
-}
