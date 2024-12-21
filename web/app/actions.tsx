@@ -84,14 +84,20 @@ export async function sendMessage(
   const TIMEOUT_MS = 60000;
   const currentMessages = history.get();
 
+  console.log('Current messages:', currentMessages);
+  console.log('Incoming message:', message);
+
   // Check if this is the first message in meme agent chat
   const isMemeAgentChat = currentMessages.some(
     (msg) => msg.name === 'meme_agent',
   );
+  console.log('Is meme agent chat?', isMemeAgentChat);
 
   // Only initialize meme agent if we're in meme agent mode
   if (!isMemeAgentChat && message === 'init meme agent') {
+    console.log('Initializing meme agent...');
     history.update([
+      ...currentMessages,
       {
         role: 'system',
         name: 'meme_agent',
@@ -99,12 +105,35 @@ export async function sendMessage(
           'You are a meme coin analysis agent specialized in Solana tokens.',
       },
     ]);
+
+    return {
+      id: Date.now(),
+      role: 'assistant',
+      display: (
+        <AgentMessage>
+          👋 Connected to Meme Coin Recommender. How can I help you analyze meme
+          coins today?
+        </AgentMessage>
+      ),
+    };
   }
 
   // Check if we're in meme agent mode
   const isMemeAgent = currentMessages.some((msg) => msg.name === 'meme_agent');
+  console.log('Is meme agent mode?', isMemeAgent);
 
   if (isMemeAgent) {
+    // Add the user message to history while preserving existing messages
+    const updatedMessages = [
+      ...currentMessages,
+      {
+        role: 'user',
+        content: message,
+        name: 'meme_agent',
+      },
+    ];
+    history.update(updatedMessages as AIState);
+
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);

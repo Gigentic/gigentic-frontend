@@ -29,14 +29,28 @@ export default function ChatAgent() {
   const { cluster } = useCluster();
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
+  const [hasInitialized, setHasInitialized] = useState(false);
 
   useEffect(() => {
     const isMemeAgent = searchParams.get('agent') === 'meme';
-    if (isMemeAgent) {
+    console.log('URL params - is meme agent?', isMemeAgent);
+    console.log('Has initialized?', hasInitialized);
+
+    if (isMemeAgent && !hasInitialized) {
       // Initialize with a dummy message to trigger meme agent mode
-      sendMessage('init meme agent', cluster.endpoint);
+      console.log('Sending init message...');
+      sendMessage('init meme agent', cluster.endpoint).then(
+        (responseMessage) => {
+          console.log('Got init response:', responseMessage);
+          setMessages((currentMessages) => {
+            console.log('Current messages before update:', currentMessages);
+            return [...currentMessages, responseMessage];
+          });
+          setHasInitialized(true);
+        },
+      );
     }
-  }, [searchParams, sendMessage]);
+  }, [searchParams, sendMessage, hasInitialized, setMessages]);
 
   // handle the form submission
   const onSubmit: SubmitHandler<ChatInput> = async (data) => {
