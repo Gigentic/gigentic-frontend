@@ -12,7 +12,8 @@ import { UserMessage } from '@/components/service-discovery/llm/message';
 import { Button } from '@gigentic-frontend/ui-kit/ui';
 import { z } from 'zod';
 import { useCluster } from '@/cluster/cluster-data-access';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 const chatSchema = z.object({
   message: z.string().min(1, 'Message is required'),
@@ -27,6 +28,15 @@ export default function ChatAgent() {
   const { sendMessage } = useActions<typeof AI>();
   const { cluster } = useCluster();
   const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const isMemeAgent = searchParams.get('agent') === 'meme';
+    if (isMemeAgent) {
+      // Initialize with a dummy message to trigger meme agent mode
+      sendMessage('init meme agent', cluster.endpoint);
+    }
+  }, [searchParams, sendMessage]);
 
   // handle the form submission
   const onSubmit: SubmitHandler<ChatInput> = async (data) => {

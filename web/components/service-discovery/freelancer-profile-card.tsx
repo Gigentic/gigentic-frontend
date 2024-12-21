@@ -1,6 +1,5 @@
 'use client';
 
-// import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -29,10 +28,14 @@ export default function FreelancerProfileCard(
   props: Freelancer = DefaultFreelancerProfileProps,
 ) {
   const router = useRouter();
+  const { mutate: selectFreelancer } = useSelectFreelancer();
 
   // const [isExpanded, setIsExpanded] = useState(false);
   // const fullStars = Math.floor(props.rating);
   // const hasHalfStar = props.rating % 1 !== 0;
+  const isMemeAgent =
+    props.serviceAccountAddress ===
+    'D2ZQ3XT1yD2E4DDbzrE5Ln9jSF2TyDkDEdMSHQxHer1r';
 
   const handleContactNow = () => {
     // Replace this URL with the actual Solchat URL when available
@@ -40,16 +43,15 @@ export default function FreelancerProfileCard(
     window.open(solchatUrl, '_blank', 'noopener,noreferrer');
   };
 
-  const { mutate: selectFreelancer } = useSelectFreelancer();
-
   const handlePayEscrow = () => {
+    if (isMemeAgent) {
+      router.push('/service-discovery?agent=meme');
+      return;
+    }
+
     const freelancerData = {
-      title: props.title,
-      pricePerHour: props.pricePerHour,
-      experience: props.experience,
-      rating: props.rating,
-      matchScore: props.matchScore,
-      serviceAccountAddress: props.serviceAccountAddress,
+      ...props,
+      isMemeAgent,
     };
 
     // Cache the freelancer data and navigate on success

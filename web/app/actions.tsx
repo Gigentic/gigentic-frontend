@@ -17,6 +17,7 @@ import { getGigenticProgram } from '@gigentic-frontend/anchor';
 
 import {
   BotCard,
+  AgentMessage,
   BotMessage,
 } from '@/components/service-discovery/llm/message';
 import FreelancerProfileCard from '@/components/service-discovery/freelancer-profile-card';
@@ -62,7 +63,15 @@ async function fetchServicesFromRegistry(endpoint: string) {
   );
 }
 
-//export const sendMessage = async () => {};
+// First, define the message type interface
+interface AIMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  name?: 'show_freelancer_profile' | 'meme_agent';
+}
+
+export type AIState = Array<AIMessage>;
+
 export async function sendMessage(
   message: string,
   endpoint: string,
@@ -72,7 +81,95 @@ export async function sendMessage(
   display: ReactNode;
 }> {
   const history = getMutableAIState<typeof AI>();
-  const TIMEOUT_MS = 60000; // 1 minute timeout
+  const TIMEOUT_MS = 60000;
+  const currentMessages = history.get();
+
+  // Check if this is the first message in meme agent chat
+  const isMemeAgentChat = currentMessages.some(
+    (msg) => msg.name === 'meme_agent',
+  );
+
+  // Only initialize meme agent if we're in meme agent mode
+  if (!isMemeAgentChat && message === 'init meme agent') {
+    history.update([
+      {
+        role: 'system',
+        name: 'meme_agent',
+        content:
+          'You are a meme coin analysis agent specialized in Solana tokens.',
+      },
+    ]);
+  }
+
+  // Check if we're in meme agent mode
+  const isMemeAgent = currentMessages.some((msg) => msg.name === 'meme_agent');
+
+  if (isMemeAgent) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+      const agentHandle = process.env.ASSISTERR_AGENT_HANDLE!;
+
+      console.log('agentHandle', agentHandle);
+      // Simple fetch and stream approach
+      const response = await fetch(
+        `https://api.assisterr.ai/api/v1/slm/${agentHandle}/chat/stream`,
+        {
+          method: 'POST',
+          headers: {
+            'X-Api-Key': process.env.ASSISTERR_API_KEY!,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query: message,
+          }),
+        },
+      );
+
+      console.log('response', response);
+      if (!response.ok) {
+        return {
+          id: Date.now(),
+          role: 'assistant' as const,
+          display: (
+            <BotMessage>
+              Sorry, there was an error contacting the Meme Agent.
+            </BotMessage>
+          ),
+        };
+      }
+
+      // Just stream the response directly
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      let content = '';
+
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        // Parse the JSON chunks and extract just the message
+        const chunk = decoder.decode(value);
+        try {
+          const jsonChunk = JSON.parse(chunk);
+          content += jsonChunk.message || '';
+        } catch (e) {
+          console.error('Error parsing chunk:', e);
+        }
+      }
+
+      clearTimeout(timeoutId);
+      return {
+        id: Date.now(),
+        role: 'assistant' as const,
+        display: <AgentMessage>{content}</AgentMessage>,
+      };
+    } catch (error) {
+      // ... error handling
+    }
+  }
 
   try {
     const controller = new AbortController();
@@ -223,13 +320,6 @@ export async function sendMessage(
     throw error;
   }
 }
-
-export type AIState = Array<{
-  id?: number;
-  name?: 'show_freelancer_profile';
-  role?: 'user' | 'assistant' | 'system';
-  content?: string;
-}>;
 
 export type UIState = Array<{
   id?: number;
