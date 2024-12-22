@@ -1,5 +1,6 @@
 import { UserIcon, SparkleIcon } from 'lucide-react';
 import Image from 'next/image';
+import { Fragment } from 'react';
 
 export function UserMessage({ children }: { children: React.ReactNode }) {
   return (
@@ -77,12 +78,26 @@ export function AgentMessage({
   children: React.ReactNode;
   className?: string;
 }) {
+  // Convert string content to formatted JSX
+  const formatContent = (content: string) => {
+    return content.split('*').map((part, index) => {
+      // Even indices are normal text, odd indices are bold
+      if (index % 2 === 1) {
+        return <strong key={index}>{part}</strong>;
+      }
+      // Split normal text by newlines and add line breaks
+      return part.split('\n').map((line, i, arr) => (
+        <Fragment key={`${index}-${i}`}>
+          {line}
+          {i < arr.length - 1 && <br />}
+        </Fragment>
+      ));
+    });
+  };
+
   return (
     <div className="group relative flex items-start">
-      <div
-        className="flex h-8 w-8 shrink-0 select-none items-center justify-center
-            rounded-md border shadow-sm bg-background overflow-hidden"
-      >
+      <div className="flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-md border shadow-sm bg-background overflow-hidden">
         <Image
           src="/images/doge-agent.png"
           alt="Doge Agent"
@@ -91,8 +106,8 @@ export function AgentMessage({
           className="object-cover"
         />
       </div>
-      <div className="ml-4 flex-1 space-y-2 overflow-hidden px-1">
-        {children}
+      <div className="ml-4 flex-1 space-y-2 overflow-hidden px-1 whitespace-pre-wrap">
+        {typeof children === 'string' ? formatContent(children) : children}
       </div>
     </div>
   );

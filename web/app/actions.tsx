@@ -96,7 +96,7 @@ export async function sendMessage(
   // Only initialize meme agent if we're in meme agent mode
   if (!isMemeAgentChat && message === 'init meme agent') {
     console.log('Initializing meme agent...');
-    history.update([
+    history.done([
       ...currentMessages,
       {
         role: 'system',
@@ -108,7 +108,7 @@ export async function sendMessage(
 
     return {
       id: Date.now(),
-      role: 'assistant',
+      role: 'assistant' as const,
       display: (
         <AgentMessage>
           👋 Connected to Meme Coin Recommender. How can I help you analyze meme
@@ -123,16 +123,21 @@ export async function sendMessage(
   console.log('Is meme agent mode?', isMemeAgent);
 
   if (isMemeAgent) {
-    // Add the user message to history while preserving existing messages
-    const updatedMessages = [
-      ...currentMessages,
-      {
-        role: 'user',
-        content: message,
-        name: 'meme_agent',
-      },
-    ];
-    history.update(updatedMessages as AIState);
+    try {
+      // Add the user message to history
+      history.done([
+        ...currentMessages,
+        {
+          role: 'user',
+          content: message,
+          name: 'meme_agent',
+        },
+      ]);
+    } catch (error) {
+      console.error('Error adding user message to history:', error);
+    }
+
+    console.log('history', history.get());
 
     try {
       const controller = new AbortController();

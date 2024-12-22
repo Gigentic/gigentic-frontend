@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 
 import {
   Card,
@@ -9,7 +10,7 @@ import {
 } from '@gigentic-frontend/ui-kit/ui';
 import { Badge } from '@gigentic-frontend/ui-kit/ui';
 import { Button } from '@gigentic-frontend/ui-kit/ui';
-import { Star, MessageSquare, Zap, Lock } from 'lucide-react';
+import { Star, MessageSquare, Zap, Lock, UserIcon } from 'lucide-react';
 import { useSelectFreelancer } from '@/hooks/services/use-freelancer-query';
 import { useRouter } from 'next/navigation';
 import type { Freelancer } from '@/types/freelancer';
@@ -78,7 +79,20 @@ export default function FreelancerProfileCard(
       <Card>
         <CardHeader className="flex flex-row items-center gap-4">
           <div className="w-16 h-16">
-            <svg
+            <div className="flex h-12 w-12 shrink-0 select-none items-center justify-center rounded-md border shadow-sm bg-background overflow-hidden">
+              {isMemeAgent ? (
+                <Image
+                  src="/images/doge-agent-big.png"
+                  alt="Doge Agent"
+                  width={48}
+                  height={48}
+                  className="object-cover"
+                />
+              ) : (
+                <UserIcon className="h-6 w-6" />
+              )}
+            </div>
+            {/* <svg
               className="w-12 h-12 text-gray-400"
               fill="currentColor"
               viewBox="0 0 20 20"
@@ -89,7 +103,7 @@ export default function FreelancerProfileCard(
                 d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
                 clipRule="evenodd"
               />
-            </svg>
+            </svg> */}
           </div>
           <div className="flex flex-col flex-grow">
             <div className="flex justify-between items-center">
@@ -125,7 +139,7 @@ export default function FreelancerProfileCard(
           </Button>
           <Button className="w-full" onClick={handlePayEscrow}>
             <Lock className="w-4 h-4 mr-2" />
-            Pay into Escrow
+            Connect to ASSISTERR Agent
           </Button>
         </CardFooter>
       </Card>
