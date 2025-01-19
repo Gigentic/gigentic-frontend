@@ -314,12 +314,12 @@ All Anchor commands are executed using `yarn anchor xyz` from the project root d
    ```bash
    cd anchor
    cargo fmt -- --check
+   yarn lint --write
    cd ..
    ```
 
 5. **Lint TypeScript and JSON Files**
    ```bash
-   yarn lint --write
    yarn prettier anchor/target/idl/gigentic.json --write
    ```
 
@@ -406,8 +406,8 @@ Choose the appropriate deployment method based on your environment.
 
   ```bash
   yarn anchor run deploy-registry
-  yarn anchor run write-services
   yarn anchor run create-mint
+  yarn anchor run write-services
   ```
 
 #### 2. Deploy to Devnet
