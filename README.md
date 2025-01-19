@@ -449,8 +449,8 @@ Choose the appropriate deployment method based on your environment.
 6. **Deploy Service Registry and Write Services**
    ```bash
    yarn anchor run deploy-registry
-   yarn anchor run write-services
    yarn anchor run create-mint
+   yarn anchor run write-services
    ```
 
 #### 3. Deploy to Soon Testnet
@@ -477,8 +477,8 @@ Ask for test SOL from the SOON team or bridge in assets from Ethereum Sepolia.
 
    ```bash
    yarn anchor run deploy-registry
-   yarn anchor run write-services
    yarn anchor run create-mint
+   yarn anchor run write-services
    ```
 
 _Ensure you update `Anchor.toml` and environment variables accordingly._
