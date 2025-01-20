@@ -126,7 +126,7 @@ export function UiLayout({
               <span className="sr-only">Email</span>
             </Link>
           </div>
-          <p className="text-sm">© 2024 Gigentic</p>
+          <p className="text-sm">© 2025 Gigentic</p>
           <ClusterUiSelect />
         </div>
       </footer>
