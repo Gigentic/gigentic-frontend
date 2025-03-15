@@ -57,7 +57,7 @@ async function fetchServicesFromRegistry(endpoint: string) {
   return services.reduce(
     (acc, service, i) =>
       acc +
-      `\n${service?.description} | serviceAccountAddress: ${serviceRegistry.serviceAccountAddresses[i]} | pricePerHour: ${service?.price ? lamportsToSol(service.price.toNumber()) : 0} ETH`,
+      `\n${service?.description} | serviceAccountAddress: ${serviceRegistry.serviceAccountAddresses[i]} | price: ${service?.price ? lamportsToSol(service.price.toNumber()) : 0} ETH`,
     '',
   );
 }
@@ -144,9 +144,7 @@ export async function sendMessage(
             title: z
               .string()
               .describe('The title of the freelancer or AI agent'),
-            pricePerHour: z
-              .number()
-              .describe('The price per hour of the freelancer'),
+            price: z.number().describe('The price of the freelancer'),
             experience: z.string().describe('The experience of the freelancer'),
             matchScore: z
               .number()
@@ -160,14 +158,14 @@ export async function sendMessage(
           }),
           generate: async function* ({
             title,
-            pricePerHour,
+            price,
             experience,
             rating,
             matchScore,
             serviceAccountAddress,
           }: {
             title: string;
-            pricePerHour: number;
+            price: number;
             experience: string;
             rating: number;
             matchScore: number;
@@ -188,7 +186,7 @@ export async function sendMessage(
               <BotCard>
                 <FreelancerProfileCard
                   title={title}
-                  pricePerHour={pricePerHour}
+                  price={price}
                   experience={experience}
                   // rating={rating}
                   rating={4.6}

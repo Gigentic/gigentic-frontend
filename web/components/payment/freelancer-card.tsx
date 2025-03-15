@@ -54,7 +54,7 @@ export const FreelancerCard: React.FC<FreelancerCardProps> = ({
         </div>
         <div className="text-right">
           <div className="text-lg font-semibold">
-            Service Price to pay into escrow: {freelancer.pricePerHour} ETH
+            Service Price to pay into escrow: {freelancer.price} ETH
           </div>
           {isServiceInEscrow ? (
             <div className="space-y-2">

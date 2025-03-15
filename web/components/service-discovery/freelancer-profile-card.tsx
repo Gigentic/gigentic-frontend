@@ -17,7 +17,7 @@ import type { Freelancer } from '@/types/freelancer';
 
 const DefaultFreelancerProfileProps: Freelancer = {
   title: 'Test',
-  pricePerHour: 50,
+  price: 50,
   experience: 'Test',
   rating: 4.5,
   matchScore: 80,
@@ -45,7 +45,7 @@ export default function FreelancerProfileCard(
   const handlePayEscrow = () => {
     const freelancerData = {
       title: props.title,
-      pricePerHour: props.pricePerHour,
+      price: props.price,
       experience: props.experience,
       rating: props.rating,
       matchScore: props.matchScore,
@@ -104,8 +104,8 @@ export default function FreelancerProfileCard(
         </CardHeader>
         <CardContent className="grid gap-4">
           <div className="flex justify-between items-center">
-            <span>Price per hour</span>
-            <Badge variant="secondary">{props.pricePerHour} ETH</Badge>
+            <span>Price</span>
+            <Badge variant="secondary">{props.price} ETH</Badge>
           </div>
           <div>
             <span>Experience</span>

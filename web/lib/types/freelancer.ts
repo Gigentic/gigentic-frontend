@@ -1,6 +1,6 @@
 export interface Freelancer {
   title: string;
-  pricePerHour: number;
+  price: number;
   experience: string;
   rating: number;
   matchScore: number;
