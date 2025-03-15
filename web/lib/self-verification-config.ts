@@ -13,7 +13,7 @@ export const selfVerificationConfig = {
     // DG1 disclosures
     issuing_state: false,
     name: false,
-    nationality: false,
+    nationality: true,
     date_of_birth: false,
     passport_number: false,
     gender: false,

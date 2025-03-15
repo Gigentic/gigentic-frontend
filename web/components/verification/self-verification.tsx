@@ -61,13 +61,6 @@ export function SelfVerification({
         </Button>
       ) : (
         <div className="bg-card p-6 rounded-lg shadow-md">
-          {/* <div className="text-center space-y-2 mb-4">
-            <h3 className="text-lg font-semibold">Identity Verification</h3>
-            <p className="text-sm text-muted-foreground">
-              Scan the QR code with your Self app to verify your identity
-            </p>
-          </div> */}
-
           <div className="flex justify-center">
             {selfApp ? (
               <SelfQRcodeWrapper

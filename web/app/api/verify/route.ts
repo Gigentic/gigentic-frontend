@@ -48,11 +48,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Set excluded countries if any
-    if (
-      disclosures.excludedCountries &&
-      disclosures.excludedCountries.length > 0
-    ) {
-      selfBackendVerifier.excludeCountries(...disclosures.excludedCountries);
+    if (disclosures.excludedCountries.length > 0) {
+      // selfBackendVerifier.excludeCountries(...disclosures.excludedCountries);
+      selfBackendVerifier.excludeCountries(
+        ...(disclosures.excludedCountries as (keyof typeof countryCodes)[]),
+      );
     }
 
     // Enable OFAC check if requested
@@ -69,6 +69,15 @@ export async function POST(request: NextRequest) {
 
     // Extract userId for reference
     const userId = await getUserIdentifier(publicSignals);
+
+    const temp = disclosures.excludedCountries.map((countryName) => {
+      const entry = Object.entries(countryCodes).find(
+        ([_, name]) => name === countryName,
+      );
+      return entry ? entry[0] : countryName;
+    });
+
+    console.log('disclosures.excludedCountries', temp);
 
     // Check the verification result
     if (verificationResult && verificationResult.isValid) {
