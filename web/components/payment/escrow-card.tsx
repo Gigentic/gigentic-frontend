@@ -63,7 +63,7 @@ export const EscrowCard: React.FC<EscrowCardProps> = ({
                     rel="noopener noreferrer"
                     className="text-sm hover:underline hover:text-primary whitespace-nowrap"
                   >
-                    Amount in Escrow: {amountInEscrow.toFixed(3)} Sol
+                    Amount in Escrow: {amountInEscrow.toFixed(3)} ETH
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent>

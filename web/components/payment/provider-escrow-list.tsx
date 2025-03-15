@@ -36,7 +36,7 @@ export const ProviderEscrowList: React.FC<ProviderEscrowProps> = ({
       <div className="text-center py-12 bg-muted rounded-lg">
         <h3 className="text-lg font-semibold mb-2">No Pending Escrows</h3>
         <p className="text-muted-foreground">
-          You don't have any pending escrow payments to receive
+          You don&apos;t have any pending escrow payments to receive
         </p>
       </div>
     );
@@ -63,7 +63,7 @@ export const ProviderEscrowList: React.FC<ProviderEscrowProps> = ({
                 </p>
                 <p className="text-sm">
                   Amount to Receive: {Number(escrow.amount) / LAMPORTS_PER_SOL}{' '}
-                  SOL
+                  ETH
                 </p>
               </div>
               <div className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 text-sm">

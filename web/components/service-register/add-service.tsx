@@ -16,7 +16,7 @@ import {
   TabsTrigger,
 } from '@gigentic-frontend/ui-kit/ui';
 import { useTransactionToast } from '@/components/ui/ui-layout';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, ShieldCheck } from 'lucide-react';
 
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -31,6 +31,7 @@ import {
 } from '@/hooks/blockchain/use-service-registry';
 
 import { ServiceCard } from './service-card';
+import { SelfVerification } from '@/components/verification/self-verification';
 
 // Form validation schema
 const serviceSchema = z.object({
@@ -59,6 +60,7 @@ export function AddService() {
   const { serviceAccounts } = useServiceRegistry();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
 
   // Filter for all services (already available from accounts)
   const allServices = serviceAccounts.data || [];
@@ -77,9 +79,18 @@ export function AddService() {
     },
   });
 
+  const handleVerificationSuccess = () => {
+    setIsVerified(true);
+  };
+
   const handleCreateService = async (data: ServiceFormData) => {
     if (!connected || !publicKey || !signTransaction) {
       console.warn('Please connect your wallet first');
+      return;
+    }
+
+    if (!isVerified) {
+      console.warn('Please complete Self identity verification first');
       return;
     }
 
@@ -125,6 +136,7 @@ export function AddService() {
       // Reset form and hide it
       form.reset();
       setShowForm(false);
+      setIsVerified(false);
     } catch (error) {
       console.error('Error creating service:', error);
     } finally {
@@ -256,18 +268,16 @@ export function AddService() {
 
               <div className="space-y-2">
                 <label htmlFor="price" className="text-lg font-semibold">
-                  Service Hourly Rate (SOL)
+                  Service Price (ETH)
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                    SOL
-                  </span>
+                  {/* <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"></span> */}
                   <Input
                     {...form.register('price')}
                     type="text"
                     min="0"
                     placeholder="0.01"
-                    className="pl-12"
+                    className="pl-2"
                   />
                 </div>
                 {form.formState.errors.price && (
@@ -277,11 +287,35 @@ export function AddService() {
                 )}
               </div>
 
+              <div className="space-y-2">
+                <label className="text-lg font-semibold flex items-center">
+                  <ShieldCheck className="mr-2 h-5 w-5 text-primary" />
+                  Identity Verification
+                </label>
+                <p className="text-sm text-muted-foreground mb-2">
+                  To ensure trust and safety in our marketplace, we require
+                  identity verification before creating a service.
+                </p>
+
+                <SelfVerification
+                  onVerificationSuccess={handleVerificationSuccess}
+                />
+
+                {isVerified && (
+                  <div className="mt-2 p-2 bg-green-50 text-green-700 rounded flex items-center">
+                    <ShieldCheck className="mr-2 h-4 w-4" />
+                    <span className="text-sm font-medium">
+                      Verification successful
+                    </span>
+                  </div>
+                )}
+              </div>
+
               <Button
                 className="w-full rounded-lg"
                 size="lg"
                 type="submit"
-                disabled={isSubmitting || !connected}
+                disabled={isSubmitting || !connected || !isVerified}
               >
                 <Plus className="mr-2 h-4 w-4" />
                 {isSubmitting ? 'Creating...' : 'Create Talent Offering'}
