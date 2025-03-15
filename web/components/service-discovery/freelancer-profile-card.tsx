@@ -105,7 +105,7 @@ export default function FreelancerProfileCard(
         <CardContent className="grid gap-4">
           <div className="flex justify-between items-center">
             <span>Price per hour</span>
-            <Badge variant="secondary">{props.pricePerHour} SOL</Badge>
+            <Badge variant="secondary">{props.pricePerHour} ETH</Badge>
           </div>
           <div>
             <span>Experience</span>

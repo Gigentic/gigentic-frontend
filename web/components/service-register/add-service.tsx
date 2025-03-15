@@ -268,11 +268,11 @@ export function AddService() {
 
               <div className="space-y-2">
                 <label htmlFor="price" className="text-lg font-semibold">
-                  Service Hourly Rate (SOL)
+                  Service Hourly Rate (ETH)
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                    SOL
+                    ETH
                   </span>
                   <Input
                     {...form.register('price')}

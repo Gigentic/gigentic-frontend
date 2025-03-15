@@ -63,7 +63,7 @@ export const ProviderEscrowList: React.FC<ProviderEscrowProps> = ({
                 </p>
                 <p className="text-sm">
                   Amount to Receive: {Number(escrow.amount) / LAMPORTS_PER_SOL}{' '}
-                  SOL
+                  ETH
                 </p>
               </div>
               <div className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 text-sm">

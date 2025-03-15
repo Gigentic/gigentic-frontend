@@ -70,7 +70,7 @@ export function ReviewPopupDialog({
           <CardHeader>
             <CardTitle className="text-xl">{serviceTitle}</CardTitle>
             <Label>{providerAddress.slice(0, 4)}...</Label>
-            <CardDescription>Amount: {amount} SOL</CardDescription>
+            <CardDescription>Amount: {amount} ETH</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">

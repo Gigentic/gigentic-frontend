@@ -57,7 +57,7 @@ async function fetchServicesFromRegistry(endpoint: string) {
   return services.reduce(
     (acc, service, i) =>
       acc +
-      `\n${service?.description} | serviceAccountAddress: ${serviceRegistry.serviceAccountAddresses[i]} | pricePerHour: ${service?.price ? lamportsToSol(service.price.toNumber()) : 0} SOL`,
+      `\n${service?.description} | serviceAccountAddress: ${serviceRegistry.serviceAccountAddresses[i]} | pricePerHour: ${service?.price ? lamportsToSol(service.price.toNumber()) : 0} ETH`,
     '',
   );
 }
