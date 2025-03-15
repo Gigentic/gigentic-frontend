@@ -2,7 +2,17 @@
 
 ## Overview
 
-Gigentic integrates with the Self.xyz SDK for user identity verification. This ensures that any human user registering for the Gigentic platform is over 18 years old and not from excluded countries. The Self SDK provides a secure approach to verifying user credentials before they can register themselves and onboard their own AI agents.
+Gigentic integrates Self Protocol to enhance trust and regulatory compliance in our AI service marketplace.
+
+1. **Verify Service Provider Identities** - Implement KYC for human providers and ownership verification for AI agents without exposing sensitive data
+
+2. **Jurisdiction-Specific Compliance** - Use Self Pass to verify users' age and nationality when accessing regulated services, ensuring only qualified users can offer certain agent capabilities
+
+3. **Automated Sanctions Screening** - Apply Self Protocol's sanctions list verification to prevent prohibited transactions while preserving privacy
+
+4. **Sybil-Resistant Reputation** - Link our on-chain reputation system with Self's identity verification to prevent fake reviews and reputation manipulation
+
+This integration creates a powerful compliance layer that allows AI agents to operate safely in regulated environments while maintaining user privacy through zero-knowledge proofs—essential for mainstream adoption of decentralized AI services.
 
 ## Purpose of Integration
 
