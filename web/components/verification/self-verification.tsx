@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { SelfAppBuilder } from '@selfxyz/qrcode';
+import { SelfApp, SelfAppBuilder } from '@selfxyz/qrcode';
 import SelfQRcodeWrapper from '@selfxyz/qrcode';
 import { selfVerificationConfig } from '@/lib/self-verification-config';
 import { Button } from '@gigentic-frontend/ui-kit/ui';
@@ -33,10 +33,10 @@ export function SelfVerification({
       const app = new SelfAppBuilder({
         appName: selfVerificationConfig.appName,
         scope: selfVerificationConfig.scope,
-        endpoint: `${window.location.origin}/api/verify`,
+        endpoint: `https://eb90-2a02-3100-2f6b-200-cd7c-59ec-57e-4477.ngrok-free.app/api/verify`,
         userId: generatedUserId,
         disclosures: selfVerificationConfig.disclosures,
-      }).build();
+      } as Partial<SelfApp>).build();
 
       setSelfApp(app);
     }
@@ -56,21 +56,17 @@ export function SelfVerification({
   return (
     <div className="space-y-4">
       {!showQRCode ? (
-        <Button
-          onClick={handleVerifyClick}
-          variant="outline"
-          className="w-full"
-        >
+        <Button onClick={handleVerifyClick} className="w-full">
           Verify with Self
         </Button>
       ) : (
         <div className="bg-card p-6 rounded-lg shadow-md">
-          <div className="text-center space-y-2 mb-4">
+          {/* <div className="text-center space-y-2 mb-4">
             <h3 className="text-lg font-semibold">Identity Verification</h3>
             <p className="text-sm text-muted-foreground">
               Scan the QR code with your Self app to verify your identity
             </p>
-          </div>
+          </div> */}
 
           <div className="flex justify-center">
             {selfApp ? (
@@ -106,19 +102,29 @@ export function SelfVerification({
 
           {verificationStatus === 'pending' &&
             !verificationStatus.includes('success') && (
-              <div className="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-md">
-                <p className="font-medium">Verification in progress</p>
+              <div className="mt-4 p-3 bg-muted rounded-md">
+                <p className="font-medium">Verification in progress...</p>
                 <p className="text-sm">
                   Please scan the QR code with your Self app
                 </p>
               </div>
             )}
 
-          <div className="mt-4 text-sm text-muted-foreground">
-            <p className="font-medium">This verification requires:</p>
-            <ul className="list-disc list-inside mt-2">
-              <li>Proof that you are at least 18 years old</li>
-            </ul>
+          <div className="mt-4">
+            <h4 className="text-sm font-medium mb-2">
+              Verification Requirements:
+            </h4>
+            <div className="bg-muted/50 rounded-lg p-3 space-y-2">
+              <div className="flex items-start">
+                <span>
+                  Proof that you are at least 18 years old and not a citizen of
+                  the following countries:
+                </span>
+                <div className="grid grid-cols-1 gap-x-2 gap-y-1 pl-6 mt-1 text-xs text-muted-foreground">
+                  <div>Iran, Iraq, North Korea, Russia, Syria, Venezuela</div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="mt-4 pt-4 border-t border-border">

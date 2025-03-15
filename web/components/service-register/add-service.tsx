@@ -90,7 +90,7 @@ export function AddService() {
     }
 
     if (!isVerified) {
-      console.warn('Please complete identity verification first');
+      console.warn('Please complete Self identity verification first');
       return;
     }
 
