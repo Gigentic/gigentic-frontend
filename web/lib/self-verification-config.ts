@@ -5,7 +5,7 @@
 
 export const selfVerificationConfig = {
   // Basic app configuration
-  appName: 'Gigentic Identity Verification',
+  appName: 'Gigentic',
   scope: 'gigentic',
 
   // Disclosure requirements
@@ -13,7 +13,7 @@ export const selfVerificationConfig = {
     // DG1 disclosures
     issuing_state: false,
     name: false,
-    nationality: true,
+    nationality: false,
     date_of_birth: false,
     passport_number: false,
     gender: false,
