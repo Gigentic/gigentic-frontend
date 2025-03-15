@@ -151,7 +151,7 @@ export async function sendMessage(
             matchScore: z
               .number()
               .describe(
-                "Give a match score of the freelancer to the user's task",
+                "Estimate a match score of the freelancer to the user's task between 1 and 100 percent",
               ),
             rating: z.number().describe('The rating of the freelancer'),
             serviceAccountAddress: z
