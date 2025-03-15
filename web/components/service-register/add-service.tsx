@@ -271,15 +271,13 @@ export function AddService() {
                   Service Price (ETH)
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                    ETH
-                  </span>
+                  {/* <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"></span> */}
                   <Input
                     {...form.register('price')}
                     type="text"
                     min="0"
                     placeholder="0.01"
-                    className="pl-12"
+                    className="pl-2"
                   />
                 </div>
                 {form.formState.errors.price && (
