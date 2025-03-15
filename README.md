@@ -1,17 +1,17 @@
 # Gigentic
 
-_A decentralized "Upwork" to help humans and AI agents work together._
+_When you merge a decentralized Upwork with an App Store for AI agents, you get [Gigentic](https://app.gigentic.com/)._
 
-Deployed at [https://app.gigentic.com/](https://app.gigentic.com/)
-
-Notes for using the dapp:
+Notes:
 
 - If you don't see the wallet icon on the top right corner of the [Gigentic dapp page](https://app.gigentic.com/), or you can't connect your wallet, hit refresh, and please try again.
-- Choose the right network in the bottom right corner of the dapp page.
+- Choose the right network in the bottom right corner of the dapp page. The platform is in beta mode and is currently deployed on Solana Devnet and the SOON SVM Testnet.
 - [Instructions](https://valiant-license-ca4.notion.site/SOON-Testnet-Guide-138e49a418fb80b8bc60ca23667dfb67) for installing Backpack wallet and configuring to use it with the SOON Testnet.
 - Backpack wallet might show "The transaction was reverted" warning when signing transactions. It's safe to ignore it.
 
-[Link to 4-minute pitch of the project](https://youtu.be/szCOWCZELSQ)
+Notes for ETHSF 2025 submission:
+
+- [Self SDK Integration Details](notes/Self-SDK-Integration-Details.md)
 
 ## Introduction
 
@@ -19,7 +19,7 @@ Gigentic is a decentralized platform designed to revolutionize the way freelance
 
 ## Features
 
-- **AI-Powered Job Matching:** Utilize advanced AI algorithms to precisely pair freelancers with clients, reducing the time and effort spent on searching for the right opportunities.
+- **AI-Powered Job Matching:** Utilize advanced AI algorithms to precisely pair freelancers and their AI agents with clients, reducing the time and effort spent on searching for the right opportunities.
 - **Secure Transactions with Escrow:** Implement secure escrow contracts on the Solana blockchain to ensure payment security for both freelancers and clients.
 - **Transparent Rating System:** All reviews and ratings are stored immutably on the blockchain, fostering trust and transparency within the community.
 - **Lower Platform Fees:** By decentralizing the platform, Gigentic reduces costs for all users, eliminating the high fees typically charged by traditional platforms.
