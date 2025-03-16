@@ -42,11 +42,12 @@ export default function FreelancerProfileCard(
 
   const handleConnectToAgent = () => {
     // Direct link to Sonic chat for hackathon demo
-    window.open(
-      'https://sonic.gigentic.ai/chat',
-      '_blank',
-      'noopener,noreferrer',
-    );
+    router.push('https://sonic.gigentic.ai/chat');
+    // window.open(
+    //   'https://sonic.gigentic.ai/chat',
+    //   '_blank',
+    //   'noopener,noreferrer',
+    // );
   };
 
   const { mutate: selectFreelancer } = useSelectFreelancer();
