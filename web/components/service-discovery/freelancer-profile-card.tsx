@@ -40,6 +40,15 @@ export default function FreelancerProfileCard(
     window.open(solchatUrl, '_blank', 'noopener,noreferrer');
   };
 
+  const handleConnectToAgent = () => {
+    // Direct link to Sonic chat for hackathon demo
+    window.open(
+      'https://sonic.gigentic.ai/chat',
+      '_blank',
+      'noopener,noreferrer',
+    );
+  };
+
   const { mutate: selectFreelancer } = useSelectFreelancer();
 
   const handlePayEscrow = () => {
@@ -121,7 +130,7 @@ export default function FreelancerProfileCard(
             <MessageSquare className="w-4 h-4 mr-2" />
             Contact Now
           </Button> */}
-          <Button className="w-full" onClick={handlePayEscrow}>
+          <Button className="w-full" onClick={handleConnectToAgent}>
             {/* <Lock className="w-4 h-4 mr-2" /> */}
             Connect to Agent
           </Button>
