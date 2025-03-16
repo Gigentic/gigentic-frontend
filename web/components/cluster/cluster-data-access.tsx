@@ -14,9 +14,10 @@ export interface Cluster {
 }
 
 export enum ClusterNetwork {
-  Mainnet = 'mainnet-beta',
-  Testnet = 'testnet',
+  Local = 'local',
   Devnet = 'devnet',
+  Testnet = 'testnet',
+  Mainnet = 'mainnet-beta',
   Custom = 'custom',
 }
 
@@ -25,14 +26,28 @@ export enum ClusterNetwork {
 // To use the mainnet-beta cluster, provide a custom endpoint
 export const defaultClusters: Cluster[] = [
   {
+    name: 'local',
+    endpoint: 'http://localhost:8899',
+    network: ClusterNetwork.Local,
+  },
+  {
     name: 'devnet',
     endpoint: clusterApiUrl('devnet'),
     network: ClusterNetwork.Devnet,
   },
-  { name: 'local', endpoint: 'http://localhost:8899' },
   {
     name: 'soon-testnet',
     endpoint: 'https://rpc.testnet.soo.network/rpc',
+    network: ClusterNetwork.Testnet,
+  },
+  // {
+  //   name: 'soon-mainnet',
+  //   endpoint: 'https://rpc.mainnet.soo.network/rpc',
+  //   network: ClusterNetwork.Mainnet,
+  // },
+  {
+    name: 'sonic-testnet',
+    endpoint: 'https://api.testnet.sonic.game',
     network: ClusterNetwork.Testnet,
   },
 ];
@@ -64,8 +79,6 @@ const activeClusterAtom = atom<Cluster>((get) => {
 export interface ClusterProviderContext {
   cluster: Cluster;
   clusters: Cluster[];
-  addCluster: (cluster: Cluster) => void;
-  deleteCluster: (cluster: Cluster) => void;
   setCluster: (cluster: Cluster) => void;
   getExplorerUrl(path: string): string;
 }
@@ -82,21 +95,25 @@ export function ClusterProvider({ children }: { children: ReactNode }) {
 
   const value: ClusterProviderContext = {
     cluster,
-    clusters: clusters.sort((a, b) => (a.name > b.name ? 1 : -1)),
-    addCluster: (cluster: Cluster) => {
-      try {
-        new Connection(cluster.endpoint);
-        setClusters([...clusters, cluster]);
-      } catch (err) {
-        toast.error(`${err}`);
-      }
-    },
-    deleteCluster: (cluster: Cluster) => {
-      setClusters(clusters.filter((item) => item.name !== cluster.name));
-    },
+    clusters: defaultClusters,
     setCluster: (cluster: Cluster) => setCluster(cluster),
-    getExplorerUrl: (path: string) =>
-      `https://explorer.solana.com/${path}${getClusterUrlParam(cluster)}`,
+    getExplorerUrl: (path: string) => {
+      // Use Soon explorer for Soon networks
+      const isSoonNetwork = cluster.name.startsWith('soon-');
+      // Check if it's a Sonic network
+      const isSonicNetwork = cluster.name.startsWith('sonic-');
+
+      let baseUrl = 'https://explorer.solana.com';
+      if (isSoonNetwork) {
+        baseUrl = 'https://explorer.soo.network';
+      } else if (isSonicNetwork) {
+        baseUrl = 'https://explorer.sonic.game';
+        // For Sonic networks, return with special cluster parameter format
+        return `${baseUrl}/${path}?cluster=testnet.v1`;
+      }
+
+      return `${baseUrl}/${path}${getClusterUrlParam(cluster)}`;
+    },
   };
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
