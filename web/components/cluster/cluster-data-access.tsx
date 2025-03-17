@@ -25,6 +25,11 @@ export enum ClusterNetwork {
 // To use the mainnet-beta cluster, provide a custom endpoint
 export const defaultClusters: Cluster[] = [
   {
+    name: 'sonic-testnet',
+    endpoint: 'https://api.testnet.sonic.game',
+    network: ClusterNetwork.Testnet,
+  },
+  {
     name: 'local',
     endpoint: 'http://localhost:8899',
     network: ClusterNetwork.Local,
@@ -44,11 +49,6 @@ export const defaultClusters: Cluster[] = [
   //   endpoint: 'https://rpc.mainnet.soo.network/rpc',
   //   network: ClusterNetwork.Mainnet,
   // },
-  {
-    name: 'sonic-testnet',
-    endpoint: 'https://api.testnet.sonic.game',
-    network: ClusterNetwork.Testnet,
-  },
 ];
 
 const clusterAtom = atomWithStorage<Cluster>(

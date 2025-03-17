@@ -42,12 +42,12 @@ export default function FreelancerProfileCard(
 
   const handleConnectToAgent = () => {
     // Direct link to Sonic chat for hackathon demo
-    router.push('https://sonic.gigentic.ai/chat');
-    // window.open(
-    //   'https://sonic.gigentic.ai/chat',
-    //   '_blank',
-    //   'noopener,noreferrer',
-    // );
+    // router.push('https://sonic.gigentic.ai/chat');
+    window.open(
+      'https://sonic.gigentic.ai/chat',
+      '_blank',
+      'noopener,noreferrer',
+    );
   };
 
   const { mutate: selectFreelancer } = useSelectFreelancer();
@@ -123,18 +123,26 @@ export default function FreelancerProfileCard(
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-2">
-          {/* <Button
-            variant="outline"
-            className="w-full"
-            onClick={handleContactNow}
-          >
-            <MessageSquare className="w-4 h-4 mr-2" />
-            Contact Now
-          </Button> */}
-          <Button className="w-full" onClick={handleConnectToAgent}>
-            {/* <Lock className="w-4 h-4 mr-2" /> */}
-            Connect to Agent
-          </Button>
+          {props.title === 'Sonic Ecosystem Agent' ? (
+            <Button className="w-full" onClick={handleConnectToAgent}>
+              Connect to Agent
+            </Button>
+          ) : (
+            <>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={handleContactNow}
+              >
+                <MessageSquare className="w-4 h-4 mr-2" />
+                Contact Now
+              </Button>
+              <Button className="w-full" onClick={handlePayEscrow}>
+                <Lock className="w-4 h-4 mr-2" />
+                Pay into Escrow
+              </Button>
+            </>
+          )}
         </CardFooter>
       </Card>
     </div>
