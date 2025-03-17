@@ -481,6 +481,34 @@ Ask for test SOL from the SOON team or bridge in assets from Ethereum Sepolia.
    yarn anchor run write-services
    ```
 
+#### 4. Deploy to Sonic Testnet
+
+If you plan to deploy to the Sonic Testnet, follow these additional steps:
+
+1. **Configure Solana CLI for Sonic Testnet**
+
+   ```bash
+   solana config set --url https://api.testnet.sonic.game
+   ```
+
+2. **Deploy the Program**
+
+   ```bash
+   solana program deploy ./anchor/target/deploy/gigentic.so
+   ```
+
+3. **Fund Accounts**
+
+Get SOL from the [Sonic Faucet](https://faucet.sonic.game/#/).
+
+4. **Deploy Registry and Write Services**
+
+   ```bash
+   yarn anchor run deploy-registry
+   yarn anchor run create-mint
+   yarn anchor run write-services
+   ```
+
 _Ensure you update `Anchor.toml` and environment variables accordingly._
 
 ### Important Notes

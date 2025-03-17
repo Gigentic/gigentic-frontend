@@ -20,6 +20,7 @@ url = "https://api.apr.dev"
 [provider]
 cluster = "Localnet"
 # cluster = "https://rpc.testnet.soo.network/rpc"
+# cluster = "https://api.testnet.sonic.game"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

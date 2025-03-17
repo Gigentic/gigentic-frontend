@@ -73,22 +73,25 @@ export function UiLayout({
           </div>
           <div className="flex items-center space-x-4">
             {publicKey && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Link href={`/account/${publicKey.toString()}`}>
-                      <Avatar className="cursor-pointer hover:opacity-80">
-                        <AvatarFallback>
-                          <User className="h-5 w-5" />
-                        </AvatarFallback>
-                      </Avatar>
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>View Account Details</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Link href={`/account/${publicKey.toString()}`}>
+                        <Avatar className="cursor-pointer hover:opacity-80">
+                          <AvatarFallback>
+                            <User className="h-5 w-5" />
+                          </AvatarFallback>
+                        </Avatar>
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>View Account Details</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                {/* <Button variant="outline">Sign Out</Button> */}
+              </>
             )}
             <ThemeToggle />
             <div className="hidden sm:block">

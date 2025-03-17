@@ -1,12 +1,9 @@
 'use client';
 
 import { useConnection } from '@solana/wallet-adapter-react';
-import { IconTrash } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { ReactNode, useState } from 'react';
-import { AppModal } from '../ui/ui-layout';
-import { ClusterNetwork, useCluster } from './cluster-data-access';
-import { Connection } from '@solana/web3.js';
+import { ReactNode } from 'react';
+import { useCluster } from './cluster-data-access';
 import {
   Select,
   SelectContent,
@@ -80,7 +77,7 @@ export function ClusterUiSelect() {
         }
       }}
     >
-      <SelectTrigger className="w-[100px] border-neutral-200">
+      <SelectTrigger className="w-[130px] border-neutral-200">
         <SelectValue placeholder="Select network" />
       </SelectTrigger>
       <SelectContent>
@@ -91,122 +88,5 @@ export function ClusterUiSelect() {
         ))}
       </SelectContent>
     </Select>
-  );
-}
-
-export function ClusterUiModal({
-  hideModal,
-  show,
-}: {
-  hideModal: () => void;
-  show: boolean;
-}) {
-  const { addCluster } = useCluster();
-  const [name, setName] = useState('');
-  const [network, setNetwork] = useState<ClusterNetwork | undefined>();
-  const [endpoint, setEndpoint] = useState('');
-
-  return (
-    <AppModal
-      title={'Add Cluster'}
-      hide={hideModal}
-      show={show}
-      submit={() => {
-        try {
-          new Connection(endpoint);
-          if (name) {
-            addCluster({ name, network, endpoint });
-            hideModal();
-          } else {
-            console.log('Invalid cluster name');
-          }
-        } catch {
-          console.log('Invalid cluster endpoint');
-        }
-      }}
-      submitLabel="Save"
-    >
-      <input
-        type="text"
-        placeholder="Name"
-        className="input input-bordered w-full"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Endpoint"
-        className="input input-bordered w-full"
-        value={endpoint}
-        onChange={(e) => setEndpoint(e.target.value)}
-      />
-      <select
-        className="select select-bordered w-full"
-        value={network}
-        onChange={(e) => setNetwork(e.target.value as ClusterNetwork)}
-      >
-        <option value={undefined}>Select a network</option>
-        <option value={ClusterNetwork.Devnet}>Devnet</option>
-        <option value={ClusterNetwork.Testnet}>Testnet</option>
-        <option value={ClusterNetwork.Mainnet}>Mainnet</option>
-      </select>
-    </AppModal>
-  );
-}
-
-export function ClusterUiTable() {
-  const { clusters, setCluster, deleteCluster } = useCluster();
-  return (
-    <div className="overflow-x-auto">
-      <table className="table border-4 border-separate border-base-300">
-        <thead>
-          <tr>
-            <th>Name/ Network / Endpoint</th>
-            <th className="text-center">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {clusters.map((item) => (
-            <tr key={item.name} className={item?.active ? 'bg-base-200' : ''}>
-              <td className="space-y-2">
-                <div className="whitespace-nowrap space-x-2">
-                  <span className="text-xl">
-                    {item?.active ? (
-                      item.name
-                    ) : (
-                      <button
-                        title="Select cluster"
-                        className="link link-secondary"
-                        onClick={() => setCluster(item)}
-                      >
-                        {item.name}
-                      </button>
-                    )}
-                  </span>
-                </div>
-                <span className="text-xs">
-                  Network: {item.network ?? 'custom'}
-                </span>
-                <div className="whitespace-nowrap text-gray-500 text-xs">
-                  {item.endpoint}
-                </div>
-              </td>
-              <td className="space-x-2 whitespace-nowrap text-center">
-                <button
-                  disabled={item?.active}
-                  className="btn btn-xs btn-default btn-outline"
-                  onClick={() => {
-                    if (!window.confirm('Are you sure?')) return;
-                    deleteCluster(item);
-                  }}
-                >
-                  <IconTrash size={16} />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
   );
 }

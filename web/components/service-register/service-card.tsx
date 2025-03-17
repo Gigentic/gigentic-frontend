@@ -58,7 +58,7 @@ export function ServiceCard({ account }: ServiceCardProps) {
               {title}
             </CardTitle>
             <Badge variant="secondary" className="shrink-0">
-              {priceInSol} ETH
+              {priceInSol} SOL
             </Badge>
           </div>
           <TooltipProvider>
