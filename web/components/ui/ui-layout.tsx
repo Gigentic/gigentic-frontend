@@ -90,7 +90,7 @@ export function UiLayout({
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-                <Button variant="outline">Sign Out</Button>
+                {/* <Button variant="outline">Sign Out</Button> */}
               </>
             )}
             <ThemeToggle />

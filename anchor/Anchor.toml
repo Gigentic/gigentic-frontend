@@ -18,9 +18,9 @@ gigentic = "2xtwCiDhiQ9vuTFpR3wECJaHyvtE7L9pBPbNHdnsk1YS"
 url = "https://api.apr.dev"
 
 [provider]
-# cluster = "Localnet"
+cluster = "Localnet"
 # cluster = "https://rpc.testnet.soo.network/rpc"
-cluster = "https://api.testnet.sonic.game"
+# cluster = "https://api.testnet.sonic.game"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
