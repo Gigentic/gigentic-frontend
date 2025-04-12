@@ -89,10 +89,10 @@ export function AddService() {
       return;
     }
 
-    if (!isVerified) {
-      console.warn('Please complete Self identity verification first');
-      return;
-    }
+    // if (!isVerified) {
+    //   console.warn('Please complete Self identity verification first');
+    //   return;
+    // }
 
     console.log('Creating Service Offering...');
 
@@ -287,7 +287,7 @@ export function AddService() {
                 )}
               </div>
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <label className="text-lg font-semibold flex items-center">
                   <ShieldCheck className="mr-2 h-5 w-5 text-primary" />
                   Identity Verification
@@ -309,13 +309,14 @@ export function AddService() {
                     </span>
                   </div>
                 )}
-              </div>
+              </div> */}
 
               <Button
                 className="w-full rounded-lg"
                 size="lg"
                 type="submit"
-                disabled={isSubmitting || !connected || !isVerified}
+                // disabled={isSubmitting || !connected || !isVerified}
+                disabled={isSubmitting || !connected}
               >
                 <Plus className="mr-2 h-4 w-4" />
                 {isSubmitting ? 'Creating...' : 'Create Talent Offering'}
