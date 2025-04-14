@@ -13,8 +13,6 @@ gantt
     dateFormat  YYYY-MM-DD
     title Milestone Delivery Timeline
 
-    %%{ init: { 'theme': 'default', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#9cb5f2', 'secondaryColor': '#e0e0e0', 'tertiaryColor': '#f8f8f8', 'primaryTextColor': '#333', 'lineColor': '#666', 'mainBkg': '#ffffff', 'taskTextColor': '#333', 'taskTextDarkColor': '#333', 'taskTextOutsideColor': '#333' } } }%%
-
     section Milestone 1: MVP
     Core Platform Development       : active, 2024-11-04, 2024-12-15
     Service Management              : 2024-11-07, 2024-11-22
@@ -116,16 +114,10 @@ These UX improvements were internally tested and validated to ensure alignment w
 
 ```mermaid
 graph LR
-    %%{ init: { 'theme': 'default', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#d4e4ff', 'secondaryColor': '#f0f0f0', 'tertiaryColor': '#f8f8f8', 'primaryTextColor': '#333', 'lineColor': '#666', 'mainBkg': '#ffffff', 'nodeBorder': '#333', 'clusterBkg': '#ffffff' } } }%%
-
     subgraph "Alpha Testing Metrics"
     A["Target Users: 10<br>Achieved Users: 12"]
     B["Target Transactions: 7<br>Achieved Transactions: 15"]
     end
-
-    style subgraph fill:#ffffff,stroke:#333
-    style A fill:#d4f9d4,stroke:#333,color:#333
-    style B fill:#d4f9d4,stroke:#333,color:#333
 ```
 
 # Milestone 3: Onboarding & Scaling Preparation
@@ -182,18 +174,10 @@ These activities significantly enhanced our visibility within the Web3 and AI co
 
 ```mermaid
 flowchart LR
-    %%{ init: { 'theme': 'default', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#d4e4ff', 'secondaryColor': '#f0f0f0', 'tertiaryColor': '#f8f8f8', 'primaryTextColor': '#333', 'lineColor': '#666', 'mainBkg': '#ffffff', 'nodeBorder': '#333', 'clusterBkg': '#ffffff', 'fontSize': '16px' } } }%%
-
     A[All Milestones Completed] --> B[Public Beta]
     B --> C[Public Launch]
     C --> D[Scale Adoption]
     D --> E[Ecosystem Growth]
-
-    style A fill:#d6ffd6,stroke:#333,color:#333,stroke-width:2px
-    style B fill:#ffffcc,stroke:#333,color:#333,stroke-width:2px
-    style C fill:#ffdbcc,stroke:#333,color:#333,stroke-width:2px
-    style D fill:#d4e4ff,stroke:#333,color:#333
-    style E fill:#f0e6ff,stroke:#333,color:#333
 ```
 
 With all three milestones successfully completed, the Gigentic platform has evolved from concept to a functional product ready for broader adoption. We have built the core functionality, validated it with real users, and prepared the necessary infrastructure for scaling.
