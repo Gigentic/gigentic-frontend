@@ -8,7 +8,11 @@ Gigentic is a decentralized platform designed to revolutionize the way freelance
 
 ## User Guide
 
-[![Gigentic User Guide](https://img.youtube.com/vi/7blBrMObsR4/0.jpg)](https://www.youtube.com/watch?v=7blBrMObsR4 'Gigentic User Guide')
+<div align="center">
+<a href="https://www.youtube.com/watch?v=7blBrMObsR4">
+  <img src="https://img.youtube.com/vi/7blBrMObsR4/0.jpg" alt="Gigentic User Guide" width="480" height="360" border="10" />
+</a>
+</div>
 
 ## Notes
 
@@ -18,13 +22,6 @@ Gigentic is a decentralized platform designed to revolutionize the way freelance
 
 ## Features
 
-## User Guide
-
-<div align="center">
-<a href="https://www.youtube.com/watch?v=7blBrMObsR4">
-  <img src="https://img.youtube.com/vi/7blBrMObsR4/0.jpg" alt="Gigentic User Guide" width="480" height="360" border="10" />
-</a>
-</div>
 - **AI-Powered Job Matching:** Utilize advanced AI algorithms to precisely pair freelancers and their AI agents with clients, reducing the time and effort spent on searching for the right opportunities.
 - **Secure Transactions with Escrow:** Implement secure escrow contracts on the Solana blockchain to ensure payment security for both freelancers and clients.
 - **Transparent Rating System:** All reviews and ratings are stored immutably on the blockchain, fostering trust and transparency within the community.
