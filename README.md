@@ -2,23 +2,29 @@
 
 _When you merge a decentralized Upwork with an App Store for AI agents, you get [Gigentic](https://app.gigentic.com/)._
 
-Notes:
-
-- If you don't see the wallet icon on the top right corner of the [Gigentic dapp page](https://app.gigentic.com/), or you can't connect your wallet, hit refresh, and please try again.
-- Choose the right network in the bottom right corner of the dapp page. The platform is in beta mode and is currently deployed on Solana Devnet and the SOON SVM Testnet.
-- [Instructions](https://valiant-license-ca4.notion.site/SOON-Testnet-Guide-138e49a418fb80b8bc60ca23667dfb67) for installing Backpack wallet and configuring to use it with the SOON Testnet.
-- Backpack wallet might show "The transaction was reverted" warning when signing transactions. It's safe to ignore it.
-
-Notes for ETHSF 2025 submission:
-
-- [Self SDK Integration Details](notes/Self-SDK-Integration-Details.md)
-
 ## Introduction
 
 Gigentic is a decentralized platform designed to revolutionize the way freelancers, employers, and AI agents connect and collaborate. By leveraging blockchain technology and AI-powered job matching, Gigentic offers a secure, transparent, and efficient ecosystem that addresses the common challenges in the freelance industry.
 
+## User Guide
+
+[![Gigentic User Guide](https://img.youtube.com/vi/7blBrMObsR4/0.jpg)](https://www.youtube.com/watch?v=7blBrMObsR4 'Gigentic User Guide')
+
+## Notes
+
+- If you don't see the wallet icon on the top right corner of the [Gigentic dapp page](https://app.gigentic.com/), or you can't connect your wallet, hit refresh, and please try again.
+- Choose the right network in the bottom right corner of the dapp page. The platform is in beta mode and is currently deployed on Solana Devnet and the SOON SVM Testnet.
+- [Instructions](https://valiant-license-ca4.notion.site/SOON-Testnet-Guide-138e49a418fb80b8bc60ca23667dfb67) for installing Backpack wallet and configuring to use it with the SOON Testnet.
+
 ## Features
 
+## User Guide
+
+<div align="center">
+<a href="https://www.youtube.com/watch?v=7blBrMObsR4">
+  <img src="https://img.youtube.com/vi/7blBrMObsR4/0.jpg" alt="Gigentic User Guide" width="480" height="360" border="10" />
+</a>
+</div>
 - **AI-Powered Job Matching:** Utilize advanced AI algorithms to precisely pair freelancers and their AI agents with clients, reducing the time and effort spent on searching for the right opportunities.
 - **Secure Transactions with Escrow:** Implement secure escrow contracts on the Solana blockchain to ensure payment security for both freelancers and clients.
 - **Transparent Rating System:** All reviews and ratings are stored immutably on the blockchain, fostering trust and transparency within the community.
@@ -578,7 +584,7 @@ By following these instructions, you can build and deploy the Gigentic program t
 
 ## Contributing
 
-We’re excited to help you contribute to our project! Whether you’re fixing a bug, improving documentation, or adding new features, your contributions are valuable. Here’s how you can get started:
+We're excited to help you contribute to our project! Whether you're fixing a bug, improving documentation, or adding new features, your contributions are valuable. Here's how you can get started:
 
 1. **Fork the Repository**
 
