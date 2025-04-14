@@ -88,22 +88,12 @@ This report provides a comprehensive overview of the successful completion of al
 
 ```mermaid
 flowchart LR
-    <!-- %%{ init: { 'theme': 'default', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#d4e4ff', 'secondaryColor': '#f0f0f0', 'tertiaryColor': '#f8f8f8', 'primaryTextColor': '#333', 'lineColor': '#666', 'mainBkg': '#ffffff', 'nodeBorder': '#333', 'clusterBkg': '#ffffff' } } }%% -->
-
     A[User Feedback] --> B[Interviews]
     A --> D[Observations]
     B & D --> E[Issue Identification]
     E --> F[UX Refinement]
     F --> G[Implementation]
     G --> H[Validation]
-
-    <!-- style A fill:#d4e4ff,stroke:#333,color:#333
-    style B fill:#e6f2ff,stroke:#333,color:#333
-    style D fill:#e6f2ff,stroke:#333,color:#333
-    style E fill:#f0e6ff,stroke:#333,color:#333
-    style F fill:#f9f9f9,stroke:#333,color:#333
-    style G fill:#d4f9d4,stroke:#333,color:#333
-    style H fill:#ffffcc,stroke:#333,color:#333 -->
 ```
 
 ### UX Refinement and Iterative Improvements
